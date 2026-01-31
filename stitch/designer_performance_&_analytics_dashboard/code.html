@@ -1,0 +1,537 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Designer Performance &amp; Analytics Dashboard</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;900&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#137fec",
+                        "background-light": "#f6f7f8",
+                        "background-dark": "#101922",
+                        "card-dark": "#1a2632",
+                    },
+                    fontFamily: {
+                        "display": ["Inter", "sans-serif"]
+                    },
+                    borderRadius: {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                },
+            },
+        }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+    </style>
+</head>
+<body class="bg-background-light dark:bg-background-dark text-slate-900 dark:text-slate-100 font-display">
+<div class="flex min-h-screen overflow-hidden">
+<!-- Side Navigation -->
+<aside class="w-64 flex-shrink-0 border-r border-slate-200 dark:border-slate-800 bg-white dark:bg-background-dark hidden lg:flex flex-col">
+<div class="p-6 flex flex-col h-full">
+<div class="flex items-center gap-3 mb-10">
+<div class="w-10 h-10 rounded-lg bg-primary flex items-center justify-center text-white">
+<span class="material-symbols-outlined">auto_graph</span>
+</div>
+<div>
+<h1 class="text-base font-bold leading-none">WebAsia</h1>
+<p class="text-xs text-slate-500 dark:text-slate-400 mt-1">Creative Admin</p>
+</div>
+</div>
+<nav class="flex-1 space-y-1">
+<a class="flex items-center gap-3 px-3 py-2 rounded-lg bg-primary/10 text-primary font-medium" href="#">
+<span class="material-symbols-outlined">dashboard</span>
+<span>Dashboard</span>
+</a>
+<a class="flex items-center gap-3 px-3 py-2 rounded-lg text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors" href="#">
+<span class="material-symbols-outlined">layers</span>
+<span>Projects</span>
+</a>
+<a class="flex items-center gap-3 px-3 py-2 rounded-lg text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors" href="#">
+<span class="material-symbols-outlined">group</span>
+<span>Designers</span>
+</a>
+<a class="flex items-center gap-3 px-3 py-2 rounded-lg text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors" href="#">
+<span class="material-symbols-outlined">business_center</span>
+<span>Clients</span>
+</a>
+<a class="flex items-center gap-3 px-3 py-2 rounded-lg text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors" href="#">
+<span class="material-symbols-outlined">payments</span>
+<span>Billing</span>
+</a>
+<a class="flex items-center gap-3 px-3 py-2 rounded-lg text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors" href="#">
+<span class="material-symbols-outlined">settings</span>
+<span>Settings</span>
+</a>
+</nav>
+<div class="mt-auto">
+<button class="w-full bg-primary hover:bg-primary/90 text-white font-bold py-2.5 rounded-lg flex items-center justify-center gap-2 transition-all">
+<span class="material-symbols-outlined text-sm">add</span>
+<span>New Report</span>
+</button>
+</div>
+</div>
+</aside>
+<!-- Main Content -->
+<main class="flex-1 overflow-y-auto">
+<!-- Top Navigation -->
+<header class="sticky top-0 z-10 flex items-center justify-between px-8 py-4 bg-white/80 dark:bg-background-dark/80 backdrop-blur-md border-b border-slate-200 dark:border-slate-800">
+<div class="flex items-center gap-4 flex-1 max-w-xl">
+<div class="relative w-full">
+<span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-slate-400">search</span>
+<input class="w-full bg-slate-100 dark:bg-slate-800 border-none rounded-lg pl-10 pr-4 py-2 focus:ring-2 focus:ring-primary text-sm" placeholder="Search designers, metrics or tasks..." type="text"/>
+</div>
+</div>
+<div class="flex items-center gap-4">
+<button class="p-2 rounded-lg bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400 relative">
+<span class="material-symbols-outlined">notifications</span>
+<span class="absolute top-2 right-2 w-2 h-2 bg-red-500 rounded-full border-2 border-white dark:border-background-dark"></span>
+</button>
+<button class="p-2 rounded-lg bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400">
+<span class="material-symbols-outlined">chat_bubble</span>
+</button>
+<div class="h-8 w-px bg-slate-200 dark:border-slate-800 mx-2"></div>
+<div class="flex items-center gap-3">
+<img class="w-9 h-9 rounded-full border border-slate-200 dark:border-slate-700" data-alt="Admin profile avatar portrait" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAkyGs_kLcjePzAJTbALlN4ag-GiT5aYFKoy1I1sL1B910PALz7vbRhvLjvQBFdO9fU2jb5Flm6JsoWZUBrdm20TzpzoR_ybaSaKdZXyOe21FhYFkE3zfQGEaDOe9kMsOaqEJGynJ6E2PudmkiNbxs822eJJxho3zEi3_jgQXgrXE64Oz3-oioPjG22Q_RvPZ-5vxEdhDVidqiBgKdyqrd7Wyf8__11CbJWZJxEUNgnYK8Stw_DFQCxz4D4QZs5VKn4UIti1npQkEM"/>
+<div class="hidden sm:block">
+<p class="text-sm font-semibold leading-none">Alex Rivera</p>
+<p class="text-xs text-slate-500 dark:text-slate-400 mt-1">Head of Operations</p>
+</div>
+</div>
+</div>
+</header>
+<!-- Dashboard Body -->
+<div class="p-8 space-y-8 max-w-7xl mx-auto">
+<!-- Header Section -->
+<div class="flex flex-col md:flex-row md:items-end justify-between gap-4">
+<div>
+<h2 class="text-3xl font-black tracking-tight">Designer Performance</h2>
+<p class="text-slate-500 dark:text-slate-400 mt-1">Monitor team productivity and efficiency metrics across all service categories.</p>
+</div>
+<div class="flex items-center gap-3">
+<button class="flex items-center gap-2 px-4 py-2 bg-slate-200 dark:bg-slate-800 font-bold text-sm rounded-lg hover:bg-slate-300 dark:hover:bg-slate-700 transition-colors">
+<span class="material-symbols-outlined text-lg">file_download</span>
+<span>Export Data</span>
+</button>
+</div>
+</div>
+<!-- Filter Chips & Tabs -->
+<div class="flex flex-col gap-4">
+<div class="flex border-b border-slate-200 dark:border-slate-800 gap-8">
+<a class="border-b-2 border-primary text-primary pb-3 text-sm font-bold" href="#">Overview</a>
+<a class="border-b-2 border-transparent text-slate-500 hover:text-slate-700 dark:hover:text-slate-300 pb-3 text-sm font-bold transition-colors" href="#">Efficiency</a>
+<a class="border-b-2 border-transparent text-slate-500 hover:text-slate-700 dark:hover:text-slate-300 pb-3 text-sm font-bold transition-colors" href="#">Workload</a>
+<a class="border-b-2 border-transparent text-slate-500 hover:text-slate-700 dark:hover:text-slate-300 pb-3 text-sm font-bold transition-colors" href="#">Skill Distribution</a>
+</div>
+<div class="flex flex-wrap gap-2">
+<button class="flex items-center gap-2 px-3 py-1.5 bg-slate-100 dark:bg-slate-800 rounded-lg text-sm font-medium border border-slate-200 dark:border-slate-700">
+<span>Last 30 Days</span>
+<span class="material-symbols-outlined text-base">expand_more</span>
+</button>
+<button class="flex items-center gap-2 px-3 py-1.5 bg-slate-100 dark:bg-slate-800 rounded-lg text-sm font-medium border border-slate-200 dark:border-slate-700">
+<span>All Categories</span>
+<span class="material-symbols-outlined text-base">expand_more</span>
+</button>
+<button class="flex items-center gap-2 px-3 py-1.5 bg-slate-100 dark:bg-slate-800 rounded-lg text-sm font-medium border border-slate-200 dark:border-slate-700">
+<span>High Efficiency</span>
+<span class="material-symbols-outlined text-base text-primary">check_circle</span>
+</button>
+</div>
+</div>
+<!-- KPI Grid -->
+<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+<div class="bg-white dark:bg-card-dark p-6 rounded-xl shadow-sm border border-slate-200 dark:border-slate-800">
+<div class="flex items-center justify-between mb-4">
+<span class="text-slate-500 dark:text-slate-400 text-sm font-medium">Avg Turnaround</span>
+<div class="w-8 h-8 rounded-lg bg-green-500/10 text-green-500 flex items-center justify-center">
+<span class="material-symbols-outlined text-lg">timer</span>
+</div>
+</div>
+<div class="flex items-end gap-2">
+<h3 class="text-2xl font-bold">1.4 Days</h3>
+<span class="text-green-500 text-xs font-bold mb-1 flex items-center">
+<span class="material-symbols-outlined text-xs">arrow_downward</span>
+                            12%
+                        </span>
+</div>
+</div>
+<div class="bg-white dark:bg-card-dark p-6 rounded-xl shadow-sm border border-slate-200 dark:border-slate-800">
+<div class="flex items-center justify-between mb-4">
+<span class="text-slate-500 dark:text-slate-400 text-sm font-medium">Revision Rate</span>
+<div class="w-8 h-8 rounded-lg bg-primary/10 text-primary flex items-center justify-center">
+<span class="material-symbols-outlined text-lg">history_edu</span>
+</div>
+</div>
+<div class="flex items-end gap-2">
+<h3 class="text-2xl font-bold">8.2%</h3>
+<span class="text-red-500 text-xs font-bold mb-1 flex items-center">
+<span class="material-symbols-outlined text-xs">arrow_upward</span>
+                            2%
+                        </span>
+</div>
+</div>
+<div class="bg-white dark:bg-card-dark p-6 rounded-xl shadow-sm border border-slate-200 dark:border-slate-800">
+<div class="flex items-center justify-between mb-4">
+<span class="text-slate-500 dark:text-slate-400 text-sm font-medium">CSAT Score</span>
+<div class="w-8 h-8 rounded-lg bg-yellow-500/10 text-yellow-500 flex items-center justify-center">
+<span class="material-symbols-outlined text-lg">star</span>
+</div>
+</div>
+<div class="flex items-end gap-2">
+<h3 class="text-2xl font-bold">4.9/5.0</h3>
+<span class="text-green-500 text-xs font-bold mb-1 flex items-center">
+<span class="material-symbols-outlined text-xs">arrow_upward</span>
+                            0.4
+                        </span>
+</div>
+</div>
+<div class="bg-white dark:bg-card-dark p-6 rounded-xl shadow-sm border border-slate-200 dark:border-slate-800">
+<div class="flex items-center justify-between mb-4">
+<span class="text-slate-500 dark:text-slate-400 text-sm font-medium">Total Tasks</span>
+<div class="w-8 h-8 rounded-lg bg-purple-500/10 text-purple-500 flex items-center justify-center">
+<span class="material-symbols-outlined text-lg">task_alt</span>
+</div>
+</div>
+<div class="flex items-end gap-2">
+<h3 class="text-2xl font-bold">1,240</h3>
+<span class="text-green-500 text-xs font-bold mb-1 flex items-center">
+<span class="material-symbols-outlined text-xs">arrow_upward</span>
+                            8%
+                        </span>
+</div>
+</div>
+</div>
+<div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+<!-- Designer Leaderboard -->
+<div class="lg:col-span-2 bg-white dark:bg-card-dark rounded-xl shadow-sm border border-slate-200 dark:border-slate-800 overflow-hidden">
+<div class="p-6 border-b border-slate-200 dark:border-slate-800 flex justify-between items-center">
+<h3 class="font-bold text-lg">Designer Leaderboard</h3>
+<button class="text-primary text-sm font-bold hover:underline">View All</button>
+</div>
+<div class="overflow-x-auto">
+<table class="w-full text-left border-collapse">
+<thead>
+<tr class="bg-slate-50 dark:bg-slate-800/50">
+<th class="px-6 py-3 text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider">Rank</th>
+<th class="px-6 py-3 text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider">Designer</th>
+<th class="px-6 py-3 text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider">Tasks Done</th>
+<th class="px-6 py-3 text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider">Rating</th>
+<th class="px-6 py-3 text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider">Efficiency</th>
+</tr>
+</thead>
+<tbody class="divide-y divide-slate-100 dark:divide-slate-800">
+<tr class="hover:bg-slate-50 dark:hover:bg-slate-800/30 transition-colors">
+<td class="px-6 py-4 font-bold text-primary">#1</td>
+<td class="px-6 py-4">
+<div class="flex items-center gap-3">
+<img class="w-8 h-8 rounded-full" data-alt="Designer profile photo Sarah" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCqj6b6MdSHsbdU-j1pHfnHmLubFOgPmGlM4gX2SkH0BSfUIbQz_GpkBYMiqFjFSCBGRYlZMVe29ykijGwBcAVic8YB6DWM2iWrsfAqV1ft6T9MIGc72rMQt0sBnJAQUGPQvVhPyaMOzJBQ0uhY7KkESxZJP4Ntu3s1Py3G9y0werWlGOguJUWiZZ35FgOB8Vn0uGf-jTpWBj4XooEAJxQRp5tLQLQA4YM_hi9hxR-tHE2Wd2NWDjt4BJDL3olCZCWrbl-NS8Hlvng"/>
+<div>
+<p class="text-sm font-bold">Sarah Jenkins</p>
+<p class="text-xs text-slate-500">UI/UX Designer</p>
+</div>
+</div>
+</td>
+<td class="px-6 py-4 text-sm">142</td>
+<td class="px-6 py-4">
+<div class="flex items-center gap-1 text-yellow-500">
+<span class="material-symbols-outlined text-sm">star</span>
+<span class="text-sm font-bold text-slate-900 dark:text-white">4.95</span>
+</div>
+</td>
+<td class="px-6 py-4">
+<div class="w-full bg-slate-200 dark:bg-slate-700 rounded-full h-1.5 max-w-[100px]">
+<div class="bg-green-500 h-1.5 rounded-full" style="width: 98%"></div>
+</div>
+</td>
+</tr>
+<tr class="hover:bg-slate-50 dark:hover:bg-slate-800/30 transition-colors">
+<td class="px-6 py-4 font-bold text-slate-400">#2</td>
+<td class="px-6 py-4">
+<div class="flex items-center gap-3">
+<img class="w-8 h-8 rounded-full" data-alt="Designer profile photo Michael" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDqz6C0J1nsTqaj3zmTW6pRTI6_eCwdiHTDgaSIRoKf5bc-1bXMtnvywV4H9YmuXxKS90XJzYjj9nGIqC62-THfi_j2lYJOPIHBJxL-xNq8jB2H_fa2SgimYsFIDF2LYG1r2qX2P1UiddAHLi4AikcqCpKMLBYlvb8AvkpHbQYvvJN4vxGjzCtvJr1ttwIrbz9xL2L-hVXBxpl6VvoRq4q8qAd6sH4Yeje2ugw7yi9LCkg-r2rSRp_tbC3Hc7bIj-pDuKAjGg5cZco"/>
+<div>
+<p class="text-sm font-bold">Michael Chen</p>
+<p class="text-xs text-slate-500">Motion Graphics</p>
+</div>
+</div>
+</td>
+<td class="px-6 py-4 text-sm">128</td>
+<td class="px-6 py-4">
+<div class="flex items-center gap-1 text-yellow-500">
+<span class="material-symbols-outlined text-sm">star</span>
+<span class="text-sm font-bold text-slate-900 dark:text-white">4.88</span>
+</div>
+</td>
+<td class="px-6 py-4">
+<div class="w-full bg-slate-200 dark:bg-slate-700 rounded-full h-1.5 max-w-[100px]">
+<div class="bg-primary h-1.5 rounded-full" style="width: 92%"></div>
+</div>
+</td>
+</tr>
+<tr class="hover:bg-slate-50 dark:hover:bg-slate-800/30 transition-colors">
+<td class="px-6 py-4 font-bold text-slate-400">#3</td>
+<td class="px-6 py-4">
+<div class="flex items-center gap-3">
+<img class="w-8 h-8 rounded-full" data-alt="Designer profile photo Elena" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBFxrhJTQAcoz8TzwdjF8sA_Dj5uyffGXnZctJ1BrtYeB_Ukkdi5Yh6xzvi0am9vZTm35mcgs_ey2Kj2e9GUGiCKTyGe9kzsZYGAAsoeA07ZmpdUekONg045K109W0gnu_lWuVC699ftXVzH0atyEB9lNd-mSXW0XFiohCvLbtx7XlR8p6p_3ue0YhDjNx03uZhstSh-SuMv0VYem42bgyMjI2mWu6fMfFkyEVhxhrGUx8tCRNUVRtIbeOZvxN5a1XVvZSHS-wZ1iw"/>
+<div>
+<p class="text-sm font-bold">Elena Rodriguez</p>
+<p class="text-xs text-slate-500">Video Editor</p>
+</div>
+</div>
+</td>
+<td class="px-6 py-4 text-sm">115</td>
+<td class="px-6 py-4">
+<div class="flex items-center gap-1 text-yellow-500">
+<span class="material-symbols-outlined text-sm">star</span>
+<span class="text-sm font-bold text-slate-900 dark:text-white">4.82</span>
+</div>
+</td>
+<td class="px-6 py-4">
+<div class="w-full bg-slate-200 dark:bg-slate-700 rounded-full h-1.5 max-w-[100px]">
+<div class="bg-primary h-1.5 rounded-full" style="width: 85%"></div>
+</div>
+</td>
+</tr>
+<tr class="hover:bg-slate-50 dark:hover:bg-slate-800/30 transition-colors">
+<td class="px-6 py-4 font-bold text-slate-400">#4</td>
+<td class="px-6 py-4">
+<div class="flex items-center gap-3">
+<img class="w-8 h-8 rounded-full" data-alt="Designer profile photo James" src="https://lh3.googleusercontent.com/aida-public/AB6AXuA_7u7p-B6cbCRKlNnNsLMY6x4K0Pu26lOqYHoiC7mVLWeDFpRpcVHAL6Ce0RkvrdUNUl2GEymAENtKd7vZAn05l9iUmsrA_ykLyOTeQ4WFPA8SJQKZ2XohhmetmY50ZBvhk9uWWIGgwUGryz3aRmnoEXh1Nug-ur7hitc2PgUvEekNSAjYFN4J9G3dO-DBGU9kkgiRo6ClPMBNDLzpEG22QJBCIHYgTiB7SJMu5nSpcuIEIuDZOKmOAK-qbbezNp6JxGaWxra6Ly4"/>
+<div>
+<p class="text-sm font-bold">James Wilson</p>
+<p class="text-xs text-slate-500">Graphic Artist</p>
+</div>
+</div>
+</td>
+<td class="px-6 py-4 text-sm">104</td>
+<td class="px-6 py-4">
+<div class="flex items-center gap-1 text-yellow-500">
+<span class="material-symbols-outlined text-sm">star</span>
+<span class="text-sm font-bold text-slate-900 dark:text-white">4.75</span>
+</div>
+</td>
+<td class="px-6 py-4">
+<div class="w-full bg-slate-200 dark:bg-slate-700 rounded-full h-1.5 max-w-[100px]">
+<div class="bg-primary h-1.5 rounded-full" style="width: 80%"></div>
+</div>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<!-- Workload Analysis -->
+<div class="bg-white dark:bg-card-dark rounded-xl shadow-sm border border-slate-200 dark:border-slate-800 p-6">
+<h3 class="font-bold text-lg mb-6">Workload Analysis</h3>
+<div class="flex justify-center mb-8 relative">
+<!-- Custom CSS for semi-circle/donut representation -->
+<div class="relative w-48 h-48 rounded-full border-[16px] border-slate-100 dark:border-slate-800 flex items-center justify-center">
+<div class="absolute inset-0 rounded-full border-[16px] border-transparent border-t-primary border-r-primary rotate-45"></div>
+<div class="text-center">
+<p class="text-3xl font-black">74%</p>
+<p class="text-xs text-slate-500">Avg. Capacity</p>
+</div>
+</div>
+</div>
+<div class="space-y-4">
+<div class="flex items-center justify-between">
+<div class="flex items-center gap-2">
+<span class="w-3 h-3 rounded-full bg-primary"></span>
+<span class="text-sm">Available</span>
+</div>
+<span class="text-sm font-bold">12 Designers</span>
+</div>
+<div class="flex items-center justify-between">
+<div class="flex items-center gap-2">
+<span class="w-3 h-3 rounded-full bg-yellow-500"></span>
+<span class="text-sm">At Capacity</span>
+</div>
+<span class="text-sm font-bold">8 Designers</span>
+</div>
+<div class="flex items-center justify-between">
+<div class="flex items-center gap-2">
+<span class="w-3 h-3 rounded-full bg-red-500"></span>
+<span class="text-sm">Overloaded</span>
+</div>
+<span class="text-sm font-bold">3 Designers</span>
+</div>
+</div>
+<button class="w-full mt-8 py-2.5 rounded-lg border border-primary text-primary text-sm font-bold hover:bg-primary/5 transition-colors">
+                        Rebalance Tasks
+                    </button>
+</div>
+</div>
+<!-- Detailed Performance Section -->
+<div class="space-y-6">
+<h3 class="font-bold text-xl">Individual Skill Proficiency</h3>
+<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+<!-- Performance Card 1 -->
+<div class="bg-white dark:bg-card-dark rounded-xl border border-slate-200 dark:border-slate-800 p-6 flex flex-col">
+<div class="flex items-center gap-4 mb-6">
+<img class="w-12 h-12 rounded-full border-2 border-primary" data-alt="Sarah Jenkins profile" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCEKIoBeXaB3Eb6mJGusVKG5BCpeQ7QSkkvq2Ey-2b8Vo_P0ejq3mnwy8oY-jKgRK6AbPN5iEYQC3IA66d8IYW7ORpWCd75-QhkRIR87sjHfCKpyqGg2K6J3CegaBg9XdoyjoQ89FM-51U9P1gn7Kk-M20QvzdcPDrQ1OgCaPotBvQnLd724dWtoIALC6jDtqlE-enFH0FznpqkoP7rm3NwblEzPp6SdEpL_IcCICrnviY-_84DSW5GM9pLB4RqmtFfN6hC_g-t9mM"/>
+<div>
+<h4 class="font-bold">Sarah Jenkins</h4>
+<span class="px-2 py-0.5 rounded bg-primary/10 text-primary text-[10px] font-black uppercase">Top Performer</span>
+</div>
+</div>
+<div class="space-y-4 flex-1">
+<div>
+<div class="flex justify-between text-xs mb-1.5">
+<span class="text-slate-500">UI/UX Design</span>
+<span class="font-bold">98%</span>
+</div>
+<div class="h-1.5 w-full bg-slate-100 dark:bg-slate-800 rounded-full">
+<div class="h-full bg-primary rounded-full" style="width: 98%"></div>
+</div>
+</div>
+<div>
+<div class="flex justify-between text-xs mb-1.5">
+<span class="text-slate-500">Illustration</span>
+<span class="font-bold">75%</span>
+</div>
+<div class="h-1.5 w-full bg-slate-100 dark:bg-slate-800 rounded-full">
+<div class="h-full bg-primary rounded-full" style="width: 75%"></div>
+</div>
+</div>
+<div>
+<div class="flex justify-between text-xs mb-1.5">
+<span class="text-slate-500">Branding</span>
+<span class="font-bold">82%</span>
+</div>
+<div class="h-1.5 w-full bg-slate-100 dark:bg-slate-800 rounded-full">
+<div class="h-full bg-primary rounded-full" style="width: 82%"></div>
+</div>
+</div>
+</div>
+<div class="mt-6 pt-6 border-t border-slate-100 dark:border-slate-800 grid grid-cols-2 gap-4">
+<div class="text-center">
+<p class="text-xs text-slate-500 mb-1">Weekly Output</p>
+<p class="font-bold">24 Tasks</p>
+</div>
+<div class="text-center border-l border-slate-100 dark:border-slate-800">
+<p class="text-xs text-slate-500 mb-1">Quality Score</p>
+<p class="font-bold">9.9</p>
+</div>
+</div>
+</div>
+<!-- Performance Card 2 -->
+<div class="bg-white dark:bg-card-dark rounded-xl border border-slate-200 dark:border-slate-800 p-6 flex flex-col">
+<div class="flex items-center gap-4 mb-6">
+<img class="w-12 h-12 rounded-full border-2 border-transparent" data-alt="Michael Chen profile" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBMtCeqQTdydsg69X2sn4aqEOqssBnmFiPB0fO6mV8j1ul49fPCOhAz94yAV5tSoHLWf9bad09wbMTMDxsK6SjH5LGzdmfBqDXA-bfFXI-NF6KdhPfmS0zkPPF_dp4JliCsjnZI4KIsFJ1zVkvixRXtwP_5QBFCM-zY5Q6sk4tk35f_Ia1n0xrA4DdHRkdpfV3xMh49ArocbQkGvX6WBh3N9WktZ_42r5wgh8EZg-PdazJDAdHUe9p5xLsTDvApaAsSnQe_MzitPTw"/>
+<div>
+<h4 class="font-bold">Michael Chen</h4>
+<span class="px-2 py-0.5 rounded bg-purple-500/10 text-purple-500 text-[10px] font-black uppercase">Motion Specialist</span>
+</div>
+</div>
+<div class="space-y-4 flex-1">
+<div>
+<div class="flex justify-between text-xs mb-1.5">
+<span class="text-slate-500">2D Animation</span>
+<span class="font-bold">94%</span>
+</div>
+<div class="h-1.5 w-full bg-slate-100 dark:bg-slate-800 rounded-full">
+<div class="h-full bg-purple-500 rounded-full" style="width: 94%"></div>
+</div>
+</div>
+<div>
+<div class="flex justify-between text-xs mb-1.5">
+<span class="text-slate-500">Video Editing</span>
+<span class="font-bold">88%</span>
+</div>
+<div class="h-1.5 w-full bg-slate-100 dark:bg-slate-800 rounded-full">
+<div class="h-full bg-purple-500 rounded-full" style="width: 88%"></div>
+</div>
+</div>
+<div>
+<div class="flex justify-between text-xs mb-1.5">
+<span class="text-slate-500">Scripting</span>
+<span class="font-bold">60%</span>
+</div>
+<div class="h-1.5 w-full bg-slate-100 dark:bg-slate-800 rounded-full">
+<div class="h-full bg-purple-500 rounded-full" style="width: 60%"></div>
+</div>
+</div>
+</div>
+<div class="mt-6 pt-6 border-t border-slate-100 dark:border-slate-800 grid grid-cols-2 gap-4">
+<div class="text-center">
+<p class="text-xs text-slate-500 mb-1">Weekly Output</p>
+<p class="font-bold">18 Tasks</p>
+</div>
+<div class="text-center border-l border-slate-100 dark:border-slate-800">
+<p class="text-xs text-slate-500 mb-1">Quality Score</p>
+<p class="font-bold">9.4</p>
+</div>
+</div>
+</div>
+<!-- Performance Card 3 -->
+<div class="bg-white dark:bg-card-dark rounded-xl border border-slate-200 dark:border-slate-800 p-6 flex flex-col">
+<div class="flex items-center gap-4 mb-6">
+<img class="w-12 h-12 rounded-full border-2 border-transparent" data-alt="Elena Rodriguez profile" src="https://lh3.googleusercontent.com/aida-public/AB6AXuC6F763H6HX1Vx7eRdAretHVfEyK8bvYNk1RQQRQA9Okl-YuDbW8JDjxrN5wQg97on-TPmzJ-pXuYxgf-3fJcczOy7MjoDMRWogpYAI_X31S7p6FRlotaVwExhcmedrxZa_H_J1XpuaZfQNOo6X9wANCg5Vjf_2sdN-hCYY2A9hqQZiiKLqw7lxb6Yj9XN-hRwovr5ikxvPR5ixe50udij0z9PYv-TE8b3ACz5ZgM-ChC2NX_O8Z8tx-2m8xA0vmqFwgu8cT0H8h0w"/>
+<div>
+<h4 class="font-bold">Elena Rodriguez</h4>
+<span class="px-2 py-0.5 rounded bg-green-500/10 text-green-500 text-[10px] font-black uppercase">Fast Turnaround</span>
+</div>
+</div>
+<div class="space-y-4 flex-1">
+<div>
+<div class="flex justify-between text-xs mb-1.5">
+<span class="text-slate-500">Post Production</span>
+<span class="font-bold">92%</span>
+</div>
+<div class="h-1.5 w-full bg-slate-100 dark:bg-slate-800 rounded-full">
+<div class="h-full bg-green-500 rounded-full" style="width: 92%"></div>
+</div>
+</div>
+<div>
+<div class="flex justify-between text-xs mb-1.5">
+<span class="text-slate-500">Color Grading</span>
+<span class="font-bold">95%</span>
+</div>
+<div class="h-1.5 w-full bg-slate-100 dark:bg-slate-800 rounded-full">
+<div class="h-full bg-green-500 rounded-full" style="width: 95%"></div>
+</div>
+</div>
+<div>
+<div class="flex justify-between text-xs mb-1.5">
+<span class="text-slate-500">Sound Design</span>
+<span class="font-bold">70%</span>
+</div>
+<div class="h-1.5 w-full bg-slate-100 dark:bg-slate-800 rounded-full">
+<div class="h-full bg-green-500 rounded-full" style="width: 70%"></div>
+</div>
+</div>
+</div>
+<div class="mt-6 pt-6 border-t border-slate-100 dark:border-slate-800 grid grid-cols-2 gap-4">
+<div class="text-center">
+<p class="text-xs text-slate-500 mb-1">Weekly Output</p>
+<p class="font-bold">22 Tasks</p>
+</div>
+<div class="text-center border-l border-slate-100 dark:border-slate-800">
+<p class="text-xs text-slate-500 mb-1">Quality Score</p>
+<p class="font-bold">9.2</p>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</main>
+</div>
+</body></html>

@@ -1,0 +1,294 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Client CRM Dashboard Overview - WebAsia</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#137fec",
+                        "background-light": "#f6f7f8",
+                        "background-dark": "#101922",
+                    },
+                    fontFamily: {
+                        "display": ["Inter"]
+                    },
+                    borderRadius: {"DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px"},
+                },
+            },
+        }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+    </style>
+</head>
+<body class="bg-background-light dark:bg-background-dark text-slate-900 dark:text-slate-100 font-display">
+<div class="flex min-h-screen">
+<!-- SideNavBar -->
+<aside class="w-64 border-r border-slate-200 dark:border-slate-800 bg-white dark:bg-background-dark flex flex-col justify-between p-4 sticky top-0 h-screen">
+<div class="flex flex-col gap-8">
+<div class="flex items-center gap-3 px-2">
+<div class="bg-primary rounded-lg size-10 flex items-center justify-center text-white">
+<span class="material-symbols-outlined">wb_cloudy</span>
+</div>
+<div class="flex flex-col">
+<h1 class="text-slate-900 dark:text-white text-base font-bold leading-tight">WebAsia</h1>
+<p class="text-slate-500 dark:text-slate-400 text-xs font-normal">Creative Services</p>
+</div>
+</div>
+<nav class="flex flex-col gap-1">
+<a class="flex items-center gap-3 px-3 py-2 rounded-lg bg-primary text-white" href="#">
+<span class="material-symbols-outlined">dashboard</span>
+<p class="text-sm font-medium">Dashboard</p>
+</a>
+<a class="flex items-center gap-3 px-3 py-2 text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-lg transition-colors" href="#">
+<span class="material-symbols-outlined">layers</span>
+<p class="text-sm font-medium">Requests</p>
+</a>
+<a class="flex items-center gap-3 px-3 py-2 text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-lg transition-colors" href="#">
+<span class="material-symbols-outlined">cloud_download</span>
+<p class="text-sm font-medium">Deliveries</p>
+</a>
+<a class="flex items-center gap-3 px-3 py-2 text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-lg transition-colors" href="#">
+<span class="material-symbols-outlined">payments</span>
+<p class="text-sm font-medium">Billing</p>
+</a>
+<a class="flex items-center gap-3 px-3 py-2 text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-lg transition-colors" href="#">
+<span class="material-symbols-outlined">settings</span>
+<p class="text-sm font-medium">Settings</p>
+</a>
+</nav>
+</div>
+<div class="flex flex-col gap-4">
+<div class="p-4 bg-primary/10 rounded-xl">
+<p class="text-xs font-bold text-primary uppercase tracking-wider mb-1">Support</p>
+<p class="text-xs text-slate-600 dark:text-slate-400 mb-3">Need help with a request?</p>
+<button class="w-full py-2 bg-primary text-white text-xs font-bold rounded-lg hover:bg-primary/90 transition-colors">
+                        Contact Us
+                    </button>
+</div>
+</div>
+</aside>
+<!-- Main Content Area -->
+<main class="flex-1 flex flex-col">
+<!-- TopNavBar -->
+<header class="flex items-center justify-between border-b border-slate-200 dark:border-slate-800 bg-white dark:bg-background-dark px-8 py-4 sticky top-0 z-10">
+<div class="flex items-center gap-8">
+<div class="flex items-center gap-2">
+<span class="text-slate-400 material-symbols-outlined">chevron_right</span>
+<h2 class="text-slate-900 dark:text-white text-lg font-bold tracking-tight">Client Portal</h2>
+</div>
+<div class="relative w-64">
+<span class="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 material-symbols-outlined text-xl">search</span>
+<input class="w-full bg-slate-100 dark:bg-slate-800 border-none rounded-lg py-2 pl-10 pr-4 text-sm focus:ring-2 focus:ring-primary" placeholder="Search tasks or files..."/>
+</div>
+</div>
+<div class="flex items-center gap-4">
+<button class="p-2 rounded-lg bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400 hover:text-primary transition-colors">
+<span class="material-symbols-outlined">notifications</span>
+</button>
+<div class="h-8 w-px bg-slate-200 dark:bg-slate-800"></div>
+<div class="flex items-center gap-3">
+<div class="text-right hidden sm:block">
+<p class="text-sm font-bold text-slate-900 dark:text-white">Alex Johnson</p>
+<p class="text-xs text-slate-500">Pro Plan Client</p>
+</div>
+<div class="size-10 rounded-full bg-slate-200 dark:bg-slate-700 bg-cover bg-center ring-2 ring-primary/20" data-alt="User profile portrait of a smiling professional" style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuCaQN1jDCVnZXV70DLhZDTpdbmmPe853RtpCcZ6166B9r7LAv8I-uHt3XkSJmu5OACVFlxNGbLg_t-khdY2ii_V_THH6HTh8ZZf0C09WsnXsWKfx5K5m8No7PaP8RZRuzGAhv9HS7LsyTgQr9iOD76kbUpIRUzAH-AsHybVXakdbAjHmmE3sE85uu6U2WWmCDv-BBoSVK9qdvYaJtyTLey4Hr1o5BGQyEZItb74eBQO6ATzwXU26ZFmFHaH8M2br1lprSTn1jWjDg8')"></div>
+</div>
+</div>
+</header>
+<div class="p-8 max-w-7xl mx-auto w-full space-y-8">
+<!-- PageHeading & Summary -->
+<div class="flex flex-wrap justify-between items-end gap-6">
+<div class="space-y-1">
+<div class="flex items-center gap-2 text-sm text-slate-500 mb-2">
+<span>Dashboard</span>
+<span class="material-symbols-outlined text-xs">chevron_right</span>
+<span class="text-primary font-medium">Overview</span>
+</div>
+<h1 class="text-4xl font-black text-slate-900 dark:text-white tracking-tight">Good morning, Alex</h1>
+<p class="text-slate-500 dark:text-slate-400 max-w-md">Manage your creative workflow and track your monthly usage credits here.</p>
+</div>
+<button class="bg-primary text-white px-6 py-3 rounded-xl font-bold flex items-center gap-2 shadow-lg shadow-primary/20 hover:scale-[1.02] transition-transform">
+<span class="material-symbols-outlined">add</span>
+                        Create New Request
+                    </button>
+</div>
+<!-- Stats Section -->
+<div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+<!-- Active Requests Stat -->
+<div class="bg-white dark:bg-background-dark p-6 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-sm">
+<div class="flex justify-between items-start mb-4">
+<div class="p-2 bg-blue-50 dark:bg-blue-900/20 text-primary rounded-lg">
+<span class="material-symbols-outlined">pending_actions</span>
+</div>
+<span class="text-green-600 text-xs font-bold bg-green-50 dark:bg-green-900/20 px-2 py-1 rounded-full">+2 from last week</span>
+</div>
+<p class="text-slate-500 dark:text-slate-400 text-sm font-medium">Active Requests</p>
+<h3 class="text-3xl font-bold text-slate-900 dark:text-white">08</h3>
+</div>
+<!-- Monthly Credits Stat -->
+<div class="bg-white dark:bg-background-dark p-6 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-sm col-span-1 md:col-span-2">
+<div class="flex justify-between items-center mb-4">
+<p class="text-slate-500 dark:text-slate-400 text-sm font-medium">Monthly Credits Usage</p>
+<span class="text-slate-900 dark:text-white font-bold">14 / 20 Credits</span>
+</div>
+<div class="w-full bg-slate-100 dark:bg-slate-800 h-4 rounded-full overflow-hidden mb-3">
+<div class="bg-primary h-full rounded-full w-[70%]"></div>
+</div>
+<div class="flex justify-between items-center">
+<p class="text-xs text-slate-500">70% of monthly limit used</p>
+<p class="text-xs font-bold text-primary">Renewal in 12 days</p>
+</div>
+</div>
+</div>
+<!-- Main Content Grid -->
+<div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+<!-- Active Requests List (Left 2/3) -->
+<div class="lg:col-span-2 space-y-4">
+<div class="flex items-center justify-between">
+<h2 class="text-xl font-bold text-slate-900 dark:text-white">My Active Requests</h2>
+<button class="text-primary text-sm font-semibold hover:underline">View All</button>
+</div>
+<div class="space-y-4">
+<!-- Request Card 1 -->
+<div class="bg-white dark:bg-background-dark border border-slate-200 dark:border-slate-800 rounded-xl p-5 flex items-center justify-between hover:border-primary/40 transition-colors">
+<div class="flex items-center gap-4">
+<div class="size-12 rounded-lg bg-slate-100 dark:bg-slate-800 flex items-center justify-center text-slate-400">
+<span class="material-symbols-outlined">web</span>
+</div>
+<div>
+<h4 class="font-bold text-slate-900 dark:text-white">Homepage Redesign V2</h4>
+<p class="text-sm text-slate-500 italic">Web Design • Assigned to Mark S.</p>
+</div>
+</div>
+<div class="flex items-center gap-6">
+<span class="px-3 py-1 bg-blue-50 dark:bg-blue-900/30 text-primary text-xs font-bold rounded-full">In Progress</span>
+<button class="text-slate-400 hover:text-slate-600">
+<span class="material-symbols-outlined">more_vert</span>
+</button>
+</div>
+</div>
+<!-- Request Card 2 -->
+<div class="bg-white dark:bg-background-dark border border-slate-200 dark:border-slate-800 rounded-xl p-5 flex items-center justify-between hover:border-primary/40 transition-colors">
+<div class="flex items-center gap-4">
+<div class="size-12 rounded-lg bg-slate-100 dark:bg-slate-800 flex items-center justify-center text-slate-400">
+<span class="material-symbols-outlined">brush</span>
+</div>
+<div>
+<h4 class="font-bold text-slate-900 dark:text-white">Q4 Marketing Banners</h4>
+<p class="text-sm text-slate-500 italic">Graphic Design • Unassigned</p>
+</div>
+</div>
+<div class="flex items-center gap-6">
+<span class="px-3 py-1 bg-amber-50 dark:bg-amber-900/30 text-amber-600 dark:text-amber-400 text-xs font-bold rounded-full">Awaiting Feedback</span>
+<button class="text-slate-400 hover:text-slate-600">
+<span class="material-symbols-outlined">more_vert</span>
+</button>
+</div>
+</div>
+<!-- Request Card 3 -->
+<div class="bg-white dark:bg-background-dark border border-slate-200 dark:border-slate-800 rounded-xl p-5 flex items-center justify-between hover:border-primary/40 transition-colors">
+<div class="flex items-center gap-4">
+<div class="size-12 rounded-lg bg-slate-100 dark:bg-slate-800 flex items-center justify-center text-slate-400">
+<span class="material-symbols-outlined">smart_display</span>
+</div>
+<div>
+<h4 class="font-bold text-slate-900 dark:text-white">Product Explainer Video</h4>
+<p class="text-sm text-slate-500 italic">Motion Graphics • Assigned to Leo K.</p>
+</div>
+</div>
+<div class="flex items-center gap-6">
+<span class="px-3 py-1 bg-slate-100 dark:bg-slate-800 text-slate-500 text-xs font-bold rounded-full">In Queue</span>
+<button class="text-slate-400 hover:text-slate-600">
+<span class="material-symbols-outlined">more_vert</span>
+</button>
+</div>
+</div>
+</div>
+</div>
+<!-- Sidebar Content (Right 1/3) -->
+<div class="space-y-8">
+<!-- Quick Stats / Subscription Health -->
+<div class="bg-slate-900 dark:bg-slate-800 rounded-2xl p-6 text-white shadow-xl shadow-slate-200 dark:shadow-none">
+<h3 class="text-lg font-bold mb-4">Subscription Plan</h3>
+<div class="flex items-center justify-between mb-6">
+<div>
+<p class="text-slate-400 text-xs uppercase font-black tracking-widest">Active Tier</p>
+<p class="text-xl font-bold">Professional Monthly</p>
+</div>
+<div class="p-3 bg-white/10 rounded-xl backdrop-blur-md">
+<span class="material-symbols-outlined text-primary">verified</span>
+</div>
+</div>
+<div class="space-y-3 pt-4 border-t border-white/10">
+<div class="flex justify-between text-sm">
+<span class="text-slate-400">Next billing date</span>
+<span class="font-medium">Oct 24, 2023</span>
+</div>
+<div class="flex justify-between text-sm">
+<span class="text-slate-400">Concurrent Tasks</span>
+<span class="font-medium">2 Active</span>
+</div>
+</div>
+</div>
+<!-- Recent Deliveries -->
+<div class="space-y-4">
+<div class="flex items-center justify-between">
+<h2 class="text-xl font-bold text-slate-900 dark:text-white">Recent Deliveries</h2>
+</div>
+<div class="grid grid-cols-1 gap-4">
+<!-- Delivery 1 -->
+<div class="group bg-white dark:bg-background-dark border border-slate-200 dark:border-slate-800 rounded-xl p-3 flex items-center gap-3">
+<div class="size-16 flex-shrink-0 bg-slate-200 dark:bg-slate-700 rounded-lg bg-cover bg-center overflow-hidden" data-alt="Abstract colorful graphic design placeholder" style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuA1plSzFNqx71B1-WvVj6JMjArKohvOLFcB8znA8F-1HF3jx4AH9McLFzRDbogtsxq5wuRESzbJFBJak3PscM9zDHAR3NonAgQyUCfS9T7NASABwCwQvh-eTor4-NmzgEqg7HzuS9jOANmYQZ8kttwwZqKupbl332gWiDZjnUfb4Uwov1OA6bE1PqzFPdpckthTXEz5YmapioEefLLpSj_uWbc1yePk-m5sdrmkkZdQszpRYdesVS7XVsXKf-vm_dO0aTiPEl5bS4k')">
+<div class="w-full h-full bg-black/20 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
+<span class="material-symbols-outlined text-white text-sm">zoom_in</span>
+</div>
+</div>
+<div class="flex-1 min-w-0">
+<p class="text-sm font-bold text-slate-900 dark:text-white truncate">Hero-Banner-V2.png</p>
+<p class="text-xs text-slate-500">2.4 MB • 2h ago</p>
+</div>
+<button class="p-2 text-primary hover:bg-primary/10 rounded-lg transition-colors">
+<span class="material-symbols-outlined">download</span>
+</button>
+</div>
+<!-- Delivery 2 -->
+<div class="group bg-white dark:bg-background-dark border border-slate-200 dark:border-slate-800 rounded-xl p-3 flex items-center gap-3">
+<div class="size-16 flex-shrink-0 bg-slate-200 dark:bg-slate-700 rounded-lg bg-cover bg-center overflow-hidden" data-alt="UI layout prototype thumbnail with blue accents" style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuCk9ZN4aWXUYoywMbQdK-KaUzN9J3d92WKR4Pny0jqHylBAuTpr9uR-v7LDKdKAsrsvm0GWCcAxnmrTf9_B8viqg4dgfs0MB5B6ahOJktDFiZtL0xLB8C_L8OdAdfZNGqGw8FAVmM19GZAzmbFml-Xoi80cgMM2mGYhuR0JcwRuYATkbxPr-3EF1ARv4M5qckDBzA-au2imp-px9EFqwvvdtiCzuD-BVU1HeiypwVLzq00UitSrKfPsauFJi0g6udqF-rLRZB5Y9qE')">
+<div class="w-full h-full bg-black/20 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
+<span class="material-symbols-outlined text-white text-sm">zoom_in</span>
+</div>
+</div>
+<div class="flex-1 min-w-0">
+<p class="text-sm font-bold text-slate-900 dark:text-white truncate">Social-Assets-Pack.zip</p>
+<p class="text-xs text-slate-500">45.8 MB • Yesterday</p>
+</div>
+<button class="p-2 text-primary hover:bg-primary/10 rounded-lg transition-colors">
+<span class="material-symbols-outlined">download</span>
+</button>
+</div>
+</div>
+<button class="w-full py-3 border border-slate-200 dark:border-slate-800 rounded-xl text-sm font-bold text-slate-600 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors">
+                                View Full History
+                            </button>
+</div>
+</div>
+</div>
+</div>
+</main>
+</div>
+</body></html>

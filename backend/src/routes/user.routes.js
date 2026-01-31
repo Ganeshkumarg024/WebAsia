@@ -1,0 +1,37 @@
+import express from 'express';
+import { body } from 'express-validator';
+import {
+    getProfile,
+    updateProfile,
+    changePassword
+} from '../controllers/user.controller.js';
+import { authenticate } from '../middleware/auth.middleware.js';
+
+const router = express.Router();
+
+// All user routes require authentication
+router.use(authenticate);
+
+// Get current user profile
+router.get('/me', getProfile);
+
+// Update profile
+router.put('/me', [
+    body('firstName').optional().trim().notEmpty(),
+    body('lastName').optional().trim().notEmpty(),
+    body('phone').optional().isMobilePhone(),
+    body('timezone').optional().isString(),
+    body('language').optional().isString()
+], updateProfile);
+
+// Change password
+router.post('/change-password', [
+    body('currentPassword').notEmpty().withMessage('Current password is required'),
+    body('newPassword')
+        .isLength({ min: 8 })
+        .withMessage('Password must be at least 8 characters')
+        .matches(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)/)
+        .withMessage('Password must contain uppercase, lowercase, and number')
+], changePassword);
+
+export default router;

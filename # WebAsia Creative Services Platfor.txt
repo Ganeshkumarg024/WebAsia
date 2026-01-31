@@ -1,0 +1,1074 @@
+# WebAsia Creative Services Platform
+
+## Enhanced Production Design & System Architecture Document
+
+---
+
+## 1. Executive Overview
+
+**WebAsia Creative Services Platform** is a SaaS-based, subscription-driven creative services marketplace inspired by platforms like **Kimp.io**, but deeply aligned with **WebAsia IT Solutions ([https://webasia.in/](https://webasia.in/))** brand identity, service offerings, and Indian market needs.
+
+The platform converts WebAsia from a traditional service website into a **full-fledged CRM + Creative Workflow System**, where:
+
+* Users explore services on the public website
+* Register & subscribe to plans
+* Access a CRM-style dashboard
+* Submit unlimited creative requests
+* Track progress, revisions, messaging, and deliveries
+
+This system connects **Clients → Admin/Managers → Designers → Affiliates** in a controlled, scalable, and production-ready workflow.
+
+---
+
+## 2. Business Model Alignment (WebAsia → SaaS)
+
+### Current WebAsia Website (Public Layer)
+
+* Marketing website
+* Service listings
+* Pricing pages
+* Lead generation
+
+### New Platform Layer (Logged-in CRM)
+
+* Subscription-based creative delivery
+* Credit/quota-based request handling
+* Transparent workflow & SLA tracking
+* Retention-focused recurring revenue
+
+**Goal:** Turn WebAsia into a predictable **MRR-based Creative SaaS**.
+
+---
+
+## 3. High-Level User Journey
+
+### Step 1: Public Website
+
+* User visits **webasia.in**
+* Views services (Graphics, Video, Social Media, Web, Branding)
+* Sees packages & examples
+* Clicks **Get Started / Subscribe**
+
+### Step 2: Registration & Subscription
+
+* Signup (Email / Google / LinkedIn)
+* Choose subscription plan
+* Complete payment
+* Account activated
+
+### Step 3: CRM Dashboard (Main Screen)
+
+* User lands on **Client CRM Panel**
+* Active subscription details visible
+* Remaining credits/requests shown
+* “Create New Request” CTA
+
+### Step 4: Request → Design → Approval → Delivery
+
+```
+Client → Admin/Manager → Designer → Manager Approval → Client Review
+         ↖—————— Rework / Feedback Loop ——————↗
+```
+
+---
+
+## 4. User Roles & Responsibilities
+
+### Client
+
+* Subscribe to plans
+* Submit creative requests
+* Upload references
+* Chat with designer/manager
+* Approve / request revisions
+* Download final files
+
+### Designer
+
+* View assigned tasks
+* Access brand assets
+* Upload design versions
+* Respond to feedback
+* Track deadlines
+
+### Manager / Admin Manager
+
+* Assign requests to designers
+* Review designer submissions
+* Approve / reject work
+* Handle SLA & priority
+* Client escalation handling
+
+### Super Admin
+
+* Full system control
+* Pricing, plans, users
+* Financials & reports
+* Platform configuration
+
+### Affiliate
+
+* Promote WebAsia
+* Track referrals
+* Earn commissions
+* Request payouts
+
+---
+
+## 5. Subscription & Credit Logic (IMPORTANT)
+
+### Subscription-Based Access
+
+Each plan provides:
+
+* **Active request limit** (queue-based)
+* **Monthly/weekly credits**
+* **Service-specific caps** (videos, websites)
+
+### Example Logic
+
+| Plan     | Active Requests | Monthly Credits           |
+| -------- | --------------- | ------------------------- |
+| Startup  | 1               | 5 graphics                |
+| Standard | 2               | 28 graphics + 4 videos    |
+| Business | 3               | 90 graphics + 4 YT videos |
+
+> Client can queue unlimited requests, but **only limited active requests** are processed at a time.
+
+When a request is marked **Completed** → credit reduces → next queued request auto-activates.
+
+---
+
+## 6. Request Lifecycle (End-to-End)
+
+### 6.1 Client Side
+
+* Select service type (Graphic / Video / Web)
+* Fill smart request form
+* Upload references
+* Set priority (Normal / Urgent)
+
+### 6.2 Admin / Manager Side
+
+* Request enters **Unassigned Queue**
+* Manager assigns to designer
+* SLA deadline auto-calculated
+
+### 6.3 Designer Side
+
+* Designer views task in dashboard
+* Works on design
+* Uploads version (v1, v2, v3...)
+* Marks as **Submitted for Review**
+
+### 6.4 Approval Flow
+
+* Manager reviews output
+* Approves OR sends back for rework
+
+### 6.5 Client Review
+
+* Client notified
+* Uses annotation + comments
+* Approves OR requests revision
+
+### 6.6 Completion
+
+* Final files delivered
+* Request marked **Completed**
+* Credits deducted
+* Next request moves to active
+
+---
+
+## 7. CRM Panels (Detailed)
+
+### 7.1 Client CRM Panel
+
+* Dashboard overview
+* Active requests
+* Queue requests
+* Completed downloads
+* Credit usage meter
+* Chat & notifications
+* **Post-completion feedback & rating system**
+* **Public testimonial consent toggle** (Allow WebAsia to display feedback on website)
+
+### 7.2 Designer CRM Panel
+
+* Assigned tasks
+* Deadlines & SLA
+* Brand asset access
+* File version control
+* Feedback messages
+
+### 7.3 Manager CRM Panel
+
+* Unassigned requests
+* Designer workload view
+* Approval queue
+* SLA breach alerts
+* Client escalation inbox
+
+### 7.4 Admin Panel (SUPER CONTROL)
+
+Admin has **FULL SYSTEM CONTROL**. Nothing is hardcoded.
+
+#### Admin Capabilities
+
+**User & Role Management**
+
+* Create / edit / delete clients, designers, managers, affiliates
+* Activate / suspend accounts
+* Reset passwords
+
+**Subscription & Plan Control**
+
+* Create new plans
+* Edit price, duration, credits, limits
+* Enable / disable plans
+* Assign custom plans to B2B clients
+* Manually adjust client credits
+
+**Designer Management**
+
+* Add designers
+* Assign skills (graphic, video, web)
+* Availability & workload control
+* Performance monitoring
+
+**Request Control**
+
+* Edit any request
+* Reassign designer
+* Change priority
+* Override SLA deadlines
+
+**Website Content Control**
+
+* Approve client feedback for public display
+* Manage testimonials shown on webasia.in
+* Control featured work & portfolio
+
+**Financial Control**
+
+* Manual & automated payouts
+* Refunds & adjustments
+* Affiliate commission approval
+
+---
+
+## 8. Messaging & Collaboration
+
+* Real-time chat (Client ↔ Designer ↔ Manager)
+* Per-request message threads
+* File sharing in chat
+* Email sync for offline users
+* Read receipts
+
+---
+
+## 9. Technology Stack (Finalized – MERN)
+
+### Frontend
+
+* React.js (Client, Designer, Admin)
+* Tailwind CSS
+* Redux Toolkit
+* Socket.io (real-time)
+
+### Backend
+
+* Node.js + Express.js
+* JWT + Refresh Tokens
+* REST APIs
+* WebSocket Gateway
+
+### Database
+
+* PostgreSQL (Primary)
+* Redis (Cache, queues)
+
+### Storage
+
+* AWS S3 / GCP Storage
+* CDN (Cloudflare)
+
+### Payments
+
+* Razorpay (India)
+* Stripe (International)
+
+### Infrastructure
+
+* Docker + Kubernetes
+* CI/CD (GitHub Actions)
+
+---
+
+## 10. Database Design (Simplified)
+
+### users
+
+* id, name, email, role, status
+
+### subscriptions
+
+* id, user_id, plan_id, credits_left
+
+### requests
+
+* id, client_id, service_type, status, priority
+
+### request_assignments
+
+* request_id, designer_id, manager_id
+
+### files
+
+* id, request_id, version, url
+
+### messages
+
+* id, request_id, sender_id, message
+
+---
+
+## 11. Security & Compliance
+
+### Platform Security
+
+* HTTPS + SSL/TLS
+* Role-Based Access Control (RBAC)
+* JWT + Refresh Token auth
+* Secure admin-only endpoints
+* Audit logs for admin actions
+
+### Data Protection
+
+* Encrypted sensitive data (AES-256)
+* Secure file uploads with scanning
+* Isolated storage buckets
+* Rate limiting & DDoS protection
+
+### Website + Platform Separation
+
+* webasia.in (Public Website)
+* app.webasia.in (Secure CRM Platform)
+* Shared services but isolated access
+* Testimonials pulled only from **approved feedback**
+
+---
+
+## 12. Affiliate System (Enhanced)
+
+### Affiliate User Flow
+
+1. Affiliate registers
+2. Gets unique referral link
+3. User visits via referral
+4. System shows:
+   "🎉 You were referred! Referral benefits applied"
+5. Conversion tracked
+
+### Affiliate Dashboard
+
+* Referral link generator
+* Clicks, signups, conversions
+* Earnings summary
+* Payout request form
+
+### Payout System
+
+* Affiliate submits payout request
+* Provides:
+
+  * UPI ID
+  * Bank account
+  * PayPal (optional)
+* Admin reviews & approves
+* Manual or automated payout
+* Status: Pending → Approved → Paid
+
+### Commission Control (Admin)
+
+* Percentage-based or fixed
+* Offer-based commissions
+* Time-limited referral bonuses
+
+---
+
+## 13. Client Feedback & Website Testimonials
+
+### Feedback Flow
+
+* Client completes request
+* Rates service (1–5 stars)
+* Adds written feedback
+* Chooses:
+
+  * Private (internal only)
+  * Public (website testimonial)
+
+### Admin Moderation
+
+* Admin approves feedback
+* Approved feedback auto-published on webasia.in
+* Linked to service type & package
+
+---
+
+## 14. Future Enhancements
+
+* AI request assistant
+* Auto design templates
+* White-label for agencies
+* Mobile apps
+* API for enterprises
+* AI quality checks
+
+---
+
+## 13. Outcome
+
+This enhanced system transforms **WebAsia** into:
+
+* A scalable SaaS platform
+* A Kimp.io-style creative subscription engine
+* A CRM-driven production workflow
+* A future-ready creative marketplace
+
+---
+
+**This document is production-ready and implementation-aligned for MERN stack development.**
+
+
+
+
+
+
+Production Design Document: WebAsia Creative Services Platform
+Executive Overview
+WebAsia platform will be a subscription-based creative services marketplace offering unlimited graphic design, video editing, social media content, and web development services with a workflow management system connecting clients, designers, managers, and affiliates.
+​
+​
+
+Core Service Modules
+Client-Facing Services
+Graphic Design: Digital posters, logos, brochures, business cards, social media graphics, infographics
+
+Video Production: Short videos, reels, explainer videos, logo animations, testimonial videos
+
+Social Media Management: Platform-specific content (Facebook, Instagram, Twitter, LinkedIn)
+
+Website Development: Portfolio websites, e-commerce sites, landing pages
+
+Business Content: Presentations, PDFs, branding materials, office graphics
+​
+
+Subscription Tiers
+Startup Package: ₹599/week - 5 digital graphic posters
+
+Standard Package: ₹2,999/month - 28 graphics + 4 short videos
+
+Business Package: ₹9,999/month - 90 social media posters + 4 YouTube videos
+
+Custom Enterprise: B2B pricing with dedicated teams
+​
+
+System Architecture
+User Roles & Permissions
+Role	Access Level	Key Functions
+Client	Service consumer	Request submissions, feedback, downloads, billing management
+Designer	Production team	Task assignment, file uploads, revision handling
+Manager/Approver	Quality control	Review submissions, approve/reject work, assign tasks
+Admin	System controller	User management, analytics, platform configuration, financial oversight
+Affiliate	Referral partner	Unique referral links, commission tracking, payout management
+Platform Components
+1. Client Portal (Web Application)
+Authentication & Onboarding
+
+Registration with email/phone verification
+
+Social login integration (Google, LinkedIn)
+
+Subscription plan selection and payment processing
+
+Onboarding wizard for brand guidelines, preferences, and style guide uploads
+​
+
+Request Management System
+
+AI-powered request form with auto-suggestions for design types
+
+Recommended sizes, formats, and specifications based on service type
+
+File upload capability (logos, brand assets, reference materials)
+
+Priority queue management (clients can reorder active requests)
+
+Request status tracking: Submitted → Assigned → In Progress → Review → Revision → Approved → Delivered
+​
+
+Project Dashboard
+
+Active requests counter with credit/quota usage
+
+Request history and archived projects
+
+Download center for completed files (organized by date, type, tags)
+
+Custom tags and folders for project organization
+​
+
+Real-time notifications for status updates
+
+Feedback & Revision Tools
+
+Point-and-click annotation tool for visual feedback
+​
+
+Comment threads on specific design elements
+
+Unlimited revision requests within subscription terms
+
+Version history with side-by-side comparison
+​
+
+Communication Hub
+
+Live chat with designers and project managers (5 days/week)
+
+24/7 customer support chatbot
+
+Email notifications for major updates
+
+Video call scheduling for complex briefs
+
+2. Designer Workspace
+Task Management
+
+Personalized dashboard showing assigned tasks
+
+Task details: client brief, brand guidelines, reference files, deadline
+
+Status update capabilities (Started, Awaiting Feedback, Completed)
+
+File upload system with version control
+
+Time tracking for productivity analytics
+
+Notification system for new assignments and client feedback
+​
+
+Resource Library
+
+Access to stock images, fonts, templates
+
+Brand asset repository per client
+
+Design guidelines and best practices documentation
+
+3. Manager/Approval Portal
+Quality Control Workflow
+
+Queue of submitted work pending approval
+
+Side-by-side view: client brief vs designer output
+
+Approve, request revision, or reject with comments
+
+Reassignment capability to different designers
+
+SLA monitoring and deadline alerts
+​
+
+Team Management
+
+Designer workload balancing
+
+Performance metrics: turnaround time, approval rate, client satisfaction
+
+Skill-based task routing (logo specialist, video editor, etc.)
+​
+
+4. Admin Dashboard
+User Management
+
+CRUD operations for all user roles
+
+Subscription management: upgrades, downgrades, cancellations
+
+Access control and permission settings
+
+Account suspension/activation
+
+Analytics & Reporting
+
+Revenue dashboards: MRR, ARR, churn rate
+
+Service utilization: most requested designs, peak times
+
+Designer productivity metrics
+
+Client satisfaction scores (NPS, CSAT)
+
+Affiliate performance tracking
+​
+
+System Configuration
+
+Service catalog management (add/edit/remove services)
+
+Pricing tier adjustments
+
+SLA and turnaround time settings
+
+Email template customization
+
+Payment gateway configuration (Stripe, Razorpay)
+​
+
+Financial Management
+
+Invoice generation and management
+
+Payment history and reconciliation
+
+Refund processing
+
+Affiliate commission calculations and payouts
+
+5. Affiliate System
+Affiliate Dashboard
+
+Unique referral link generator
+
+Referral tracking: clicks, signups, conversions
+
+Commission structure visibility (% per sale or fixed amount)
+
+Real-time earnings counter
+
+Payout request and history
+
+Marketing materials (banners, email templates, social media posts)
+​
+
+Commission Models
+
+B2C: 10-20% recurring commission for first 6-12 months
+
+B2B: Higher commission (20-30%) for enterprise referrals
+
+Tiered structure: higher commission for more referrals
+
+Bonus incentives for milestone achievements
+
+Technical Architecture
+Technology Stack
+Frontend (Client & User Portals)
+
+Framework: React.js or Next.js for SEO optimization
+
+UI Library: Material-UI or Tailwind CSS
+
+State Management: Redux or Context API
+
+Real-time Updates: Socket.io for live notifications
+​
+
+Backend (API & Business Logic)
+
+Framework: Node.js with Express.js or Django (Python)
+
+API Architecture: RESTful API with JWT authentication
+
+Real-time Features: WebSocket for chat and notifications
+
+File Processing: Sharp (image optimization), FFmpeg (video processing)
+
+Database
+
+Primary Database: PostgreSQL for relational data (users, subscriptions, requests)
+
+Cache Layer: Redis for session management and real-time data
+
+File Storage: AWS S3 or Google Cloud Storage for design files
+​
+
+Payment & Subscription Management
+
+Payment Gateway: Stripe or Razorpay (for Indian market)
+
+Subscription Logic: Stripe Billing or Chargebee for credit-based systems
+​
+
+Invoice Generation: Automated PDF generation with custom branding
+
+Infrastructure
+
+Hosting: AWS, Google Cloud, or DigitalOcean
+
+CDN: CloudFront or Cloudflare for global file delivery
+
+Server: Docker containers with Kubernetes for scalability
+
+CI/CD: GitHub Actions or GitLab CI for automated deployment
+​
+
+Communication Tools
+
+Email Service: SendGrid or Amazon SES
+
+SMS Notifications: Twilio (for India: MSG91)
+
+Live Chat: Intercom or custom Socket.io implementation
+​
+
+Video Calls: Zoom API or Jitsi integration
+
+Monitoring & Analytics
+
+Application Monitoring: Sentry for error tracking
+
+Analytics: Google Analytics, Mixpanel for user behavior
+
+Server Monitoring: New Relic or DataDog
+
+Uptime Monitoring: Pingdom or UptimeRobot
+
+Database Schema (Key Tables)
+Users Table
+
+user_id, email, password_hash, role (client/designer/manager/admin/affiliate), created_at, status
+
+Subscriptions Table
+
+subscription_id, user_id, plan_id, start_date, end_date, status, payment_method
+
+Plans Table
+
+plan_id, name, price, duration, features_json (request limits, turnaround times)
+
+Requests Table
+
+request_id, client_id, service_type, description, priority, status, assigned_designer_id, created_at, deadline
+
+Files Table
+
+file_id, request_id, uploaded_by, file_url, version, upload_date, file_type
+
+Feedback Table
+
+feedback_id, request_id, user_id, comment, annotations_json, created_at
+
+Affiliates Table
+
+affiliate_id, user_id, referral_code, total_referrals, total_earnings, payout_status
+
+Referrals Table
+
+referral_id, affiliate_id, referred_user_id, conversion_date, commission_amount, status
+
+Workflow & Process Flow
+Request Lifecycle
+Client Submission: Client fills AI-powered form, uploads references, sets priority
+
+Auto-Assignment: System assigns to available designer based on workload and expertise
+​
+
+Designer Work: Designer downloads brief, creates design, uploads for internal review
+
+Manager Approval: Manager reviews against brief, approves or requests changes
+
+Client Review: Approved work moves to client portal with notification
+
+Feedback Loop: Client provides feedback using annotation tools; work returns to designer if revisions needed
+
+Final Delivery: Client approves final version; files move to download center; task marked complete
+
+Queue Advancement: Next request in client's queue automatically moves to active status
+
+Service Level Agreements (SLAs)
+Service Type	Turnaround Time	Revisions
+Social Media Graphics	24-48 hours	Unlimited
+Logo Design	48-72 hours	Unlimited
+Short Videos (30s)	48-72 hours	3 rounds
+Website Development	7-14 days	2 rounds
+Explainer Videos	5-7 days	2 rounds
+Key Features & Functionality
+Notification System
+Client Notifications
+
+Request assigned to designer
+
+Design ready for review
+
+Revision completed
+
+Subscription renewal reminder
+
+Credit/quota usage alerts
+
+Designer Notifications
+
+New task assigned
+
+Client feedback received
+
+Urgent/priority requests
+
+Deadline approaching
+
+Manager Notifications
+
+Work submitted for approval
+
+SLA breach warnings
+
+Designer capacity alerts
+
+Admin Notifications
+
+New subscription/cancellation
+
+Payment failures
+
+System errors/downtime
+
+Affiliate payout requests
+​
+
+Messaging System Architecture
+In-app Chat: Real-time messaging between clients and designers with file sharing
+
+Email Integration: All messages copied to email for offline access
+
+Message Threading: Organized by request/project
+
+Read Receipts: Track message status
+
+Canned Responses: Quick replies for common questions
+​
+
+B2C vs B2B Features
+B2C (Individual/Startups)
+
+Self-service onboarding
+
+Credit card payments
+
+Standard support (chat, email)
+
+Single user accounts
+
+Public pricing plans
+​
+
+B2B (Enterprises)
+
+Custom onboarding with account manager
+
+Invoice-based billing with NET 30/60 terms
+
+Dedicated project manager and design team
+​
+
+Multi-user team accounts with role permissions
+
+Custom SLAs and priority support
+
+White-label option for agencies
+
+API access for integration with client systems
+
+Affiliate Marketing Features
+Referral Tracking: Cookie-based tracking with 30-60 day attribution window
+
+Custom Landing Pages: Unique URLs for each affiliate
+
+Marketing Collateral: Downloadable banners, email templates, social posts
+
+Performance Dashboard: Real-time conversion tracking and earnings
+
+Automated Payouts: Monthly commission payments via bank transfer or PayPal
+
+Two-tier Structure: Earn from direct referrals and sub-affiliates
+​
+
+Security & Compliance
+Data Protection
+SSL/TLS encryption for all data in transit
+
+AES-256 encryption for sensitive data at rest
+
+Regular security audits and penetration testing
+
+GDPR/data privacy compliance for user data handling
+
+Secure file upload with malware scanning
+
+Role-based access control (RBAC) for all features
+
+Payment Security
+PCI-DSS compliance through payment gateway (Stripe/Razorpay)
+
+No storage of credit card details on platform
+
+Two-factor authentication for financial transactions
+
+Automated fraud detection
+
+Development Phases
+Phase 1: MVP (3-4 months)
+User authentication and role management
+
+Basic subscription plans and payment integration
+
+Request submission and basic workflow
+
+Designer task management
+
+File upload/download system
+
+Email notifications
+
+Basic admin dashboard
+
+Phase 2: Enhanced Features (2-3 months)
+AI-powered request form
+​
+
+Advanced feedback tools with annotations
+
+Manager approval workflow
+
+Real-time chat messaging
+
+Affiliate system with tracking
+
+Analytics dashboards
+
+Mobile-responsive optimization
+
+Phase 3: Scale & Optimization (2-3 months)
+Mobile apps (iOS/Android)
+
+API for third-party integrations
+
+White-label capabilities for B2B
+
+Advanced analytics and reporting
+
+Video call integration
+
+Automated quality checks
+
+Performance optimization and load testing
+
+Phase 4: Advanced Features (Ongoing)
+AI design suggestions and templates
+
+Automated design generation for simple tasks
+
+Integration with marketing platforms (Mailchimp, HubSpot)
+
+Multi-language support
+
+Advanced project management features
+
+Client self-service design tools
+
+Cost Estimation (Development)
+Design (UI/UX): ₹2,00,000 - ₹3,00,000
+
+Frontend Development: ₹5,00,000 - ₹7,00,000
+
+Backend Development: ₹6,00,000 - ₹9,00,000
+
+Mobile Apps: ₹4,00,000 - ₹6,00,000
+
+Testing & QA: ₹2,00,000 - ₹3,00,000
+
+Infrastructure Setup: ₹1,00,000 - ₹2,00,000
+
+Project Management: ₹1,50,000 - ₹2,00,000
+
+Total MVP Cost: ₹21,50,000 - ₹32,00,000 ($25K - $38K USD)
+
+Operational Costs (Monthly)
+Server Hosting: ₹30,000 - ₹1,00,000 (scales with users)
+
+Payment Gateway Fees: 2-3% of revenue
+
+Email/SMS Services: ₹10,000 - ₹25,000
+
+CDN & Storage: ₹15,000 - ₹40,000
+
+Monitoring Tools: ₹20,000 - ₹30,000
+
+Licenses & Subscriptions: ₹15,000 - ₹25,000
+
+Success Metrics & KPIs
+Business Metrics
+Monthly Recurring Revenue (MRR)
+
+Customer Acquisition Cost (CAC)
+
+Lifetime Value (LTV)
+
+Churn Rate
+
+Affiliate conversion rate
+
+Operational Metrics
+Average turnaround time per service
+
+Revision rate
+
+Designer utilization rate
+
+SLA compliance percentage
+
+Customer satisfaction score (CSAT)
+
+Platform Metrics
+Active users (daily/monthly)
+
+Request completion rate
+
+Average requests per customer
+
+Platform uptime (target: 99.9%)
+
+This comprehensive document provides a production-ready blueprint for building your WebAsia platform similar to Kimp.io with all requested features including client portals, admin panels, designer workflows, approval systems, affiliate marketing, B2B/B2C capabilities, messaging, and notifications
+
+
+
+ENhance the document porpley we have webasia website [https://webasia.in/](https://webasia.in/)
+then user can see about our service detaul then the can regiter and subscribe that go with main screen like crm pannel on here the can submit requestio as need service then the requeston will come admina manerg they willa sign wokr to deisgner ag=fter deigsn crm apnanle also their they logib work submit then admina manaer apporve ot then cliennt can see aalso if not satifei dsent rework it they willl like messaga eoption with deisgn also thiers thwy wil ask souggested finaly compleetd set completed clinet theies purgest subsrcyibe utem will reduce lie option based also we need lot future like alos need 
+
+
+so enahce the loigc proply add on main full documnet porpley tecy we can use postgress and react and node js is fine mern stack is fine with lieke kimp.io is our exact one we just make clone like future so give full working codetio ready document
+
+enhanceit
+
+Also add the admin can edit anything they edit subscribtion plan ,add designer ,like all festures will he can
+
+
+Also clibet side after work compleed they can add feedback also that will show on main website so all wil go withwebasia.in but with diffreent based to used all here secures safe needed.
+
+the affliate will if exmaple we need refer like if anyone came from refer we need show that u got one reefer like then admin will sedn the money any offer based they clinet ther who referd will submit form gapy upi like opiton easy all witha dmin can to liek
+
+
+
+that also add on document give full added docks
+
+
+
+
+
+finaly give full docks current dont need kubernates docker is also all optional based 
+
+now give propelr document

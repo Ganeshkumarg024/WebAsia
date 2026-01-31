@@ -1,0 +1,318 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Designer Task Management Workspace - WebAsia</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#137fec",
+                        "background-light": "#f6f7f8",
+                        "background-dark": "#101922",
+                    },
+                    fontFamily: {
+                        "display": ["Inter"]
+                    },
+                    borderRadius: {"DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px"},
+                },
+            },
+        }
+    </script>
+<style>
+        body { font-family: 'Inter', sans-serif; }
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+    </style>
+</head>
+<body class="bg-background-light dark:bg-background-dark text-slate-900 dark:text-slate-100 min-h-screen flex flex-col">
+<!-- Top Navigation Bar -->
+<header class="flex items-center justify-between whitespace-nowrap border-b border-solid border-slate-200 dark:border-[#233648] px-10 py-3 bg-white dark:bg-background-dark sticky top-0 z-50">
+<div class="flex items-center gap-8">
+<div class="flex items-center gap-4 text-primary">
+<div class="size-6">
+<svg fill="none" viewbox="0 0 48 48" xmlns="http://www.w3.org/2000/svg"><path d="M6 6H42L36 24L42 42H6L12 24L6 6Z" fill="currentColor"></path></svg>
+</div>
+<h2 class="text-slate-900 dark:text-white text-lg font-bold leading-tight tracking-[-0.015em]">WebAsia Creative</h2>
+</div>
+<label class="flex flex-col min-w-40 h-10 max-w-64">
+<div class="flex w-full flex-1 items-stretch rounded-lg h-full">
+<div class="text-slate-400 dark:text-[#92adc9] flex border-none bg-slate-100 dark:bg-[#233648] items-center justify-center pl-4 rounded-l-lg border-r-0">
+<span class="material-symbols-outlined text-xl">search</span>
+</div>
+<input class="form-input flex w-full min-w-0 flex-1 resize-none overflow-hidden rounded-lg text-slate-900 dark:text-white focus:outline-0 focus:ring-0 border-none bg-slate-100 dark:bg-[#233648] focus:border-none h-full placeholder:text-slate-400 dark:placeholder:text-[#92adc9] px-4 rounded-l-none border-l-0 pl-2 text-base font-normal leading-normal" placeholder="Search tasks or assets..."/>
+</div>
+</label>
+</div>
+<div class="flex flex-1 justify-end gap-8">
+<div class="flex items-center gap-9">
+<a class="text-slate-600 dark:text-white text-sm font-medium leading-normal hover:text-primary transition-colors" href="#">Dashboard</a>
+<a class="text-primary text-sm font-bold leading-normal border-b-2 border-primary" href="#">Tasks</a>
+<a class="text-slate-600 dark:text-white text-sm font-medium leading-normal hover:text-primary transition-colors" href="#">Assets</a>
+<a class="text-slate-600 dark:text-white text-sm font-medium leading-normal hover:text-primary transition-colors" href="#">Clients</a>
+</div>
+<div class="flex gap-2">
+<button class="flex items-center justify-center rounded-lg h-10 w-10 bg-slate-100 dark:bg-[#233648] text-slate-600 dark:text-white">
+<span class="material-symbols-outlined">notifications</span>
+</button>
+<div class="bg-center bg-no-repeat aspect-square bg-cover rounded-full size-10 border-2 border-primary" data-alt="User profile avatar of a creative designer" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuBKi5xIyFgYefhzOk_Uw5noVjk4ZCzxCF9C1l2aehgDmHp6y2A1_LA-fcMmR4v0qS1F04Jlg4aYPEw6DICh1UoiQ7ZdY07PiquZU6ODcgr-N4foz1qFyLgY5QXh-9DoY1jTZv-kLsNDLi9Rpk3IrlaPefm592GkHZ4ZI-XaEsII6g-ejcfRW8j1uEgMJsgB0AsZN1f_VUiFvadzl2hP3pHpxyMT4GMWCWFc4mXic9GZN9ta6u98g-AWChJmwTcCGxu_nJ4CdNaHuiE");'></div>
+</div>
+</div>
+</header>
+<div class="flex flex-1 overflow-hidden">
+<!-- Side Navigation -->
+<aside class="w-64 border-r border-slate-200 dark:border-[#233648] flex flex-col justify-between bg-white dark:bg-background-dark p-4 shrink-0">
+<div class="flex flex-col gap-6">
+<div class="flex flex-col px-3">
+<h1 class="text-slate-900 dark:text-white text-lg font-bold leading-normal">Alex Rivera</h1>
+<p class="text-slate-500 dark:text-[#92adc9] text-sm font-normal leading-normal">Senior Illustrator</p>
+</div>
+<div class="flex flex-col gap-1">
+<div class="flex items-center gap-3 px-3 py-2 rounded-lg bg-primary text-white">
+<span class="material-symbols-outlined text-xl">dashboard</span>
+<p class="text-sm font-medium leading-normal">Workspace</p>
+</div>
+<div class="flex items-center gap-3 px-3 py-2 text-slate-600 dark:text-white hover:bg-slate-100 dark:hover:bg-[#233648] rounded-lg cursor-pointer">
+<span class="material-symbols-outlined text-xl">assignment</span>
+<p class="text-sm font-medium leading-normal">Active Tasks</p>
+<span class="ml-auto bg-primary text-white text-[10px] px-2 py-0.5 rounded-full">5</span>
+</div>
+<div class="flex items-center gap-3 px-3 py-2 text-slate-600 dark:text-white hover:bg-slate-100 dark:hover:bg-[#233648] rounded-lg cursor-pointer">
+<span class="material-symbols-outlined text-xl">error</span>
+<p class="text-sm font-medium leading-normal">Priority Queue</p>
+</div>
+<div class="flex items-center gap-3 px-3 py-2 text-slate-600 dark:text-white hover:bg-slate-100 dark:hover:bg-[#233648] rounded-lg cursor-pointer">
+<span class="material-symbols-outlined text-xl">send</span>
+<p class="text-sm font-medium leading-normal">Submissions</p>
+</div>
+<div class="flex items-center gap-3 px-3 py-2 text-slate-600 dark:text-white hover:bg-slate-100 dark:hover:bg-[#233648] rounded-lg cursor-pointer">
+<span class="material-symbols-outlined text-xl">archive</span>
+<p class="text-sm font-medium leading-normal">Archives</p>
+</div>
+</div>
+</div>
+<button class="flex min-w-[84px] cursor-pointer items-center justify-center overflow-hidden rounded-lg h-11 px-4 bg-primary text-white text-sm font-bold leading-normal tracking-[0.015em] shadow-lg shadow-primary/20">
+<span class="material-symbols-outlined mr-2">add</span>
+<span class="truncate">New Project</span>
+</button>
+</aside>
+<!-- Main Workspace Area -->
+<main class="flex-1 overflow-y-auto bg-slate-50 dark:bg-background-dark/50">
+<div class="max-w-[1200px] mx-auto p-8">
+<div class="flex justify-between items-end mb-6">
+<div>
+<h2 class="text-slate-900 dark:text-white text-3xl font-bold leading-tight tracking-tight">Priority Queue</h2>
+<p class="text-slate-500 dark:text-[#92adc9] mt-1">Focus on these high-impact tasks first.</p>
+</div>
+<div class="flex gap-2 bg-slate-200 dark:bg-[#233648] p-1 rounded-lg">
+<button class="px-4 py-1.5 bg-white dark:bg-slate-800 rounded-md text-sm font-medium shadow-sm">Grid</button>
+<button class="px-4 py-1.5 text-slate-500 dark:text-[#92adc9] text-sm font-medium">List</button>
+</div>
+</div>
+<!-- Priority Cards -->
+<div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-10">
+<!-- Urgent Card 1 -->
+<div class="flex items-stretch justify-between gap-4 rounded-xl bg-white dark:bg-[#192633] p-5 shadow-sm border-l-4 border-red-500 group">
+<div class="flex flex-[2_2_0px] flex-col justify-between gap-4">
+<div class="flex flex-col gap-1">
+<div class="flex items-center gap-2 mb-1">
+<span class="bg-red-500/10 text-red-500 text-[10px] font-bold px-2 py-0.5 rounded tracking-wider uppercase">URGENT</span>
+<span class="text-red-500 text-xs font-bold flex items-center gap-1">
+<span class="material-symbols-outlined text-sm">schedule</span> 04h 12m left
+                                    </span>
+</div>
+<p class="text-slate-900 dark:text-white text-lg font-bold leading-tight group-hover:text-primary transition-colors cursor-pointer">Website Hero Illustration</p>
+<p class="text-slate-500 dark:text-[#92adc9] text-sm font-normal leading-normal">Client: TechFlow Solutions • <span class="text-primary font-medium">Graphic</span></p>
+</div>
+<button class="flex min-w-[84px] max-w-[480px] cursor-pointer items-center justify-center overflow-hidden rounded-lg h-9 px-4 flex-row-reverse bg-slate-100 dark:bg-[#233648] text-slate-700 dark:text-white pr-2 gap-1 text-sm font-medium leading-normal w-fit hover:bg-slate-200 dark:hover:bg-slate-700 transition-colors">
+<span class="material-symbols-outlined">chevron_right</span>
+<span class="truncate">View Brief</span>
+</button>
+</div>
+<div class="w-full bg-center bg-no-repeat aspect-square bg-cover rounded-lg flex-1 shadow-inner" data-alt="Abstract vibrant hero illustration placeholder" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuB1ym7DJQLIYyvsnNdOV9sL9xqNUNuGV_LKzpg2v-YmC9ABoV1PAbqxL4q-MMC5_sTkCaFRZmRDSFh68CgNGK-RpJRDlxnyhs2Rnkv6sKjdLLLXhQveVHzD6rtTZVnxM5ZSO7Wd2xuDUw6_DyMazkPki8vzTJx8ZSmnCaVm8jfvTMLLjW7PgTK3uTFINiSZiRVW--fPoSaks9irjlGwONhUKgycrVQFc3rRNtyX16M4smIwhVmJWsrzlk9KoFoPXNMuThmg2TnmS28");'></div>
+</div>
+<!-- Urgent Card 2 -->
+<div class="flex items-stretch justify-between gap-4 rounded-xl bg-white dark:bg-[#192633] p-5 shadow-sm border-l-4 border-red-500 group">
+<div class="flex flex-[2_2_0px] flex-col justify-between gap-4">
+<div class="flex flex-col gap-1">
+<div class="flex items-center gap-2 mb-1">
+<span class="bg-red-500/10 text-red-500 text-[10px] font-bold px-2 py-0.5 rounded tracking-wider uppercase">URGENT</span>
+<span class="text-red-500 text-xs font-bold flex items-center gap-1">
+<span class="material-symbols-outlined text-sm">schedule</span> 07h 45m left
+                                    </span>
+</div>
+<p class="text-slate-900 dark:text-white text-lg font-bold leading-tight group-hover:text-primary transition-colors cursor-pointer">SaaS Dashboard UI Kit</p>
+<p class="text-slate-500 dark:text-[#92adc9] text-sm font-normal leading-normal">Client: DataViz Inc. • <span class="text-primary font-medium">UI/UX</span></p>
+</div>
+<button class="flex min-w-[84px] max-w-[480px] cursor-pointer items-center justify-center overflow-hidden rounded-lg h-9 px-4 flex-row-reverse bg-slate-100 dark:bg-[#233648] text-slate-700 dark:text-white pr-2 gap-1 text-sm font-medium leading-normal w-fit hover:bg-slate-200 dark:hover:bg-slate-700 transition-colors">
+<span class="material-symbols-outlined">chevron_right</span>
+<span class="truncate">View Brief</span>
+</button>
+</div>
+<div class="w-full bg-center bg-no-repeat aspect-square bg-cover rounded-lg flex-1 shadow-inner" data-alt="UI dashboard components dark mode layout" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuDsnlDveIoSiP8l9RXNsPioRxvnvJl68ZXyu7iqYcBiL2PtMMV92zvUDvwdsw6yUUanEx4-oS88U32XBCefnZh9BuuwkVQMF7fTYL3TcudoOrf7aj_8lMyPS3b3p63-ZFI23NS-vdlDLPYEXGGPo2Ohbk9CY2Wadfih4RuNUBbpXT9j5Y2aU1m8Lp_wBh4aYwZ5LBQgvj9LJOlmso1Qi36HBKHWawsAhxyZ68srYDzuOexhRXwbLme_Gmos5r3YQnqobxmc4gBhLlA");'></div>
+</div>
+</div>
+<!-- My Active Tasks -->
+<div class="mb-10">
+<h2 class="text-slate-900 dark:text-white text-[22px] font-bold leading-tight tracking-[-0.015em] mb-4">My Active Tasks</h2>
+<div class="bg-white dark:bg-[#192633] rounded-xl overflow-hidden shadow-sm border border-slate-200 dark:border-transparent">
+<table class="w-full text-left">
+<thead class="bg-slate-50 dark:bg-[#233648]/50 text-slate-500 dark:text-[#92adc9] text-xs uppercase tracking-wider font-semibold">
+<tr>
+<th class="px-6 py-4">Task Name</th>
+<th class="px-6 py-4">Client</th>
+<th class="px-6 py-4">Service</th>
+<th class="px-6 py-4">Deadline</th>
+<th class="px-6 py-4">Status</th>
+</tr>
+</thead>
+<tbody class="divide-y divide-slate-100 dark:divide-[#233648]">
+<tr class="hover:bg-slate-50/80 dark:hover:bg-white/5 cursor-pointer transition-colors">
+<td class="px-6 py-4 font-medium text-slate-900 dark:text-white">Mobile App Icon Set</td>
+<td class="px-6 py-4 text-slate-500 dark:text-[#92adc9]">SwiftDelivery</td>
+<td class="px-6 py-4"><span class="bg-blue-100 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400 text-[10px] font-bold px-2 py-0.5 rounded">MOBILE</span></td>
+<td class="px-6 py-4 text-slate-500 dark:text-[#92adc9]">14h 20m</td>
+<td class="px-6 py-4"><span class="flex items-center gap-1.5"><span class="size-2 bg-yellow-400 rounded-full"></span> In Progress</span></td>
+</tr>
+<tr class="hover:bg-slate-50/80 dark:hover:bg-white/5 cursor-pointer transition-colors">
+<td class="px-6 py-4 font-medium text-slate-900 dark:text-white">Product Catalog Layout</td>
+<td class="px-6 py-4 text-slate-500 dark:text-[#92adc9]">HomeDeco Ltd.</td>
+<td class="px-6 py-4"><span class="bg-purple-100 dark:bg-purple-900/30 text-purple-600 dark:text-purple-400 text-[10px] font-bold px-2 py-0.5 rounded">PRINT</span></td>
+<td class="px-6 py-4 text-slate-500 dark:text-[#92adc9]">1d 04h</td>
+<td class="px-6 py-4"><span class="flex items-center gap-1.5"><span class="size-2 bg-slate-400 rounded-full"></span> Queued</span></td>
+</tr>
+<tr class="hover:bg-slate-50/80 dark:hover:bg-white/5 cursor-pointer transition-colors">
+<td class="px-6 py-4 font-medium text-slate-900 dark:text-white">Brand Style Guide</td>
+<td class="px-6 py-4 text-slate-500 dark:text-[#92adc9]">Quantum AI</td>
+<td class="px-6 py-4"><span class="bg-teal-100 dark:bg-teal-900/30 text-teal-600 dark:text-teal-400 text-[10px] font-bold px-2 py-0.5 rounded">BRANDING</span></td>
+<td class="px-6 py-4 text-slate-500 dark:text-[#92adc9]">2d 12h</td>
+<td class="px-6 py-4"><span class="flex items-center gap-1.5"><span class="size-2 bg-yellow-400 rounded-full"></span> In Progress</span></td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<!-- Submissions for Review -->
+<div class="mb-8">
+<h2 class="text-slate-900 dark:text-white text-[22px] font-bold leading-tight tracking-[-0.015em] mb-4">Submissions for Review</h2>
+<div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+<div class="bg-white dark:bg-[#192633] p-4 rounded-xl border border-slate-200 dark:border-transparent shadow-sm">
+<div class="flex justify-between items-start mb-2">
+<p class="text-xs text-slate-500 dark:text-[#92adc9] font-medium uppercase tracking-tighter">Social Ads Pack</p>
+<span class="bg-slate-100 dark:bg-[#233648] text-slate-600 dark:text-white text-[10px] px-2 py-0.5 rounded">Manager: Leo</span>
+</div>
+<p class="text-slate-900 dark:text-white text-sm font-semibold truncate mb-3">EcoStore Spring Campaign</p>
+<div class="flex items-center gap-2 text-xs text-amber-500">
+<span class="material-symbols-outlined text-sm">hourglass_empty</span>
+<span>Awaiting Approval</span>
+</div>
+</div>
+<div class="bg-white dark:bg-[#192633] p-4 rounded-xl border border-slate-200 dark:border-transparent shadow-sm opacity-60">
+<div class="flex justify-between items-start mb-2">
+<p class="text-xs text-slate-500 dark:text-[#92adc9] font-medium uppercase tracking-tighter">Landing Page V1</p>
+<span class="bg-slate-100 dark:bg-[#233648] text-slate-600 dark:text-white text-[10px] px-2 py-0.5 rounded">Manager: Sarah</span>
+</div>
+<p class="text-slate-900 dark:text-white text-sm font-semibold truncate mb-3">CryptoVault Landing</p>
+<div class="flex items-center gap-2 text-xs text-green-500">
+<span class="material-symbols-outlined text-sm">check_circle</span>
+<span>Approved</span>
+</div>
+</div>
+<div class="bg-white dark:bg-[#192633] p-4 rounded-xl border border-slate-200 dark:border-transparent shadow-sm">
+<div class="flex justify-between items-start mb-2">
+<p class="text-xs text-slate-500 dark:text-[#92adc9] font-medium uppercase tracking-tighter">Icon Revision</p>
+<span class="bg-slate-100 dark:bg-[#233648] text-slate-600 dark:text-white text-[10px] px-2 py-0.5 rounded">Manager: Leo</span>
+</div>
+<p class="text-slate-900 dark:text-white text-sm font-semibold truncate mb-3">FitApp UI Refresh</p>
+<div class="flex items-center gap-2 text-xs text-amber-500">
+<span class="material-symbols-outlined text-sm">hourglass_empty</span>
+<span>Awaiting Approval</span>
+</div>
+</div>
+</div>
+</div>
+</div>
+</main>
+<!-- Right Sidebar: Task Quick View -->
+<aside class="w-[380px] border-l border-slate-200 dark:border-[#233648] flex flex-col bg-white dark:bg-[#192633] shrink-0">
+<!-- Quick View Header -->
+<div class="p-6 border-b border-slate-200 dark:border-[#233648]">
+<div class="flex justify-between items-start mb-4">
+<span class="bg-primary/20 text-primary text-[10px] font-bold px-2 py-0.5 rounded">ACTIVE SESSION</span>
+<button class="text-slate-400 hover:text-slate-600 dark:hover:text-white">
+<span class="material-symbols-outlined">close</span>
+</button>
+</div>
+<h3 class="text-slate-900 dark:text-white text-xl font-bold mb-1">Website Hero Illustration</h3>
+<p class="text-slate-500 dark:text-[#92adc9] text-sm">TechFlow Solutions • Due in 4 hours</p>
+</div>
+<!-- Quick View Body -->
+<div class="flex-1 overflow-y-auto p-6">
+<div class="mb-8">
+<h4 class="text-slate-900 dark:text-white text-sm font-bold uppercase tracking-wider mb-3">Creative Brief</h4>
+<p class="text-slate-600 dark:text-[#92adc9] text-sm leading-relaxed">
+                        Create a modern, isometric illustration representing "seamless cloud collaboration". 
+                        The style should be vibrant but professional. Use the primary corporate blue and 
+                        incorporate abstract data flow elements.
+                    </p>
+<ul class="mt-4 space-y-2">
+<li class="flex items-start gap-2 text-xs text-slate-500 dark:text-[#92adc9]">
+<span class="material-symbols-outlined text-primary text-sm">check_circle</span>
+                            Size: 1920x1080px (Hero section)
+                        </li>
+<li class="flex items-start gap-2 text-xs text-slate-500 dark:text-[#92adc9]">
+<span class="material-symbols-outlined text-primary text-sm">check_circle</span>
+                            Format: SVG and high-res PNG
+                        </li>
+</ul>
+</div>
+<div class="mb-8">
+<div class="flex justify-between items-center mb-3">
+<h4 class="text-slate-900 dark:text-white text-sm font-bold uppercase tracking-wider">Brand Assets</h4>
+<button class="text-primary text-xs font-bold hover:underline">Download All</button>
+</div>
+<div class="grid grid-cols-2 gap-3">
+<div class="p-3 bg-slate-50 dark:bg-[#233648] rounded-lg border border-slate-200 dark:border-transparent flex flex-col items-center gap-2 group cursor-pointer hover:bg-slate-100 dark:hover:bg-slate-700">
+<span class="material-symbols-outlined text-3xl text-primary">palette</span>
+<span class="text-[10px] dark:text-slate-300 font-medium">Color Palette</span>
+</div>
+<div class="p-3 bg-slate-50 dark:bg-[#233648] rounded-lg border border-slate-200 dark:border-transparent flex flex-col items-center gap-2 group cursor-pointer hover:bg-slate-100 dark:hover:bg-slate-700">
+<span class="material-symbols-outlined text-3xl text-primary">cloud_download</span>
+<span class="text-[10px] dark:text-slate-300 font-medium">Logo Pack</span>
+</div>
+</div>
+</div>
+<div>
+<h4 class="text-slate-900 dark:text-white text-sm font-bold uppercase tracking-wider mb-3">Notes &amp; Activity</h4>
+<div class="flex gap-3 mb-4">
+<div class="size-8 rounded-full bg-primary/20 flex items-center justify-center shrink-0">
+<span class="text-primary text-xs font-bold">LR</span>
+</div>
+<div class="flex-1 bg-slate-50 dark:bg-[#233648] p-3 rounded-lg rounded-tl-none">
+<p class="text-xs text-slate-600 dark:text-[#92adc9]">"Remember to use the new rounded corners for all cloud containers."</p>
+<span class="text-[10px] text-slate-400 mt-1 block">Manager Leo • 2h ago</span>
+</div>
+</div>
+</div>
+</div>
+<!-- Quick View Footer -->
+<div class="p-6 border-t border-slate-200 dark:border-[#233648] flex flex-col gap-3 bg-slate-50/50 dark:bg-background-dark">
+<button class="w-full flex items-center justify-center gap-2 bg-primary text-white h-12 rounded-lg font-bold shadow-lg shadow-primary/25 hover:bg-primary/90 transition-all">
+<span class="material-symbols-outlined">play_arrow</span>
+                    Start Work
+                </button>
+<button class="w-full h-11 border border-slate-200 dark:border-[#233648] text-slate-600 dark:text-white font-medium rounded-lg hover:bg-slate-100 dark:hover:bg-[#233648] transition-colors">
+                    Upload Draft
+                </button>
+</div>
+</aside>
+</div>
+</body></html>

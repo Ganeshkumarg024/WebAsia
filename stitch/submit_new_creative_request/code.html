@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Submit New Creative Request | WebAsia</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#137fec",
+                        "background-light": "#f6f7f8",
+                        "background-dark": "#101922",
+                    },
+                    fontFamily: {
+                        "display": ["Inter", "sans-serif"]
+                    },
+                    borderRadius: {"DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px"},
+                },
+            },
+        }
+    </script>
+</head>
+<body class="bg-background-light dark:bg-background-dark font-display text-slate-900 dark:text-slate-100 min-h-screen">
+<!-- Top Navigation Bar -->
+<header class="sticky top-0 z-50 bg-white dark:bg-slate-900 border-b border-slate-200 dark:border-slate-800 px-6 lg:px-20 py-3">
+<div class="max-w-[1200px] mx-auto flex items-center justify-between">
+<div class="flex items-center gap-3">
+<div class="bg-primary text-white p-1.5 rounded-lg">
+<span class="material-symbols-outlined block text-xl">deployed_code</span>
+</div>
+<h2 class="text-lg font-bold tracking-tight">WebAsia Creative</h2>
+</div>
+<nav class="hidden md:flex items-center gap-8">
+<a class="text-sm font-medium hover:text-primary transition-colors" href="#">Dashboard</a>
+<a class="text-sm font-medium text-primary border-b-2 border-primary pb-1" href="#">Requests</a>
+<a class="text-sm font-medium hover:text-primary transition-colors" href="#">Brand Assets</a>
+<a class="text-sm font-medium hover:text-primary transition-colors" href="#">Billing</a>
+</nav>
+<div class="flex items-center gap-4">
+<div class="text-right hidden sm:block">
+<p class="text-xs font-semibold">Alex Thompson</p>
+<p class="text-[10px] text-slate-500">Pro Plan</p>
+</div>
+<div class="bg-slate-200 dark:bg-slate-700 rounded-full size-10 bg-cover bg-center border border-slate-200" data-alt="User profile avatar showing a professional portrait" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuAzLjETcMOhiWVu7eguOPHnpIaEphHUj_4Hpb1_iiTgo_aX4mtNV01KWSj5IvQRW-9TnYpPcWGNa7zc8CLBGY_xWQ8dbI3qVrJP3V0HofpcL81HgnegUESgvoFWzxAsNO9GdVgpqMPaPjjg0VXfg6TJmVeLUTpjb3ZJFzaftuO-LkZxYRoRxN7OEfwTjoW71ljy6RDws_HxFr3nLguyeNJKWjIBMABjHoTdBCa-UV6SnOvxaYmlOHR6Q_xqvmQm5WPjYF89c7rc4TI");'></div>
+</div>
+</div>
+</header>
+<main class="max-w-[960px] mx-auto px-4 py-8">
+<!-- Headline Section -->
+<div class="text-center mb-8">
+<h1 class="text-3xl font-bold tracking-tight mb-2">Submit New Creative Request</h1>
+<p class="text-slate-500 dark:text-slate-400">Tell us what you need and our experts will handle the rest.</p>
+</div>
+<!-- Wizard Tabs / Progress Stepper -->
+<div class="bg-white dark:bg-slate-900 rounded-xl shadow-sm border border-slate-200 dark:border-slate-800 mb-8 overflow-hidden">
+<div class="flex overflow-x-auto">
+<button class="flex-1 flex flex-col items-center justify-center py-5 border-b-4 border-primary bg-primary/5">
+<span class="material-symbols-outlined text-primary mb-1">category</span>
+<p class="text-xs font-bold uppercase tracking-wider text-primary">1. Category</p>
+</button>
+<button class="flex-1 flex flex-col items-center justify-center py-5 border-b-4 border-transparent text-slate-400 hover:text-slate-600 transition-colors">
+<span class="material-symbols-outlined mb-1">description</span>
+<p class="text-xs font-bold uppercase tracking-wider">2. Details</p>
+</button>
+<button class="flex-1 flex flex-col items-center justify-center py-5 border-b-4 border-transparent text-slate-400 hover:text-slate-600 transition-colors">
+<span class="material-symbols-outlined mb-1">cloud_upload</span>
+<p class="text-xs font-bold uppercase tracking-wider">3. Assets</p>
+</button>
+<button class="flex-1 flex flex-col items-center justify-center py-5 border-b-4 border-transparent text-slate-400 hover:text-slate-600 transition-colors">
+<span class="material-symbols-outlined mb-1">output</span>
+<p class="text-xs font-bold uppercase tracking-wider">4. Output</p>
+</button>
+</div>
+</div>
+<!-- Form Content Container -->
+<div class="bg-white dark:bg-slate-900 rounded-xl shadow-sm border border-slate-200 dark:border-slate-800 p-8">
+<!-- Step 1 Content: Category Selection -->
+<div id="step-1">
+<h2 class="text-xl font-bold mb-6 flex items-center gap-2">
+<span class="size-8 rounded-full bg-primary/10 text-primary flex items-center justify-center text-sm">1</span>
+                    Select Service Category
+                </h2>
+<div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+<!-- Category Card 1 -->
+<label class="group cursor-pointer relative">
+<input checked="" class="peer absolute opacity-0" name="category" type="radio" value="graphic"/>
+<div class="h-full p-6 rounded-xl border-2 border-slate-100 dark:border-slate-800 bg-slate-50 dark:bg-slate-800/50 transition-all peer-checked:border-primary peer-checked:bg-primary/5 group-hover:border-primary/50">
+<div class="w-full h-32 mb-4 rounded-lg bg-cover bg-center border border-slate-200 dark:border-slate-700" data-alt="Illustration representing graphic design with abstract shapes and colors" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuAXuxr4cnLscTasexqUzU0boCusP-7LHSUG6kc9laTbJrBA6Re0Desib9b46J7QRNja15UXbCRByKHbele3E93J9OFen9Z8N48Wjj88gUoZ0UQCS1Sd_U0muRGYrgGIoJiHnDZ9V6MG_UUVd5ziIdCKdM48dSTyYTnh9urXXwYOtuesTLM2qasQXjmW67cT2ytvwudNzAt5Shwvb5xZXmmrABovi6ENzGQiz1h8neSB4cH1-Qy7bllZdKWiZ0fRgNB4Q7z4an4az5U");'></div>
+<h3 class="font-bold text-lg mb-1">Graphic Design</h3>
+<p class="text-sm text-slate-500 leading-relaxed">Logo, social media, print ads, and brand identity.</p>
+<div class="mt-4 flex justify-end">
+<span class="material-symbols-outlined text-primary opacity-0 peer-checked:opacity-100">check_circle</span>
+</div>
+</div>
+</label>
+<!-- Category Card 2 -->
+<label class="group cursor-pointer relative">
+<input class="peer absolute opacity-0" name="category" type="radio" value="video"/>
+<div class="h-full p-6 rounded-xl border-2 border-slate-100 dark:border-slate-800 bg-slate-50 dark:bg-slate-800/50 transition-all peer-checked:border-primary peer-checked:bg-primary/5 group-hover:border-primary/50">
+<div class="w-full h-32 mb-4 rounded-lg bg-cover bg-center border border-slate-200 dark:border-slate-700" data-alt="Graphic showing film strip and play icons for video production" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuDKYdIdLuDoVRk9Xueb28GleXJxjCyQKj8yncfqz8PWJTfW3H8L6yiPe2fNNdBd_lXQmDb5EekO2s43VCocyC0ib5mmF9z_RQt48D2ZoMcMmV8WqksBu0MwqOzqdxVXVZWBj1bnEp54EglyQbLlyZzzXVZ1LMcXFtLb4adAZsc5jHOv9jOs9tR2e7_nfR6qqWsfGOxrPruO56u7OaFwieLKvmWusOZGvZI0R10A1AMlGDIjG3jlE0TltMZBiRHjL14elRTarxqbQk0");'></div>
+<h3 class="font-bold text-lg mb-1">Video Production</h3>
+<p class="text-sm text-slate-500 leading-relaxed">Short ads, motion graphics, and professional editing.</p>
+<div class="mt-4 flex justify-end">
+<span class="material-symbols-outlined text-primary opacity-0 group-has-[:checked]:opacity-100">check_circle</span>
+</div>
+</div>
+</label>
+<!-- Category Card 3 -->
+<label class="group cursor-pointer relative">
+<input class="peer absolute opacity-0" name="category" type="radio" value="web"/>
+<div class="h-full p-6 rounded-xl border-2 border-slate-100 dark:border-slate-800 bg-slate-50 dark:bg-slate-800/50 transition-all peer-checked:border-primary peer-checked:bg-primary/5 group-hover:border-primary/50">
+<div class="w-full h-32 mb-4 rounded-lg bg-cover bg-center border border-slate-200 dark:border-slate-700" data-alt="Visual representation of a code window and web browser" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuANiExtv25Yt5gw9CN9VEeXFaFZtFRt4PE5pxnrC4gdJY2httr5O32Wh7QuksMmHOr6V4nwg9yIL0UJTPyXmsWXSlhiC_1MgaDXSHEkmkNCcOkV3UWwCBr6etYlDd9BjeHR7IrjMyTQoCSJ6vHnPiZ8pWANm754XkXMreYol4qZ6QagnQh-EgiXM9l7diI7yCE7USU8--SrCjIQfZCqVLBrtLy9wqMLN1kEohr9KCAuKHaEWda5AWTU8fpFLXMjcGOlwadRizdf7JU");'></div>
+<h3 class="font-bold text-lg mb-1">Web Development</h3>
+<p class="text-sm text-slate-500 leading-relaxed">Landing pages, UI/UX design, and React components.</p>
+<div class="mt-4 flex justify-end">
+<span class="material-symbols-outlined text-primary opacity-0 group-has-[:checked]:opacity-100">check_circle</span>
+</div>
+</div>
+</label>
+</div>
+</div>
+<!-- Footer Actions -->
+<div class="flex items-center justify-between pt-8 border-t border-slate-100 dark:border-slate-800">
+<button class="px-6 py-2.5 text-sm font-bold text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-lg transition-colors flex items-center gap-2">
+<span class="material-symbols-outlined text-sm">arrow_back</span>
+                    Back
+                </button>
+<div class="flex items-center gap-4">
+<span class="text-xs text-slate-400 italic">Draft saved 2 mins ago</span>
+<button class="px-8 py-2.5 bg-primary hover:bg-primary/90 text-white text-sm font-bold rounded-lg shadow-lg shadow-primary/20 transition-all flex items-center gap-2">
+                        Next Step
+                        <span class="material-symbols-outlined text-sm">arrow_forward</span>
+</button>
+</div>
+</div>
+</div>
+<!-- Preview Info / Contextual Help -->
+<div class="mt-8 grid grid-cols-1 md:grid-cols-2 gap-4">
+<div class="flex gap-4 p-4 rounded-xl bg-primary/5 border border-primary/10">
+<span class="material-symbols-outlined text-primary">info</span>
+<div>
+<h4 class="text-sm font-bold mb-1">Need help choosing?</h4>
+<p class="text-xs text-slate-600 dark:text-slate-400 leading-relaxed">If your request spans multiple categories, select the one that fits the majority of the work. You can always add details in Step 2.</p>
+</div>
+</div>
+<div class="flex gap-4 p-4 rounded-xl bg-slate-100 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700">
+<span class="material-symbols-outlined text-slate-500">timer</span>
+<div>
+<h4 class="text-sm font-bold mb-1">Turnaround Time</h4>
+<p class="text-xs text-slate-600 dark:text-slate-400 leading-relaxed">Standard requests are delivered within 48-72 hours. High-priority requests average 24 hours.</p>
+</div>
+</div>
+</div>
+</main>
+<!-- Background Decoration -->
+<div class="fixed top-0 left-0 w-full h-full pointer-events-none -z-10 overflow-hidden">
+<div class="absolute top-[-10%] right-[-5%] w-[400px] h-[400px] rounded-full bg-primary/5 blur-[100px]"></div>
+<div class="absolute bottom-[0%] left-[-5%] w-[300px] h-[300px] rounded-full bg-primary/5 blur-[80px]"></div>
+</div>
+</body></html>

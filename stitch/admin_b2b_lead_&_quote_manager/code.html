@@ -1,0 +1,401 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Admin B2B Lead &amp; Quote Manager | WebAsia</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@100..900&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#137fec",
+                        "background-light": "#f6f7f8",
+                        "background-dark": "#101922",
+                    },
+                    fontFamily: {
+                        "display": ["Inter", "sans-serif"]
+                    },
+                    borderRadius: { "DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px" },
+                },
+            },
+        }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+    </style>
+</head>
+<body class="bg-background-light dark:bg-background-dark text-slate-900 dark:text-slate-100 min-h-screen">
+<div class="layout-container flex h-full grow flex-col">
+<!-- Top Navigation -->
+<header class="flex items-center justify-between whitespace-nowrap border-b border-solid border-slate-200 dark:border-slate-800 px-10 py-3 bg-white dark:bg-background-dark sticky top-0 z-50">
+<div class="flex items-center gap-8">
+<div class="flex items-center gap-4 text-primary">
+<div class="size-6">
+<svg fill="none" viewbox="0 0 48 48" xmlns="http://www.w3.org/2000/svg">
+<path d="M4 4H17.3334V17.3334H30.6666V30.6666H44V44H4V4Z" fill="currentColor"></path>
+</svg>
+</div>
+<h2 class="text-slate-900 dark:text-white text-lg font-bold leading-tight tracking-[-0.015em]">WebAsia Admin</h2>
+</div>
+<nav class="flex items-center gap-9">
+<a class="text-primary text-sm font-semibold leading-normal" href="#">Leads</a>
+<a class="text-slate-600 dark:text-slate-400 text-sm font-medium leading-normal hover:text-primary transition-colors" href="#">Projects</a>
+<a class="text-slate-600 dark:text-slate-400 text-sm font-medium leading-normal hover:text-primary transition-colors" href="#">Subscriptions</a>
+<a class="text-slate-600 dark:text-slate-400 text-sm font-medium leading-normal hover:text-primary transition-colors" href="#">Clients</a>
+</nav>
+</div>
+<div class="flex flex-1 justify-end gap-6 items-center">
+<label class="flex flex-col min-w-40 h-10 max-w-64">
+<div class="flex w-full flex-1 items-stretch rounded-lg h-full overflow-hidden border border-slate-200 dark:border-slate-800">
+<div class="text-slate-500 dark:text-slate-400 flex bg-slate-50 dark:bg-slate-800 items-center justify-center px-3">
+<span class="material-symbols-outlined text-xl">search</span>
+</div>
+<input class="form-input flex w-full min-w-0 flex-1 border-none bg-slate-50 dark:bg-slate-800 text-slate-900 dark:text-white focus:ring-0 text-sm placeholder:text-slate-400" placeholder="Search inquiries..." value=""/>
+</div>
+</label>
+<div class="flex gap-2">
+<button class="flex items-center justify-center rounded-lg h-10 w-10 bg-slate-50 dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-700 transition-colors">
+<span class="material-symbols-outlined text-xl">notifications</span>
+</button>
+<button class="flex items-center justify-center rounded-lg h-10 w-10 bg-slate-50 dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-700 transition-colors">
+<span class="material-symbols-outlined text-xl">settings</span>
+</button>
+</div>
+<div class="bg-center bg-no-repeat aspect-square bg-cover rounded-full size-10 border border-slate-200 dark:border-slate-800" data-alt="User profile avatar portrait" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuB9oxijJ1cSL1Wo4wWBk_H7pnjKYeefHLqE6-t7ocuqtbgM8IGlWbPW072VWX61OhVhMLFnFT4lKbdgfjO7aiIrgMr7PZTyvzwzOnSOhzLsXGegsK4937OHKrxpYlDUZ5y1ZdSS0wvCXcZYTT-ykWOy1FnvD5CkXGXWmKmFTRTGMK7WUnteGESjaOEqJmbhzTrqu03rT38MtfhYzLa9WgBdza94p6_aEfp7zElmwEIbdCG72vx6ZbQTHjZP1sn8iC_DEHZdJKBrT88");'></div>
+</div>
+</header>
+<main class="flex-1 overflow-y-auto">
+<div class="max-w-[1200px] mx-auto px-6 py-8">
+<!-- Page Heading -->
+<div class="flex flex-wrap justify-between items-end gap-3 mb-8">
+<div class="flex flex-col gap-1">
+<p class="text-slate-900 dark:text-white text-4xl font-black leading-tight tracking-[-0.033em]">Lead &amp; Quote Manager</p>
+<p class="text-slate-500 dark:text-slate-400 text-base font-normal leading-normal">Manage high-value B2B inquiries and generate custom subscription plans.</p>
+</div>
+<div class="flex gap-3">
+<button class="flex items-center justify-center rounded-lg h-10 px-4 bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-white text-sm font-bold border border-slate-200 dark:border-slate-700 hover:bg-slate-200 dark:hover:bg-slate-700 transition-colors">
+<span class="truncate">View Archive</span>
+</button>
+<button class="flex items-center justify-center rounded-lg h-10 px-4 bg-primary text-white text-sm font-bold shadow-lg shadow-primary/20 hover:bg-primary/90 transition-colors">
+<span class="material-symbols-outlined mr-2 text-lg">add_circle</span>
+<span class="truncate">Create New Lead</span>
+</button>
+</div>
+</div>
+<!-- Stats Overview -->
+<div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+<div class="flex flex-col gap-2 rounded-xl p-6 border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900/50">
+<div class="flex justify-between items-start">
+<p class="text-slate-500 dark:text-slate-400 text-sm font-medium">Total Pending Leads</p>
+<span class="material-symbols-outlined text-primary">group</span>
+</div>
+<p class="text-slate-900 dark:text-white tracking-tight text-3xl font-bold">24</p>
+<div class="flex items-center gap-1">
+<span class="text-emerald-500 text-sm font-bold">+12%</span>
+<span class="text-slate-400 dark:text-slate-500 text-xs">from last week</span>
+</div>
+</div>
+<div class="flex flex-col gap-2 rounded-xl p-6 border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900/50">
+<div class="flex justify-between items-start">
+<p class="text-slate-500 dark:text-slate-400 text-sm font-medium">Avg. Lead Score</p>
+<span class="material-symbols-outlined text-primary">query_stats</span>
+</div>
+<p class="text-slate-900 dark:text-white tracking-tight text-3xl font-bold">82/100</p>
+<div class="flex items-center gap-1">
+<span class="text-emerald-500 text-sm font-bold">+5.2%</span>
+<span class="text-slate-400 dark:text-slate-500 text-xs">benchmark 70</span>
+</div>
+</div>
+<div class="flex flex-col gap-2 rounded-xl p-6 border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900/50">
+<div class="flex justify-between items-start">
+<p class="text-slate-500 dark:text-slate-400 text-sm font-medium">Projected Revenue</p>
+<span class="material-symbols-outlined text-primary">payments</span>
+</div>
+<p class="text-slate-900 dark:text-white tracking-tight text-3xl font-bold">$142,500</p>
+<div class="flex items-center gap-1">
+<span class="text-rose-500 text-sm font-bold">-2%</span>
+<span class="text-slate-400 dark:text-slate-500 text-xs">vs target</span>
+</div>
+</div>
+</div>
+<div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+<!-- Left: Lead Inquiries Table -->
+<div class="lg:col-span-2 space-y-6">
+<div class="flex items-center justify-between px-2">
+<h2 class="text-slate-900 dark:text-white text-xl font-bold leading-tight">New Inquiries</h2>
+<div class="flex gap-2">
+<button class="p-2 text-slate-500 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-lg">
+<span class="material-symbols-outlined">filter_list</span>
+</button>
+<button class="p-2 text-slate-500 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-lg">
+<span class="material-symbols-outlined">refresh</span>
+</button>
+</div>
+</div>
+<div class="overflow-hidden rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-background-dark shadow-sm">
+<table class="w-full text-left border-collapse">
+<thead>
+<tr class="bg-slate-50 dark:bg-slate-900/80 border-b border-slate-200 dark:border-slate-800">
+<th class="px-4 py-4 text-slate-700 dark:text-slate-300 text-xs font-bold uppercase tracking-wider">Company</th>
+<th class="px-4 py-4 text-slate-700 dark:text-slate-300 text-xs font-bold uppercase tracking-wider">Scale</th>
+<th class="px-4 py-4 text-slate-700 dark:text-slate-300 text-xs font-bold uppercase tracking-wider text-center">Lead Score</th>
+<th class="px-4 py-4 text-slate-700 dark:text-slate-300 text-xs font-bold uppercase tracking-wider">Status</th>
+<th class="px-4 py-4 text-slate-700 dark:text-slate-300 text-xs font-bold uppercase tracking-wider text-right">Actions</th>
+</tr>
+</thead>
+<tbody class="divide-y divide-slate-100 dark:divide-slate-800">
+<tr class="hover:bg-slate-50 dark:hover:bg-slate-900/30 transition-colors group">
+<td class="px-4 py-4">
+<div class="flex items-center gap-3">
+<div class="w-8 h-8 rounded bg-primary/10 flex items-center justify-center text-primary font-bold">T</div>
+<div class="flex flex-col">
+<span class="text-sm font-semibold text-slate-900 dark:text-white">TechFlow Inc.</span>
+<span class="text-xs text-slate-500">Cloud Infrastructure</span>
+</div>
+</div>
+</td>
+<td class="px-4 py-4">
+<div class="flex flex-col">
+<span class="text-sm text-slate-700 dark:text-slate-300 font-medium">500+ Empl.</span>
+<span class="text-xs text-emerald-500">High Volume</span>
+</div>
+</td>
+<td class="px-4 py-4 text-center">
+<div class="inline-flex items-center justify-center px-2.5 py-1 rounded-full bg-emerald-100 dark:bg-emerald-500/10 text-emerald-700 dark:text-emerald-400 text-xs font-bold">
+                                                92
+                                            </div>
+</td>
+<td class="px-4 py-4">
+<span class="flex items-center gap-1.5 text-xs font-medium text-slate-600 dark:text-slate-400">
+<span class="size-2 rounded-full bg-primary"></span>
+                                                New
+                                            </span>
+</td>
+<td class="px-4 py-4 text-right">
+<button class="text-primary text-sm font-bold hover:underline">Manage</button>
+</td>
+</tr>
+<tr class="bg-primary/5 dark:bg-primary/10 border-l-2 border-primary">
+<td class="px-4 py-4">
+<div class="flex items-center gap-3">
+<div class="w-8 h-8 rounded bg-primary flex items-center justify-center text-white font-bold text-xs">LD</div>
+<div class="flex flex-col">
+<span class="text-sm font-semibold text-slate-900 dark:text-white">Luna Digital</span>
+<span class="text-xs text-slate-500">Creative Agency</span>
+</div>
+</div>
+</td>
+<td class="px-4 py-4">
+<div class="flex flex-col">
+<span class="text-sm text-slate-700 dark:text-slate-300 font-medium">50-200 Empl.</span>
+<span class="text-xs text-amber-500">Medium Volume</span>
+</div>
+</td>
+<td class="px-4 py-4 text-center">
+<div class="inline-flex items-center justify-center px-2.5 py-1 rounded-full bg-amber-100 dark:bg-amber-500/10 text-amber-700 dark:text-amber-400 text-xs font-bold">
+                                                74
+                                            </div>
+</td>
+<td class="px-4 py-4">
+<span class="flex items-center gap-1.5 text-xs font-medium text-slate-600 dark:text-slate-400">
+<span class="size-2 rounded-full bg-amber-500"></span>
+                                                Negotiating
+                                            </span>
+</td>
+<td class="px-4 py-4 text-right">
+<button class="text-primary text-sm font-bold">Manage</button>
+</td>
+</tr>
+<tr class="hover:bg-slate-50 dark:hover:bg-slate-900/30 transition-colors">
+<td class="px-4 py-4">
+<div class="flex items-center gap-3">
+<div class="w-8 h-8 rounded bg-slate-200 dark:bg-slate-800 flex items-center justify-center text-slate-600 dark:text-slate-400 font-bold text-xs">AS</div>
+<div class="flex flex-col">
+<span class="text-sm font-semibold text-slate-900 dark:text-white">Apex Solutions</span>
+<span class="text-xs text-slate-500">FinTech</span>
+</div>
+</div>
+</td>
+<td class="px-4 py-4">
+<div class="flex flex-col">
+<span class="text-sm text-slate-700 dark:text-slate-300 font-medium">201-500 Empl.</span>
+<span class="text-xs text-emerald-500">High Volume</span>
+</div>
+</td>
+<td class="px-4 py-4 text-center">
+<div class="inline-flex items-center justify-center px-2.5 py-1 rounded-full bg-emerald-100 dark:bg-emerald-500/10 text-emerald-700 dark:text-emerald-400 text-xs font-bold">
+                                                88
+                                            </div>
+</td>
+<td class="px-4 py-4">
+<span class="flex items-center gap-1.5 text-xs font-medium text-slate-600 dark:text-slate-400">
+<span class="size-2 rounded-full bg-primary"></span>
+                                                Contacted
+                                            </span>
+</td>
+<td class="px-4 py-4 text-right">
+<button class="text-primary text-sm font-bold">Manage</button>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+<!-- Status Tracker for Selected Lead -->
+<div class="rounded-xl p-6 border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900/30">
+<h3 class="text-slate-900 dark:text-white text-lg font-bold mb-6">Pipeline Progress: Luna Digital</h3>
+<div class="relative flex items-center justify-between">
+<div class="absolute h-1 w-full bg-slate-200 dark:bg-slate-800 top-1/2 -translate-y-1/2 z-0"></div>
+<div class="absolute h-1 w-2/3 bg-primary top-1/2 -translate-y-1/2 z-0"></div>
+<div class="relative z-10 flex flex-col items-center gap-2">
+<div class="size-8 rounded-full bg-primary flex items-center justify-center text-white text-xs font-bold">
+<span class="material-symbols-outlined text-sm">check</span>
+</div>
+<span class="text-xs font-bold text-slate-900 dark:text-white">New</span>
+</div>
+<div class="relative z-10 flex flex-col items-center gap-2">
+<div class="size-8 rounded-full bg-primary flex items-center justify-center text-white text-xs font-bold">
+<span class="material-symbols-outlined text-sm">check</span>
+</div>
+<span class="text-xs font-bold text-slate-900 dark:text-white">Contacted</span>
+</div>
+<div class="relative z-10 flex flex-col items-center gap-2">
+<div class="size-8 rounded-full bg-primary border-4 border-slate-100 dark:border-slate-900 flex items-center justify-center text-white text-xs font-bold ring-2 ring-primary">
+                                        3
+                                    </div>
+<span class="text-xs font-bold text-primary">Negotiating</span>
+</div>
+<div class="relative z-10 flex flex-col items-center gap-2">
+<div class="size-8 rounded-full bg-slate-200 dark:bg-slate-800 flex items-center justify-center text-slate-500 text-xs font-bold">
+                                        4
+                                    </div>
+<span class="text-xs font-bold text-slate-500">Closed</span>
+</div>
+</div>
+</div>
+</div>
+<!-- Right: Custom Plan Builder & Notes -->
+<div class="space-y-6">
+<!-- Custom Plan Builder -->
+<div class="rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 shadow-sm overflow-hidden">
+<div class="p-5 border-b border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-800/50">
+<h3 class="text-slate-900 dark:text-white font-bold flex items-center gap-2">
+<span class="material-symbols-outlined text-primary">auto_fix</span>
+                                    Custom Plan Builder
+                                </h3>
+</div>
+<div class="p-5 space-y-5">
+<div class="space-y-2">
+<label class="text-xs font-bold text-slate-500 uppercase">Service Level</label>
+<select class="w-full bg-white dark:bg-slate-800 border-slate-200 dark:border-slate-700 rounded-lg text-sm focus:ring-primary focus:border-primary">
+<option>Enterprise Creative (Unlimited)</option>
+<option>Professional Tier (10 slots)</option>
+<option>MVP Development (Project Based)</option>
+</select>
+</div>
+<div class="space-y-2">
+<div class="flex justify-between">
+<label class="text-xs font-bold text-slate-500 uppercase">Developer Slots</label>
+<span class="text-xs font-bold text-primary">4 Slots</span>
+</div>
+<input class="w-full h-2 bg-slate-200 dark:bg-slate-700 rounded-lg appearance-none cursor-pointer accent-primary" max="10" min="1" step="1" type="range" value="4"/>
+</div>
+<div class="space-y-2">
+<label class="text-xs font-bold text-slate-500 uppercase">Add-ons</label>
+<div class="space-y-2">
+<label class="flex items-center gap-3 cursor-pointer">
+<input checked="" class="rounded border-slate-300 dark:border-slate-700 text-primary focus:ring-primary" type="checkbox"/>
+<span class="text-sm text-slate-700 dark:text-slate-300">Dedicated PM ($500/mo)</span>
+</label>
+<label class="flex items-center gap-3 cursor-pointer">
+<input class="rounded border-slate-300 dark:border-slate-700 text-primary focus:ring-primary" type="checkbox"/>
+<span class="text-sm text-slate-700 dark:text-slate-300">24h Express Delivery ($1k/mo)</span>
+</label>
+</div>
+</div>
+<div class="pt-4 border-t border-slate-200 dark:border-slate-800">
+<div class="flex justify-between items-end mb-4">
+<span class="text-sm font-medium text-slate-500">Estimated Monthly</span>
+<span class="text-2xl font-black text-slate-900 dark:text-white">$8,500</span>
+</div>
+<button class="w-full flex items-center justify-center gap-2 rounded-lg bg-primary py-3 text-white text-sm font-bold shadow-lg shadow-primary/30 hover:bg-primary/90 transition-all active:scale-95">
+<span class="material-symbols-outlined">link</span>
+                                        Generate Quote Link
+                                    </button>
+</div>
+</div>
+</div>
+<!-- Sales Notes Section -->
+<div class="rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 shadow-sm overflow-hidden">
+<div class="p-5 border-b border-slate-200 dark:border-slate-800 flex justify-between items-center">
+<h3 class="text-slate-900 dark:text-white font-bold flex items-center gap-2">
+<span class="material-symbols-outlined text-amber-500">sticky_note_2</span>
+                                    Internal Notes
+                                </h3>
+<button class="text-primary text-xs font-bold hover:underline">Edit</button>
+</div>
+<div class="p-5">
+<div class="bg-slate-50 dark:bg-slate-800/30 p-4 rounded-lg border border-dashed border-slate-200 dark:border-slate-700 mb-4">
+<p class="text-xs text-slate-600 dark:text-slate-400 leading-relaxed italic">
+                                        "Client is looking for a white-label solution for their end-customers. They prioritize turnaround speed over cost. Key stakeholder: Mark Johnson (CTO)."
+                                    </p>
+<div class="mt-2 flex items-center gap-2">
+<div class="size-4 rounded-full bg-slate-300" data-alt="Staff small avatar"></div>
+<span class="text-[10px] text-slate-400">Added by Sarah J. • 2h ago</span>
+</div>
+</div>
+<textarea class="w-full bg-slate-50 dark:bg-slate-800 border-none rounded-lg text-sm placeholder:text-slate-500 focus:ring-1 focus:ring-primary min-h-[80px]" placeholder="Add a quick note..."></textarea>
+<div class="flex justify-end mt-2">
+<button class="text-xs font-bold text-slate-500 hover:text-primary">Save Note</button>
+</div>
+</div>
+</div>
+</div>
+</div>
+<!-- Activity Feed (Optional extra) -->
+<div class="mt-8 pt-8 border-t border-slate-200 dark:border-slate-800">
+<h3 class="text-slate-900 dark:text-white text-lg font-bold mb-6">Recent Activity</h3>
+<div class="space-y-6 relative before:absolute before:inset-y-0 before:left-3 before:w-0.5 before:bg-slate-200 dark:before:bg-slate-800">
+<div class="relative pl-10">
+<span class="absolute left-0 top-0 size-6 rounded-full bg-emerald-500 flex items-center justify-center text-white ring-4 ring-white dark:ring-background-dark">
+<span class="material-symbols-outlined text-[14px]">done_all</span>
+</span>
+<div class="flex flex-col">
+<p class="text-sm font-medium text-slate-900 dark:text-white">New inquiry received from <span class="text-primary font-bold">TechFlow Inc.</span></p>
+<span class="text-xs text-slate-500">Just now • Automated Score: 92</span>
+</div>
+</div>
+<div class="relative pl-10">
+<span class="absolute left-0 top-0 size-6 rounded-full bg-primary flex items-center justify-center text-white ring-4 ring-white dark:ring-background-dark">
+<span class="material-symbols-outlined text-[14px]">send</span>
+</span>
+<div class="flex flex-col">
+<p class="text-sm font-medium text-slate-900 dark:text-white">Custom quote link sent to <span class="text-primary font-bold">Luna Digital</span></p>
+<span class="text-xs text-slate-500">45 minutes ago • Admin Sarah J.</span>
+</div>
+</div>
+<div class="relative pl-10">
+<span class="absolute left-0 top-0 size-6 rounded-full bg-amber-500 flex items-center justify-center text-white ring-4 ring-white dark:ring-background-dark">
+<span class="material-symbols-outlined text-[14px]">edit</span>
+</span>
+<div class="flex flex-col">
+<p class="text-sm font-medium text-slate-900 dark:text-white">Status updated to <span class="text-amber-500 font-bold italic">Negotiating</span> for Luna Digital</p>
+<span class="text-xs text-slate-500">2 hours ago • Admin Sarah J.</span>
+</div>
+</div>
+</div>
+</div>
+</div>
+</main>
+</div>
+</body></html>

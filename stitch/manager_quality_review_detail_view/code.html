@@ -1,0 +1,262 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Manager Quality Review - WebAsia Creative Services</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#137fec",
+                        "background-light": "#f6f7f8",
+                        "background-dark": "#101922",
+                    },
+                    fontFamily: {
+                        "display": ["Inter"]
+                    },
+                    borderRadius: {"DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px"},
+                },
+            },
+        }
+    </script>
+<style>
+        body { font-family: 'Inter', sans-serif; }
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .scrollbar-hide::-webkit-scrollbar { display: none; }
+    </style>
+</head>
+<body class="bg-background-light dark:bg-background-dark text-slate-900 dark:text-slate-100 min-h-screen flex flex-col font-display">
+<!-- Top Navigation -->
+<header class="flex items-center justify-between whitespace-nowrap border-b border-solid border-slate-200 dark:border-[#233648] px-10 py-3 bg-white dark:bg-background-dark z-20">
+<div class="flex items-center gap-8">
+<div class="flex items-center gap-4">
+<div class="size-6 text-primary">
+<svg fill="none" viewbox="0 0 48 48" xmlns="http://www.w3.org/2000/svg"><path d="M6 6H42L36 24L42 42H6L12 24L6 6Z" fill="currentColor"></path></svg>
+</div>
+<h2 class="text-lg font-bold leading-tight tracking-tight">WebAsia Quality Portal</h2>
+</div>
+<nav class="hidden md:flex items-center gap-6">
+<a class="text-sm font-medium hover:text-primary transition-colors" href="#">Dashboard</a>
+<a class="text-sm font-medium hover:text-primary transition-colors text-primary" href="#">Review Queue</a>
+<a class="text-sm font-medium hover:text-primary transition-colors" href="#">Designers</a>
+<a class="text-sm font-medium hover:text-primary transition-colors" href="#">Archive</a>
+</nav>
+</div>
+<div class="flex items-center gap-4">
+<label class="flex items-center bg-slate-100 dark:bg-[#233648] rounded-lg px-3 py-1.5 w-64">
+<span class="material-symbols-outlined text-slate-400 text-xl">search</span>
+<input class="bg-transparent border-none focus:ring-0 text-sm w-full placeholder:text-slate-400" placeholder="Search projects..."/>
+</label>
+<div class="h-8 w-px bg-slate-200 dark:bg-[#233648]"></div>
+<div class="flex items-center gap-3">
+<div class="bg-center bg-no-repeat aspect-square bg-cover rounded-full size-8" data-alt="Manager profile picture" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuA3FiHI_dGlkIFAHlLT7O1WXH6YaXMoSJ6pvlZ-8zDUj5imjRfP6F8syVev1Fr45n7AgRnJ92T0ZWuUH5r199-UYC0e_FHviUbVTxJxzyyM-Fpj_KbhNPho3D_0ydaFmbpajCBIAPch1CaFxsM_nksa68PekttigWePCChNNJ0DxWmWgTlcCezRK2z5S27elOFQxbH0bKiOuBxHlaq8mIKzvwAEa3npnapxqS6j30F6ZG-JFnjRZp2gQJHVx7v5x6daysQSkmsy358");'></div>
+<span class="text-sm font-semibold">Alex Chen</span>
+</div>
+</div>
+</header>
+<!-- Project Header & Breadcrumbs -->
+<div class="bg-white dark:bg-background-dark border-b border-slate-200 dark:border-[#233648] px-10 py-4 flex items-center justify-between">
+<div>
+<div class="flex items-center gap-2 mb-1">
+<a class="text-xs text-slate-500 hover:text-primary transition-colors uppercase tracking-wider font-bold" href="#">Projects</a>
+<span class="material-symbols-outlined text-xs text-slate-400">chevron_right</span>
+<a class="text-xs text-slate-500 hover:text-primary transition-colors uppercase tracking-wider font-bold" href="#">Nike Global</a>
+<span class="material-symbols-outlined text-xs text-slate-400">chevron_right</span>
+<span class="text-xs text-primary uppercase tracking-wider font-bold">V3 Revision</span>
+</div>
+<h1 class="text-2xl font-bold flex items-center gap-3">
+                Landing Page Redesign - Winter Campaign
+                <span class="px-2 py-0.5 rounded text-[10px] bg-amber-100 text-amber-700 dark:bg-amber-900/30 dark:text-amber-400 font-bold uppercase tracking-widest border border-amber-200 dark:border-amber-800">Review Pending</span>
+</h1>
+</div>
+<div class="flex items-center gap-3">
+<div class="flex items-center bg-slate-100 dark:bg-[#1b2a38] rounded-lg p-1 border border-slate-200 dark:border-[#233648]">
+<button class="px-3 py-1.5 text-xs font-bold rounded bg-white dark:bg-[#2d455e] shadow-sm">V3 (Latest)</button>
+<button class="px-3 py-1.5 text-xs font-bold text-slate-500 hover:text-slate-700 dark:hover:text-slate-300">V2</button>
+<button class="px-3 py-1.5 text-xs font-bold text-slate-500 hover:text-slate-700 dark:hover:text-slate-300">V1</button>
+</div>
+<button class="flex items-center gap-2 px-4 py-2 text-sm font-bold bg-slate-100 dark:bg-[#233648] rounded-lg hover:bg-slate-200 dark:hover:bg-[#2d455e] transition-colors">
+<span class="material-symbols-outlined text-lg">history</span>
+                History
+            </button>
+</div>
+</div>
+<!-- Main Comparison Workspace -->
+<main class="flex-1 flex overflow-hidden">
+<!-- Left Pane: Client Brief & References -->
+<aside class="w-1/3 border-r border-slate-200 dark:border-[#233648] flex flex-col bg-slate-50 dark:bg-[#0c141c]">
+<div class="p-6 overflow-y-auto scrollbar-hide">
+<div class="flex items-center gap-2 mb-6">
+<span class="material-symbols-outlined text-primary">description</span>
+<h3 class="text-sm font-bold uppercase tracking-widest text-slate-500">Project Brief</h3>
+</div>
+<div class="space-y-6">
+<section>
+<h4 class="text-sm font-bold mb-2">Objectives</h4>
+<p class="text-sm text-slate-600 dark:text-slate-400 leading-relaxed">
+                            Create a high-converting landing page for the 2024 Winter Collection. Focus on "Extreme Comfort" and "Sustainable Materials." The primary goal is to drive pre-orders for the 'Aura' jacket series.
+                        </p>
+</section>
+<section>
+<h4 class="text-sm font-bold mb-2">Style Guidelines</h4>
+<ul class="text-sm text-slate-600 dark:text-slate-400 space-y-2">
+<li class="flex items-start gap-2">
+<span class="material-symbols-outlined text-xs mt-1 text-primary">check_circle</span>
+                                Use high-contrast typography (Serif for headers, Sans for body)
+                            </li>
+<li class="flex items-start gap-2">
+<span class="material-symbols-outlined text-xs mt-1 text-primary">check_circle</span>
+                                Color Palette: Midnight Blue (#0A1128), Snow White, and Burnt Orange accents
+                            </li>
+<li class="flex items-start gap-2">
+<span class="material-symbols-outlined text-xs mt-1 text-primary">check_circle</span>
+                                Large, atmospheric background imagery
+                            </li>
+</ul>
+</section>
+<section>
+<div class="flex items-center justify-between mb-3">
+<h4 class="text-sm font-bold">Reference Images</h4>
+<button class="text-xs text-primary font-bold hover:underline">View All</button>
+</div>
+<div class="grid grid-cols-2 gap-3">
+<div class="aspect-video rounded-lg bg-cover bg-center border border-slate-200 dark:border-[#233648]" data-alt="Minimalist mountain photography" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuAQd75Rdq-a5iO5ZEDkcof05dUuK4GNBqzEReUf0wVkMpZX4_H80YZZg940DxlLIC9groOcbOU2Gayk7QBWHM4Zvx_ui0dcWo5Bc2AdWoUqMxZP9yEZxmBFBzNSuCySpGKTjjuqRk3t0Yv6Esg6Y0oFaSgg3zSdZdMsjn1nB12aZHMEwWuNtPMbF8xsS_T7rDVpC0cqdJymnBh8ZAuaBhBGfeZ8zFfKUkcv1D_f6QK_Fb-3T8tiAGmVeGC8yusVUKYuLGq_PhPPkvI");'></div>
+<div class="aspect-video rounded-lg bg-cover bg-center border border-slate-200 dark:border-[#233648]" data-alt="Sleek product UI layout" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuA6DwlWYyzSpq6l-DvUxFJNXOBVedczroIMSpSLGQGxinoub25yxf6hyK44xEp3LlUWuWXS15maZIlx5guMotn87QwjX5VM8Di46xabj2B175_YYgaoLCT91zGTp0slwV_kAuGYHfqlFMkjca7awO_twfEIIJqZDvYCE8LRtV0GeTxor4v0ErSEkSwrYGzwKVJjJsPJtKn23oo-XnHYfNuRY5I4kOIBefWyDcn0vWWa9Wn-uRD6XXuh206w_nyLyNw5OI0MukztwT0");'></div>
+<div class="aspect-video rounded-lg bg-cover bg-center border border-slate-200 dark:border-[#233648]" data-alt="Typography moodboard" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuAnf6odwhLJst93Chou13AXHgzbwpfsBWIy5x7eiDa2MI8h0s7Z8N7e2PZLW17YOSWRRoo_ILF6xIOxkn3NfY_cYg0Ifg2Yx8o0tenD-A3AUPEh9s52xp3i02YhDM7ZT6a9_gN_U1nPlpG44zPZJC1jvZWZpZRgmbWxP7awU6deK6QNj3oHv59faf3vo7dvQyOhND1-BPTixx5lOKVEU9Sah4_WGpNSgpsHqEKUgz8zUbmBPSfhE4hrNVoC09CGFhdI3ORVt7wQITM");'></div>
+<div class="aspect-video rounded-lg bg-cover bg-center border border-slate-200 dark:border-[#233648]" data-alt="Sustainable fabric close up" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuBb_Ux5XyD0kt_93LYarsYaJ9YXm2exL3fE7D19so5RYCrkDWnuMZ-p-7660MJZ9vB3SoVXWRB-C2RkPH6pwTZQpxCT7sc3ei3YpIRM4TCvkQHyIUHlTbEc0Hsv1J4gOwGrHy8WI2IlZJRyogg5d6w0gEYdnKXVIdFy2pRU-DdJQpJ5jAqEX0-iBvw8GJ76wx2obYzoO0VQqBgcQrAJcNEnQjJlduDVKH9uLRqFnrDUHICR_YoWguJEFywyUP0lf79Dh7u9SEv1xrk");'></div>
+</div>
+</section>
+</div>
+</div>
+</aside>
+<!-- Right Pane: Submission & Annotation -->
+<section class="flex-1 flex flex-col relative bg-[#111a22]">
+<!-- Toolbar -->
+<div class="absolute left-6 top-1/2 -translate-y-1/2 z-10 flex flex-col gap-2 p-2 bg-white/90 dark:bg-background-dark/90 backdrop-blur-md rounded-xl shadow-2xl border border-slate-200 dark:border-[#233648]">
+<button class="p-2 rounded-lg hover:bg-slate-100 dark:hover:bg-primary/20 text-slate-600 dark:text-slate-300 transition-colors" title="Select">
+<span class="material-symbols-outlined">near_me</span>
+</button>
+<button class="p-2 rounded-lg bg-primary text-white shadow-lg shadow-primary/20" title="Add Comment">
+<span class="material-symbols-outlined">add_comment</span>
+</button>
+<button class="p-2 rounded-lg hover:bg-slate-100 dark:hover:bg-primary/20 text-slate-600 dark:text-slate-300 transition-colors" title="Draw Rectangle">
+<span class="material-symbols-outlined">rectangle</span>
+</button>
+<button class="p-2 rounded-lg hover:bg-slate-100 dark:hover:bg-primary/20 text-slate-600 dark:text-slate-300 transition-colors" title="Pen Tool">
+<span class="material-symbols-outlined">edit</span>
+</button>
+<div class="h-px w-full bg-slate-200 dark:bg-[#233648] my-1"></div>
+<button class="p-2 rounded-lg hover:bg-slate-100 dark:hover:bg-primary/20 text-slate-600 dark:text-slate-300 transition-colors" title="Measure">
+<span class="material-symbols-outlined">straighten</span>
+</button>
+</div>
+<!-- Submission Canvas -->
+<div class="flex-1 overflow-auto p-12 flex justify-center items-start scrollbar-hide">
+<div class="relative bg-white shadow-2xl min-w-[800px] min-h-[1200px] border border-slate-200 dark:border-[#233648] rounded-sm group">
+<div class="w-full h-full bg-cover bg-top" data-alt="Designer's submission: Winter landing page concept" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuDEIWpO_2KlHkWPzPHODXubymyQG6OXzdGg2x-ePcPt9R5do-vyZti6zZLbhjki_IWvIKEwkOVQZSgBohAfEiQT5ruauBnNQ2ydSrthoacRl_y5k_qqh31KupEFjmCr9v3CqbNpUYwsnO_tI5ZrVTw-53t4HYkdy-4BKsEatjQjsYdvijNVidlNwwED-EX7aG6sMB4_Xolkt4efc7dIH2ZkRIdq0A5N0K0aZKzG8a8SlWO0UUbQSN2OW1aFAE_Q1OWodtIupbM53LU");'>
+<!-- Mock Annotations -->
+<div class="absolute top-[150px] left-[400px] flex flex-col items-center">
+<div class="size-8 bg-primary rounded-full border-2 border-white shadow-lg flex items-center justify-center text-white text-xs font-bold cursor-pointer hover:scale-110 transition-transform">1</div>
+<div class="mt-2 bg-white dark:bg-[#1a2632] p-3 rounded-lg shadow-xl border border-slate-200 dark:border-[#233648] w-48 text-xs">
+<div class="font-bold mb-1">Alex Chen</div>
+<p class="text-slate-500">The orange is too vibrant. Tone it down to Burnt Orange as per brief.</p>
+</div>
+</div>
+<div class="absolute top-[480px] left-[120px]">
+<div class="size-8 bg-primary rounded-full border-2 border-white shadow-lg flex items-center justify-center text-white text-xs font-bold cursor-pointer">2</div>
+</div>
+<div class="absolute top-[820px] left-[550px] border-2 border-primary border-dashed w-40 h-24 rounded flex items-center justify-center">
+<div class="size-6 bg-primary rounded-full border-2 border-white shadow-lg flex items-center justify-center text-white text-[10px] font-bold absolute -top-3 -right-3">3</div>
+</div>
+</div>
+</div>
+</div>
+<!-- Annotation Sidebar (Collapsible) -->
+<aside class="absolute right-0 top-0 bottom-0 w-80 bg-white dark:bg-background-dark border-l border-slate-200 dark:border-[#233648] transform translate-x-0 transition-transform duration-300 flex flex-col shadow-xl z-10">
+<div class="p-4 border-b border-slate-200 dark:border-[#233648] flex items-center justify-between bg-slate-50 dark:bg-[#1b2a38]">
+<h3 class="text-xs font-bold uppercase tracking-widest text-slate-500">Feedback (3)</h3>
+<button class="text-slate-400 hover:text-slate-600 dark:hover:text-white">
+<span class="material-symbols-outlined text-xl">filter_list</span>
+</button>
+</div>
+<div class="flex-1 overflow-y-auto p-4 space-y-4">
+<!-- Comment Item 1 -->
+<div class="bg-slate-50 dark:bg-[#1b2a38] p-3 rounded-lg border border-primary/30 relative">
+<div class="flex items-center gap-2 mb-2">
+<div class="size-5 rounded-full bg-primary text-[10px] text-white flex items-center justify-center font-bold">1</div>
+<span class="text-xs font-bold">Contrast Check</span>
+<span class="text-[10px] text-slate-400 ml-auto">2m ago</span>
+</div>
+<p class="text-xs text-slate-600 dark:text-slate-400">Heading color doesn't meet AA accessibility guidelines on this background.</p>
+</div>
+<!-- Comment Item 2 -->
+<div class="bg-slate-50 dark:bg-[#1b2a38] p-3 rounded-lg border border-slate-200 dark:border-[#233648]">
+<div class="flex items-center gap-2 mb-2">
+<div class="size-5 rounded-full bg-primary text-[10px] text-white flex items-center justify-center font-bold">2</div>
+<span class="text-xs font-bold">Asset Quality</span>
+<span class="text-[10px] text-slate-400 ml-auto">10m ago</span>
+</div>
+<p class="text-xs text-slate-600 dark:text-slate-400">The hero image looks slightly pixelated. Please re-export in @2x.</p>
+</div>
+<!-- Comment Item 3 -->
+<div class="bg-slate-50 dark:bg-[#1b2a38] p-3 rounded-lg border border-slate-200 dark:border-[#233648]">
+<div class="flex items-center gap-2 mb-2">
+<div class="size-5 rounded-full bg-primary text-[10px] text-white flex items-center justify-center font-bold">3</div>
+<span class="text-xs font-bold">Internal Note</span>
+<span class="text-[10px] text-slate-400 ml-auto">1h ago</span>
+</div>
+<p class="text-xs text-slate-600 dark:text-slate-400 italic">"Check if the CTA alignment matches the mobile breakpoint specs."</p>
+</div>
+</div>
+<div class="p-4 border-t border-slate-200 dark:border-[#233648]">
+<div class="flex items-center gap-2">
+<input class="w-full bg-slate-100 dark:bg-[#233648] border-none rounded-lg text-xs py-2 focus:ring-1 focus:ring-primary" placeholder="Add a general note..." type="text"/>
+<button class="bg-primary text-white p-2 rounded-lg shadow-sm hover:brightness-110">
+<span class="material-symbols-outlined text-sm">send</span>
+</button>
+</div>
+</div>
+</aside>
+</section>
+</main>
+<!-- Bottom Action Bar -->
+<footer class="bg-white dark:bg-background-dark border-t border-slate-200 dark:border-[#233648] p-4 px-10 flex items-center justify-between z-20">
+<div class="flex items-center gap-8">
+<div class="flex flex-col">
+<span class="text-[10px] text-slate-500 uppercase font-bold tracking-widest">Designer</span>
+<div class="flex items-center gap-2">
+<div class="size-6 rounded-full bg-slate-300" data-alt="Designer profile thumbnail" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuCsWBhBkWcXnSeqzkQU9dzvePkHRulQO29NV2EoWmhfG3c4qkjUSA7OthLFBw6y4PzEHmnH53UtufwU-85MGU9cASpreTUYgECPEkvtPWls1ihiTCIlW7EYPEQhTvt-ejLqw0bO9oE80bYj8_S3b87YETwQdAe718LJZJzNE21PBFcdcTXKPEveNq1vJUkQntbKwCP7TzPCip9WpVuR2onWLyglyqkfbyTjBOsxkAimaCwv5T6VBTqdfNQ5t6TWnWX4ECOw6gIES10"); background-size: cover;'></div>
+<span class="text-sm font-semibold">Jordan Smith</span>
+</div>
+</div>
+<div class="h-8 w-px bg-slate-200 dark:bg-[#233648]"></div>
+<div class="flex flex-col">
+<span class="text-[10px] text-slate-500 uppercase font-bold tracking-widest">Time Spent</span>
+<span class="text-sm font-semibold">14h 20m</span>
+</div>
+</div>
+<div class="flex items-center gap-4">
+<button class="flex items-center gap-2 px-5 py-2.5 rounded-lg text-sm font-bold text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-[#233648] transition-colors border border-slate-200 dark:border-[#233648]">
+<span class="material-symbols-outlined text-xl">speaker_notes</span>
+                Internal Note to Designer
+            </button>
+<button class="flex items-center gap-2 px-5 py-2.5 rounded-lg text-sm font-bold text-white bg-amber-600 hover:bg-amber-700 transition-colors shadow-lg shadow-amber-900/20">
+<span class="material-symbols-outlined text-xl">assignment_return</span>
+                Reject for Rework
+            </button>
+<button class="flex items-center gap-2 px-8 py-2.5 rounded-lg text-sm font-bold text-white bg-primary hover:brightness-110 transition-all shadow-lg shadow-primary/30">
+<span class="material-symbols-outlined text-xl">verified</span>
+                Approve &amp; Send to Client
+            </button>
+</div>
+</footer>
+</body></html>
