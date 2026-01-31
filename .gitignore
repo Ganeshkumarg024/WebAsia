@@ -24,6 +24,18 @@ build/
 *.swo
 *~
 
+
+*.pdf
+*.mp4
+*.mov
+*.zip
+*.log
+.env
+node_modules/
+dist/
+build/
+
+
 # OS
 .DS_Store
 Thumbs.db
