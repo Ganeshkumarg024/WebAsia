@@ -8,37 +8,30 @@ yarn.lock
 
 # Environment variables
 .env
-.env.local
-.env.production
-.env.development
+.env.*
+!.env.example
 
 # Build outputs
 dist/
 build/
 *.log
 
-# IDE
+# IDE / Editor
 .vscode/
 .idea/
 *.swp
 *.swo
 *~
 
+# OS
+.DS_Store
+Thumbs.db
 
+# Media / Documents (do not commit)
 *.pdf
 *.mp4
 *.mov
 *.zip
-*.log
-.env
-node_modules/
-dist/
-build/
-
-
-# OS
-.DS_Store
-Thumbs.db
 
 # Testing
 coverage/
@@ -53,5 +46,5 @@ tmp/
 *.sqlite
 *.db
 
-# Uploads (local development)
+# Uploads (local only)
 uploads/
