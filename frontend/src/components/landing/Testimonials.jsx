@@ -1,31 +1,34 @@
 import { motion } from 'framer-motion';
 import { useInView } from 'react-intersection-observer';
 
+import { useEffect } from 'react';
+import useTestimonialStore from '../../store/testimonialStore';
+
 const Testimonials = () => {
+    const { publicTestimonials, fetchPublicTestimonials, isLoading } = useTestimonialStore();
     const [ref, inView] = useInView({
         triggerOnce: true,
         threshold: 0.1,
     });
 
-    const testimonials = [
+    useEffect(() => {
+        fetchPublicTestimonials();
+    }, []);
+
+    // Combine real testimonials with placeholders if empty (for initial look)
+    const displayTestimonials = publicTestimonials.length > 0 ? publicTestimonials : [
         {
-            name: 'Rajesh Kumar',
-            role: 'CEO, TechStart India',
-            image: '👨‍💼',
+            user: { firstName: 'Rajesh', lastName: 'Kumar', photoUrl: null },
             content: 'WebAsia transformed our brand identity completely. The unlimited revisions meant we got exactly what we wanted. Best investment we\'ve made!',
             rating: 5,
         },
         {
-            name: 'Priya Sharma',
-            role: 'Marketing Director, GrowthCo',
-            image: '👩‍💼',
+            user: { firstName: 'Priya', lastName: 'Sharma', photoUrl: null },
             content: 'The turnaround time is incredible! We get professional designs in 24-48 hours. Our social media has never looked better.',
             rating: 5,
         },
         {
-            name: 'Amit Patel',
-            role: 'Founder, StartupHub',
-            image: '👨‍💻',
+            user: { firstName: 'Amit', lastName: 'Patel', photoUrl: null },
             content: 'Having a dedicated designer who understands our brand has been game-changing. The flat monthly fee saves us thousands compared to hiring.',
             rating: 5,
         },
@@ -53,16 +56,16 @@ const Testimonials = () => {
                 </motion.div>
 
                 <div className="grid md:grid-cols-3 gap-8 max-w-6xl mx-auto">
-                    {testimonials.map((testimonial, index) => (
+                    {displayTestimonials.map((testimonial, index) => (
                         <motion.div
                             key={index}
                             initial={{ opacity: 0, y: 30 }}
                             animate={inView ? { opacity: 1, y: 0 } : {}}
                             transition={{ duration: 0.6, delay: index * 0.2 }}
-                            className="glass-card p-8 card-3d"
+                            className="bg-white/80 backdrop-blur-md p-8 rounded-[2.5rem] border border-white/20 shadow-xl shadow-purple-500/5 hover:-translate-y-2 transition-transform h-full flex flex-col"
                         >
                             <div className="flex items-center mb-4">
-                                {[...Array(testimonial.rating)].map((_, i) => (
+                                {[...Array(testimonial.rating || 5)].map((_, i) => (
                                     <svg
                                         key={i}
                                         className="w-5 h-5 text-yellow-400"
@@ -73,16 +76,26 @@ const Testimonials = () => {
                                     </svg>
                                 ))}
                             </div>
-                            <p className="text-gray-700 mb-6 leading-relaxed italic">
+                            <p className="text-gray-700 mb-8 leading-relaxed italic text-lg flex-1">
                                 "{testimonial.content}"
                             </p>
-                            <div className="flex items-center">
-                                <div className="text-4xl mr-4">{testimonial.image}</div>
+                            <div className="flex items-center gap-4 mt-auto">
+                                {testimonial.user?.photoUrl ? (
+                                    <img
+                                        src={testimonial.user.photoUrl}
+                                        alt={testimonial.user.firstName}
+                                        className="w-12 h-12 rounded-2xl object-cover ring-2 ring-purple-100"
+                                    />
+                                ) : (
+                                    <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-purple-500 to-pink-500 flex items-center justify-center text-white font-bold text-xl shadow-lg ring-2 ring-purple-100">
+                                        {(testimonial.user?.firstName?.[0] || 'U')}
+                                    </div>
+                                )}
                                 <div>
-                                    <h4 className="font-bold text-gray-800">
-                                        {testimonial.name}
+                                    <h4 className="font-black text-gray-900 leading-none mb-1">
+                                        {testimonial.user?.firstName} {testimonial.user?.lastName}
                                     </h4>
-                                    <p className="text-sm text-gray-600">{testimonial.role}</p>
+                                    <p className="text-xs font-bold text-gray-400 uppercase tracking-widest">{testimonial.serviceType || 'Client'}</p>
                                 </div>
                             </div>
                         </motion.div>

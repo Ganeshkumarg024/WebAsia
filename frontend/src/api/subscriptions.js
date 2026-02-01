@@ -9,31 +9,25 @@ export const subscriptionsAPI = {
 
     // Get current subscription
     getCurrentSubscription: async () => {
-        const response = await apiClient.get('/subscriptions/current');
+        const response = await apiClient.get('/subscriptions/me');
         return response.data;
     },
 
     // Create subscription
     createSubscription: async (planId, paymentData) => {
-        const response = await apiClient.post('/subscriptions/create', { planId, ...paymentData });
+        const response = await apiClient.post('/subscriptions', { planId, ...paymentData });
         return response.data;
     },
 
-    // Upgrade subscription
-    upgradeSubscription: async (newPlanId) => {
-        const response = await apiClient.post('/subscriptions/upgrade', { planId: newPlanId });
-        return response.data;
-    },
-
-    // Downgrade subscription
-    downgradeSubscription: async (newPlanId) => {
-        const response = await apiClient.post('/subscriptions/downgrade', { planId: newPlanId });
+    // Upgrade/Downgrade subscription
+    changeSubscriptionPlan: async (newPlanId) => {
+        const response = await apiClient.put('/subscriptions/change-plan', { newPlanId });
         return response.data;
     },
 
     // Cancel subscription
-    cancelSubscription: async (reason) => {
-        const response = await apiClient.post('/subscriptions/cancel', { reason });
+    cancelSubscription: async (paymentId) => {
+        const response = await apiClient.post('/subscriptions/cancel', { paymentId });
         return response.data;
     },
 

@@ -6,7 +6,7 @@ const useAuthStore = create((set, get) => ({
     user: JSON.parse(localStorage.getItem('user')) || null,
     accessToken: localStorage.getItem('accessToken') || null,
     refreshToken: localStorage.getItem('refreshToken') || null,
-    isAuthenticated: !!localStorage.getItem('accessToken'),
+    isAuthenticated: !!localStorage.getItem('accessToken') && !!localStorage.getItem('user'),
     isLoading: false,
     error: null,
 

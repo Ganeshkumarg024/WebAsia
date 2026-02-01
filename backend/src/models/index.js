@@ -11,6 +11,8 @@ import Referral from './Referral.js';
 import Testimonial from './Testimonial.js';
 import Payment from './Payment.js';
 import RequestActivity from './RequestActivity.js';
+import BrandAsset from './BrandAsset.js';
+import FinancialLog from './FinancialLog.js';
 
 // User associations
 User.hasMany(Subscription, { foreignKey: 'userId', as: 'subscriptions' });
@@ -24,6 +26,8 @@ User.hasOne(Affiliate, { foreignKey: 'userId', as: 'affiliate' });
 User.hasMany(Testimonial, { foreignKey: 'userId', as: 'testimonials' });
 User.hasMany(Payment, { foreignKey: 'userId', as: 'payments' });
 User.hasMany(RequestActivity, { foreignKey: 'userId', as: 'activities' });
+User.hasMany(BrandAsset, { foreignKey: 'userId', as: 'brandAssets' });
+User.hasMany(FinancialLog, { foreignKey: 'userId', as: 'financialLogs' });
 User.belongsTo(User, { foreignKey: 'managerId', as: 'manager' });
 User.hasMany(User, { foreignKey: 'managerId', as: 'designers' });
 
@@ -51,6 +55,7 @@ File.belongsTo(Request, { foreignKey: 'requestId', as: 'request' });
 File.belongsTo(User, { foreignKey: 'uploadedBy', as: 'uploader' });
 File.belongsTo(File, { foreignKey: 'parentFileId', as: 'parentFile' });
 File.hasMany(File, { foreignKey: 'parentFileId', as: 'versions' });
+File.hasOne(BrandAsset, { foreignKey: 'fileId', as: 'brandAsset' });
 
 // Message associations
 Message.belongsTo(Request, { foreignKey: 'requestId', as: 'request' });
@@ -78,10 +83,19 @@ Testimonial.belongsTo(User, { foreignKey: 'approvedBy', as: 'approver' });
 // Payment associations
 Payment.belongsTo(User, { foreignKey: 'userId', as: 'user' });
 Payment.belongsTo(Subscription, { foreignKey: 'subscriptionId', as: 'subscription' });
+Payment.hasOne(FinancialLog, { foreignKey: 'paymentId', as: 'financialLog' });
 
 // RequestActivity associations
 RequestActivity.belongsTo(Request, { foreignKey: 'requestId', as: 'request' });
 RequestActivity.belongsTo(User, { foreignKey: 'userId', as: 'user' });
+
+// BrandAsset associations
+BrandAsset.belongsTo(User, { foreignKey: 'userId', as: 'user' });
+BrandAsset.belongsTo(File, { foreignKey: 'fileId', as: 'file' });
+
+// FinancialLog associations
+FinancialLog.belongsTo(User, { foreignKey: 'userId', as: 'user' });
+FinancialLog.belongsTo(Payment, { foreignKey: 'paymentId', as: 'payment' });
 
 // Sync database (development only)
 export const syncDatabase = async (options = {}) => {
@@ -107,5 +121,7 @@ export {
     Referral,
     Testimonial,
     Payment,
-    RequestActivity
+    RequestActivity,
+    BrandAsset,
+    FinancialLog
 };

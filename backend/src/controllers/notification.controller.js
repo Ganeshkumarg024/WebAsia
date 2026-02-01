@@ -216,7 +216,7 @@ export const notifyUser = async (userId, type, title, message, relatedId, relate
 
         // Emit socket event
         if (io) {
-            io.to(`user_${userId}`).emit('new_notification', notification);
+            io.to(`user_${userId}`).emit('notification:new', notification);
         }
 
         return notification;

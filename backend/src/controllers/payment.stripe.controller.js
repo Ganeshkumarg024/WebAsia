@@ -1,5 +1,6 @@
 import Stripe from 'stripe';
 import config from '../config/index.js';
+import { paymentService } from '../services/payment.service.js';
 
 // Initialize Stripe
 const stripe = new Stripe(config.stripe.secretKey);
@@ -126,8 +127,17 @@ export const handleStripeWebhook = async (req, res) => {
         switch (event.type) {
             case 'checkout.session.completed':
                 const session = event.data.object;
-                console.log('Checkout completed:', session.id);
-                // TODO: Create subscription in database
+                await paymentService.handleSuccessfulPayment({
+                    userId: session.metadata.userId,
+                    planId: session.metadata.planId,
+                    amount: session.amount_total / 100,
+                    currency: session.currency,
+                    gateway: 'stripe',
+                    gatewayOrderId: session.id,
+                    gatewayPaymentId: session.payment_intent || session.subscription,
+                    paymentMethod: 'card', // For Stripe checkout defaults
+                    metadata: session.metadata
+                });
                 break;
 
             case 'customer.subscription.created':
@@ -137,14 +147,12 @@ export const handleStripeWebhook = async (req, res) => {
 
             case 'customer.subscription.updated':
                 const updatedSubscription = event.data.object;
-                console.log('Subscription updated:', updatedSubscription.id);
-                // TODO: Update subscription status
+                // You might handle plan changes here if initiated from Stripe dashboard
                 break;
 
             case 'customer.subscription.deleted':
                 const deletedSubscription = event.data.object;
-                console.log('Subscription deleted:', deletedSubscription.id);
-                // TODO: Cancel subscription in database
+                await paymentService.handleSubscriptionCancellation(null, deletedSubscription.id);
                 break;
 
             case 'invoice.payment_succeeded':

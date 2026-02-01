@@ -6,6 +6,8 @@ import morgan from 'morgan';
 import cookieParser from 'cookie-parser';
 import { createServer } from 'http';
 import { Server } from 'socket.io';
+import path from 'path';
+import { fileURLToPath } from 'url';
 import config from './config/index.js';
 import { testConnection } from './config/database.js';
 import { connectRedis } from './config/redis.js';
@@ -16,6 +18,8 @@ import authRoutes from './routes/auth.routes.js';
 import userRoutes from './routes/user.routes.js';
 import subscriptionPlanRoutes from './routes/subscriptionPlan.routes.js';
 import subscriptionRoutes from './routes/subscription.routes.js';
+import affiliateRoutes from './routes/affiliate.routes.js';
+import testimonialRoutes from './routes/testimonial.routes.js';
 import paymentRoutes from './routes/payment.routes.js';
 import requestRoutes from './routes/request.routes.js';
 import managerRoutes from './routes/manager.routes.js';
@@ -25,6 +29,8 @@ import messageRoutes from './routes/message.routes.js';
 import notificationRoutes from './routes/notification.routes.js';
 import adminRoutes from './routes/admin.routes.js';
 import clientRoutes from './routes/client.routes.js';
+import brandAssetRoutes from './routes/brandAsset.routes.js';
+import { streamFile } from './controllers/file.controller.js'; // For public thumbnails if needed
 
 // Import socket handlers
 import { setupSocketHandlers } from './socket/handlers.js';
@@ -47,6 +53,11 @@ app.use(morgan('dev')); // HTTP request logger
 app.use(express.json({ limit: '10mb' }));
 app.use(express.urlencoded({ extended: true, limit: '10mb' }));
 app.use(cookieParser());
+
+// Serve static files from local storage (Public Access - Use with caution)
+// Note: Core files are served via secure stream route /api/files/stream/:id
+const uploadsPath = path.resolve(process.cwd(), config.storage.localPath);
+app.use('/uploads', express.static(uploadsPath));
 
 // CORS configuration
 app.use(cors({
@@ -79,6 +90,8 @@ app.use('/api/auth', authRoutes);
 app.use('/api/users', userRoutes);
 app.use('/api/subscription-plans', subscriptionPlanRoutes);
 app.use('/api/subscriptions', subscriptionRoutes);
+app.use('/api/affiliate', affiliateRoutes);
+app.use('/api/testimonials', testimonialRoutes);
 app.use('/api/payments', paymentRoutes);
 app.use('/api/requests', requestRoutes);
 app.use('/api/manager', managerRoutes);
@@ -88,6 +101,7 @@ app.use('/api/messages', messageRoutes);
 app.use('/api/notifications', notificationRoutes);
 app.use('/api/admin', adminRoutes);
 app.use('/api/client', clientRoutes);
+app.use('/api/brand-assets', brandAssetRoutes);
 
 // 404 handler
 app.use((req, res) => {

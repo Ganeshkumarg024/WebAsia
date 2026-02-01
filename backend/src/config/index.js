@@ -41,6 +41,13 @@ export default {
     s3Bucket: process.env.AWS_S3_BUCKET || 'webasia-files'
   },
 
+  // Storage Configuration
+  storage: {
+    driver: process.env.STORAGE_DRIVER || 'local', // 'local' or 's3'
+    localPath: process.env.STORAGE_LOCAL_PATH || 'uploads',
+    baseUrl: process.env.STORAGE_BASE_URL || 'http://localhost:3000/uploads'
+  },
+
   // Razorpay Configuration
   razorpay: {
     keyId: process.env.RAZORPAY_KEY_ID || '',

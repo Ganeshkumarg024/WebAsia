@@ -1,6 +1,7 @@
 import Razorpay from 'razorpay';
 import crypto from 'crypto';
 import config from '../config/index.js';
+import { paymentService } from '../services/payment.service.js';
 
 // Initialize Razorpay
 const razorpay = new Razorpay({
@@ -120,15 +121,29 @@ export const handleRazorpayWebhook = async (req, res) => {
 
         switch (event) {
             case 'payment.captured':
-                // Handle successful payment
-                console.log('Payment captured:', payload.payment.entity.id);
-                // TODO: Update subscription status
+                await paymentService.handleSuccessfulPayment({
+                    userId: payload.payment.entity.notes.userId,
+                    planId: payload.payment.entity.notes.planId,
+                    amount: payload.payment.entity.amount / 100,
+                    currency: payload.payment.entity.currency,
+                    gateway: 'razorpay',
+                    gatewayOrderId: payload.payment.entity.order_id,
+                    gatewayPaymentId: payload.payment.entity.id,
+                    gatewaySignature: webhookSignature,
+                    paymentMethod: payload.payment.entity.method,
+                    metadata: payload.payment.entity.notes
+                });
                 break;
 
             case 'payment.failed':
-                // Handle failed payment
-                console.log('Payment failed:', payload.payment.entity.id);
-                // TODO: Update subscription status
+                await paymentService.handleFailedPayment({
+                    userId: payload.payment.entity.notes.userId,
+                    gatewayOrderId: payload.payment.entity.order_id,
+                    gatewayPaymentId: payload.payment.entity.id,
+                    failureReason: payload.payment.entity.error_description,
+                    gateway: 'razorpay',
+                    amount: payload.payment.entity.amount / 100
+                });
                 break;
 
             case 'subscription.charged':

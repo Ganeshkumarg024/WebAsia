@@ -1,5 +1,7 @@
 import { File, Request, User } from '../models/index.js';
-import { uploadToS3, getSignedDownloadUrl, deleteFromS3 } from '../utils/s3.js';
+import { uploadFile as storageUploadFile, getDownloadUrl, deleteFile as deleteFromStorage, getFileStream, scanForViruses } from '../utils/storage.js';
+import path from 'path';
+import fs from 'fs';
 
 export const uploadFile = async (req, res) => {
     try {
@@ -44,22 +46,35 @@ export const uploadFile = async (req, res) => {
             });
         }
 
-        // Upload to S3
+        // Virus Scan
+        const scanResults = await scanForViruses(req.file.buffer);
+        if (!scanResults.isSafe) {
+            return res.status(400).json({
+                success: false,
+                error: {
+                    code: 'MALICIOUS_FILE',
+                    message: scanResults.message
+                }
+            });
+        }
+
+        // Upload to Storage
         const folder = `requests/${requestId}/${fileType}`;
-        const s3Data = await uploadToS3(req.file, folder);
+        const storageData = await storageUploadFile(req.file, folder, true); // true for generateThumb
 
         // Create file record
         const file = await File.create({
             requestId,
             uploadedBy: req.user.id,
-            fileName: s3Data.fileName,
-            originalName: s3Data.originalName,
+            fileName: storageData.fileName,
+            originalName: storageData.originalName,
             fileType,
-            mimeType: s3Data.mimeType,
-            fileSize: s3Data.fileSize,
-            s3Key: s3Data.s3Key,
-            s3Bucket: s3Data.s3Bucket,
-            s3Url: s3Data.s3Url,
+            mimeType: storageData.mimeType,
+            fileSize: storageData.fileSize,
+            s3Key: storageData.storageKey,
+            s3Bucket: storageData.storageBucket || 'local',
+            s3Url: storageData.url,
+            thumbnailUrl: storageData.thumbnailUrl,
             metadata: {
                 uploadedByRole: req.user.role,
                 uploadedAt: new Date()
@@ -126,22 +141,27 @@ export const uploadMultipleFiles = async (req, res) => {
             });
         }
 
-        // Upload all files
+        // Virus Scan and Upload all files
         const folder = `requests/${requestId}/${fileType}`;
         const uploadPromises = req.files.map(async (file) => {
-            const s3Data = await uploadToS3(file, folder);
+            // Scan
+            const scanResults = await scanForViruses(file.buffer);
+            if (!scanResults.isSafe) throw new Error(`File ${file.originalname} failed virus scan`);
+
+            const storageData = await storageUploadFile(file, folder, true);
 
             return File.create({
                 requestId,
                 uploadedBy: req.user.id,
-                fileName: s3Data.fileName,
-                originalName: s3Data.originalName,
+                fileName: storageData.fileName,
+                originalName: storageData.originalName,
                 fileType,
-                mimeType: s3Data.mimeType,
-                fileSize: s3Data.fileSize,
-                s3Key: s3Data.s3Key,
-                s3Bucket: s3Data.s3Bucket,
-                s3Url: s3Data.s3Url,
+                mimeType: storageData.mimeType,
+                fileSize: storageData.fileSize,
+                s3Key: storageData.storageKey,
+                s3Bucket: storageData.storageBucket || 'local',
+                s3Url: storageData.url,
+                thumbnailUrl: storageData.thumbnailUrl,
                 metadata: {
                     uploadedByRole: req.user.role,
                     uploadedAt: new Date()
@@ -217,8 +237,8 @@ export const getFileDownloadUrl = async (req, res) => {
             });
         }
 
-        // Generate signed URL (valid for 1 hour)
-        const downloadUrl = await getSignedDownloadUrl(file.s3Key, 3600);
+        // Generate signed URL (valid for 1 hour) or return secure streaming URL
+        const downloadUrl = await getDownloadUrl(file.id, file.s3Key, 3600);
 
         // Increment download count
         await file.increment('downloadCount');
@@ -275,12 +295,9 @@ export const deleteFile = async (req, res) => {
         // Soft delete (mark as inactive)
         await file.update({ isActive: false });
 
-        // Optionally delete from S3 (commented out for safety)
-        // await deleteFromS3(file.s3Key);
-
         res.json({
             success: true,
-            message: 'File deleted successfully'
+            message: 'File de-activated successfully'
         });
     } catch (error) {
         console.error('Delete file error:', error);
@@ -288,8 +305,54 @@ export const deleteFile = async (req, res) => {
             success: false,
             error: {
                 code: 'SERVER_ERROR',
-                message: 'File deletion failed'
+                message: 'Failed to delete file'
             }
+        });
+    }
+};
+
+/**
+ * Stream a local file securely after checking permissions
+ */
+export const streamFile = async (req, res) => {
+    try {
+        const { id } = req.params;
+        const file = await File.findByPk(id, {
+            include: [{ model: Request, as: 'request' }]
+        });
+
+        if (!file) {
+            return res.status(404).json({
+                success: false,
+                error: { code: 'NOT_FOUND', message: 'File not found' }
+            });
+        }
+
+        // Permission check
+        const isOwner = file.uploadedBy === req.user.id;
+        const isAdminOrManager = ['admin', 'manager'].includes(req.user.role);
+        const isAssignedDesigner = file.request && file.request.assignedDesignerId === req.user.id;
+        const isClient = file.request && file.request.clientId === req.user.id;
+
+        if (!isOwner && !isAdminOrManager && !isAssignedDesigner && !isClient) {
+            return res.status(403).json({
+                success: false,
+                error: { code: 'FORBIDDEN', message: 'Access denied' }
+            });
+        }
+
+        const filePath = await getFileStream(file.s3Key);
+
+        // Use Content-Disposition to force download and preserve filename
+        res.setHeader('Content-Disposition', `attachment; filename="${file.originalName}"`);
+        res.setHeader('Content-Type', file.mimeType);
+
+        res.sendFile(filePath);
+    } catch (error) {
+        console.error('Stream file error:', error);
+        res.status(500).json({
+            success: false,
+            error: { code: 'SERVER_ERROR', message: 'Streaming failed' }
         });
     }
 };

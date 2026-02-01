@@ -1,6 +1,7 @@
 import socketClient, { SOCKET_EVENTS } from './client';
 import useNotificationStore from '../store/notificationStore';
 import useRequestStore from '../store/requestStore';
+import useMessageStore from '../store/messageStore';
 
 // Initialize socket connection with auth token
 export const initializeSocket = (token) => {
@@ -22,6 +23,22 @@ const setupSocketListeners = () => {
                 icon: '/assets/mascot.png',
             });
         }
+    });
+
+    // Message events
+    socketClient.on(SOCKET_EVENTS.MESSAGE_NEW, (message) => {
+        const { addMessage } = useMessageStore.getState();
+        addMessage(message);
+    });
+
+    socketClient.on(SOCKET_EVENTS.TYPING_START, (data) => {
+        const { setTyping } = useMessageStore.getState();
+        setTyping(data.requestId, data.userId, true);
+    });
+
+    socketClient.on(SOCKET_EVENTS.TYPING_STOP, (data) => {
+        const { setTyping } = useMessageStore.getState();
+        setTyping(data.requestId, data.userId, false);
     });
 
     // Request events
@@ -51,14 +68,9 @@ const setupSocketListeners = () => {
         });
     });
 
-    socketClient.on(SOCKET_EVENTS.REQUEST_ASSIGNED, (data) => {
-        console.log('Request assigned:', data);
-        // Refresh requests if needed
-    });
-
-    socketClient.on(SOCKET_EVENTS.REQUEST_COMPLETED, (data) => {
-        console.log('Request completed:', data);
-        // Show completion notification
+    socketClient.on(SOCKET_EVENTS.USER_STATUS, (data) => {
+        // Here you could update user status in a userStore if you have one
+        console.log('User status changed:', data);
     });
 };
 

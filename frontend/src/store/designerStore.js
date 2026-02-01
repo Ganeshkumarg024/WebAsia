@@ -59,11 +59,13 @@ const useDesignerStore = create((set, get) => ({
                 currentTask: data.data,
                 isLoading: false,
             });
+            return data.data;
         } catch (error) {
             set({
                 error: error.message || 'Failed to fetch task',
                 isLoading: false,
             });
+            return null;
         }
     },
 

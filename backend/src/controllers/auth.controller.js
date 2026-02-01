@@ -17,7 +17,7 @@ export const register = async (req, res) => {
             });
         }
 
-        const { email, password, firstName, lastName, phone, role = 'client' } = req.body;
+        const { email, password, firstName, lastName, phone, role = 'client', referralCode } = req.body;
 
         // Check if user already exists
         const existingUser = await User.findOne({ where: { email } });
@@ -34,13 +34,23 @@ export const register = async (req, res) => {
         // Create user
         const user = await User.create({
             email,
-            passwordHash: password, // Will be hashed by beforeCreate hook
+            password, // Original field name from req.body, hooks handle hashing
             firstName,
             lastName,
             phone,
             role,
-            status: 'pending' // Requires email verification
+            status: 'active' // For testing/simplicity, using active. In real app, 'pending' + email verification
         });
+
+        // 3. Handle Affiliate Referral
+        if (referralCode) {
+            try {
+                const { affiliateService } = await import('../services/affiliate.service.js');
+                await affiliateService.assignReferral(user.id, referralCode);
+            } catch (err) {
+                console.error('Failed to assign referral:', err);
+            }
+        }
 
         // Generate tokens
         const tokens = generateTokenPair(user);

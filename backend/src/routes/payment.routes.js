@@ -11,6 +11,10 @@ import {
     cancelStripeSubscription,
     handleStripeWebhook
 } from '../controllers/payment.stripe.controller.js';
+import {
+    getPaymentHistory,
+    getPaymentById
+} from '../controllers/payment.controller.js';
 import { authenticate } from '../middleware/auth.middleware.js';
 
 const router = express.Router();
@@ -45,5 +49,9 @@ router.post('/stripe/cancel-subscription', authenticate, [
 ], cancelStripeSubscription);
 
 router.post('/stripe/webhook', express.raw({ type: 'application/json' }), handleStripeWebhook);
+
+// Generic payment routes
+router.get('/', authenticate, getPaymentHistory);
+router.get('/:id', authenticate, getPaymentById);
 
 export default router;

@@ -53,7 +53,7 @@ export const sendMessage = async (req, res) => {
 
         // Emit socket event
         const io = req.app.get('io');
-        io.to(`request_${requestId}`).emit('new_message', newMessage);
+        io.to(`request_${requestId}`).emit('message:new', newMessage);
 
         res.status(201).json({
             success: true,

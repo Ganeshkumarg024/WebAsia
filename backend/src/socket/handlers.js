@@ -40,23 +40,23 @@ export const setupSocketHandlers = (io) => {
         });
 
         // Typing indicator
-        socket.on('typing_start', ({ requestId }) => {
-            socket.to(`request_${requestId}`).emit('user_typing', {
+        socket.on('typing:start', ({ requestId }) => {
+            socket.to(`request_${requestId}`).emit('typing:start', {
                 userId: socket.userId,
                 requestId
             });
         });
 
-        socket.on('typing_stop', ({ requestId }) => {
-            socket.to(`request_${requestId}`).emit('user_stopped_typing', {
+        socket.on('typing:stop', ({ requestId }) => {
+            socket.to(`request_${requestId}`).emit('typing:stop', {
                 userId: socket.userId,
                 requestId
             });
         });
 
         // Online status
-        socket.on('status_update', (status) => {
-            io.emit('user_status_changed', {
+        socket.on('status:update', (status) => {
+            io.emit('user:status', {
                 userId: socket.userId,
                 status
             });
@@ -65,7 +65,7 @@ export const setupSocketHandlers = (io) => {
         // Disconnect
         socket.on('disconnect', () => {
             console.log(`❌ User disconnected: ${socket.userId}`);
-            io.emit('user_status_changed', {
+            io.emit('user:status', {
                 userId: socket.userId,
                 status: 'offline'
             });

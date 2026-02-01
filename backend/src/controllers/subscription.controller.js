@@ -1,5 +1,6 @@
 import { Subscription, SubscriptionPlan, User } from '../models/index.js';
 import { Op } from 'sequelize';
+import { paymentService } from '../services/payment.service.js';
 
 export const getUserSubscription = async (req, res) => {
     try {
@@ -35,70 +36,23 @@ export const getUserSubscription = async (req, res) => {
 
 export const createSubscription = async (req, res) => {
     try {
-        const { planId, paymentId, paymentMethod } = req.body;
+        const { planId, paymentId, paymentMethod, amount, currency } = req.body;
 
-        // Check if user already has an active subscription
-        const existingSubscription = await Subscription.findOne({
-            where: {
-                userId: req.user.id,
-                status: 'active'
-            }
-        });
-
-        if (existingSubscription) {
-            return res.status(409).json({
-                success: false,
-                error: {
-                    code: 'CONFLICT',
-                    message: 'User already has an active subscription'
-                }
-            });
-        }
-
-        // Get plan details
-        const plan = await SubscriptionPlan.findByPk(planId);
-        if (!plan) {
-            return res.status(404).json({
-                success: false,
-                error: {
-                    code: 'NOT_FOUND',
-                    message: 'Subscription plan not found'
-                }
-            });
-        }
-
-        // Calculate dates
-        const startDate = new Date();
-        const endDate = calculateEndDate(startDate, plan.duration);
-        const nextBillingDate = new Date(endDate);
-        const creditsResetDate = calculateCreditsResetDate(startDate, plan.duration);
-
-        // Create subscription
-        const subscription = await Subscription.create({
+        const result = await paymentService.handleSuccessfulPayment({
             userId: req.user.id,
-            planId: plan.id,
-            status: 'active',
-            startDate,
-            endDate,
-            nextBillingDate,
-            autoRenew: true,
-            graphicsCreditsRemaining: plan.monthlyGraphicsCredits,
-            videoCreditsRemaining: plan.monthlyVideoCredits,
-            webCreditsRemaining: plan.monthlyWebCredits,
-            creditsResetDate,
-            paymentMethod,
-            paymentId
-        });
-
-        // Load plan details
-        await subscription.reload({
-            include: [{ model: SubscriptionPlan, as: 'plan' }]
+            planId,
+            amount: amount || 0,
+            currency: currency || 'INR',
+            gateway: 'manual', // or appropriate gateway
+            gatewayPaymentId: paymentId,
+            paymentMethod: paymentMethod || 'offline',
+            metadata: { source: 'manual_creation' }
         });
 
         res.status(201).json({
             success: true,
             message: 'Subscription created successfully',
-            data: subscription
+            data: result.subscription
         });
     } catch (error) {
         console.error('Create subscription error:', error);
@@ -106,7 +60,7 @@ export const createSubscription = async (req, res) => {
             success: false,
             error: {
                 code: 'SERVER_ERROR',
-                message: 'Failed to create subscription'
+                message: error.message || 'Failed to create subscription'
             }
         });
     }
@@ -114,36 +68,22 @@ export const createSubscription = async (req, res) => {
 
 export const cancelSubscription = async (req, res) => {
     try {
-        const { reason } = req.body;
+        const result = await paymentService.handleSubscriptionCancellation(null, req.body.paymentId);
 
-        const subscription = await Subscription.findOne({
-            where: {
-                userId: req.user.id,
-                status: 'active'
-            }
-        });
-
-        if (!subscription) {
+        if (!result) {
             return res.status(404).json({
                 success: false,
                 error: {
                     code: 'NOT_FOUND',
-                    message: 'No active subscription found'
+                    message: 'Active subscription not found'
                 }
             });
         }
 
-        await subscription.update({
-            status: 'cancelled',
-            autoRenew: false,
-            cancelledAt: new Date(),
-            cancellationReason: reason
-        });
-
         res.json({
             success: true,
             message: 'Subscription cancelled successfully',
-            data: subscription
+            data: result
         });
     } catch (error) {
         console.error('Cancel subscription error:', error);
@@ -161,45 +101,7 @@ export const updateSubscriptionPlan = async (req, res) => {
     try {
         const { newPlanId } = req.body;
 
-        const subscription = await Subscription.findOne({
-            where: {
-                userId: req.user.id,
-                status: 'active'
-            }
-        });
-
-        if (!subscription) {
-            return res.status(404).json({
-                success: false,
-                error: {
-                    code: 'NOT_FOUND',
-                    message: 'No active subscription found'
-                }
-            });
-        }
-
-        const newPlan = await SubscriptionPlan.findByPk(newPlanId);
-        if (!newPlan) {
-            return res.status(404).json({
-                success: false,
-                error: {
-                    code: 'NOT_FOUND',
-                    message: 'New plan not found'
-                }
-            });
-        }
-
-        // Update subscription with new plan
-        await subscription.update({
-            planId: newPlan.id,
-            graphicsCreditsRemaining: newPlan.monthlyGraphicsCredits,
-            videoCreditsRemaining: newPlan.monthlyVideoCredits,
-            webCreditsRemaining: newPlan.monthlyWebCredits
-        });
-
-        await subscription.reload({
-            include: [{ model: SubscriptionPlan, as: 'plan' }]
-        });
+        const subscription = await paymentService.handlePlanChange(req.user.id, newPlanId);
 
         res.json({
             success: true,
@@ -212,7 +114,7 @@ export const updateSubscriptionPlan = async (req, res) => {
             success: false,
             error: {
                 code: 'SERVER_ERROR',
-                message: 'Failed to update subscription plan'
+                message: error.message || 'Failed to update subscription plan'
             }
         });
     }
@@ -250,31 +152,3 @@ export const deductCredits = async (subscriptionId, serviceType, amount = 1) => 
         throw error;
     }
 };
-
-// Helper functions
-function calculateEndDate(startDate, duration) {
-    const date = new Date(startDate);
-
-    switch (duration) {
-        case 'weekly':
-            date.setDate(date.getDate() + 7);
-            break;
-        case 'monthly':
-            date.setMonth(date.getMonth() + 1);
-            break;
-        case 'quarterly':
-            date.setMonth(date.getMonth() + 3);
-            break;
-        case 'yearly':
-            date.setFullYear(date.getFullYear() + 1);
-            break;
-        default:
-            date.setMonth(date.getMonth() + 1);
-    }
-
-    return date;
-}
-
-function calculateCreditsResetDate(startDate, duration) {
-    return calculateEndDate(startDate, duration);
-}

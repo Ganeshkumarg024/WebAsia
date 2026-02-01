@@ -32,10 +32,29 @@ const Register = () => {
     });
 
     const onSubmit = async (data) => {
-        const result = await registerUser({ ...data, role: 'client' });
+        // Retrieve referral code if exists
+        let referralCode = null;
+        const storedReferral = localStorage.getItem('wa_referral');
+        if (storedReferral) {
+            try {
+                const { code, expiry } = JSON.parse(storedReferral);
+                if (expiry > Date.now()) {
+                    referralCode = code;
+                } else {
+                    localStorage.removeItem('wa_referral');
+                }
+            } catch (err) {
+                console.error('Failed to parse referral data:', err);
+            }
+        }
+
+        const result = await registerUser({ ...data, role: 'client', referralCode });
 
         if (result.success) {
             toast.success('Registration successful!');
+            if (referralCode) {
+                localStorage.removeItem('wa_referral');
+            }
             navigate('/dashboard');
         } else {
             toast.error(result.error || 'Registration failed');

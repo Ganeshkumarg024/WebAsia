@@ -19,7 +19,13 @@ import {
     bulkUpdateRequests,
     getUnassignedDesigners,
     getRefundRequests,
-    handleRefund
+    handleRefund,
+    getTestimonials,
+    approveTestimonial,
+    rejectTestimonial,
+    getAllAffiliates,
+    updateAffiliateCommission,
+    approvePayout
 } from '../controllers/admin.controller.js';
 import { authenticate } from '../middleware/auth.middleware.js';
 import { isAdmin } from '../middleware/rbac.middleware.js';
@@ -88,5 +94,15 @@ router.get('/requests', getAdminRequests);
 router.patch('/requests/bulk', [
     body('requestIds').isArray().withMessage('Request IDs must be an array'),
 ], bulkUpdateRequests);
+
+// Testimonials
+router.get('/testimonials', getTestimonials);
+router.post('/testimonials/:id/approve', approveTestimonial);
+router.post('/testimonials/:id/reject', rejectTestimonial);
+
+// Affiliate Management
+router.get('/affiliates', getAllAffiliates);
+router.patch('/affiliates/:id/commission', updateAffiliateCommission);
+router.post('/affiliates/payouts/:id/approve', approvePayout);
 
 export default router;

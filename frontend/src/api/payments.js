@@ -1,15 +1,20 @@
 import apiClient from './client';
 
 export const paymentsAPI = {
-    // Create payment intent
-    createPayment: async (data) => {
-        const response = await apiClient.post('/payments', data);
+    // Razorpay
+    createRazorpayOrder: async (data) => {
+        const response = await apiClient.post('/payments/razorpay/create-order', data);
         return response.data;
     },
 
-    // Verify payment
-    verifyPayment: async (paymentId, paymentDetails) => {
-        const response = await apiClient.post(`/payments/${paymentId}/verify`, paymentDetails);
+    verifyRazorpayPayment: async (data) => {
+        const response = await apiClient.post('/payments/razorpay/verify', data);
+        return response.data;
+    },
+
+    // Stripe
+    createStripeCheckout: async (data) => {
+        const response = await apiClient.post('/payments/stripe/create-checkout', data);
         return response.data;
     },
 

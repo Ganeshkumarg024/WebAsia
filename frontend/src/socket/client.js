@@ -132,9 +132,10 @@ export const SOCKET_EVENTS = {
 
     // Message events
     MESSAGE_NEW: 'message:new',
-    MESSAGE_TYPING: 'message:typing',
+    TYPING_START: 'typing:start',
+    TYPING_STOP: 'typing:stop',
 
     // User events
-    USER_ONLINE: 'user:online',
-    USER_OFFLINE: 'user:offline',
+    USER_STATUS: 'user:status',
+    STATUS_UPDATE: 'status:update',
 };

@@ -4,7 +4,8 @@ import {
     uploadMultipleFiles,
     getRequestFiles,
     getFileDownloadUrl,
-    deleteFile
+    deleteFile,
+    streamFile
 } from '../controllers/file.controller.js';
 import { authenticate } from '../middleware/auth.middleware.js';
 import { uploadSingle, uploadMultiple, handleMulterError } from '../middleware/upload.middleware.js';
@@ -17,8 +18,11 @@ router.use(authenticate);
 // Upload single file
 router.post('/upload', uploadSingle('file'), handleMulterError, uploadFile);
 
-// Upload multiple files
-router.post('/upload-multiple', uploadMultiple('files', 10), handleMulterError, uploadMultipleFiles);
+// Bulk upload files for a request
+router.post('/bulk', uploadMultiple('files'), handleMulterError, uploadMultipleFiles);
+
+// Stream a file securely (Local storage proxy)
+router.get('/stream/:id', streamFile);
 
 // Get files for a request
 router.get('/request/:requestId', getRequestFiles);

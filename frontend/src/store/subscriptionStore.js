@@ -1,11 +1,11 @@
 import { create } from 'zustand';
 import { subscriptionsAPI } from '../api/subscriptions';
+import { paymentsAPI } from '../api/payments';
 
 const useSubscriptionStore = create((set, get) => ({
     plans: [],
     currentSubscription: null,
-    subscriptions: [],
-    usage: null,
+    paymentHistory: [],
     isLoading: false,
     error: null,
 
@@ -20,7 +20,7 @@ const useSubscriptionStore = create((set, get) => ({
             });
         } catch (error) {
             set({
-                error: error.response?.data?.error?.message || 'Failed to fetch plans',
+                error: error.message || 'Failed to fetch plans',
                 isLoading: false,
             });
         }
@@ -36,127 +36,79 @@ const useSubscriptionStore = create((set, get) => ({
                 isLoading: false,
             });
         } catch (error) {
-            // If no subscription, it's not an error
-            if (error.response?.status === 404) {
+            if (error.status === 404) {
                 set({ currentSubscription: null, isLoading: false });
             } else {
                 set({
-                    error: error.response?.data?.error?.message || 'Failed to fetch subscription',
+                    error: error.message || 'Failed to fetch subscription',
                     isLoading: false,
                 });
             }
         }
     },
 
-    // Fetch all subscriptions
-    fetchSubscriptions: async () => {
+    // Fetch payment history
+    fetchPaymentHistory: async () => {
         set({ isLoading: true, error: null });
         try {
-            const data = await subscriptionsAPI.getSubscriptions();
+            const data = await paymentsAPI.getPaymentHistory();
             set({
-                subscriptions: data.data,
+                paymentHistory: data.data,
                 isLoading: false,
             });
         } catch (error) {
             set({
-                error: error.response?.data?.error?.message || 'Failed to fetch subscriptions',
+                error: error.message || 'Failed to fetch payment history',
                 isLoading: false,
             });
         }
     },
 
     // Subscribe to plan
-    subscribe: async (planId, paymentMethodId) => {
+    subscribe: async (planId, paymentData) => {
         set({ isLoading: true, error: null });
         try {
-            const data = await subscriptionsAPI.subscribe(planId, paymentMethodId);
+            const data = await subscriptionsAPI.createSubscription(planId, paymentData);
             set({
                 currentSubscription: data.data,
                 isLoading: false,
             });
             return { success: true, data: data.data };
         } catch (error) {
-            const errorMessage = error.response?.data?.error?.message || 'Failed to subscribe';
-            set({ error: errorMessage, isLoading: false });
-            return { success: false, error: errorMessage };
+            set({ error: error.message, isLoading: false });
+            return { success: false, error: error.message };
+        }
+    },
+
+    // Change plan
+    changePlan: async (newPlanId) => {
+        set({ isLoading: true, error: null });
+        try {
+            const data = await subscriptionsAPI.changeSubscriptionPlan(newPlanId);
+            set({
+                currentSubscription: data.data,
+                isLoading: false,
+            });
+            return { success: true, data: data.data };
+        } catch (error) {
+            set({ error: error.message, isLoading: false });
+            return { success: false, error: error.message };
         }
     },
 
     // Cancel subscription
-    cancelSubscription: async (id, reason) => {
+    cancelSubscription: async (paymentId) => {
         set({ isLoading: true, error: null });
         try {
-            const data = await subscriptionsAPI.cancelSubscription(id, reason);
+            const data = await subscriptionsAPI.cancelSubscription(paymentId);
             set({
                 currentSubscription: data.data,
                 isLoading: false,
             });
             return { success: true };
         } catch (error) {
-            const errorMessage = error.response?.data?.error?.message || 'Failed to cancel subscription';
-            set({ error: errorMessage, isLoading: false });
-            return { success: false, error: errorMessage };
-        }
-    },
-
-    // Pause subscription
-    pauseSubscription: async (id) => {
-        set({ isLoading: true, error: null });
-        try {
-            const data = await subscriptionsAPI.pauseSubscription(id);
-            set({
-                currentSubscription: data.data,
-                isLoading: false,
-            });
-            return { success: true };
-        } catch (error) {
-            const errorMessage = error.response?.data?.error?.message || 'Failed to pause subscription';
-            set({ error: errorMessage, isLoading: false });
-            return { success: false, error: errorMessage };
-        }
-    },
-
-    // Resume subscription
-    resumeSubscription: async (id) => {
-        set({ isLoading: true, error: null });
-        try {
-            const data = await subscriptionsAPI.resumeSubscription(id);
-            set({
-                currentSubscription: data.data,
-                isLoading: false,
-            });
-            return { success: true };
-        } catch (error) {
-            const errorMessage = error.response?.data?.error?.message || 'Failed to resume subscription';
-            set({ error: errorMessage, isLoading: false });
-            return { success: false, error: errorMessage };
-        }
-    },
-
-    // Update payment method
-    updatePaymentMethod: async (id, paymentMethodId) => {
-        set({ isLoading: true, error: null });
-        try {
-            const data = await subscriptionsAPI.updatePaymentMethod(id, paymentMethodId);
-            set({
-                currentSubscription: data.data,
-                isLoading: false,
-            });
-            return { success: true };
-        } catch (error) {
-            const errorMessage = error.response?.data?.error?.message || 'Failed to update payment method';
-            set({ error: errorMessage, isLoading: false });
-            return { success: false, error: errorMessage };
-        }
-    },
-
-    // Fetch usage
-    fetchUsage: async (id) => {
-        try {
-            const data = await subscriptionsAPI.getUsage(id);
-            set({ usage: data.data });
-        } catch (error) {
-            console.error('Failed to fetch usage:', error);
+            set({ error: error.message, isLoading: false });
+            return { success: false, error: error.message };
         }
     },
 

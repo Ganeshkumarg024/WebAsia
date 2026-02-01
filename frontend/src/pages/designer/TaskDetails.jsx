@@ -13,22 +13,29 @@ import {
 } from '@heroicons/react/24/outline';
 import useDesignerStore from '../../store/designerStore';
 import useRequestStore from '../../store/requestStore';
+import useBrandAssetStore from '../../store/brandAssetStore';
 import DashboardLayout from '../../components/layout/DashboardLayout';
 import { format, formatDistanceToNow } from 'date-fns';
+import { SwatchIcon, IdentificationIcon, BookOpenIcon } from '@heroicons/react/24/outline';
 
 const TaskDetails = () => {
     const { id } = useParams();
     const navigate = useNavigate();
     const { currentTask, fetchTaskById, startTask, isLoading } = useDesignerStore();
     const { requestActivity, fetchRequestActivity } = useRequestStore();
+    const { brandAssets, fetchBrandAssets } = useBrandAssetStore();
     const [activeTab, setActiveTab] = useState('overview');
 
     useEffect(() => {
         if (id) {
-            fetchTaskById(id);
+            fetchTaskById(id).then((task) => {
+                if (task?.clientId) {
+                    fetchBrandAssets(task.clientId);
+                }
+            });
             fetchRequestActivity(id);
         }
-    }, [id, fetchTaskById, fetchRequestActivity]);
+    }, [id, fetchTaskById, fetchRequestActivity, fetchBrandAssets]);
 
     const handleStartTask = async () => {
         const result = await startTask(id);
@@ -55,6 +62,7 @@ const TaskDetails = () => {
 
     const tabs = [
         { id: 'overview', label: 'Overview', icon: DocumentTextIcon },
+        { id: 'brand', label: 'Brand Assets', icon: SwatchIcon },
         { id: 'files', label: 'Files', icon: PhotoIcon },
         { id: 'messages', label: 'Messages', icon: ChatBubbleLeftIcon },
         { id: 'activity', label: 'Activity', icon: ClipboardDocumentListIcon }
@@ -178,8 +186,8 @@ const TaskDetails = () => {
                                     key={tab.id}
                                     onClick={() => setActiveTab(tab.id)}
                                     className={`flex items-center gap-2 px-4 py-3 font-bold rounded-t-2xl transition-all ${activeTab === tab.id
-                                            ? 'bg-blue-50 text-blue-600 border-b-2 border-blue-600'
-                                            : 'text-gray-500 hover:text-gray-900'
+                                        ? 'bg-blue-50 text-blue-600 border-b-2 border-blue-600'
+                                        : 'text-gray-500 hover:text-gray-900'
                                         }`}
                                 >
                                     <tab.icon className="w-5 h-5" />
@@ -208,6 +216,111 @@ const TaskDetails = () => {
                                                 {JSON.stringify(currentTask.specifications, null, 2)}
                                             </pre>
                                         </div>
+                                    </div>
+                                )}
+                            </div>
+                        )}
+
+                        {/* Brand Assets Tab */}
+                        {activeTab === 'brand' && (
+                            <div className="space-y-8">
+                                {brandAssets.length > 0 ? (
+                                    <>
+                                        {/* Logos */}
+                                        {brandAssets.filter(a => a.type === 'logo').length > 0 && (
+                                            <div>
+                                                <h3 className="text-lg font-black text-gray-900 mb-4 flex items-center gap-2">
+                                                    <IdentificationIcon className="w-5 h-5 text-blue-600" />
+                                                    <span>Logos</span>
+                                                </h3>
+                                                <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                                                    {brandAssets.filter(a => a.type === 'logo').map((asset) => (
+                                                        <div key={asset.id} className="bg-gray-50 rounded-2xl p-6 border border-gray-100 group hover:border-blue-200 transition-all">
+                                                            {asset.file && (
+                                                                <div className="aspect-video rounded-xl bg-white flex items-center justify-center p-4 mb-4 border border-gray-100 overflow-hidden">
+                                                                    <img
+                                                                        src={asset.file.thumbnailUrl || asset.file.s3Url}
+                                                                        alt={asset.name}
+                                                                        className="max-w-full max-h-full object-contain group-hover:scale-105 transition-transform"
+                                                                    />
+                                                                </div>
+                                                            )}
+                                                            <p className="font-bold text-gray-900">{asset.name}</p>
+                                                            <p className="text-xs text-gray-500 mt-1">{asset.description}</p>
+                                                        </div>
+                                                    ))}
+                                                </div>
+                                            </div>
+                                        )}
+
+                                        {/* Color Palettes */}
+                                        {brandAssets.filter(a => a.type === 'color_palette').length > 0 && (
+                                            <div>
+                                                <h3 className="text-lg font-black text-gray-900 mb-4 flex items-center gap-2">
+                                                    <SwatchIcon className="w-5 h-5 text-blue-600" />
+                                                    <span>Color Palette</span>
+                                                </h3>
+                                                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                                    {brandAssets.filter(a => a.type === 'color_palette').map((asset) => (
+                                                        <div key={asset.id} className="bg-gray-50 rounded-2xl p-6 border border-gray-100">
+                                                            <p className="font-bold text-gray-900 mb-4">{asset.name}</p>
+                                                            <div className="flex flex-wrap gap-4">
+                                                                {asset.value?.colors?.map((color, idx) => (
+                                                                    <div key={idx} className="flex flex-col items-center gap-2">
+                                                                        <div
+                                                                            className="w-12 h-12 rounded-xl shadow-sm border border-black/5"
+                                                                            style={{ backgroundColor: color.hex }}
+                                                                        ></div>
+                                                                        <span className="text-[10px] font-bold text-gray-500 font-mono uppercase">{color.hex || color}</span>
+                                                                    </div>
+                                                                ))}
+                                                            </div>
+                                                        </div>
+                                                    ))}
+                                                </div>
+                                            </div>
+                                        )}
+
+                                        {/* Guidelines & Others */}
+                                        {brandAssets.filter(a => ['brand_guidelines', 'typography', 'other'].includes(a.type)).length > 0 && (
+                                            <div>
+                                                <h3 className="text-lg font-black text-gray-900 mb-4 flex items-center gap-2">
+                                                    <BookOpenIcon className="w-5 h-5 text-blue-600" />
+                                                    <span>Guidelines & Resources</span>
+                                                </h3>
+                                                <div className="space-y-4">
+                                                    {brandAssets.filter(a => ['brand_guidelines', 'typography', 'other'].includes(a.type)).map((asset) => (
+                                                        <div key={asset.id} className="bg-gray-50 rounded-2xl p-4 border border-gray-100 flex items-center justify-between">
+                                                            <div className="flex items-center gap-4">
+                                                                <div className="w-10 h-10 bg-white rounded-xl flex items-center justify-center border border-gray-100">
+                                                                    <DocumentTextIcon className="w-5 h-5 text-gray-400" />
+                                                                </div>
+                                                                <div>
+                                                                    <p className="font-bold text-gray-900">{asset.name}</p>
+                                                                    <p className="text-xs text-gray-500">{asset.description}</p>
+                                                                </div>
+                                                            </div>
+                                                            {asset.file && (
+                                                                <a
+                                                                    href={asset.file.s3Url}
+                                                                    target="_blank"
+                                                                    rel="noopener noreferrer"
+                                                                    className="px-4 py-2 bg-white border border-gray-100 rounded-xl text-xs font-bold text-blue-600 hover:bg-blue-50 transition-all"
+                                                                >
+                                                                    Download
+                                                                </a>
+                                                            )}
+                                                        </div>
+                                                    ))}
+                                                </div>
+                                            </div>
+                                        )}
+                                    </>
+                                ) : (
+                                    <div className="text-center py-20">
+                                        <SwatchIcon className="w-16 h-16 text-gray-200 mx-auto mb-4" />
+                                        <p className="text-gray-500 font-semibold uppercase tracking-widest text-xs">No brand assets found for this client</p>
+                                        <p className="text-gray-400 text-[11px] mt-2">Ask the client or manager to upload brand materials.</p>
                                     </div>
                                 )}
                             </div>

@@ -3,46 +3,47 @@ import config from '../config/index.js';
 
 // Create transporter
 const transporter = nodemailer.createTransport({
-    host: config.email.host,
-    port: config.email.port,
-    secure: config.email.secure,
-    auth: {
-        user: config.email.user,
-        pass: config.email.password
-    }
+  host: config.email.host,
+  port: config.email.port,
+  secure: config.email.secure,
+  auth: {
+    user: config.email.user,
+    pass: config.email.password
+  }
 });
 
 // Verify transporter
-transporter.verify((error, success) => {
-    if (error) {
-        console.error('❌ Email transporter error:', error);
-    } else {
-        console.log('✅ Email server is ready');
-    }
-});
+if (process.env.NODE_ENV !== 'test') {
+  transporter.verify()
+    .then(() => console.log('✅ Email server is ready'))
+    .catch(error => {
+      console.error('❌ Email transporter error (likely auth or connection):', error.message);
+      console.log('⚠️ Emails will not be sent, but server will continue to run.');
+    });
+}
 
 export const sendEmail = async (to, subject, html, text = null) => {
-    try {
-        const mailOptions = {
-            from: `${config.email.fromName} <${config.email.fromEmail}>`,
-            to,
-            subject,
-            html,
-            text: text || html.replace(/<[^>]*>/g, '') // Strip HTML for text version
-        };
+  try {
+    const mailOptions = {
+      from: `${config.email.fromName} <${config.email.fromEmail}>`,
+      to,
+      subject,
+      html,
+      text: text || html.replace(/<[^>]*>/g, '') // Strip HTML for text version
+    };
 
-        const info = await transporter.sendMail(mailOptions);
-        console.log('✅ Email sent:', info.messageId);
-        return info;
-    } catch (error) {
-        console.error('❌ Email send error:', error);
-        throw error;
-    }
+    const info = await transporter.sendMail(mailOptions);
+    console.log('✅ Email sent:', info.messageId);
+    return info;
+  } catch (error) {
+    console.error('❌ Email send error:', error);
+    throw error;
+  }
 };
 
 export const sendWelcomeEmail = async (user) => {
-    const subject = 'Welcome to WebAsia Creative Services!';
-    const html = `
+  const subject = 'Welcome to WebAsia Creative Services!';
+  const html = `
     <!DOCTYPE html>
     <html>
     <head>
@@ -81,13 +82,13 @@ export const sendWelcomeEmail = async (user) => {
     </html>
   `;
 
-    return sendEmail(user.email, subject, html);
+  return sendEmail(user.email, subject, html);
 };
 
 export const sendPasswordResetEmail = async (user, resetToken) => {
-    const resetUrl = `${config.frontendUrl}/reset-password?token=${resetToken}`;
-    const subject = 'Password Reset Request';
-    const html = `
+  const resetUrl = `${config.frontendUrl}/reset-password?token=${resetToken}`;
+  const subject = 'Password Reset Request';
+  const html = `
     <!DOCTYPE html>
     <html>
     <head>
@@ -122,13 +123,13 @@ export const sendPasswordResetEmail = async (user, resetToken) => {
     </html>
   `;
 
-    return sendEmail(user.email, subject, html);
+  return sendEmail(user.email, subject, html);
 };
 
 export const sendEmailVerification = async (user, verificationToken) => {
-    const verificationUrl = `${config.frontendUrl}/verify-email?token=${verificationToken}`;
-    const subject = 'Verify Your Email Address';
-    const html = `
+  const verificationUrl = `${config.frontendUrl}/verify-email?token=${verificationToken}`;
+  const subject = 'Verify Your Email Address';
+  const html = `
     <!DOCTYPE html>
     <html>
     <head>
@@ -159,12 +160,12 @@ export const sendEmailVerification = async (user, verificationToken) => {
     </html>
   `;
 
-    return sendEmail(user.email, subject, html);
+  return sendEmail(user.email, subject, html);
 };
 
 export const sendRequestAssignedEmail = async (designer, request, client) => {
-    const subject = 'New Request Assigned to You';
-    const html = `
+  const subject = 'New Request Assigned to You';
+  const html = `
     <!DOCTYPE html>
     <html>
     <head>
@@ -199,12 +200,12 @@ export const sendRequestAssignedEmail = async (designer, request, client) => {
     </html>
   `;
 
-    return sendEmail(designer.email, subject, html);
+  return sendEmail(designer.email, subject, html);
 };
 
 export const sendRequestCompletedEmail = async (client, request) => {
-    const subject = 'Your Request is Complete!';
-    const html = `
+  const subject = 'Your Request is Complete!';
+  const html = `
     <!DOCTYPE html>
     <html>
     <head>
@@ -234,14 +235,14 @@ export const sendRequestCompletedEmail = async (client, request) => {
     </html>
   `;
 
-    return sendEmail(client.email, subject, html);
+  return sendEmail(client.email, subject, html);
 };
 
 export default {
-    sendEmail,
-    sendWelcomeEmail,
-    sendPasswordResetEmail,
-    sendEmailVerification,
-    sendRequestAssignedEmail,
-    sendRequestCompletedEmail
+  sendEmail,
+  sendWelcomeEmail,
+  sendPasswordResetEmail,
+  sendEmailVerification,
+  sendRequestAssignedEmail,
+  sendRequestCompletedEmail
 };

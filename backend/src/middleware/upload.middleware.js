@@ -1,5 +1,5 @@
 import multer from 'multer';
-import { getAllowedMimeTypes } from '../utils/s3.js';
+import { getAllowedMimeTypes } from '../utils/storage.js';
 
 // Configure multer for memory storage
 const storage = multer.memoryStorage();

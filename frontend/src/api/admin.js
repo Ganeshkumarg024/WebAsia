@@ -69,6 +69,11 @@ export const adminAPI = {
     },
 
     // Subscription Plans Management
+    getPlan: async (id) => {
+        const response = await apiClient.get(`/admin/plans/${id}`);
+        return response.data;
+    },
+
     createPlan: async (planData) => {
         const response = await apiClient.post('/admin/plans', planData);
         return response.data;
@@ -126,8 +131,13 @@ export const adminAPI = {
         return response.data;
     },
 
-    handleRefund: async (id, action) => {
-        const response = await apiClient.post(`/admin/financials/refunds/${id}/${action}`);
+    getRefundRequests: async () => {
+        const response = await apiClient.get('/admin/financials/refunds');
+        return response.data;
+    },
+
+    handleRefund: async (id, actionData) => {
+        const response = await apiClient.post(`/admin/financials/refunds/${id}`, actionData);
         return response.data;
     },
 
@@ -155,6 +165,22 @@ export const adminAPI = {
 
     bulkUpdateRequests: async (updateData) => {
         const response = await apiClient.patch('/admin/requests/bulk', updateData);
+        return response.data;
+    },
+
+    // Testimonials
+    getTestimonials: async (status = 'pending') => {
+        const response = await apiClient.get('/admin/testimonials', { params: { status } });
+        return response.data;
+    },
+
+    approveTestimonial: async (id) => {
+        const response = await apiClient.post(`/admin/testimonials/${id}/approve`);
+        return response.data;
+    },
+
+    rejectTestimonial: async (id) => {
+        const response = await apiClient.post(`/admin/testimonials/${id}/reject`);
         return response.data;
     },
 

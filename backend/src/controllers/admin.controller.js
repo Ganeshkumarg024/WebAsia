@@ -1,4 +1,83 @@
-import { User, Subscription, Request, SubscriptionPlan } from '../models/index.js';
+import { User, Subscription, Request, SubscriptionPlan, Message, Payment, Testimonial, Affiliate, FinancialLog, Referral } from '../models/index.js';
+
+// ... (existing code)
+
+// Affiliate Management
+export const getAllAffiliates = async (req, res) => {
+    try {
+        const { status, search, limit = 50, offset = 0 } = req.query;
+        const where = {};
+        if (status) where.status = status;
+
+        const affiliates = await Affiliate.findAll({
+            where,
+            include: [{ model: User, as: 'user', attributes: ['firstName', 'lastName', 'email'] }],
+            limit: parseInt(limit),
+            offset: parseInt(offset),
+            order: [['createdAt', 'DESC']]
+        });
+
+        res.json({ success: true, data: affiliates });
+    } catch (error) {
+        console.error('Get all affiliates error:', error);
+        res.status(500).json({ success: false, error: { message: 'Failed to fetch affiliates' } });
+    }
+};
+
+export const updateAffiliateCommission = async (req, res) => {
+    try {
+        const { id } = req.params;
+        const { commissionRate } = req.body;
+
+        const affiliate = await Affiliate.findByPk(id);
+        if (!affiliate) return res.status(404).json({ success: false, error: { message: 'Affiliate not found' } });
+
+        await affiliate.update({ commissionRate });
+
+        res.json({ success: true, message: 'Commission rate updated successfully', data: affiliate });
+    } catch (error) {
+        console.error('Update commission error:', error);
+        res.status(500).json({ success: false, error: { message: 'Failed to update commission rate' } });
+    }
+};
+
+export const approvePayout = async (req, res) => {
+    try {
+        const { id } = req.params; // This is the FinancialLog ID
+        const { status, transactionId, adminNotes } = req.body; // status: 'completed' or 'cancelled'
+
+        const log = await FinancialLog.findByPk(id);
+        if (!log || log.type !== 'payout') {
+            return res.status(404).json({ success: false, error: { message: 'Payout request not found' } });
+        }
+
+        const t = await FinancialLog.sequelize.transaction();
+        try {
+            await log.update({
+                status: status || 'completed',
+                metadata: { ...log.metadata, transactionId, adminNotes },
+                completedAt: status === 'completed' ? new Date() : null
+            }, { transaction: t });
+
+            if (status === 'completed') {
+                const affiliate = await Affiliate.findOne({ where: { userId: log.userId }, transaction: t });
+                if (affiliate) {
+                    await affiliate.decrement('pendingEarnings', { by: log.amount, transaction: t });
+                    await affiliate.increment('paidEarnings', { by: log.amount, transaction: t });
+                }
+            }
+
+            await t.commit();
+            res.json({ success: true, message: `Payout ${status} successfully` });
+        } catch (err) {
+            await t.rollback();
+            throw err;
+        }
+    } catch (error) {
+        console.error('Approve payout error:', error);
+        res.status(500).json({ success: false, error: { message: 'Failed to process payout' } });
+    }
+};
 import { Op } from 'sequelize';
 import bcrypt from 'bcryptjs';
 
@@ -788,6 +867,93 @@ export const handleRefund = async (req, res) => {
             error: {
                 code: 'SERVER_ERROR',
                 message: 'Failed to process refund'
+            }
+        });
+    }
+};
+
+export const getTestimonials = async (req, res) => {
+    try {
+        const { status = 'pending' } = req.query;
+        const testimonials = await Testimonial.findAll({
+            where: { status },
+            include: [
+                { model: User, as: 'user', attributes: ['id', 'firstName', 'lastName', 'email', 'role'] }
+            ],
+            order: [['createdAt', 'DESC']]
+        });
+
+        res.json({
+            success: true,
+            data: testimonials
+        });
+    } catch (error) {
+        console.error('Get testimonials error:', error);
+        res.status(500).json({
+            success: false,
+            error: {
+                code: 'SERVER_ERROR',
+                message: 'Failed to fetch testimonials'
+            }
+        });
+    }
+};
+
+export const approveTestimonial = async (req, res) => {
+    try {
+        const { id } = req.params;
+        const testimonial = await Testimonial.findByPk(id);
+
+        if (!testimonial) {
+            return res.status(404).json({
+                success: false,
+                error: { code: 'NOT_FOUND', message: 'Testimonial not found' }
+            });
+        }
+
+        await testimonial.update({ status: 'approved', approvedBy: req.user.id });
+
+        res.json({
+            success: true,
+            message: 'Testimonial approved successfully'
+        });
+    } catch (error) {
+        console.error('Approve testimonial error:', error);
+        res.status(500).json({
+            success: false,
+            error: {
+                code: 'SERVER_ERROR',
+                message: 'Failed to approve testimonial'
+            }
+        });
+    }
+};
+
+export const rejectTestimonial = async (req, res) => {
+    try {
+        const { id } = req.params;
+        const testimonial = await Testimonial.findByPk(id);
+
+        if (!testimonial) {
+            return res.status(404).json({
+                success: false,
+                error: { code: 'NOT_FOUND', message: 'Testimonial not found' }
+            });
+        }
+
+        await testimonial.update({ status: 'rejected' });
+
+        res.json({
+            success: true,
+            message: 'Testimonial rejected successfully'
+        });
+    } catch (error) {
+        console.error('Reject testimonial error:', error);
+        res.status(500).json({
+            success: false,
+            error: {
+                code: 'SERVER_ERROR',
+                message: 'Failed to reject testimonial'
             }
         });
     }

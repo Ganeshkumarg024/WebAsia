@@ -3,6 +3,7 @@ import useAuthStore from './store/authStore';
 
 // Landing Page
 import LandingPage from './pages/LandingPage';
+import ReferralTracker from './components/common/ReferralTracker';
 
 // Auth Pages
 import Login from './pages/auth/Login';
@@ -18,6 +19,8 @@ import MyRequests from './pages/client/MyRequests';
 import ClientDeliveries from './pages/client/Deliveries';
 import ClientBilling from './pages/client/Billing';
 import ClientSettings from './pages/client/Settings';
+import ClientAffiliateDashboard from './pages/client/AffiliateDashboard';
+import AffiliateRegistration from './pages/client/AffiliateRegistration';
 
 // Designer Pages
 import DesignerWorkspace from './pages/designer/Workspace';
@@ -46,16 +49,46 @@ import Users from './pages/admin/Users';
 import Analytics from './pages/admin/Analytics';
 import GlobalRequests from './pages/admin/GlobalRequests';
 import TeamMapping from './pages/admin/TeamMapping';
+import Financials from './pages/admin/Financials';
+import CommHub from './pages/admin/CommHub';
+import Testimonials from './pages/admin/Testimonials';
+import GlobalRequestDetail from './pages/admin/GlobalRequestDetail';
 
 // Affiliate Pages
-import AffiliateDashboard from './pages/affiliate/Dashboard';
+import PartnerAffiliateDashboard from './pages/affiliate/Dashboard';
 import AffiliateSettings from './pages/affiliate/Settings';
 
 // Components
 import ProtectedRoute from './components/auth/ProtectedRoute';
 
+import { useEffect } from 'react';
+import { initializeSocket } from './socket';
+import useNotificationStore from './store/notificationStore';
+
+const DashboardRedirect = () => {
+    const { user } = useAuthStore();
+    if (!user) return <Navigate to="/login" />;
+
+    switch (user.role) {
+        case 'admin': return <Navigate to="/admin/dashboard" />;
+        case 'manager': return <Navigate to="/manager/dashboard" />;
+        case 'designer': return <Navigate to="/designer/dashboard" />;
+        case 'affiliate': return <Navigate to="/affiliate/dashboard" />;
+        default: return <Navigate to="/client/requests" />;
+    }
+};
+
 function App() {
-    const { isAuthenticated } = useAuthStore();
+    const { isAuthenticated, accessToken, user } = useAuthStore();
+    const { fetchUnreadCount, fetchNotifications } = useNotificationStore();
+
+    useEffect(() => {
+        if (isAuthenticated && accessToken) {
+            initializeSocket(accessToken);
+            fetchUnreadCount();
+            fetchNotifications();
+        }
+    }, [isAuthenticated, accessToken]);
 
     return (
         <Routes>
@@ -71,23 +104,17 @@ function App() {
             <Route path="/forgot-password" element={<ForgotPassword />} />
             <Route path="/reset-password" element={<ResetPassword />} />
 
-            {/* Protected Routes - Client */}
+            {/* Protected Routes - All Users */}
             <Route
                 path="/dashboard"
                 element={
-                    <ProtectedRoute roles={['client']}>
-                        <ClientDashboard />
+                    <ProtectedRoute>
+                        <DashboardRedirect />
                     </ProtectedRoute>
                 }
             />
-            <Route
-                path="/requests/create"
-                element={
-                    <ProtectedRoute roles={['client']}>
-                        <CreateRequest />
-                    </ProtectedRoute>
-                }
-            />
+
+            {/* Protected Routes - Client */}
             <Route
                 path="/client/requests"
                 element={
@@ -133,6 +160,22 @@ function App() {
                 element={
                     <ProtectedRoute roles={['client']}>
                         <ClientBilling />
+                    </ProtectedRoute>
+                }
+            />
+            <Route
+                path="/client/affiliate"
+                element={
+                    <ProtectedRoute roles={['client']}>
+                        <ClientAffiliateDashboard />
+                    </ProtectedRoute>
+                }
+            />
+            <Route
+                path="/client/affiliate/join"
+                element={
+                    <ProtectedRoute roles={['client']}>
+                        <AffiliateRegistration />
                     </ProtectedRoute>
                 }
             />
@@ -263,6 +306,30 @@ function App() {
                 }
             />
             <Route
+                path="/admin/financials"
+                element={
+                    <ProtectedRoute roles={['admin']}>
+                        <Financials />
+                    </ProtectedRoute>
+                }
+            />
+            <Route
+                path="/admin/communication"
+                element={
+                    <ProtectedRoute roles={['admin']}>
+                        <CommHub />
+                    </ProtectedRoute>
+                }
+            />
+            <Route
+                path="/admin/testimonials"
+                element={
+                    <ProtectedRoute roles={['admin']}>
+                        <Testimonials />
+                    </ProtectedRoute>
+                }
+            />
+            <Route
                 path="/admin/plans"
                 element={
                     <ProtectedRoute roles={['admin']}>
@@ -271,7 +338,7 @@ function App() {
                 }
             />
             <Route
-                path="/admin/plans/:id/edit"
+                path="/admin/plans/new"
                 element={
                     <ProtectedRoute roles={['admin']}>
                         <EditPlan />
@@ -279,26 +346,10 @@ function App() {
                 }
             />
             <Route
-                path="/admin/testimonials"
+                path="/admin/plans/:id/edit"
                 element={
                     <ProtectedRoute roles={['admin']}>
-                        <TestimonialModeration />
-                    </ProtectedRoute>
-                }
-            />
-            <Route
-                path="/admin/leads"
-                element={
-                    <ProtectedRoute roles={['admin']}>
-                        <LeadManager />
-                    </ProtectedRoute>
-                }
-            />
-            <Route
-                path="/admin/payouts"
-                element={
-                    <ProtectedRoute roles={['admin']}>
-                        <AffiliatePayouts />
+                        <EditPlan />
                     </ProtectedRoute>
                 }
             />
@@ -315,6 +366,14 @@ function App() {
                 element={
                     <ProtectedRoute roles={['admin']}>
                         <GlobalRequests />
+                    </ProtectedRoute>
+                }
+            />
+            <Route
+                path="/admin/requests/:id"
+                element={
+                    <ProtectedRoute roles={['admin']}>
+                        <GlobalRequestDetail />
                     </ProtectedRoute>
                 }
             />
@@ -336,7 +395,7 @@ function App() {
                 path="/affiliate/dashboard"
                 element={
                     <ProtectedRoute roles={['affiliate']}>
-                        <AffiliateDashboard />
+                        <PartnerAffiliateDashboard />
                     </ProtectedRoute>
                 }
             />

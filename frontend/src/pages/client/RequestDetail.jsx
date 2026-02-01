@@ -1,22 +1,49 @@
-import { useEffect, useState } from 'react';
-import { useParams, useNavigate } from 'react-router-dom';
-import { ArrowLeftIcon, ChatBubbleLeftIcon, CheckCircleIcon, XCircleIcon, PaperClipIcon, ClockIcon, UserCircleIcon, IdentificationIcon } from '@heroicons/react/24/outline';
-import DashboardLayout from '../../components/layout/DashboardLayout';
-import requestsAPI from '../../api/requests';
-import StatusBadge from '../../components/shared/StatusBadge';
-import showToast from '../../components/shared/Toast';
-import { format } from 'date-fns';
+import useMessageStore from '../../store/messageStore';
+import useTestimonialStore from '../../store/testimonialStore';
+import FeedbackForm from '../../components/client/FeedbackForm';
+import socketClient, { SOCKET_EVENTS } from '../../socket/client';
+import useAuthStore from '../../store/authStore';
 
 const RequestDetail = () => {
     const { id } = useParams();
     const navigate = useNavigate();
+    const { user } = useAuthStore();
+    const { messages, fetchMessages, sendMessage, addMessage, typingUsers, setTyping, clearMessages } = useMessageStore();
+    const { myTestimonials, fetchMyTestimonials } = useTestimonialStore();
     const [request, setRequest] = useState(null);
     const [loading, setLoading] = useState(true);
     const [revisionNote, setRevisionNote] = useState('');
+    const [isTypingLocal, setIsTypingLocal] = useState(false);
+    const [showFeedbackModal, setShowFeedbackModal] = useState(false);
 
     useEffect(() => {
-        fetchRequest();
+        const init = async () => {
+            await Promise.all([
+                fetchRequest(),
+                fetchMessages(id),
+                fetchMyTestimonials()
+            ]);
+            socketClient.emit('join_request', id);
+        };
+        init();
+
+        return () => {
+            socketClient.emit('leave_request', id);
+            clearMessages();
+        };
     }, [id]);
+
+    const handleTyping = (e) => {
+        setRevisionNote(e.target.value);
+        if (!isTypingLocal) {
+            setIsTypingLocal(true);
+            socketClient.emit('typing:start', { requestId: id });
+            setTimeout(() => {
+                setIsTypingLocal(false);
+                socketClient.emit('typing:stop', { requestId: id });
+            }, 3000);
+        }
+    };
 
     const fetchRequest = async () => {
         try {
@@ -41,21 +68,30 @@ const RequestDetail = () => {
         }
     };
 
-    const handleRequestRevision = async () => {
+    const handleSendMessage = async () => {
         if (!revisionNote.trim()) {
             showToast.error('Please provide revision notes');
             return;
         }
 
         try {
-            await requestsAPI.addRevision(id, { notes: revisionNote });
-            showToast.success('Revision requested successfully');
-            setRevisionNote('');
-            fetchRequest();
+            const success = await sendMessage({
+                requestId: id,
+                message: revisionNote,
+                messageType: 'text'
+            });
+
+            if (success) {
+                setRevisionNote('');
+                setIsTypingLocal(false);
+                socketClient.emit('typing:stop', { requestId: id });
+            }
         } catch (error) {
-            showToast.error('Failed to request revision');
+            showToast.error('Failed to send message');
         }
     };
+
+    const activeTyping = typingUsers[id]?.filter(uid => uid !== user?.id) || [];
 
     if (loading) {
         return (
@@ -91,8 +127,34 @@ const RequestDetail = () => {
         );
     }
 
+    const hasSubmittedFeedback = myTestimonials.some(t => t.requestId === id);
+    const canShowFeedback = request?.status === 'completed' && !hasSubmittedFeedback;
+
+    useEffect(() => {
+        if (canShowFeedback) {
+            const timer = setTimeout(() => setShowFeedbackModal(true), 1500);
+            return () => clearTimeout(timer);
+        }
+    }, [canShowFeedback]);
+
     return (
         <DashboardLayout breadcrumbs={['Requests', request?.title || 'Detail']}>
+            <AnimatePresence>
+                {showFeedbackModal && (
+                    <div className="fixed inset-0 z-[60] flex items-center justify-center p-4 bg-gray-900/60 backdrop-blur-sm">
+                        <FeedbackForm
+                            requestId={id}
+                            serviceType={request.category}
+                            onSuccess={() => {
+                                setShowFeedbackModal(false);
+                                fetchMyTestimonials();
+                            }}
+                            onCancel={() => setShowFeedbackModal(false)}
+                        />
+                    </div>
+                )}
+            </AnimatePresence>
+
             <div className="max-w-7xl mx-auto w-full space-y-12 animate-in fade-in slide-in-from-bottom-4 duration-700">
                 {/* Header Section */}
                 <div className="flex flex-col xl:flex-row xl:items-end justify-between gap-10">
@@ -279,50 +341,46 @@ const RequestDetail = () => {
 
                             <div className="p-6 border-b border-gray-50 flex items-center justify-between relative z-10">
                                 <h3 className="text-[10px] font-black text-gray-900 uppercase tracking-[0.2em]">Activity Matrix</h3>
-                                <div className="w-2.5 h-2.5 rounded-full bg-blue-600 animate-pulse shadow-lg shadow-blue-600/20"></div>
+                                <div className={`w-2.5 h-2.5 rounded-full ${activeTyping.length > 0 ? 'bg-green-500 animate-pulse' : 'bg-blue-600'} shadow-lg shadow-blue-600/20`}></div>
                             </div>
 
-                            <div className="flex-1 overflow-y-auto p-8 space-y-10 relative z-10 custom-scrollbar">
-                                <div className="flex justify-center">
-                                    <span className="text-[9px] font-black text-gray-400 bg-gray-50 px-4 py-2 rounded-full uppercase tracking-widest border border-gray-100">Genesis Node: October 24</span>
-                                </div>
+                            <div className="flex-1 overflow-y-auto p-8 space-y-10 relative z-10 custom-scrollbar flex flex-col-reverse">
+                                {activeTyping.length > 0 && (
+                                    <div className="flex items-center gap-2 text-[10px] text-gray-400 font-bold italic py-2">
+                                        <div className="flex gap-1">
+                                            <span className="w-1 h-1 bg-gray-400 rounded-full animate-bounce"></span>
+                                            <span className="w-1 h-1 bg-gray-400 rounded-full animate-bounce [animation-delay:0.2s]"></span>
+                                            <span className="w-1 h-1 bg-gray-400 rounded-full animate-bounce [animation-delay:0.4s]"></span>
+                                        </div>
+                                        Professional is typing...
+                                    </div>
+                                )}
 
-                                {request.comments?.length > 0 ? request.comments.map((comment, idx) => (
-                                    <div key={idx} className={`flex flex-col ${comment.author === 'me' ? 'items-end' : 'items-start'} animate-in fade-in slide-in-from-bottom-2 duration-500`}>
-                                        <div className={`px-6 py-4 rounded-[28px] max-w-[90%] text-sm font-medium leading-relaxed shadow-sm ${comment.author === 'me'
+                                {messages.map((message) => (
+                                    <div key={message.id} className={`flex flex-col ${message.senderId === user?.id ? 'items-end' : 'items-start'} animate-in fade-in slide-in-from-bottom-2 duration-500`}>
+                                        <div className={`px-6 py-4 rounded-[28px] max-w-[90%] text-sm font-medium leading-relaxed shadow-sm ${message.senderId === user?.id
                                             ? 'bg-blue-600 text-white rounded-tr-none shadow-blue-600/10'
                                             : 'bg-white text-gray-700 rounded-tl-none border border-gray-100'
                                             }`}>
-                                            {comment.text}
+                                            {message.message}
                                         </div>
-                                        <span className="text-[9px] font-black text-gray-400 mt-3 uppercase tracking-widest px-1">{comment.timestamp}</span>
+                                        <span className="text-[9px] font-black text-gray-400 mt-3 uppercase tracking-widest px-1">{format(new Date(message.createdAt), 'HH:mm')}</span>
                                     </div>
-                                )) : (
-                                    <div className="flex flex-col items-start animate-in fade-in slide-in-from-bottom-2 duration-700">
-                                        <div className="flex items-center gap-3 mb-3">
-                                            <div className="w-8 h-8 rounded-xl bg-blue-50 flex items-center justify-center text-blue-600 shadow-sm border border-blue-100">
-                                                <span className="text-xs">✨</span>
-                                            </div>
-                                            <span className="text-[10px] font-black text-gray-400 uppercase tracking-widest">Protocol Intel</span>
-                                        </div>
-                                        <div className="bg-blue-50/30 text-blue-600/80 border border-blue-100/50 px-6 py-4 rounded-[28px] rounded-tl-none text-xs font-bold max-w-[90%] leading-loose">
-                                            Handshake successful. Your creative blueprint is being analyzed. A specialized architect will manifest in your dashboard shortly.
-                                        </div>
-                                    </div>
-                                )}
+                                ))}
                             </div>
 
                             <div className="p-6 border-t border-gray-50 bg-gray-50/30 relative z-10">
                                 <div className="flex items-end gap-3 bg-white border border-gray-100 rounded-[28px] p-2 pr-4 shadow-2xl shadow-gray-200/50 focus-within:border-blue-600 transition-all">
                                     <textarea
                                         value={revisionNote}
-                                        onChange={(e) => setRevisionNote(e.target.value)}
+                                        onChange={handleTyping}
+                                        onKeyPress={(e) => e.key === 'Enter' && !e.shiftKey && (e.preventDefault(), handleSendMessage())}
                                         placeholder="Transmit signal or revision requirements..."
                                         className="bg-transparent border-none focus:ring-0 text-sm text-gray-900 font-medium flex-1 outline-none resize-none py-3 px-4 min-h-[44px] max-h-[120px]"
                                         rows="1"
                                     />
                                     <button
-                                        onClick={handleRequestRevision}
+                                        onClick={handleSendMessage}
                                         className="w-10 h-10 bg-blue-600 text-white rounded-2xl flex items-center justify-center hover:bg-blue-700 transition-all hover:scale-110 active:scale-95 disabled:opacity-20 disabled:grayscale disabled:scale-100 disabled:cursor-not-allowed shadow-xl shadow-blue-600/10 mb-1"
                                         disabled={!revisionNote.trim()}
                                     >

@@ -119,6 +119,47 @@ const useAdminStore = create((set, get) => ({
         }
     },
 
+    fetchTransactions: async (params) => {
+        set({ loading: true, error: null });
+        try {
+            const { data } = await adminAPI.getTransactions(params);
+            set({ transactions: data, loading: false });
+        } catch (error) {
+            set({ error: error.message, loading: false });
+        }
+    },
+
+    fetchRefundRequests: async () => {
+        set({ loading: true, error: null });
+        try {
+            const { data } = await adminAPI.getRefundRequests();
+            set({ refundQueue: data, loading: false });
+        } catch (error) {
+            set({ error: error.message, loading: false });
+        }
+    },
+
+    handleRefund: async (id, actionData) => {
+        set({ loading: true, error: null });
+        try {
+            await adminAPI.handleRefund(id, actionData);
+            // Refresh
+            const [transData, refundData] = await Promise.all([
+                adminAPI.getTransactions(),
+                adminAPI.getRefundRequests(),
+                adminAPI.getFinancialStats()
+            ]);
+            set({
+                transactions: transData.data,
+                refundQueue: refundData.data,
+                financialStats: (await adminAPI.getFinancialStats()).data,
+                loading: false
+            });
+        } catch (error) {
+            set({ error: error.message, loading: false });
+        }
+    },
+
     // Global Request Actions
     fetchAdminRequests: async (params) => {
         set({ loading: true, error: null });
@@ -137,6 +178,72 @@ const useAdminStore = create((set, get) => ({
             // Refresh requests
             const { data } = await adminAPI.getAdminRequests();
             set({ requests: data.requests, loading: false });
+        } catch (error) {
+            set({ error: error.message, loading: false });
+        }
+    },
+
+    fetchCommThreads: async (params) => {
+        set({ loading: true, error: null });
+        try {
+            const { data } = await adminAPI.getCommThreads(params);
+            set({ commThreads: data, loading: false });
+        } catch (error) {
+            set({ error: error.message, loading: false });
+        }
+    },
+
+    fetchCommThreadDetails: async (id) => {
+        set({ loading: true, error: null });
+        try {
+            const { data } = await adminAPI.getCommThreadDetails(id);
+            set({ selectedThread: data, loading: false });
+        } catch (error) {
+            set({ error: error.message, loading: false });
+        }
+    },
+
+    flagCommThread: async (id, reason) => {
+        set({ loading: true, error: null });
+        try {
+            await adminAPI.flagCommThread(id, reason);
+            // Refresh list
+            const { data } = await adminAPI.getCommThreads();
+            set({ commThreads: data, loading: false });
+        } catch (error) {
+            set({ error: error.message, loading: false });
+        }
+    },
+
+    fetchTestimonials: async (status) => {
+        set({ loading: true, error: null });
+        try {
+            const { data } = await adminAPI.getTestimonials(status);
+            set({ testimonials: data, loading: false });
+        } catch (error) {
+            set({ error: error.message, loading: false });
+        }
+    },
+
+    approveTestimonial: async (id) => {
+        set({ loading: true, error: null });
+        try {
+            await adminAPI.approveTestimonial(id);
+            // Refresh
+            const { data } = await adminAPI.getTestimonials('pending');
+            set({ testimonials: data, loading: false });
+        } catch (error) {
+            set({ error: error.message, loading: false });
+        }
+    },
+
+    rejectTestimonial: async (id) => {
+        set({ loading: true, error: null });
+        try {
+            await adminAPI.rejectTestimonial(id);
+            // Refresh
+            const { data } = await adminAPI.getTestimonials('pending');
+            set({ testimonials: data, loading: false });
         } catch (error) {
             set({ error: error.message, loading: false });
         }
