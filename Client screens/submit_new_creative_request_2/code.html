@@ -1,0 +1,251 @@
+<!DOCTYPE html>
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Client Referral Wallet &amp; Payout Hub | WebAsia</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#137fec",
+                        "background-light": "#f6f7f8",
+                        "background-dark": "#101922",
+                    },
+                    fontFamily: {
+                        "display": ["Inter", "sans-serif"]
+                    },
+                    borderRadius: {"DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px"},
+                },
+            },
+        }
+    </script>
+</head>
+<body class="bg-background-light dark:bg-background-dark font-display text-slate-900 dark:text-slate-100 min-h-screen">
+<header class="sticky top-0 z-50 bg-white dark:bg-slate-900 border-b border-slate-200 dark:border-slate-800 px-6 lg:px-20 py-3">
+<div class="max-w-[1200px] mx-auto flex items-center justify-between">
+<div class="flex items-center gap-3">
+<div class="bg-primary text-white p-1.5 rounded-lg">
+<span class="material-symbols-outlined block text-xl">deployed_code</span>
+</div>
+<h2 class="text-lg font-bold tracking-tight">WebAsia Creative</h2>
+</div>
+<nav class="hidden md:flex items-center gap-8">
+<a class="text-sm font-medium hover:text-primary transition-colors" href="#">Dashboard</a>
+<a class="text-sm font-medium hover:text-primary transition-colors" href="#">Requests</a>
+<a class="text-sm font-medium hover:text-primary transition-colors" href="#">Brand Assets</a>
+<a class="text-sm font-medium text-primary border-b-2 border-primary pb-1" href="#">Referrals</a>
+</nav>
+<div class="flex items-center gap-4">
+<div class="text-right hidden sm:block">
+<p class="text-xs font-semibold">Alex Thompson</p>
+<p class="text-[10px] text-slate-500">Pro Plan</p>
+</div>
+<div class="bg-slate-200 dark:bg-slate-700 rounded-full size-10 bg-cover bg-center border border-slate-200" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuBlICyHyQzuil7a1sSuCCG5q_7mFf23JLZfYcQQ45mcYLjU91zV30ofcdjA1TV0rmWKVuTUG1oTALcWkEZIA-iyTy031StiL3CZkWTWbRAbBp9boSF5J6zaQ2KBZe9aZQFyxFRpidcjFJK3Gq4-vypgpZksezGdlc_xngH0H_eFJM6mQ5NDNLBxnD0lonqX87JGLrHgb7HKt22iqWZQhEeWWhHwommXgPnl-u6ex4TLeM3Ydw9UOW_tbkOo7pwlDdotILa4ffzL8v0");'></div>
+</div>
+</div>
+</header>
+<main class="max-w-[1200px] mx-auto px-4 py-8">
+<div class="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-8">
+<div>
+<h1 class="text-3xl font-bold tracking-tight mb-2">Referral Wallet</h1>
+<p class="text-slate-500 dark:text-slate-400 text-sm">Earn 15% recurring commission for every friend you refer to WebAsia.</p>
+</div>
+<div class="bg-white dark:bg-slate-900 p-4 rounded-xl shadow-sm border border-slate-200 dark:border-slate-800 flex flex-col gap-2 min-w-[320px]">
+<span class="text-[10px] font-bold uppercase tracking-wider text-slate-400">Your Referral Link</span>
+<div class="flex gap-2">
+<div class="flex-1 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded px-3 py-2 text-sm font-mono truncate">
+                    webasia.cc/ref/alex_thompson
+                </div>
+<button class="bg-primary text-white px-4 py-2 rounded font-bold text-sm flex items-center gap-2 hover:bg-primary/90 transition-all">
+<span class="material-symbols-outlined text-sm">content_copy</span>
+                    Copy
+                </button>
+</div>
+</div>
+</div>
+<div class="grid grid-cols-1 lg:grid-cols-12 gap-8">
+<div class="lg:col-span-4 space-y-6">
+<div class="bg-primary rounded-2xl p-6 text-white shadow-xl shadow-primary/20 relative overflow-hidden">
+<div class="relative z-10">
+<p class="text-primary-100 text-xs font-bold uppercase tracking-widest opacity-80">Available Balance</p>
+<h2 class="text-4xl font-bold mt-2">₹14,500</h2>
+<div class="mt-6 grid grid-cols-2 gap-4">
+<div>
+<p class="text-[10px] uppercase opacity-60">Total Earned</p>
+<p class="font-bold">₹42,000</p>
+</div>
+<div>
+<p class="text-[10px] uppercase opacity-60">Total Paid</p>
+<p class="font-bold">₹27,500</p>
+</div>
+</div>
+</div>
+<div class="absolute -right-8 -bottom-8 opacity-10">
+<span class="material-symbols-outlined text-[140px]">account_balance_wallet</span>
+</div>
+</div>
+<div class="bg-white dark:bg-slate-900 rounded-xl border border-slate-200 dark:border-slate-800 p-6 shadow-sm">
+<h3 class="font-bold text-lg mb-4 flex items-center gap-2">
+<span class="material-symbols-outlined text-primary">payments</span>
+                    Request Payout
+                </h3>
+<form class="space-y-4">
+<div>
+<label class="block text-xs font-bold text-slate-500 uppercase mb-1">Amount to Withdraw</label>
+<div class="relative">
+<span class="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400">₹</span>
+<input class="w-full pl-8 pr-4 py-2 bg-slate-50 dark:bg-slate-800 border-slate-200 dark:border-slate-700 rounded-lg text-sm focus:ring-primary" placeholder="0.00" type="number"/>
+</div>
+</div>
+<div>
+<label class="block text-xs font-bold text-slate-500 uppercase mb-1">Payout Method</label>
+<select class="w-full px-4 py-2 bg-slate-50 dark:bg-slate-800 border-slate-200 dark:border-slate-700 rounded-lg text-sm focus:ring-primary">
+<option>UPI ID</option>
+<option>Bank Transfer (IMPS/NEFT)</option>
+</select>
+</div>
+<div>
+<label class="block text-xs font-bold text-slate-500 uppercase mb-1">Account Details</label>
+<input class="w-full px-4 py-2 bg-slate-50 dark:bg-slate-800 border-slate-200 dark:border-slate-700 rounded-lg text-sm focus:ring-primary" placeholder="alex@upi or Account No / IFSC" type="text"/>
+</div>
+<button class="w-full py-3 bg-slate-900 dark:bg-white dark:text-slate-900 text-white font-bold rounded-lg text-sm hover:opacity-90 transition-opacity mt-2" type="submit">
+                        Submit Payout Request
+                    </button>
+</form>
+</div>
+</div>
+<div class="lg:col-span-5 flex flex-col">
+<div class="bg-white dark:bg-slate-900 rounded-xl border border-slate-200 dark:border-slate-800 shadow-sm flex flex-col h-full max-h-[650px]">
+<div class="p-4 border-b border-slate-100 dark:border-slate-800 flex items-center justify-between">
+<h3 class="font-bold text-lg">Payout Activity</h3>
+<span class="px-2 py-1 bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400 text-[10px] font-bold rounded uppercase">System Live</span>
+</div>
+<div class="flex-1 overflow-y-auto p-4 space-y-6">
+<div class="flex justify-center">
+<span class="text-[10px] font-bold text-slate-400 bg-slate-100 dark:bg-slate-800 px-3 py-1 rounded-full uppercase">Yesterday</span>
+</div>
+<div class="flex flex-col items-end">
+<div class="bg-primary text-white px-4 py-2 rounded-2xl rounded-tr-none text-sm max-w-[85%]">
+                            Requested a payout of ₹10,000 to alex@upi
+                        </div>
+<span class="text-[10px] text-slate-400 mt-1">4:30 PM</span>
+</div>
+<div class="flex flex-col items-start">
+<div class="flex items-center gap-2 mb-1">
+<div class="size-6 rounded-full bg-slate-200 flex items-center justify-center overflow-hidden">
+<span class="material-symbols-outlined text-sm">support_agent</span>
+</div>
+<span class="text-[10px] font-bold text-slate-500">Admin Response</span>
+</div>
+<div class="bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 px-4 py-2 rounded-2xl rounded-tl-none text-sm max-w-[85%]">
+                            Payment of ₹10,000 processed! You should see it in your account shortly.
+                        </div>
+<div class="mt-2 w-48 rounded-lg overflow-hidden border border-slate-200 dark:border-slate-700">
+<img alt="Transaction Receipt" class="w-full h-auto" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAXuxr4cnLscTasexqUzU0boCusP-7LHSUG6kc9laTbJrBA6Re0Desib9b46J7QRNja15UXbCRByKHbele3E93J9OFen9Z8N48Wjj88gUoZ0UQCS1Sd_U0muRGYrgGIoJiHnDZ9V6MG_UUVd5ziIdCKdM48dSTyYTnh9urXXwYOtuesTLM2qasQXjmW67cT2ytvwudNzAt5Shwvb5xZXmmrABovi6ENzGQiz1h8neSB4cH1-Qy7bllZdKWiZ0fRgNB4Q7z4an4az5U"/>
+<div class="bg-white dark:bg-slate-900 p-2 text-[10px] font-medium flex items-center gap-1 border-t border-slate-100 dark:border-slate-800">
+<span class="material-symbols-outlined text-sm text-green-500">verified_user</span>
+                                receipt_49201.jpg
+                            </div>
+</div>
+<span class="text-[10px] text-slate-400 mt-1">4:45 PM</span>
+</div>
+<div class="flex justify-center">
+<span class="text-[10px] font-bold text-slate-400 bg-slate-100 dark:bg-slate-800 px-3 py-1 rounded-full uppercase">Today</span>
+</div>
+<div class="flex flex-col items-start">
+<div class="flex items-center gap-2 mb-1">
+<div class="size-6 rounded-full bg-primary/10 flex items-center justify-center text-primary">
+<span class="material-symbols-outlined text-sm">celebration</span>
+</div>
+<span class="text-[10px] font-bold text-slate-500">System Notification</span>
+</div>
+<div class="bg-blue-50 dark:bg-blue-900/20 text-blue-700 dark:text-blue-400 px-4 py-2 rounded-2xl rounded-tl-none text-sm max-w-[85%]">
+                            You earned ₹1,500 from Sarah Miller's subscription renewal!
+                        </div>
+<span class="text-[10px] text-slate-400 mt-1">10:15 AM</span>
+</div>
+</div>
+<div class="p-4 border-t border-slate-100 dark:border-slate-800">
+<div class="bg-slate-50 dark:bg-slate-800/50 rounded-lg px-4 py-2 flex items-center gap-2">
+<input class="bg-transparent border-none focus:ring-0 text-sm flex-1 outline-none" placeholder="Type a message to admin..." type="text"/>
+<button class="text-primary hover:scale-110 transition-transform">
+<span class="material-symbols-outlined">send</span>
+</button>
+</div>
+</div>
+</div>
+</div>
+<div class="lg:col-span-3">
+<div class="bg-white dark:bg-slate-900 rounded-xl border border-slate-200 dark:border-slate-800 shadow-sm overflow-hidden">
+<div class="p-4 border-b border-slate-100 dark:border-slate-800">
+<h3 class="font-bold text-sm">Referred Users (8)</h3>
+</div>
+<div class="divide-y divide-slate-100 dark:divide-slate-800">
+<div class="p-4 flex items-center gap-3">
+<div class="size-8 rounded-full bg-slate-100 dark:bg-slate-800 flex items-center justify-center text-xs font-bold text-slate-500">SM</div>
+<div class="flex-1 min-w-0">
+<p class="text-xs font-bold truncate">Sarah Miller</p>
+<p class="text-[10px] text-slate-500">Pro Plan</p>
+</div>
+<div class="flex flex-col items-end">
+<span class="size-2 rounded-full bg-green-500 mb-1"></span>
+<span class="text-[9px] font-bold text-slate-400">Active</span>
+</div>
+</div>
+<div class="p-4 flex items-center gap-3">
+<div class="size-8 rounded-full bg-slate-100 dark:bg-slate-800 flex items-center justify-center text-xs font-bold text-slate-500">JK</div>
+<div class="flex-1 min-w-0">
+<p class="text-xs font-bold truncate">James Knight</p>
+<p class="text-[10px] text-slate-500">Elite Plan</p>
+</div>
+<div class="flex flex-col items-end">
+<span class="size-2 rounded-full bg-green-500 mb-1"></span>
+<span class="text-[9px] font-bold text-slate-400">Active</span>
+</div>
+</div>
+<div class="p-4 flex items-center gap-3">
+<div class="size-8 rounded-full bg-slate-100 dark:bg-slate-800 flex items-center justify-center text-xs font-bold text-slate-500">PD</div>
+<div class="flex-1 min-w-0">
+<p class="text-xs font-bold truncate">Peter Dundas</p>
+<p class="text-[10px] text-slate-500">Basic Plan</p>
+</div>
+<div class="flex flex-col items-end">
+<span class="size-2 rounded-full bg-slate-300 dark:bg-slate-600 mb-1"></span>
+<span class="text-[9px] font-bold text-slate-400">Paused</span>
+</div>
+</div>
+<div class="p-4 flex items-center gap-3">
+<div class="size-8 rounded-full bg-slate-100 dark:bg-slate-800 flex items-center justify-center text-xs font-bold text-slate-500">LW</div>
+<div class="flex-1 min-w-0">
+<p class="text-xs font-bold truncate">Linda Wu</p>
+<p class="text-[10px] text-slate-500">Pro Plan</p>
+</div>
+<div class="flex flex-col items-end">
+<span class="size-2 rounded-full bg-green-500 mb-1"></span>
+<span class="text-[9px] font-bold text-slate-400">Active</span>
+</div>
+</div>
+</div>
+<button class="w-full py-3 text-[11px] font-bold text-slate-500 hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors uppercase tracking-wider">View All Referrals</button>
+</div>
+<div class="mt-6 p-4 rounded-xl bg-gradient-to-br from-indigo-500 to-primary text-white">
+<h4 class="font-bold text-sm mb-1 italic">Ambassador Bonus</h4>
+<p class="text-[11px] opacity-90 leading-snug">Refer 5 active Pro Plan users to get an extra ₹5,000 bonus this month!</p>
+<div class="mt-3 bg-white/20 h-1.5 rounded-full overflow-hidden">
+<div class="bg-white h-full" style="width: 60%"></div>
+</div>
+<p class="text-[9px] font-bold mt-1 text-right">3/5 Completed</p>
+</div>
+</div>
+</div>
+</main>
+<div class="fixed top-0 left-0 w-full h-full pointer-events-none -z-10 overflow-hidden">
+<div class="absolute top-[-10%] right-[-5%] w-[400px] h-[400px] rounded-full bg-primary/5 blur-[100px]"></div>
+<div class="absolute bottom-[0%] left-[-5%] w-[300px] h-[300px] rounded-full bg-primary/5 blur-[80px]"></div>
+</div>
+
+</body></html>

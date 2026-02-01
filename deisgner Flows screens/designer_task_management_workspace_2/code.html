@@ -1,0 +1,380 @@
+<!DOCTYPE html>
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Designer Assigned Clients - WebAsia</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#137fec",
+                        "background-light": "#f6f7f8",
+                        "background-dark": "#101922",
+                    },
+                    fontFamily: {
+                        "display": ["Inter"]
+                    },
+                    borderRadius: {"DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px"},
+                },
+            },
+        }
+    </script>
+<style>
+        body { font-family: 'Inter', sans-serif; }
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+    </style>
+</head>
+<body class="bg-background-light dark:bg-background-dark text-slate-900 dark:text-slate-100 min-h-screen flex flex-col">
+<header class="flex items-center justify-between whitespace-nowrap border-b border-solid border-slate-200 dark:border-[#233648] px-10 py-3 bg-white dark:bg-background-dark sticky top-0 z-50">
+<div class="flex items-center gap-8">
+<div class="flex items-center gap-4 text-primary">
+<div class="size-6">
+<svg fill="none" viewBox="0 0 48 48" xmlns="http://www.w3.org/2000/svg"><path d="M6 6H42L36 24L42 42H6L12 24L6 6Z" fill="currentColor"></path></svg>
+</div>
+<h2 class="text-slate-900 dark:text-white text-lg font-bold leading-tight tracking-[-0.015em]">WebAsia Creative</h2>
+</div>
+<label class="flex flex-col min-w-40 h-10 max-w-64">
+<div class="flex w-full flex-1 items-stretch rounded-lg h-full">
+<div class="text-slate-400 dark:text-[#92adc9] flex border-none bg-slate-100 dark:bg-[#233648] items-center justify-center pl-4 rounded-l-lg border-r-0">
+<span class="material-symbols-outlined text-xl">search</span>
+</div>
+<input class="form-input flex w-full min-w-0 flex-1 resize-none overflow-hidden rounded-lg text-slate-900 dark:text-white focus:outline-0 focus:ring-0 border-none bg-slate-100 dark:bg-[#233648] focus:border-none h-full placeholder:text-slate-400 dark:placeholder:text-[#92adc9] px-4 rounded-l-none border-l-0 pl-2 text-base font-normal leading-normal" placeholder="Search brands..."/>
+</div>
+</label>
+</div>
+<div class="flex flex-1 justify-end gap-8">
+<div class="flex items-center gap-9">
+<a class="text-slate-600 dark:text-white text-sm font-medium leading-normal hover:text-primary transition-colors" href="#">Dashboard</a>
+<a class="text-slate-600 dark:text-white text-sm font-medium leading-normal hover:text-primary transition-colors" href="#">Tasks</a>
+<a class="text-slate-600 dark:text-white text-sm font-medium leading-normal hover:text-primary transition-colors" href="#">Assets</a>
+<a class="text-primary text-sm font-bold leading-normal border-b-2 border-primary" href="#">Clients</a>
+</div>
+<div class="flex gap-2">
+<button class="flex items-center justify-center rounded-lg h-10 w-10 bg-slate-100 dark:bg-[#233648] text-slate-600 dark:text-white">
+<span class="material-symbols-outlined">notifications</span>
+</button>
+<div class="bg-center bg-no-repeat aspect-square bg-cover rounded-full size-10 border-2 border-primary" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuBKi5xIyFgYefhzOk_Uw5noVjk4ZCzxCF9C1l2aehgDmHp6y2A1_LA-fcMmR4v0qS1F04Jlg4aYPEw6DICh1UoiQ7ZdY07PiquZU6ODcgr-N4foz1qFyLgY5QXh-9DoY1jTZv-kLsNDLi9Rpk3IrlaPefm592GkHZ4ZI-XaEsII6g-ejcfRW8j1uEgMJsgB0AsZN1f_VUiFvadzl2hP3pHpxyMT4GMWCWFc4mXic9GZN9ta6u98g-AWChJmwTcCGxu_nJ4CdNaHuiE");'></div>
+</div>
+</div>
+</header>
+<div class="flex flex-1 overflow-hidden">
+<aside class="w-64 border-r border-slate-200 dark:border-[#233648] flex flex-col justify-between bg-white dark:bg-background-dark p-4 shrink-0">
+<div class="flex flex-col gap-6">
+<div class="flex flex-col px-3">
+<h1 class="text-slate-900 dark:text-white text-lg font-bold leading-normal">Alex Rivera</h1>
+<p class="text-slate-500 dark:text-[#92adc9] text-sm font-normal leading-normal">Senior Illustrator</p>
+</div>
+<div class="flex flex-col gap-1">
+<div class="flex items-center gap-3 px-3 py-2 text-slate-600 dark:text-white hover:bg-slate-100 dark:hover:bg-[#233648] rounded-lg cursor-pointer">
+<span class="material-symbols-outlined text-xl">dashboard</span>
+<p class="text-sm font-medium leading-normal">Workspace</p>
+</div>
+<div class="flex items-center gap-3 px-3 py-2 rounded-lg bg-primary text-white">
+<span class="material-symbols-outlined text-xl">group</span>
+<p class="text-sm font-medium leading-normal">My Clients</p>
+</div>
+<div class="flex items-center gap-3 px-3 py-2 text-slate-600 dark:text-white hover:bg-slate-100 dark:hover:bg-[#233648] rounded-lg cursor-pointer">
+<span class="material-symbols-outlined text-xl">assignment</span>
+<p class="text-sm font-medium leading-normal">Active Tasks</p>
+</div>
+<div class="flex items-center gap-3 px-3 py-2 text-slate-600 dark:text-white hover:bg-slate-100 dark:hover:bg-[#233648] rounded-lg cursor-pointer">
+<span class="material-symbols-outlined text-xl">history</span>
+<p class="text-sm font-medium leading-normal">Communication</p>
+</div>
+</div>
+</div>
+<div class="bg-slate-50 dark:bg-[#192633] p-4 rounded-xl border border-slate-200 dark:border-[#233648]">
+<p class="text-xs text-slate-500 dark:text-[#92adc9] mb-2">Capacity Status</p>
+<div class="w-full bg-slate-200 dark:bg-[#233648] h-1.5 rounded-full mb-2">
+<div class="bg-primary h-full rounded-full" style="width: 75%"></div>
+</div>
+<p class="text-[10px] text-slate-400">75% (6/8 Slots Used)</p>
+</div>
+</aside>
+<main class="flex-1 overflow-y-auto bg-slate-50 dark:bg-background-dark/50">
+<div class="max-w-[1200px] mx-auto p-8">
+<div class="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-8">
+<div>
+<h2 class="text-slate-900 dark:text-white text-3xl font-bold leading-tight tracking-tight">Assigned Clients</h2>
+<p class="text-slate-500 dark:text-[#92adc9] mt-1">Manage your active brand partnerships and guidelines.</p>
+</div>
+<div class="flex items-center gap-3">
+<div class="flex bg-slate-200 dark:bg-[#233648] p-1 rounded-lg">
+<button class="px-4 py-1.5 bg-white dark:bg-slate-800 rounded-md text-sm font-medium shadow-sm">All</button>
+<button class="px-4 py-1.5 text-slate-500 dark:text-[#92adc9] text-sm font-medium hover:text-slate-900 dark:hover:text-white">Retainer</button>
+<button class="px-4 py-1.5 text-slate-500 dark:text-[#92adc9] text-sm font-medium hover:text-slate-900 dark:hover:text-white">One-off</button>
+</div>
+</div>
+</div>
+<div class="flex flex-col sm:flex-row items-center justify-between gap-4 mb-6">
+<div class="relative w-full sm:w-96">
+<span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-slate-400">search</span>
+<input class="w-full pl-10 pr-4 py-2.5 bg-white dark:bg-[#192633] border border-slate-200 dark:border-[#233648] rounded-xl text-sm focus:ring-2 focus:ring-primary focus:border-transparent outline-none transition-all" placeholder="Search by company name..." type="text"/>
+</div>
+<div class="flex items-center gap-2">
+<span class="text-sm text-slate-500 dark:text-[#92adc9] mr-2">Sort by:</span>
+<select class="bg-white dark:bg-[#192633] border border-slate-200 dark:border-[#233648] rounded-lg text-sm px-3 py-2 outline-none focus:ring-1 focus:ring-primary">
+<option>Recently Active</option>
+<option>Most Tasks</option>
+<option>Company Name (A-Z)</option>
+</select>
+</div>
+</div>
+<div class="bg-white dark:bg-[#192633] rounded-xl overflow-hidden shadow-sm border border-slate-200 dark:border-[#233648]">
+<table class="w-full text-left">
+<thead class="bg-slate-50 dark:bg-[#233648]/50 text-slate-500 dark:text-[#92adc9] text-xs uppercase tracking-wider font-semibold">
+<tr>
+<th class="px-6 py-4">Brand / Company</th>
+<th class="px-6 py-4">Status</th>
+<th class="px-6 py-4">Active Tasks</th>
+<th class="px-6 py-4">Last Communication</th>
+<th class="px-6 py-4 text-right">Actions</th>
+</tr>
+</thead>
+<tbody class="divide-y divide-slate-100 dark:divide-[#233648]">
+<tr class="hover:bg-slate-50 dark:hover:bg-white/5 transition-colors group">
+<td class="px-6 py-5">
+<div class="flex items-center gap-4">
+<div class="size-12 rounded-lg bg-indigo-50 dark:bg-indigo-900/20 border border-indigo-100 dark:border-indigo-900/30 flex items-center justify-center overflow-hidden">
+<img alt="TechFlow Logo" class="size-8" src="https://lh3.googleusercontent.com/aida-public/AB6AXuD4iBxpPBFR97teRbxAAS94HUE1H5BxL0l4Rq0DfMmrlWtnHKA2mKdP7cgv8YJbYARiyvX54MGoIDp9rWba5c8xbg7MHrrKYrmvO99GGU98ZpyIFO0Dhmhw50l6y9y-C14VtqtSfR1c7AQ3ifW-SrrY13mS7D5JqUOZcYv_dgPKZZhBCqwecCr7MwMyzzABQd9dIPHcAP0UpzA-TRMF3OL3TdYBgRPDkyRmPuFVmQ8h7nw77O5LlE1jMUe5ON3pBmR3scxAqViH2rE"/>
+</div>
+<div>
+<p class="text-slate-900 dark:text-white font-bold leading-tight">TechFlow Solutions</p>
+<p class="text-slate-500 dark:text-[#92adc9] text-xs">SaaS • Enterprise Tech</p>
+</div>
+</div>
+</td>
+<td class="px-6 py-5">
+<span class="bg-blue-50 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400 text-[10px] font-bold px-2 py-0.5 rounded tracking-wide uppercase">RETAINER</span>
+</td>
+<td class="px-6 py-5">
+<div class="flex items-center gap-2">
+<span class="text-slate-900 dark:text-white font-semibold">4</span>
+<span class="text-slate-400 dark:text-[#92adc9] text-xs">active</span>
+</div>
+</td>
+<td class="px-6 py-5">
+<div class="flex flex-col">
+<span class="text-slate-700 dark:text-slate-300 text-sm">2 hours ago</span>
+<span class="text-[10px] text-slate-400">via Slack</span>
+</div>
+</td>
+<td class="px-6 py-5 text-right">
+<button class="inline-flex items-center gap-2 px-4 py-2 bg-slate-100 dark:bg-[#233648] hover:bg-primary hover:text-white dark:hover:bg-primary text-slate-700 dark:text-white text-xs font-bold rounded-lg transition-all">
+<span class="material-symbols-outlined text-lg">description</span>
+                                    View Brand Profile
+                                </button>
+</td>
+</tr>
+<tr class="hover:bg-slate-50 dark:hover:bg-white/5 transition-colors group">
+<td class="px-6 py-5">
+<div class="flex items-center gap-4">
+<div class="size-12 rounded-lg bg-amber-50 dark:bg-amber-900/20 border border-amber-100 dark:border-amber-900/30 flex items-center justify-center overflow-hidden">
+<img alt="Quantum AI Logo" class="size-8" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAgrDnk87E0AkT82WNVJsTNt6roLGkn9_fyx-tajggiE1GivzT2Lq7L3qfhCrKGgLlXt7UxHGPiJ5xRxip46N4ym3XfzpQjOHgPthxarWVO-rk0qS7SsLLefxmJDvTt3eG2T3fuunmFSherPOGSqEP4pkTMs-OTgoY7tcw6bO_SwVFPttPy6A2pxBGjRO1tOZrK7X36idy769kUtYrxDxGabkwf8JdpV3RfpfZGHt0JSD3JFL_0oDgjA32s3Fp3YYnChSqtFUWgups"/>
+</div>
+<div>
+<p class="text-slate-900 dark:text-white font-bold leading-tight">Quantum AI Research</p>
+<p class="text-slate-500 dark:text-[#92adc9] text-xs">Deep Tech • Research</p>
+</div>
+</div>
+</td>
+<td class="px-6 py-5">
+<span class="bg-blue-50 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400 text-[10px] font-bold px-2 py-0.5 rounded tracking-wide uppercase">RETAINER</span>
+</td>
+<td class="px-6 py-5">
+<div class="flex items-center gap-2">
+<span class="text-slate-900 dark:text-white font-semibold">2</span>
+<span class="text-slate-400 dark:text-[#92adc9] text-xs">active</span>
+</div>
+</td>
+<td class="px-6 py-5">
+<div class="flex flex-col">
+<span class="text-slate-700 dark:text-slate-300 text-sm">Yesterday, 4:30 PM</span>
+<span class="text-[10px] text-slate-400">via Platform Chat</span>
+</div>
+</td>
+<td class="px-6 py-5 text-right">
+<button class="inline-flex items-center gap-2 px-4 py-2 bg-slate-100 dark:bg-[#233648] hover:bg-primary hover:text-white dark:hover:bg-primary text-slate-700 dark:text-white text-xs font-bold rounded-lg transition-all">
+<span class="material-symbols-outlined text-lg">description</span>
+                                    View Brand Profile
+                                </button>
+</td>
+</tr>
+<tr class="hover:bg-slate-50 dark:hover:bg-white/5 transition-colors group">
+<td class="px-6 py-5">
+<div class="flex items-center gap-4">
+<div class="size-12 rounded-lg bg-emerald-50 dark:bg-emerald-900/20 border border-emerald-100 dark:border-emerald-900/30 flex items-center justify-center overflow-hidden">
+<img alt="HomeDeco Logo" class="size-8" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCeCXTacIhSNt8ZbZnsoYUH5TDI5SW1NDleatgEof_RV8PEkNuAb_S2J-68W_BTziDN4KwvS_8N4XmKt8uCtzu6jfBklD7epx6ta1XZxY3i3QiecUj-Of4gwkdT5WLJA9rRfhwz3snknTQzt922ovVJj78fYXFPE2DhlF40uJZsxEoPDU_CPj3qaAgzSd4UR7jHV7Puq-f4JxE8feiW9r16OleZCpiLARp03otQtzrO6HfJBT5Hf8JHFnBpYAlcM9o5fVg0jVm7kHk"/>
+</div>
+<div>
+<p class="text-slate-900 dark:text-white font-bold leading-tight">HomeDeco Ltd.</p>
+<p class="text-slate-500 dark:text-[#92adc9] text-xs">E-commerce • Lifestyle</p>
+</div>
+</div>
+</td>
+<td class="px-6 py-5">
+<span class="bg-slate-100 dark:bg-[#233648] text-slate-500 dark:text-[#92adc9] text-[10px] font-bold px-2 py-0.5 rounded tracking-wide uppercase">ONE-OFF</span>
+</td>
+<td class="px-6 py-5">
+<div class="flex items-center gap-2">
+<span class="text-slate-900 dark:text-white font-semibold">1</span>
+<span class="text-slate-400 dark:text-[#92adc9] text-xs">active</span>
+</div>
+</td>
+<td class="px-6 py-5">
+<div class="flex flex-col">
+<span class="text-slate-700 dark:text-slate-300 text-sm">3 days ago</span>
+<span class="text-[10px] text-slate-400">via Email</span>
+</div>
+</td>
+<td class="px-6 py-5 text-right">
+<button class="inline-flex items-center gap-2 px-4 py-2 bg-slate-100 dark:bg-[#233648] hover:bg-primary hover:text-white dark:hover:bg-primary text-slate-700 dark:text-white text-xs font-bold rounded-lg transition-all">
+<span class="material-symbols-outlined text-lg">description</span>
+                                    View Brand Profile
+                                </button>
+</td>
+</tr>
+<tr class="hover:bg-slate-50 dark:hover:bg-white/5 transition-colors group">
+<td class="px-6 py-5">
+<div class="flex items-center gap-4">
+<div class="size-12 rounded-lg bg-rose-50 dark:bg-rose-900/20 border border-rose-100 dark:border-rose-900/30 flex items-center justify-center overflow-hidden">
+<img alt="Swift Logo" class="size-8" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBHrTRT8uJSlIV3nyj6m4WFQpAvdYr5N4nqV1b_QGzpjArClTE2KQbgjc0imwyvyD_iUnCYSbKmqYVnPTrWdXWeff3EdtHWwre2y-z9D1jGMIK2q6PjfHJoekWntwa2iR4SEyRvy9N6vsVsWcoTzaJxpHYdrV08XyzoxFFLetAVZa9f03ObBBKIMe6OXRhqU2IFfL6xAjtTgyzfIwWN5Uhcwp_49s9ZUzd1SHS4yf_FEoD7Q7BfvjGzNAuP67qk_S6GiLGoxzvMMTQ"/>
+</div>
+<div>
+<p class="text-slate-900 dark:text-white font-bold leading-tight">SwiftDelivery</p>
+<p class="text-slate-500 dark:text-[#92adc9] text-xs">Logistics • Mobile</p>
+</div>
+</div>
+</td>
+<td class="px-6 py-5">
+<span class="bg-blue-50 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400 text-[10px] font-bold px-2 py-0.5 rounded tracking-wide uppercase">RETAINER</span>
+</td>
+<td class="px-6 py-5">
+<div class="flex items-center gap-2">
+<span class="text-slate-900 dark:text-white font-semibold">3</span>
+<span class="text-slate-400 dark:text-[#92adc9] text-xs">active</span>
+</div>
+</td>
+<td class="px-6 py-5">
+<div class="flex flex-col">
+<span class="text-slate-700 dark:text-slate-300 text-sm">Oct 24, 11:20 AM</span>
+<span class="text-[10px] text-slate-400">via Slack</span>
+</div>
+</td>
+<td class="px-6 py-5 text-right">
+<button class="inline-flex items-center gap-2 px-4 py-2 bg-slate-100 dark:bg-[#233648] hover:bg-primary hover:text-white dark:hover:bg-primary text-slate-700 dark:text-white text-xs font-bold rounded-lg transition-all">
+<span class="material-symbols-outlined text-lg">description</span>
+                                    View Brand Profile
+                                </button>
+</td>
+</tr>
+<tr class="hover:bg-slate-50 dark:hover:bg-white/5 transition-colors group">
+<td class="px-6 py-5">
+<div class="flex items-center gap-4">
+<div class="size-12 rounded-lg bg-sky-50 dark:bg-sky-900/20 border border-sky-100 dark:border-sky-900/30 flex items-center justify-center overflow-hidden">
+<img alt="DataViz Logo" class="size-8" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBbuVUlEAFhAjaz1VF2-cy599gu_FIxA4L-ksusEUgZnEdGXoZDPr7ilH_fcUQSne1hPnCTHWPuh87TXa_JHY8EsSQDLfaX1Stq8i32C62JfNdeb82t70N47kGoVQrDMNM-xoF0MTreFeFA0sfU7SQXUSYZxTud5obOu99TS8Merbw-PCMiZB_jBM6t-qx_E96t8_wRvk7uGAcR9sTZQ81VPOZgPNff8_GSjNZPKrlazLCUHRzOOdNWtGDkIO1yqve7Sn-qULtaGE0"/>
+</div>
+<div>
+<p class="text-slate-900 dark:text-white font-bold leading-tight">DataViz Inc.</p>
+<p class="text-slate-500 dark:text-[#92adc9] text-xs">Analytics • SaaS</p>
+</div>
+</div>
+</td>
+<td class="px-6 py-5">
+<span class="bg-blue-50 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400 text-[10px] font-bold px-2 py-0.5 rounded tracking-wide uppercase">RETAINER</span>
+</td>
+<td class="px-6 py-5">
+<div class="flex items-center gap-2">
+<span class="text-slate-900 dark:text-white font-semibold">0</span>
+<span class="text-slate-400 dark:text-[#92adc9] text-xs">active</span>
+</div>
+</td>
+<td class="px-6 py-5">
+<div class="flex flex-col">
+<span class="text-slate-700 dark:text-slate-300 text-sm">Oct 22, 09:15 AM</span>
+<span class="text-[10px] text-slate-400">via Platform Chat</span>
+</div>
+</td>
+<td class="px-6 py-5 text-right">
+<button class="inline-flex items-center gap-2 px-4 py-2 bg-slate-100 dark:bg-[#233648] hover:bg-primary hover:text-white dark:hover:bg-primary text-slate-700 dark:text-white text-xs font-bold rounded-lg transition-all">
+<span class="material-symbols-outlined text-lg">description</span>
+                                    View Brand Profile
+                                </button>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="mt-8 p-6 bg-white dark:bg-[#192633] rounded-xl border-2 border-dashed border-slate-200 dark:border-[#233648] flex flex-col items-center justify-center text-center">
+<span class="material-symbols-outlined text-4xl text-slate-300 dark:text-[#233648] mb-2">add_business</span>
+<p class="text-slate-900 dark:text-white font-medium">Looking for a new brand to manage?</p>
+<p class="text-slate-500 dark:text-[#92adc9] text-sm mt-1 max-w-sm">Contact your account manager to be assigned to new creative subscriptions or check the internal marketplace.</p>
+</div>
+</div>
+</main>
+<aside class="w-[380px] border-l border-slate-200 dark:border-[#233648] flex flex-col bg-white dark:bg-[#192633] shrink-0">
+<div class="p-6 border-b border-slate-200 dark:border-[#233648]">
+<h3 class="text-slate-900 dark:text-white text-xl font-bold mb-4">Client Insights</h3>
+<div class="grid grid-cols-2 gap-4">
+<div class="p-4 bg-slate-50 dark:bg-[#233648] rounded-xl">
+<p class="text-[10px] text-slate-500 dark:text-[#92adc9] uppercase font-bold mb-1">Total Assigned</p>
+<p class="text-2xl font-bold text-slate-900 dark:text-white">12</p>
+</div>
+<div class="p-4 bg-slate-50 dark:bg-[#233648] rounded-xl">
+<p class="text-[10px] text-slate-500 dark:text-[#92adc9] uppercase font-bold mb-1">Retainers</p>
+<p class="text-2xl font-bold text-primary">8</p>
+</div>
+</div>
+</div>
+<div class="flex-1 overflow-y-auto p-6">
+<h4 class="text-slate-900 dark:text-white text-sm font-bold uppercase tracking-wider mb-4">Recent Activity</h4>
+<div class="space-y-6">
+<div class="flex gap-4">
+<div class="size-8 rounded-full bg-blue-100 dark:bg-blue-900/30 flex items-center justify-center shrink-0">
+<span class="material-symbols-outlined text-primary text-lg">chat_bubble</span>
+</div>
+<div>
+<p class="text-sm text-slate-800 dark:text-slate-200"><span class="font-bold">Leo (TechFlow)</span> mentioned you in a comment.</p>
+<p class="text-xs text-slate-500 mt-1">"The new hero assets look great!"</p>
+<p class="text-[10px] text-slate-400 mt-1 uppercase">2 hours ago</p>
+</div>
+</div>
+<div class="flex gap-4">
+<div class="size-8 rounded-full bg-emerald-100 dark:bg-emerald-900/30 flex items-center justify-center shrink-0">
+<span class="material-symbols-outlined text-emerald-600 text-lg">folder_shared</span>
+</div>
+<div>
+<p class="text-sm text-slate-800 dark:text-slate-200"><span class="font-bold">HomeDeco Ltd.</span> updated their style guide.</p>
+<p class="text-xs text-slate-500 mt-1">New photography guidelines added.</p>
+<p class="text-[10px] text-slate-400 mt-1 uppercase">5 hours ago</p>
+</div>
+</div>
+<div class="flex gap-4">
+<div class="size-8 rounded-full bg-purple-100 dark:bg-purple-900/30 flex items-center justify-center shrink-0">
+<span class="material-symbols-outlined text-purple-600 text-lg">assignment_add</span>
+</div>
+<div>
+<p class="text-sm text-slate-800 dark:text-slate-200"><span class="font-bold">Quantum AI</span> submitted 2 new tasks.</p>
+<p class="text-xs text-slate-500 mt-1">Research poster series (Set B).</p>
+<p class="text-[10px] text-slate-400 mt-1 uppercase">Yesterday</p>
+</div>
+</div>
+</div>
+</div>
+<div class="p-6 border-t border-slate-200 dark:border-[#233648] bg-slate-50/50 dark:bg-background-dark">
+<button class="w-full flex items-center justify-center gap-2 bg-primary text-white h-12 rounded-lg font-bold shadow-lg shadow-primary/25 hover:bg-primary/90 transition-all">
+<span class="material-symbols-outlined">forum</span>
+                Open Global Chat
+            </button>
+</div>
+</aside>
+</div>
+
+</body></html>

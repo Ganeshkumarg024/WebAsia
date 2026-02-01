@@ -1,5 +1,5 @@
 import { useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom';
 import { DocumentTextIcon, ClockIcon, CheckCircleIcon, ArrowDownTrayIcon } from '@heroicons/react/24/outline';
 import useRequestStore from '../../store/requestStore';
 import useSubscriptionStore from '../../store/subscriptionStore';
@@ -9,222 +9,245 @@ import StatusBadge from '../../components/shared/StatusBadge';
 import ProgressBar from '../../components/shared/ProgressBar';
 import DashboardLayout from '../../components/layout/DashboardLayout';
 import { format } from 'date-fns';
+import { SparklesIcon, FolderArrowDownIcon, PencilSquareIcon, ArrowRightIcon, ChatBubbleLeftIcon, PlusIcon } from '@heroicons/react/24/outline';
 
-const ClientDashboard = () => {
+const Dashboard = () => {
     const navigate = useNavigate();
     const { user } = useAuthStore();
-    const { requests, stats, fetchRequests, fetchStats, isLoading } = useRequestStore();
+    const { requests, fetchRequests } = useRequestStore();
     const { currentSubscription, fetchCurrentSubscription } = useSubscriptionStore();
 
     useEffect(() => {
-        fetchRequests({ status: 'active', limit: 5 });
-        fetchStats();
+        fetchRequests();
         fetchCurrentSubscription();
-    }, [fetchRequests, fetchStats, fetchCurrentSubscription]);
+    }, [fetchRequests, fetchCurrentSubscription]);
 
-    const activeRequests = requests.filter(r => r.status !== 'completed' && r.status !== 'cancelled');
+    // Format stats for display
+    const statCards = [
+        {
+            title: 'Active Requests',
+            value: requests.filter(r => ['pending', 'in-progress'].includes(r.status)).length.toString().padStart(2, '0'),
+            change: '+2', // Mockup placeholder
+            icon: SparklesIcon,
+            color: 'blue'
+        },
+        {
+            title: 'Available Credits',
+            value: currentSubscription?.credits?.remaining?.toString() || '00',
+            change: 'of ' + (currentSubscription?.credits?.total || '20'),
+            icon: FolderArrowDownIcon,
+            color: 'blue'
+        }
+    ];
 
     return (
         <DashboardLayout breadcrumbs={['Dashboard', 'Overview']}>
-            {/* Header */}
-            <div className="mb-8">
-                <div className="flex items-center justify-between">
-                    <div>
-                        <h1 className="text-3xl font-bold text-white mb-2">
-                            Good morning, {user?.firstName || 'User'}
+            <div className="space-y-8 animate-in fade-in duration-700">
+                {/* Header Section */}
+                <div className="flex flex-col md:flex-row md:items-end justify-between gap-6">
+                    <div className="space-y-1">
+                        <h1 className="text-4xl font-black text-gray-900 tracking-tight">
+                            Welcome back, <span className="text-blue-600">{user?.name?.split(' ')[0] || 'Member'}</span>
                         </h1>
-                        <p className="text-gray-400">
-                            Manage your creative workflow and track your monthly usage credits here.
-                        </p>
+                        <p className="text-gray-500 font-medium">Your creative engine is running smoothly today.</p>
                     </div>
-                    <button
-                        onClick={() => navigate('/client/requests/new')}
-                        className="px-6 py-3 bg-blue-500 hover:bg-blue-600 text-white rounded-lg font-medium transition-colors flex items-center gap-2"
-                    >
-                        <span className="text-xl">+</span>
-                        Create New Request
-                    </button>
-                </div>
-            </div>
-
-            {/* Stats Grid */}
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-                <StatCard
-                    title="Active Requests"
-                    value={stats?.active || activeRequests.length.toString().padStart(2, '0')}
-                    icon={DocumentTextIcon}
-                    color="primary"
-                    loading={isLoading}
-                />
-                <div className="bg-[#151B2E] rounded-lg p-6 border border-[#1E2638]">
-                    <div className="flex items-start justify-between mb-4">
-                        <div>
-                            <p className="text-sm text-gray-400 mb-2">Credits Status</p>
-                            <p className="text-sm text-green-500 font-medium">+2 from last week</p>
-                        </div>
-                        <div className="p-3 rounded-lg bg-green-500/10 text-green-500">
-                            <CheckCircleIcon className="w-6 h-6" />
-                        </div>
+                    <div className="flex items-center gap-3">
+                        <button
+                            onClick={() => navigate('/client/requests')}
+                            className="flex items-center gap-2 px-6 py-3 bg-white border border-gray-100 rounded-2xl text-gray-900 font-bold hover:bg-gray-50 transition-all shadow-sm"
+                        >
+                            <ClockIcon className="w-5 h-5 text-blue-600" />
+                            <span>Request History</span>
+                        </button>
+                        <button
+                            onClick={() => navigate('/client/requests/new')}
+                            className="flex items-center gap-2 px-6 py-3 bg-blue-600 text-white rounded-2xl font-bold hover:bg-blue-700 transition-all shadow-lg shadow-blue-600/20"
+                        >
+                            <PlusIcon className="w-5 h-5" />
+                            <span>Create New Request</span>
+                        </button>
                     </div>
                 </div>
-                <div className="bg-[#151B2E] rounded-lg p-6 border border-[#1E2638]">
-                    <div className="flex items-center justify-between mb-2">
-                        <p className="text-sm text-gray-400">Monthly Credits Usage</p>
-                        <p className="text-sm font-medium text-white">
-                            {currentSubscription?.creditsUsed || 14} / {currentSubscription?.creditsTotal || 20} Credits
-                        </p>
-                    </div>
-                    <ProgressBar
-                        value={currentSubscription?.creditsUsed || 14}
-                        max={currentSubscription?.creditsTotal || 20}
-                        color="primary"
-                        showLabel={false}
-                    />
-                    <p className="text-xs text-gray-500 mt-2">
-                        Renewed in {currentSubscription?.daysUntilRenewal || 12} days
-                    </p>
-                </div>
-            </div>
 
-            <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-                {/* Main Content */}
-                <div className="lg:col-span-2 space-y-6">
-                    {/* Active Requests */}
-                    <div>
-                        <div className="flex items-center justify-between mb-4">
-                            <h2 className="text-xl font-bold text-white">My Active Requests</h2>
-                            <button
-                                onClick={() => navigate('/client/requests')}
-                                className="text-blue-500 hover:text-blue-400 text-sm font-medium"
-                            >
-                                View All
-                            </button>
-                        </div>
-
-                        <div className="space-y-3">
-                            {isLoading ? (
-                                <div className="bg-[#151B2E] rounded-lg p-6 border border-[#1E2638] animate-pulse">
-                                    <div className="h-4 bg-gray-700 rounded w-3/4 mb-4"></div>
-                                    <div className="h-4 bg-gray-700 rounded w-1/2"></div>
-                                </div>
-                            ) : activeRequests.length > 0 ? (
-                                activeRequests.map((request) => (
-                                    <div
-                                        key={request.id}
-                                        onClick={() => navigate(`/client/requests/${request.id}`)}
-                                        className="bg-[#151B2E] rounded-lg p-4 border border-[#1E2638] hover:border-[#2A3447] transition-colors cursor-pointer"
-                                    >
-                                        <div className="flex items-start justify-between">
-                                            <div className="flex items-start gap-3 flex-1">
-                                                <div className="p-2 bg-gray-700 rounded">
-                                                    <DocumentTextIcon className="w-5 h-5 text-gray-400" />
-                                                </div>
-                                                <div className="flex-1">
-                                                    <h3 className="text-white font-medium mb-1">{request.title}</h3>
-                                                    <p className="text-sm text-gray-400">
-                                                        {request.category} • Assigned to {request.designer?.name || 'Unassigned'}
-                                                    </p>
-                                                </div>
-                                            </div>
-                                            <div className="flex items-center gap-3">
-                                                <StatusBadge status={request.status} />
-                                                <button className="p-1 hover:bg-gray-700 rounded">
-                                                    <span className="text-gray-400">⋮</span>
-                                                </button>
-                                            </div>
+                {/* Stats & Usage Row */}
+                <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
+                    {/* Stat Cards */}
+                    <div className="lg:col-span-4 grid grid-cols-1 gap-6">
+                        {statCards.map((stat, index) => (
+                            <div key={index} className="bg-white p-8 rounded-3xl border border-gray-100 shadow-[0_8px_30px_rgb(0,0,0,0.02)] relative overflow-hidden group">
+                                <div className="absolute top-0 right-0 w-32 h-32 bg-blue-50 rounded-full -mr-16 -mt-16 group-hover:scale-110 transition-transform duration-500"></div>
+                                <div className="relative z-10 flex flex-col justify-between h-full space-y-4">
+                                    <div className="p-3 bg-blue-50 w-fit rounded-2xl">
+                                        <stat.icon className="w-6 h-6 text-blue-600" />
+                                    </div>
+                                    <div className="space-y-1">
+                                        <p className="text-[10px] font-black text-gray-400 uppercase tracking-widest">{stat.title}</p>
+                                        <div className="flex items-baseline gap-3">
+                                            <h2 className="text-5xl font-black text-gray-900 tracking-tighter">{stat.value}</h2>
+                                            <span className="text-xs font-bold text-blue-600 bg-blue-50 px-2 py-0.5 rounded-full">{stat.change}</span>
                                         </div>
                                     </div>
-                                ))
-                            ) : (
-                                <div className="bg-[#151B2E] rounded-lg p-12 border border-[#1E2638] text-center">
-                                    <DocumentTextIcon className="w-12 h-12 text-gray-600 mx-auto mb-4" />
-                                    <p className="text-gray-400 mb-4">No active requests</p>
-                                    <button
-                                        onClick={() => navigate('/client/requests/new')}
-                                        className="px-4 py-2 bg-blue-500 hover:bg-blue-600 text-white rounded-lg text-sm"
-                                    >
-                                        Create Your First Request
-                                    </button>
                                 </div>
-                            )}
-                        </div>
+                            </div>
+                        ))}
                     </div>
 
-                    {/* Recent Deliveries */}
-                    <div>
-                        <div className="flex items-center justify-between mb-4">
-                            <h2 className="text-xl font-bold text-white">Recent Deliveries</h2>
-                            <button className="text-blue-500 hover:text-blue-400 text-sm font-medium">
-                                View Full History
-                            </button>
+                    {/* Usage Tracking Card */}
+                    <div className="lg:col-span-8 bg-white p-8 rounded-3xl border border-gray-100 shadow-[0_8px_30px_rgb(0,0,0,0.02)]">
+                        <div className="flex items-center justify-between mb-10">
+                            <h3 className="text-sm font-black text-gray-900 uppercase tracking-widest">Credit Usage Tracking</h3>
+                            <div className="text-right">
+                                <p className="text-lg font-black text-gray-900 tracking-tight">
+                                    {currentSubscription?.credits?.used || '0'}<span className="text-gray-300 mx-1">/</span>{currentSubscription?.credits?.total || '20'} Credits
+                                </p>
+                            </div>
                         </div>
 
-                        <div className="space-y-3">
-                            {[
-                                { name: 'Hero-Banner-V2.p...', size: '2.4 MB', date: '2m ago', type: 'image' },
-                                { name: 'Social-Assets-Pac...', size: '42.8 MB', date: 'Yesterday', type: 'zip' },
-                            ].map((file, index) => (
+                        <div className="space-y-4">
+                            <div className="h-4 bg-gray-50 rounded-full overflow-hidden border border-gray-100">
                                 <div
-                                    key={index}
-                                    className="bg-[#151B2E] rounded-lg p-4 border border-[#1E2638] flex items-center justify-between"
-                                >
-                                    <div className="flex items-center gap-3">
-                                        <div className="w-12 h-12 bg-gradient-to-br from-orange-400 to-pink-400 rounded"></div>
+                                    className="h-full bg-blue-600 rounded-full shadow-[0_0_20px_rgba(37,99,235,0.3)] transition-all duration-1000"
+                                    style={{ width: `${(currentSubscription?.credits?.used / currentSubscription?.credits?.total) * 100 || 0}%` }}
+                                ></div>
+                            </div>
+                            <div className="flex justify-between text-[11px] font-black uppercase tracking-widest">
+                                <span className="text-gray-400">{Math.round((currentSubscription?.credits?.used / currentSubscription?.credits?.total) * 100) || 0}% of monthly allocation consumed</span>
+                                <span className="text-blue-600 underline">Next reset in 12 days</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                {/* Brand Kit Card */}
+                <div className="bg-white p-8 rounded-3xl border border-gray-100 shadow-[0_8px_30px_rgb(0,0,0,0.02)]">
+                    <div className="flex items-center justify-between mb-8">
+                        <div className="flex items-center gap-3">
+                            <div className="w-10 h-10 bg-blue-50 rounded-xl flex items-center justify-center">
+                                <SparklesIcon className="w-5 h-5 text-blue-600" />
+                            </div>
+                            <h3 className="text-sm font-black text-gray-900 uppercase tracking-widest">Brand Kit Quick Access</h3>
+                        </div>
+                        <button className="text-xs font-black text-blue-600 uppercase tracking-widest hover:underline">Edit Kit</button>
+                    </div>
+
+                    <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+                        <div className="md:col-span-2 bg-gray-50/50 rounded-2xl border border-dashed border-gray-200 p-12 flex items-center justify-center group cursor-pointer hover:border-blue-300 transition-colors">
+                            <div className="text-center space-y-2">
+                                <p className="text-2xl font-black text-gray-300 italic group-hover:text-blue-200 transition-colors">BRAND LOGO</p>
+                                <p className="text-[10px] font-black text-gray-400 uppercase tracking-[0.2em]">Primary Logo</p>
+                            </div>
+                        </div>
+
+                        <div className="space-y-6">
+                            <div className="space-y-3">
+                                <p className="text-[10px] font-black text-gray-400 uppercase tracking-widest px-1">Palette</p>
+                                <div className="flex flex-wrap gap-2">
+                                    {['#2563EB', '#10B981', '#1E293B'].map(color => (
+                                        <div key={color} className="group relative">
+                                            <div
+                                                className="w-10 h-10 rounded-xl shadow-sm border border-gray-100 ring-2 ring-transparent group-hover:ring-blue-100 transition-all"
+                                                style={{ backgroundColor: color }}
+                                            ></div>
+                                            <span className="absolute -bottom-6 left-1/2 -translate-x-1/2 text-[9px] font-black text-gray-400 opacity-0 group-hover:opacity-100 transition-opacity">{color}</span>
+                                        </div>
+                                    ))}
+                                </div>
+                            </div>
+                            <button className="w-full flex items-center justify-center gap-3 py-4 bg-blue-50 text-blue-600 rounded-2xl font-bold text-sm hover:bg-blue-100 transition-all group">
+                                <div className="p-1.5 bg-white rounded-lg shadow-sm">
+                                    <ArrowDownTrayIcon className="w-4 h-4" />
+                                </div>
+                                <span>Download Assets</span>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                {/* Bottom Row: Requests & Deliveries */}
+                <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
+                    {/* Active Requests */}
+                    <div className="lg:col-span-8 space-y-6">
+                        <div className="flex items-center justify-between">
+                            <h3 className="text-sm font-black text-gray-900 uppercase tracking-widest">Active Requests</h3>
+                            <Link to="/client/requests" className="text-xs font-black text-blue-600 uppercase tracking-widest flex items-center gap-1 hover:underline group">
+                                View all requests
+                                <ArrowRightIcon className="w-3 h-3 group-hover:translate-x-1 transition-transform" />
+                            </Link>
+                        </div>
+
+                        <div className="grid grid-cols-1 gap-4">
+                            {requests.filter(r => ['pending', 'in-progress'].includes(r.status)).slice(0, 3).map((request, index) => (
+                                <div key={index} className="bg-white p-6 rounded-3xl border border-gray-100 shadow-[0_8px_30px_rgb(0,0,0,0.01)] hover:shadow-md transition-all group flex items-center justify-between">
+                                    <div className="flex items-center gap-4">
+                                        <div className="w-12 h-12 bg-blue-50 rounded-2xl flex items-center justify-center text-blue-600 font-black">
+                                            {index + 1}
+                                        </div>
                                         <div>
-                                            <p className="text-white font-medium">{file.name}</p>
-                                            <p className="text-sm text-gray-400">{file.size} • {file.date}</p>
+                                            <h4 className="font-bold text-gray-900">{request.title}</h4>
+                                            <p className="text-xs text-gray-500 font-medium">
+                                                {request.category} • Assigned to {request.designer?.name || 'Reviewing'}
+                                            </p>
                                         </div>
                                     </div>
-                                    <button className="p-2 hover:bg-gray-700 rounded transition-colors">
-                                        <ArrowDownTrayIcon className="w-5 h-5 text-blue-500" />
-                                    </button>
+                                    <div className="flex items-center gap-4">
+                                        <span className={`px-4 py-1.5 rounded-full text-[10px] font-black uppercase tracking-widest ${request.status === 'in-progress'
+                                            ? 'bg-blue-50 text-blue-600'
+                                            : 'bg-yellow-50 text-yellow-600'
+                                            }`}>
+                                            {request.status.replace('-', ' ')}
+                                        </span>
+                                        <button className="p-2 text-gray-300 hover:text-blue-600 transition-colors">
+                                            <ChatBubbleLeftIcon className="w-5 h-5" />
+                                        </button>
+                                    </div>
                                 </div>
                             ))}
                         </div>
                     </div>
-                </div>
 
-                {/* Sidebar */}
-                <div className="space-y-6">
-                    {/* Subscription Plan */}
-                    <div className="bg-[#151B2E] rounded-lg p-6 border border-[#1E2638]">
-                        <div className="flex items-center justify-between mb-4">
-                            <h3 className="text-lg font-bold text-white">Subscription Plan</h3>
-                            <button className="p-1 hover:bg-gray-700 rounded">
-                                <CheckCircleIcon className="w-5 h-5 text-blue-500" />
-                            </button>
+                    {/* Recent Deliveries */}
+                    <div className="lg:col-span-4 space-y-6">
+                        <div className="flex items-center justify-between">
+                            <h3 className="text-sm font-black text-gray-900 uppercase tracking-widest">Recent Deliveries</h3>
                         </div>
-                        <div className="mb-4">
-                            <p className="text-xs text-gray-400 mb-1">ACTIVE TIER</p>
-                            <p className="text-xl font-bold text-white">
-                                {currentSubscription?.plan?.name || 'Professional'}
-                            </p>
-                            <p className="text-sm text-gray-400">Monthly</p>
-                        </div>
-                        <div className="space-y-2 mb-4">
-                            <div className="flex items-center justify-between text-sm">
-                                <span className="text-gray-400">Next billing date</span>
-                                <span className="text-white">
-                                    {currentSubscription?.nextBillingDate
-                                        ? format(new Date(currentSubscription.nextBillingDate), 'MMM dd, yyyy')
-                                        : 'Oct 24, 2023'
-                                    }
-                                </span>
-                            </div>
-                            <div className="flex items-center justify-between text-sm">
-                                <span className="text-gray-400">Concurrent Tasks</span>
-                                <span className="text-white">{currentSubscription?.concurrentTasks || 2} Active</span>
-                            </div>
-                        </div>
-                    </div>
 
-                    {/* Support */}
-                    <div className="bg-[#151B2E] rounded-lg p-6 border border-[#1E2638]">
-                        <h3 className="text-sm font-bold text-blue-500 mb-2">SUPPORT</h3>
-                        <p className="text-sm text-white mb-4">Need help with a request?</p>
-                        <button className="w-full px-4 py-2 bg-blue-500 hover:bg-blue-600 text-white rounded-lg text-sm font-medium transition-colors">
-                            Contact Us
-                        </button>
+                        <div className="grid grid-cols-1 gap-4">
+                            {requests.filter(r => r.status === 'completed').slice(0, 3).map((file, index) => (
+                                <div
+                                    key={index}
+                                    className="group bg-white border border-gray-100 rounded-3xl p-4 flex items-center gap-4 hover:shadow-lg hover:shadow-blue-600/5 transition-all cursor-pointer shadow-sm"
+                                >
+                                    <div
+                                        className="w-14 h-14 flex-shrink-0 bg-gray-50 rounded-2xl bg-cover bg-center overflow-hidden relative border border-gray-50"
+                                        style={{ backgroundImage: `url(${file.finalDeliveryUrl || 'https://via.placeholder.com/150'})` }}
+                                    >
+                                        <div className="absolute inset-0 bg-blue-600/10 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
+                                            <SparklesIcon className="w-5 h-5 text-blue-600" />
+                                        </div>
+                                    </div>
+                                    <div className="flex-1 min-w-0">
+                                        <p className="text-sm font-black text-gray-900 truncate">{file.title}</p>
+                                        <p className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">{file.category} • {format(new Date(file.updatedAt), 'MMM dd')}</p>
+                                    </div>
+                                    <button
+                                        onClick={(e) => {
+                                            e.stopPropagation();
+                                            window.open(file.finalDeliveryUrl, '_blank');
+                                        }}
+                                        className="p-3 bg-blue-50 text-blue-600 hover:bg-blue-600 hover:text-white rounded-2xl transition-all shadow-sm"
+                                    >
+                                        <ArrowDownTrayIcon className="w-4 h-4" />
+                                    </button>
+                                </div>
+                            ))}
+                            {requests.filter(r => r.status === 'completed').length === 0 && (
+                                <div className="bg-gray-50/50 border-2 border-dashed border-gray-200 rounded-3xl py-12 text-center">
+                                    <p className="text-xs font-black text-gray-400 uppercase tracking-widest">
+                                        No deliveries yet.
+                                    </p>
+                                </div>
+                            )}
+                        </div>
                     </div>
                 </div>
             </div>
@@ -232,4 +255,4 @@ const ClientDashboard = () => {
     );
 };
 
-export default ClientDashboard;
+export default Dashboard;

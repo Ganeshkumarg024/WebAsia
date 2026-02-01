@@ -1,0 +1,267 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Affiliate Referral Dashboard | WebAsia Creative Services</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#137fec",
+                        "background-light": "#f6f7f8",
+                        "background-dark": "#101922",
+                    },
+                    fontFamily: {
+                        "display": ["Inter", "sans-serif"]
+                    },
+                    borderRadius: {"DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px"},
+                },
+            },
+        }
+    </script>
+<style>
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+    </style>
+</head>
+<body class="bg-background-light dark:bg-background-dark text-[#0d141b] transition-colors duration-200">
+<div class="relative flex min-h-screen flex-col">
+<!-- Top Navigation -->
+<header class="sticky top-0 z-50 w-full border-b border-[#e7edf3] bg-white dark:bg-background-dark dark:border-slate-800 px-4 md:px-10 lg:px-20 py-3">
+<div class="mx-auto flex max-w-[1200px] items-center justify-between">
+<div class="flex items-center gap-3">
+<div class="flex h-8 w-8 items-center justify-center rounded-lg bg-primary text-white">
+<span class="material-symbols-outlined text-xl">bolt</span>
+</div>
+<h1 class="text-lg font-bold tracking-tight dark:text-white">WebAsia <span class="text-primary font-black">Creative</span></h1>
+</div>
+<nav class="hidden md:flex flex-1 justify-center gap-8">
+<a class="text-sm font-semibold text-primary" href="#">Dashboard</a>
+<a class="text-sm font-medium text-slate-600 hover:text-primary dark:text-slate-400" href="#">Marketing Kits</a>
+<a class="text-sm font-medium text-slate-600 hover:text-primary dark:text-slate-400" href="#">Payouts</a>
+<a class="text-sm font-medium text-slate-600 hover:text-primary dark:text-slate-400" href="#">Settings</a>
+</nav>
+<div class="flex items-center gap-4">
+<div class="flex flex-col items-end mr-2 hidden sm:flex">
+<span class="text-xs font-bold text-slate-800 dark:text-slate-200">Alex Thompson</span>
+<span class="text-[10px] text-slate-500 uppercase font-medium">Gold Partner</span>
+</div>
+<div class="h-10 w-10 overflow-hidden rounded-full border-2 border-primary/20 bg-slate-200" data-alt="Professional profile picture of the affiliate partner" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuCf3-RrijFkOXEEE-xwSseibeMpNwTHws5RLCELxoz619azTY-l4VzxavXDVJp850uxiFaNiglj_b2v1oyzBpqvk0bSjioQx_wFEFXmpg7rSfGkqzknjdGVFrZAvD0x7Nt9EdXIAlok-nYdlKiYQPlpXwrA-AloydVmGUGooGv2YdUf_9o1gIwLboxli0XUlX9r9qSy07g7HSN2xKGVFJkeBY9GmBASt8zAR3cR2Ri2CD780orRSQWRa8TW1JzecXKvVAe1KjoBNdE"); background-size: cover;'>
+</div>
+</div>
+</div>
+</header>
+<main class="flex-1 py-8 px-4 md:px-10 lg:px-20">
+<div class="mx-auto max-w-[1200px] space-y-8">
+<!-- Page Heading -->
+<div class="flex flex-col md:flex-row md:items-end justify-between gap-4">
+<div>
+<h2 class="text-3xl font-black tracking-tight text-[#0d141b] dark:text-white">Partner Dashboard</h2>
+<p class="mt-1 text-slate-600 dark:text-slate-400">Welcome back, Alex. Your referrals generated $1,240 in the last 30 days.</p>
+</div>
+<div class="flex items-center gap-2 rounded-lg bg-green-50 dark:bg-green-900/20 px-3 py-1.5 text-green-700 dark:text-green-400 text-sm font-semibold">
+<span class="material-symbols-outlined text-sm">trending_up</span>
+                        Performance up 12% this month
+                    </div>
+</div>
+<!-- Referral Link Section -->
+<div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+<div class="lg:col-span-2">
+<div class="group relative flex flex-col justify-between overflow-hidden rounded-xl border border-[#cfdbe7] dark:border-slate-800 bg-white dark:bg-slate-900 p-6 shadow-sm hover:shadow-md transition-shadow">
+<div class="flex flex-col gap-4">
+<div>
+<h3 class="text-sm font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400">Your Unique Referral Link</h3>
+<p class="mt-1 text-xs text-slate-400">Share this link with your network to earn 15% commission on every checkout.</p>
+</div>
+<div class="flex flex-col sm:flex-row items-center gap-3">
+<div class="w-full flex-1 rounded-lg bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 px-4 py-3">
+<p class="text-sm font-mono font-medium text-primary break-all">https://webasia.io/ref/alex_creative_24</p>
+</div>
+<button class="flex w-full sm:w-auto items-center justify-center gap-2 rounded-lg bg-primary px-6 py-3 font-bold text-white hover:bg-primary/90 transition-all">
+<span class="material-symbols-outlined text-sm">content_copy</span>
+<span>Copy Link</span>
+</button>
+</div>
+</div>
+</div>
+</div>
+<!-- Payout Quick Action -->
+<div class="rounded-xl border border-primary/20 bg-primary/5 dark:bg-primary/10 p-6 flex flex-col justify-between">
+<div class="space-y-1">
+<h3 class="text-sm font-bold text-slate-500 dark:text-slate-400">Available Balance</h3>
+<p class="text-3xl font-black text-slate-900 dark:text-white">$842.50</p>
+</div>
+<div class="mt-6 space-y-3">
+<p class="text-xs text-slate-600 dark:text-slate-400">Your next automated payout is scheduled for 1st of next month.</p>
+<button class="w-full rounded-lg bg-slate-900 dark:bg-primary py-2.5 text-sm font-bold text-white shadow-lg transition-transform active:scale-95">
+                                Request Instant Payout
+                            </button>
+</div>
+</div>
+</div>
+<!-- Metrics Grid -->
+<div class="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
+<div class="rounded-xl border border-[#cfdbe7] dark:border-slate-800 bg-white dark:bg-slate-900 p-6">
+<div class="flex items-center justify-between mb-2">
+<p class="text-sm font-medium text-slate-500">Total Clicks</p>
+<span class="material-symbols-outlined text-slate-400">ads_click</span>
+</div>
+<p class="text-2xl font-black text-slate-900 dark:text-white">4,812</p>
+<p class="mt-1 text-xs font-bold text-green-600">+12.4% vs last mo.</p>
+</div>
+<div class="rounded-xl border border-[#cfdbe7] dark:border-slate-800 bg-white dark:bg-slate-900 p-6">
+<div class="flex items-center justify-between mb-2">
+<p class="text-sm font-medium text-slate-500">New Signups</p>
+<span class="material-symbols-outlined text-slate-400">person_add</span>
+</div>
+<p class="text-2xl font-black text-slate-900 dark:text-white">156</p>
+<p class="mt-1 text-xs font-bold text-green-600">+8.2% vs last mo.</p>
+</div>
+<div class="rounded-xl border border-[#cfdbe7] dark:border-slate-800 bg-white dark:bg-slate-900 p-6">
+<div class="flex items-center justify-between mb-2">
+<p class="text-sm font-medium text-slate-500">Conversions</p>
+<span class="material-symbols-outlined text-slate-400">shopping_cart_checkout</span>
+</div>
+<p class="text-2xl font-black text-slate-900 dark:text-white">28</p>
+<p class="mt-1 text-xs font-bold text-slate-400">0% vs last mo.</p>
+</div>
+<div class="rounded-xl border border-[#cfdbe7] dark:border-slate-800 bg-white dark:bg-slate-900 p-6">
+<div class="flex items-center justify-between mb-2">
+<p class="text-sm font-medium text-slate-500">Total Commissions</p>
+<span class="material-symbols-outlined text-slate-400">payments</span>
+</div>
+<p class="text-2xl font-black text-slate-900 dark:text-white">$3,420.00</p>
+<p class="mt-1 text-xs font-bold text-green-600">+15.1% vs last mo.</p>
+</div>
+</div>
+<!-- Referral Table -->
+<div class="rounded-xl border border-[#cfdbe7] dark:border-slate-800 bg-white dark:bg-slate-900 overflow-hidden shadow-sm">
+<div class="border-b border-slate-100 dark:border-slate-800 px-6 py-4 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+<h3 class="font-bold text-slate-800 dark:text-white">Recent Referrals</h3>
+<div class="flex items-center gap-2">
+<div class="relative">
+<span class="absolute left-3 top-1/2 -translate-y-1/2 material-symbols-outlined text-slate-400 text-sm">search</span>
+<input class="pl-9 pr-4 py-1.5 text-sm rounded-lg border border-slate-200 dark:border-slate-700 dark:bg-slate-800 bg-slate-50 focus:ring-primary focus:border-primary outline-none" placeholder="Search referrals..." type="text"/>
+</div>
+<button class="flex items-center gap-1 text-sm font-semibold text-slate-600 dark:text-slate-400 hover:text-primary transition-colors">
+<span class="material-symbols-outlined text-sm">filter_list</span>
+<span>Filter</span>
+</button>
+</div>
+</div>
+<div class="overflow-x-auto">
+<table class="w-full text-left">
+<thead>
+<tr class="bg-slate-50 dark:bg-slate-800/50">
+<th class="px-6 py-3 text-xs font-bold uppercase tracking-wider text-slate-500">Customer</th>
+<th class="px-6 py-3 text-xs font-bold uppercase tracking-wider text-slate-500">Plan</th>
+<th class="px-6 py-3 text-xs font-bold uppercase tracking-wider text-slate-500">Date</th>
+<th class="px-6 py-3 text-xs font-bold uppercase tracking-wider text-slate-500">Status</th>
+<th class="px-6 py-3 text-xs font-bold uppercase tracking-wider text-slate-500 text-right">Commission</th>
+</tr>
+</thead>
+<tbody class="divide-y divide-slate-100 dark:divide-slate-800">
+<tr class="hover:bg-slate-50/50 dark:hover:bg-slate-800/30 transition-colors">
+<td class="px-6 py-4">
+<div class="flex items-center gap-3">
+<div class="h-8 w-8 rounded-full bg-blue-100 flex items-center justify-center text-blue-600 font-bold text-xs">JD</div>
+<span class="text-sm font-semibold text-slate-800 dark:text-slate-200">John Doe Corp</span>
+</div>
+</td>
+<td class="px-6 py-4 text-sm text-slate-600 dark:text-slate-400">Enterprise CRM</td>
+<td class="px-6 py-4 text-sm text-slate-600 dark:text-slate-400">Oct 24, 2023</td>
+<td class="px-6 py-4">
+<span class="inline-flex items-center rounded-full bg-green-100 px-2 py-1 text-xs font-bold text-green-700 dark:bg-green-900/40 dark:text-green-400">Active</span>
+</td>
+<td class="px-6 py-4 text-sm font-bold text-slate-800 dark:text-slate-200 text-right">$149.00</td>
+</tr>
+<tr class="hover:bg-slate-50/50 dark:hover:bg-slate-800/30 transition-colors">
+<td class="px-6 py-4">
+<div class="flex items-center gap-3">
+<div class="h-8 w-8 rounded-full bg-purple-100 flex items-center justify-center text-purple-600 font-bold text-xs">SA</div>
+<span class="text-sm font-semibold text-slate-800 dark:text-slate-200">Sarah Agency</span>
+</div>
+</td>
+<td class="px-6 py-4 text-sm text-slate-600 dark:text-slate-400">Growth Plan</td>
+<td class="px-6 py-4 text-sm text-slate-600 dark:text-slate-400">Oct 22, 2023</td>
+<td class="px-6 py-4">
+<span class="inline-flex items-center rounded-full bg-amber-100 px-2 py-1 text-xs font-bold text-amber-700 dark:bg-amber-900/40 dark:text-amber-400">Pending</span>
+</td>
+<td class="px-6 py-4 text-sm font-bold text-slate-800 dark:text-slate-200 text-right">$45.00</td>
+</tr>
+<tr class="hover:bg-slate-50/50 dark:hover:bg-slate-800/30 transition-colors">
+<td class="px-6 py-4">
+<div class="flex items-center gap-3">
+<div class="h-8 w-8 rounded-full bg-slate-100 flex items-center justify-center text-slate-600 font-bold text-xs">MK</div>
+<span class="text-sm font-semibold text-slate-800 dark:text-slate-200">Mike Kim</span>
+</div>
+</td>
+<td class="px-6 py-4 text-sm text-slate-600 dark:text-slate-400">Basic Monthly</td>
+<td class="px-6 py-4 text-sm text-slate-600 dark:text-slate-400">Oct 19, 2023</td>
+<td class="px-6 py-4">
+<span class="inline-flex items-center rounded-full bg-green-100 px-2 py-1 text-xs font-bold text-green-700 dark:bg-green-900/40 dark:text-green-400">Active</span>
+</td>
+<td class="px-6 py-4 text-sm font-bold text-slate-800 dark:text-slate-200 text-right">$29.00</td>
+</tr>
+<tr class="hover:bg-slate-50/50 dark:hover:bg-slate-800/30 transition-colors">
+<td class="px-6 py-4">
+<div class="flex items-center gap-3">
+<div class="h-8 w-8 rounded-full bg-red-100 flex items-center justify-center text-red-600 font-bold text-xs">TL</div>
+<span class="text-sm font-semibold text-slate-800 dark:text-slate-200">Tech Logistics</span>
+</div>
+</td>
+<td class="px-6 py-4 text-sm text-slate-600 dark:text-slate-400">Enterprise CRM</td>
+<td class="px-6 py-4 text-sm text-slate-600 dark:text-slate-400">Oct 15, 2023</td>
+<td class="px-6 py-4">
+<span class="inline-flex items-center rounded-full bg-slate-100 px-2 py-1 text-xs font-bold text-slate-700 dark:bg-slate-800 dark:text-slate-400">Cancelled</span>
+</td>
+<td class="px-6 py-4 text-sm font-bold text-slate-400 text-right">$0.00</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="px-6 py-4 border-t border-slate-100 dark:border-slate-800 bg-slate-50/50 dark:bg-slate-800/30 flex items-center justify-center">
+<button class="text-sm font-bold text-primary hover:underline">View All Referral History</button>
+</div>
+</div>
+<!-- Footer Motivational Section -->
+<div class="grid grid-cols-1 md:grid-cols-2 gap-6 pb-12">
+<div class="rounded-xl bg-gradient-to-br from-primary to-blue-700 p-8 text-white">
+<h4 class="text-xl font-black mb-2">Invite and Earn More</h4>
+<p class="text-white/80 text-sm mb-6">Reach 50 active referrals this quarter to unlock the "Platinum Tier" and earn 20% commission on all sales.</p>
+<div class="w-full bg-white/20 rounded-full h-2 mb-2">
+<div class="bg-white h-2 rounded-full" style="width: 56%"></div>
+</div>
+<div class="flex justify-between text-xs font-bold">
+<span>28 / 50 Referrals</span>
+<span>56% to Next Tier</span>
+</div>
+</div>
+<div class="rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 p-8 flex flex-col justify-center">
+<div class="flex items-center gap-4">
+<div class="h-12 w-12 rounded-full bg-primary/10 flex items-center justify-center text-primary">
+<span class="material-symbols-outlined text-2xl">help</span>
+</div>
+<div>
+<h4 class="font-bold text-slate-800 dark:text-white">Need help scaling?</h4>
+<p class="text-sm text-slate-500 dark:text-slate-400">Check our Marketing Playbook for strategies on how to promote WebAsia effectively.</p>
+<a class="mt-2 inline-block text-sm font-bold text-primary hover:underline" href="#">Download Playbook →</a>
+</div>
+</div>
+</div>
+</div>
+</div>
+</main>
+</div>
+</body></html>

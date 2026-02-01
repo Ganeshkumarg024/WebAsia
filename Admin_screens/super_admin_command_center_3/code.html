@@ -1,0 +1,289 @@
+<!DOCTYPE html>
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Universal Communication &amp; Asset Hub | WebAsia</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#137fec",
+                        "background-light": "#f6f7f8",
+                        "background-dark": "#101922",
+                    },
+                    fontFamily: {
+                        "display": ["Inter"]
+                    },
+                    borderRadius: {"DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px"},
+                },
+            },
+        }
+    </script>
+<style type="text/tailwindcss">
+        body { font-family: 'Inter', sans-serif; }
+        .sidebar-dark { background-color: #0d141b; }
+        .custom-scrollbar::-webkit-scrollbar { width: 4px; }
+        .custom-scrollbar::-webkit-scrollbar-track { background: transparent; }
+        .custom-scrollbar::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 10px; }
+        .chat-container { height: calc(100vh - 12rem); }
+        .moderation-overlay { background: rgba(19, 127, 236, 0.03); }
+    </style>
+</head>
+<body class="bg-background-light dark:bg-background-dark text-[#0d141b] dark:text-slate-50 font-display">
+<div class="flex h-screen overflow-hidden">
+<aside class="sidebar-dark w-64 flex-shrink-0 flex flex-col justify-between p-4 text-slate-300 border-r border-slate-800 h-full">
+<div class="flex flex-col gap-8">
+<div class="flex items-center gap-3 px-2">
+<div class="bg-primary p-2 rounded-lg">
+<svg class="size-6 text-white" fill="none" viewBox="0 0 48 48" xmlns="http://www.w3.org/2000/svg">
+<path d="M44 4H30.6666V17.3334H17.3334V30.6666H4V44H44V4Z" fill="currentColor"></path>
+</svg>
+</div>
+<div>
+<h1 class="text-white text-base font-bold leading-none">WebAsia</h1>
+<p class="text-slate-500 text-xs font-medium">Command Center</p>
+</div>
+</div>
+<nav class="flex flex-col gap-1">
+<a class="flex items-center gap-3 px-3 py-2.5 rounded-lg hover:bg-slate-800 transition-colors" href="#">
+<span class="material-symbols-outlined text-[22px]">dashboard</span>
+<span class="text-sm font-medium">Dashboard</span>
+</a>
+<a class="flex items-center gap-3 px-3 py-2.5 rounded-lg bg-primary text-white" href="#">
+<span class="material-symbols-outlined text-[22px]">forum</span>
+<span class="text-sm font-medium">Comm Hub</span>
+</a>
+<a class="flex items-center gap-3 px-3 py-2.5 rounded-lg hover:bg-slate-800 hover:text-white transition-colors" href="#">
+<span class="material-symbols-outlined text-[22px]">folder_shared</span>
+<span class="text-sm font-medium">Asset Archive</span>
+</a>
+<a class="flex items-center gap-3 px-3 py-2.5 rounded-lg hover:bg-slate-800 hover:text-white transition-colors" href="#">
+<span class="material-symbols-outlined text-[22px]">warning</span>
+<span class="text-sm font-medium">Escalations</span>
+<span class="ml-auto bg-red-500 text-white text-[10px] px-1.5 py-0.5 rounded-full">3</span>
+</a>
+<a class="flex items-center gap-3 px-3 py-2.5 rounded-lg hover:bg-slate-800 hover:text-white transition-colors" href="#">
+<span class="material-symbols-outlined text-[22px]">receipt_long</span>
+<span class="text-sm font-medium">Billing</span>
+</a>
+</nav>
+</div>
+<div class="flex flex-col gap-4 mt-auto">
+<div class="flex items-center gap-3 px-3 py-2 bg-slate-800/50 rounded-xl">
+<div class="size-9 rounded-full bg-cover bg-center" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuAsH3FKv4x2WOhUt3UxkpVYQZDgsC-tlYwjws6I7jyPWCwX0YCEbAuhxxFnLobBvxzo0Ap67huiWyD-GUq5umzto57cWuRfYBBtofwQZa3nXdbBnYFnsXEkFOUei3BfnObHDu9oNivOTLRpK2l4bHXfO77IFB5IHB8DC2GEM2qqxqk4a3PnfhyI6X6KiVdP5fZABTAPBk4JKmdvmaNZqHI9EdYwLAujuGz0h_gJ9sKsrDu26oRTZNY5aqip65VDsujatE9OYNVErq8");'></div>
+<div class="flex-1 overflow-hidden">
+<p class="text-xs font-bold text-white truncate">Marcus Chen</p>
+<p class="text-[10px] text-slate-400 truncate">Super Admin</p>
+</div>
+</div>
+<button class="w-full flex items-center justify-center gap-2 bg-slate-800 hover:bg-slate-700 text-white py-2 rounded-lg text-sm font-bold transition-colors">
+<span class="material-symbols-outlined text-sm">settings</span>
+                System Settings
+            </button>
+</div>
+</aside>
+<main class="flex-1 flex flex-col min-w-0 bg-background-light dark:bg-background-dark">
+<header class="h-16 flex items-center justify-between px-8 border-b border-[#e7edf3] dark:border-slate-800 bg-white dark:bg-slate-900 z-10">
+<div class="flex items-center gap-4">
+<h2 class="text-lg font-bold text-[#0d141b] dark:text-white">Universal Communication &amp; Asset Hub</h2>
+<div class="flex items-center gap-2 px-3 py-1 bg-blue-50 dark:bg-blue-900/20 text-primary rounded-full text-xs font-bold border border-blue-100 dark:border-blue-800">
+<span class="material-symbols-outlined text-sm">visibility</span>
+                    Moderation Mode
+                </div>
+</div>
+<div class="flex items-center gap-4">
+<div class="flex items-center gap-2 text-[#4c739a]">
+<span class="material-symbols-outlined text-lg">history</span>
+<span class="text-xs font-medium">Last synced: Just now</span>
+</div>
+<button class="p-2 rounded-lg bg-[#f0f2f5] dark:bg-slate-800 text-[#0d141b] dark:text-slate-300 relative">
+<span class="material-symbols-outlined text-[20px]">notifications</span>
+<span class="absolute top-2 right-2 size-2 bg-red-500 rounded-full border-2 border-white dark:border-slate-900"></span>
+</button>
+</div>
+</header>
+<div class="flex flex-1 overflow-hidden">
+<div class="w-80 flex-shrink-0 border-r border-[#e7edf3] dark:border-slate-800 flex flex-col bg-white dark:bg-slate-900">
+<div class="p-4 border-b border-[#e7edf3] dark:border-slate-800">
+<label class="relative block">
+<span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-[#4c739a] text-lg">search</span>
+<input class="w-full pl-9 pr-4 py-2 bg-[#f0f2f5] dark:bg-slate-800 border-none rounded-lg text-sm focus:ring-1 focus:ring-primary placeholder:text-[#4c739a]" placeholder="Search threads..." type="text"/>
+</label>
+</div>
+<div class="flex-1 overflow-y-auto custom-scrollbar">
+<div class="p-4 bg-red-50/50 dark:bg-red-900/10 border-l-4 border-red-500 cursor-pointer hover:bg-red-50 transition-colors">
+<div class="flex justify-between items-start mb-1">
+<h3 class="text-sm font-bold text-[#0d141b] dark:text-white truncate">TechFlow Inc.</h3>
+<span class="text-[10px] text-red-600 font-bold flex items-center gap-1 uppercase">
+<span class="material-symbols-outlined text-[12px] fill-1">flag</span> Flagged
+                            </span>
+</div>
+<p class="text-xs text-[#4c739a] truncate mb-2">Designer Alex Rivera vs Client</p>
+<p class="text-[11px] text-slate-500 dark:text-slate-400 italic truncate">"I expected the final revision by yesterday..."</p>
+</div>
+<div class="p-4 border-b border-[#e7edf3] dark:border-slate-800 cursor-pointer hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors">
+<div class="flex justify-between items-start mb-1">
+<h3 class="text-sm font-bold text-[#0d141b] dark:text-white truncate">GreenPulse Branding</h3>
+<span class="text-[10px] text-slate-400">12m ago</span>
+</div>
+<p class="text-xs text-[#4c739a] truncate mb-2">Designer Sarah Chen</p>
+<p class="text-[11px] text-slate-500 dark:text-slate-400 truncate">Sarah uploaded 4 new assets.</p>
+</div>
+<div class="p-4 border-b border-[#e7edf3] dark:border-slate-800 bg-primary/5 cursor-pointer">
+<div class="flex justify-between items-start mb-1">
+<h3 class="text-sm font-bold text-[#0d141b] dark:text-white truncate">CloudScale Web</h3>
+<span class="text-[10px] text-primary font-bold">ACTIVE</span>
+</div>
+<p class="text-xs text-[#4c739a] truncate mb-2">Lead: Mike Ross</p>
+<p class="text-[11px] text-[#0d141b] dark:text-slate-300 font-medium truncate">Client: The new hero section looks perfect!</p>
+</div>
+<div class="p-4 border-b border-[#e7edf3] dark:border-slate-800 cursor-pointer hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors">
+<div class="flex justify-between items-start mb-1">
+<h3 class="text-sm font-bold text-[#0d141b] dark:text-white truncate">NexGen Media Kit</h3>
+<span class="text-[10px] text-slate-400">2h ago</span>
+</div>
+<p class="text-xs text-[#4c739a] truncate mb-2">Designer Lisa Wong</p>
+<p class="text-[11px] text-slate-500 dark:text-slate-400 truncate">Project moved to "Under Review".</p>
+</div>
+</div>
+</div>
+<div class="flex-1 flex flex-col bg-white dark:bg-slate-900 relative">
+<div class="bg-primary/10 border-b border-primary/20 px-6 py-2 flex items-center justify-between">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-primary text-sm">security</span>
+<span class="text-xs font-bold text-primary">Moderation Mode Active: Your messages will not be sent to participants.</span>
+</div>
+<button class="text-[10px] font-bold text-primary hover:underline uppercase tracking-wider">Leave Watch</button>
+</div>
+<div class="flex-1 overflow-y-auto p-6 space-y-6 custom-scrollbar moderation-overlay">
+<div class="flex items-start gap-3">
+<div class="size-8 rounded-full bg-cover bg-center shrink-0" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuCxZ5Uu6b7DVK29nodP0ggG2NvPHZGHzUNqKjYAGlo-APBPKy9CTYDQTesTBLy4beKZAo3ofQmXjTmTGWg0SHHckVfhczyxOxm11h0B9qS2Jpn1fQT7iU01yrQE4WoHzGwRuCu2Q-9lW5lNSj5plDXp4vEQnaWB6RYNuMB1yPMWzgqnfMqltAewceUkMr0SWBP1O8I70CzAGWwWSZ2dp1hdfsr9IDp3vKl2elC4KNQ7rhGlbdhMEnwn0uJUrMP202oUtm1DUDges8Q");'></div>
+<div class="max-w-md">
+<div class="flex items-baseline gap-2 mb-1">
+<span class="text-xs font-bold text-[#0d141b] dark:text-white">Alex Rivera (Designer)</span>
+<span class="text-[10px] text-[#4c739a]">10:24 AM</span>
+</div>
+<div class="bg-[#f0f2f5] dark:bg-slate-800 p-3 rounded-tr-xl rounded-br-xl rounded-bl-xl text-sm">
+                                Attached the new logo concepts for TechFlow. Let me know which direction you prefer.
+                            </div>
+</div>
+</div>
+<div class="flex items-start gap-3 flex-row-reverse">
+<div class="size-8 rounded-full bg-cover bg-center shrink-0" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuDhMBL3gvTQ11dRf9TUN6W2e8YBYen0-mMgbQ2-H9p4x-7337cQdFHdCMMC1Gm1107qqsbiBkb_CRtdE84Tbai9zWrBqi8T1HC_lA_n0T0Z4KYEILHTLHhn-H-JI7zySiVG66AOF_fWOWPETInx2kmf-FSUB0vKbpp16HajZbRuXgW1jVSmRVhxa3DQFf8V-KEvSVxkFNPqLgqLTzp7LCUcpE9kektwo77FpeCJehxfm5MyHpP1A-G1MI5p-lQum-VOEkpp-c49KQA");'></div>
+<div class="max-w-md text-right">
+<div class="flex items-baseline gap-2 mb-1 justify-end">
+<span class="text-[10px] text-[#4c739a]">10:45 AM</span>
+<span class="text-xs font-bold text-[#0d141b] dark:text-white">John Doe (Client)</span>
+</div>
+<div class="bg-primary text-white p-3 rounded-tl-xl rounded-br-xl rounded-bl-xl text-sm">
+                                These look a bit different from our last discussion. Can we hop on a quick call?
+                            </div>
+</div>
+</div>
+<div class="flex justify-center">
+<span class="px-3 py-1 bg-red-100 dark:bg-red-900/30 text-red-600 text-[10px] font-bold rounded-full uppercase">Message Flagged for Potential Escalation</span>
+</div>
+<div class="flex items-start gap-3">
+<div class="size-8 rounded-full bg-cover bg-center shrink-0" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuA6_gTL8qUkaertulKNlEW6nPQlyIupw-M7mdAUm9l192r1RVbAxOgC3Dl82n9LTU85hOcaIfWST6irBr5NpBsoHOO_zFKsw7JlQCUovMDEKNn1mFnQ0QDJgPH7RsIoQGOzNZYT1eCbYUlJLUbu1sE-L-QIAvUrDEMVta2jm3zK9uJT1_Uin7k5XnISV8-1KNZpbVNp8rajjXNDo8wKHs4gj9uaEiTjT0A1DraJHwFJ3Ldizq6XscB4i8ke0T01boRfPAntenohlCk");'></div>
+<div class="max-w-md">
+<div class="flex items-baseline gap-2 mb-1">
+<span class="text-xs font-bold text-[#0d141b] dark:text-white">Alex Rivera (Designer)</span>
+<span class="text-[10px] text-[#4c739a]">11:02 AM</span>
+</div>
+<div class="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-900/50 p-3 rounded-tr-xl rounded-br-xl rounded-bl-xl text-sm text-red-900 dark:text-red-100">
+                                My contract explicitly says calls are limited to 1 per week. We already had one on Monday. I cannot join another today without an overage fee.
+                            </div>
+</div>
+</div>
+</div>
+<div class="p-4 border-t border-[#e7edf3] dark:border-slate-800 bg-slate-50 dark:bg-slate-900/50">
+<div class="flex items-center gap-3 opacity-50 cursor-not-allowed">
+<button class="p-2 text-[#4c739a]"><span class="material-symbols-outlined">add_circle</span></button>
+<div class="flex-1 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 px-4 py-2 rounded-lg text-sm text-slate-400">
+                            Compose a message... (Send disabled in moderation)
+                        </div>
+<button class="p-2 text-primary"><span class="material-symbols-outlined">send</span></button>
+</div>
+</div>
+</div>
+<div class="w-80 flex-shrink-0 border-l border-[#e7edf3] dark:border-slate-800 flex flex-col bg-white dark:bg-slate-900">
+<div class="p-4 border-b border-[#e7edf3] dark:border-slate-800">
+<div class="flex items-center gap-2 mb-4">
+<span class="material-symbols-outlined text-primary">inventory_2</span>
+<h3 class="text-sm font-bold text-[#0d141b] dark:text-white">Global File Archive</h3>
+</div>
+<div class="flex gap-2 mb-2">
+<button class="flex-1 py-1 text-[10px] font-bold bg-primary text-white rounded">ALL FILES</button>
+<button class="flex-1 py-1 text-[10px] font-bold bg-slate-100 dark:bg-slate-800 text-slate-500 rounded">IMAGES</button>
+<button class="flex-1 py-1 text-[10px] font-bold bg-slate-100 dark:bg-slate-800 text-slate-500 rounded">DOCS</button>
+</div>
+</div>
+<div class="flex-1 overflow-y-auto p-4 custom-scrollbar">
+<div class="grid grid-cols-2 gap-3">
+<div class="group relative aspect-square rounded-lg border border-slate-200 dark:border-slate-700 overflow-hidden bg-slate-50">
+<div class="absolute inset-0 bg-cover bg-center" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuA5GX1k-Z9-oStGCNpTIBnEW-ob_jFP6LJ2OcwAln71uRmEgPtrfd-ajLDPgdkGKVR7AxEekSZR0cq3pj8peQvHOPTf_SKaVtqHJOzXAljCPZN2ZxzNsVif78qJhVrm6IkZ7jb3sNznREIVPRYORkuLeCM5BQzAEtnt3sSJlgiGxnNJTIO41dpIOV-Ycdh2IbqzNYRHnLR6YZOW7ibO5wNrc64QF5vCy5Y5yzP-fRVjx_-yWVT3nL0-icGezMWte6LY6KK4KDnP7tA");'></div>
+<div class="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-2">
+<button class="p-1.5 bg-white/20 hover:bg-white/40 rounded-full text-white">
+<span class="material-symbols-outlined text-sm">visibility</span>
+</button>
+<button class="p-1.5 bg-white/20 hover:bg-white/40 rounded-full text-white">
+<span class="material-symbols-outlined text-sm">download</span>
+</button>
+</div>
+</div>
+<div class="group relative aspect-square rounded-lg border border-slate-200 dark:border-slate-700 overflow-hidden bg-slate-50">
+<div class="absolute inset-0 bg-cover bg-center" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuAhLkVnotCok9T3S1TIbin5FHck65q1PadUfelGw19inbLDseKeiOUgY87Ul3NUwh0iWoWkf4lA5bveS5ApWImteK3Rx80l4ejut0gTGXD2BAaLbs939OQg-6OnZtu-yHlo60JBG7Rhv06SIb0f5hQLuJOvfC-3UsaYT3FSwyZAnffgWuksO5BNWFQaZJ3rGiaELPaAqajR46elo_-V9_-uC35Tq3oao7MO2jlRdUifUJ1hmTOXmMS9W2NjhG2ihD-SIMsXms-Rxi0");'></div>
+<div class="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-2">
+<button class="p-1.5 bg-white/20 hover:bg-white/40 rounded-full text-white">
+<span class="material-symbols-outlined text-sm">visibility</span>
+</button>
+<button class="p-1.5 bg-white/20 hover:bg-white/40 rounded-full text-white">
+<span class="material-symbols-outlined text-sm">download</span>
+</button>
+</div>
+</div>
+<div class="group relative aspect-square rounded-lg border border-slate-200 dark:border-slate-700 overflow-hidden bg-slate-50 flex items-center justify-center flex-col p-2">
+<span class="material-symbols-outlined text-slate-400 text-3xl">description</span>
+<span class="text-[9px] text-[#4c739a] mt-1 font-bold text-center truncate w-full">Brand_Guidelines.pdf</span>
+</div>
+<div class="group relative aspect-square rounded-lg border border-slate-200 dark:border-slate-700 overflow-hidden bg-slate-50">
+<div class="absolute inset-0 bg-cover bg-center" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuDF5p0kPL5pc8h16a7w3amLM3G2tewPga9ZHYXrzcgK7NASualbTzWzOovad6EM1IwzL1gASj8lmfgasG1eR-XaSVKUUBUvvF8hkMnAxNr3mZLY1i4lJNK0_Y2DfHSowfeq46tHj8MJHiaj-c_AUvDRTzxUfsgxtPSLK_4iigTdSIWaA0XK8TkPr7_eos7Vt7KoJWzZSGBJiTsJdCqTGp4WBuYpOSlTjJePCQFKrmLC72EsF78zRNrKFwb-oH05WD9XRP1hwS1vxyU");'></div>
+</div>
+</div>
+<div class="mt-8 space-y-4">
+<h4 class="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Escalation Status</h4>
+<div class="p-3 bg-red-50 dark:bg-red-900/10 border border-red-200 dark:border-red-900/40 rounded-xl">
+<p class="text-xs font-bold text-red-700 dark:text-red-400">High Risk of Churn</p>
+<p class="text-[10px] text-red-600 dark:text-red-300 mt-1 leading-relaxed">System flagged "Contractual Dispute" keywords. Admin action recommended.</p>
+<button class="w-full mt-3 py-1.5 bg-red-600 text-white text-[10px] font-bold rounded uppercase hover:bg-red-700 transition-colors">Intervene Now</button>
+</div>
+<h4 class="text-[10px] font-bold text-slate-400 uppercase tracking-widest mt-6">Thread Participants</h4>
+<div class="space-y-3">
+<div class="flex items-center gap-3">
+<div class="size-7 rounded-full bg-cover bg-center" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuD8XLQ9CTYSLE8icv1C5SZ2_ndqP26dnyiUpDMgLCxGqrj5U-nREDf0D9NLSKMjnsooAiXXAaclBXWQcW4zPmpgnXpr0lnvIW1WRCgBc6N4RwM_3XaQxaHEw35gOjc912yGfbVRoOp4zS2am0ppo5Ev7f19UPL_DfmbFgiLKRVyshe15B1CIm6Y6PmZBOJOkI_cKkiRHq5ZCm_eF9e_8qifrZCjvngNrNhsRe19tNsg55sPSNO0RY94VU04IDN7Xght8FA2g7iGvMc");'></div>
+<div>
+<p class="text-[11px] font-bold text-[#0d141b] dark:text-white">Alex Rivera</p>
+<p class="text-[9px] text-slate-400">Pro Designer • 98% Rating</p>
+</div>
+</div>
+<div class="flex items-center gap-3">
+<div class="size-7 rounded-full bg-cover bg-center" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuAqkXoGgayrVKEiPX67bumgLNBpzj8ZD55G-XfGonGhTOmeU_2oOCQ0lmhQfqX1gelFYGiVV61xCDFK2hNhGzrGALhhZgWpaJj1Tl3ByJUhiCT-TqkuVIJjwgN6eSZvItJ2I8PXli9vcUjC5C_2SMzr0rXnrbgm1Lsu8TnK_Ea6tmn7IhcrrHlJvCKx-TpcmEn3Lk4Y-O7V87iCWRp-etuhABup16s9UvLBglg2incSN-IsNlKBwko88KA-nUF4iha_e799tkdqQHU");'></div>
+<div>
+<p class="text-[11px] font-bold text-[#0d141b] dark:text-white">John Doe</p>
+<p class="text-[9px] text-slate-400">Growth Plan • TechFlow Inc.</p>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</main>
+</div>
+
+</body></html>

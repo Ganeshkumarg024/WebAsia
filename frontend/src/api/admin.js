@@ -84,6 +84,80 @@ export const adminAPI = {
         return response.data;
     },
 
+    // Pod Management
+    getPods: async () => {
+        const response = await apiClient.get('/admin/pods');
+        return response.data;
+    },
+
+    assignToPod: async (assignmentData) => {
+        const response = await apiClient.post('/admin/pods/assign', assignmentData);
+        return response.data;
+    },
+
+    removeFromPod: async (podId, userId) => {
+        const response = await apiClient.delete(`/admin/pods/${podId}/member/${userId}`);
+        return response.data;
+    },
+
+    getTeamMapping: async () => {
+        const response = await apiClient.get('/admin/team-mapping');
+        return response.data;
+    },
+
+    fetchTeamMapping: async () => {
+        const response = await apiClient.get('/admin/team-mapping');
+        return response.data;
+    },
+
+    getUnassignedDesigners: async () => {
+        const response = await apiClient.get('/admin/designers/unassigned');
+        return response.data;
+    },
+
+    // Financials
+    getFinancialStats: async (period = '30d') => {
+        const response = await apiClient.get('/admin/financials/stats', { params: { period } });
+        return response.data;
+    },
+
+    getTransactions: async (params = {}) => {
+        const response = await apiClient.get('/admin/financials/transactions', { params });
+        return response.data;
+    },
+
+    handleRefund: async (id, action) => {
+        const response = await apiClient.post(`/admin/financials/refunds/${id}/${action}`);
+        return response.data;
+    },
+
+    // Communication Hub
+    getCommThreads: async (params = {}) => {
+        const response = await apiClient.get('/admin/comm/threads', { params });
+        return response.data;
+    },
+
+    getCommThreadDetails: async (id) => {
+        const response = await apiClient.get(`/admin/comm/threads/${id}`);
+        return response.data;
+    },
+
+    flagCommThread: async (id, reason) => {
+        const response = await apiClient.post(`/admin/comm/threads/${id}/flag`, { reason });
+        return response.data;
+    },
+
+    // Global Request Management
+    getAdminRequests: async (params = {}) => {
+        const response = await apiClient.get('/admin/requests', { params });
+        return response.data;
+    },
+
+    bulkUpdateRequests: async (updateData) => {
+        const response = await apiClient.patch('/admin/requests/bulk', updateData);
+        return response.data;
+    },
+
     // Settings
     getSettings: async () => {
         const response = await apiClient.get('/admin/settings');

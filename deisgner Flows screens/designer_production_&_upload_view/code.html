@@ -1,0 +1,286 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Designer Production &amp; Upload View - WebAsia</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#137fec",
+                        "background-light": "#f6f7f8",
+                        "background-dark": "#101922",
+                    },
+                    fontFamily: {
+                        "display": ["Inter"]
+                    },
+                    borderRadius: {"DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px"},
+                },
+            },
+        }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+    </style>
+</head>
+<body class="bg-background-light dark:bg-background-dark font-display text-white">
+<!-- Top Navigation Bar -->
+<header class="flex items-center justify-between border-b border-solid border-[#233648] px-8 py-3 bg-background-light dark:bg-background-dark sticky top-0 z-50">
+<div class="flex items-center gap-4">
+<div class="text-primary">
+<svg fill="none" height="32" viewbox="0 0 48 48" width="32" xmlns="http://www.w3.org/2000/svg">
+<path d="M6 6H42L36 24L42 42H6L12 24L6 6Z" fill="currentColor"></path>
+</svg>
+</div>
+<h2 class="text-lg font-bold leading-tight tracking-[-0.015em] dark:text-white text-slate-900">WebAsia Creative Services</h2>
+</div>
+<div class="flex flex-1 justify-end gap-6 items-center">
+<nav class="flex items-center gap-6 mr-6">
+<a class="text-slate-600 dark:text-slate-300 text-sm font-medium hover:text-primary transition-colors" href="#">Dashboard</a>
+<a class="text-primary text-sm font-bold" href="#">Active Task</a>
+<a class="text-slate-600 dark:text-slate-300 text-sm font-medium hover:text-primary transition-colors" href="#">Library</a>
+</nav>
+<!-- Timer Component Integrated -->
+<div class="flex items-center gap-2 bg-[#233648] px-4 py-1.5 rounded-lg border border-slate-700">
+<span class="material-symbols-outlined text-primary text-lg">timer</span>
+<div class="flex gap-2">
+<span class="text-white text-sm font-bold">02:45:12</span>
+</div>
+<div class="flex gap-1 ml-2">
+<button class="p-1 hover:bg-slate-600 rounded"><span class="material-symbols-outlined text-xs">pause</span></button>
+</div>
+</div>
+<button class="flex min-w-[140px] cursor-pointer items-center justify-center rounded-lg h-10 px-4 bg-primary text-white text-sm font-bold shadow-lg hover:bg-primary/90 transition-all">
+<span>Mark as Submitted</span>
+</button>
+<div class="bg-center bg-no-repeat aspect-square bg-cover rounded-full size-10 border-2 border-primary/30" data-alt="User avatar of the designer" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuCsSejELqaO1OYgtfoOZy95XVnwDMe3lk1LC3OhfqpPEfcUdK6_9lhQ0xkHReTh8owZqky9IdJlpqpj1ODZHrKT83MlI82Dwh-8ibgadBlXCoTVcPKZ1iXrepy25GDXNw8KyeEXtQ8akJnMRuLvlL87udchcIIsNQo2zKlw4qvlHzg5jopXE0ClbR5wTYeB2qqoRwxCSfrwZUSTo_v4aIAV0CZWg97N3q_JQn9sbD2gjiXvzCLo0WU_kdnPBToFf6sINqWpT7eSAPg");'>
+</div>
+</div>
+</header>
+<main class="flex h-[calc(100vh-64px)] overflow-hidden">
+<!-- Left Sidebar / Left Content (Main Area) -->
+<div class="flex-1 flex flex-col overflow-y-auto">
+<!-- Section Header -->
+<div class="px-8 pt-8 pb-4 flex justify-between items-end">
+<div>
+<div class="flex items-center gap-2 mb-1">
+<span class="px-2 py-0.5 rounded bg-primary/20 text-primary text-[10px] font-bold uppercase tracking-wider">In Progress</span>
+<span class="text-slate-500 text-xs">Due in 3 days</span>
+</div>
+<h1 class="text-slate-900 dark:text-white text-3xl font-bold tracking-tight">Homepage Redesign - Q3</h1>
+<p class="text-slate-500 dark:text-slate-400 text-sm mt-1">Project: Enterprise SaaS Refresh • Client: SkyLine Tech</p>
+</div>
+</div>
+<div class="px-8 py-4 flex flex-col gap-6">
+<!-- EmptyState / Upload Zone -->
+<div class="flex flex-col">
+<div class="flex flex-col items-center gap-6 rounded-xl border-2 border-dashed border-[#324d67] bg-slate-800/20 px-6 py-12 hover:border-primary transition-colors cursor-pointer group">
+<div class="flex max-w-[480px] flex-col items-center gap-2">
+<span class="material-symbols-outlined text-5xl text-slate-500 group-hover:text-primary transition-colors mb-2">cloud_upload</span>
+<p class="text-white text-lg font-bold leading-tight tracking-[-0.015em] text-center">Upload New Version</p>
+<p class="text-[#92adc9] text-sm font-normal leading-normal text-center">Drag and drop JPG, PNG, or PDF (v1, v2, etc.)</p>
+</div>
+<button class="flex min-w-[120px] cursor-pointer items-center justify-center rounded-lg h-10 px-6 bg-[#233648] text-white text-sm font-bold hover:bg-[#324d67] transition-all">
+<span>Browse Files</span>
+</button>
+</div>
+</div>
+<!-- Version History List -->
+<div class="flex flex-col gap-4">
+<h3 class="text-white text-sm font-semibold uppercase tracking-widest text-slate-400">Deliverables History</h3>
+<div class="grid grid-cols-1 gap-3">
+<!-- Version Item -->
+<div class="flex items-center justify-between p-4 bg-slate-800/40 border border-slate-700 rounded-lg">
+<div class="flex items-center gap-4">
+<div class="w-12 h-12 bg-slate-700 rounded overflow-hidden" data-alt="Thumbnail of design version 2">
+<div class="w-full h-full flex items-center justify-center bg-gradient-to-br from-primary/40 to-purple-600/40">
+<span class="material-symbols-outlined text-white">image</span>
+</div>
+</div>
+<div>
+<p class="text-white font-medium text-sm">homepage_v2_final.png</p>
+<p class="text-slate-500 text-xs">Uploaded 2 hours ago • 4.2 MB</p>
+</div>
+</div>
+<div class="flex gap-2">
+<button class="p-2 text-slate-400 hover:text-white hover:bg-slate-700 rounded transition-all"><span class="material-symbols-outlined text-lg">download</span></button>
+<button class="p-2 text-slate-400 hover:text-red-400 hover:bg-slate-700 rounded transition-all"><span class="material-symbols-outlined text-lg">delete</span></button>
+</div>
+</div>
+<!-- Version Item -->
+<div class="flex items-center justify-between p-4 bg-slate-800/40 border border-slate-700 rounded-lg opacity-60">
+<div class="flex items-center gap-4">
+<div class="w-12 h-12 bg-slate-700 rounded overflow-hidden" data-alt="Thumbnail of design version 1">
+<div class="w-full h-full flex items-center justify-center bg-slate-600">
+<span class="material-symbols-outlined text-white">image</span>
+</div>
+</div>
+<div>
+<p class="text-white font-medium text-sm">homepage_v1_draft.png</p>
+<p class="text-slate-500 text-xs">Uploaded Yesterday • 3.8 MB</p>
+</div>
+</div>
+<div class="flex gap-2">
+<span class="text-[10px] font-bold text-slate-400 self-center mr-2 px-2 py-1 bg-slate-700 rounded uppercase">Superseded</span>
+<button class="p-2 text-slate-400 hover:text-white hover:bg-slate-700 rounded transition-all"><span class="material-symbols-outlined text-lg">download</span></button>
+</div>
+</div>
+</div>
+</div>
+</div>
+<!-- Communication Dock (Bottom) -->
+<div class="mt-auto border-t border-slate-700 grid grid-cols-2 h-80 bg-background-dark">
+<!-- Internal Notes -->
+<div class="border-r border-slate-700 flex flex-col bg-amber-900/5">
+<div class="p-3 border-b border-slate-700/50 flex items-center justify-between">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-amber-500 text-sm">lock</span>
+<span class="text-xs font-bold uppercase text-amber-500 tracking-wider">Internal Team Notes</span>
+</div>
+<span class="text-[10px] text-slate-500">Only visible to manager &amp; you</span>
+</div>
+<div class="flex-1 overflow-y-auto p-4 flex flex-col gap-4">
+<div class="flex gap-3">
+<div class="size-8 rounded-full bg-slate-600 shrink-0" data-alt="Manager avatar" style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuBZsalCTH_w-iTVWuASPCIpYzJdGj6MUhAOnrrCRvnv9bLhNnz3Wfx7GWJt0OZ3-hqXEV59KeziZsOiTwXPKTApmvcZkj5VDxj5Le51ARwLUhHi_Q90Epwcla6XNWc8j1LVhlW1juRDZAl4zS7P-1k9fMTw0X3gMAM6EGkT0eGKcXtaHUPoYAFsXqIkdSg5PxvlTZ2RXxw1cT8IFpXvONL-X7t4NKWzx9YdRZzG26qMMpXRVi4s6LNqruNUC4o9es0_FNZclP_v5SU'); background-size: cover;"></div>
+<div class="bg-slate-800 p-3 rounded-lg rounded-tl-none border border-amber-900/20">
+<p class="text-xs font-bold text-amber-400 mb-1">Manager Sarah</p>
+<p class="text-sm text-slate-300">Hey, let's make sure the CTA contrast follows WCAG AA. The client was picky about that last time.</p>
+<span class="text-[10px] text-slate-500 mt-2 block">10:45 AM</span>
+</div>
+</div>
+</div>
+<div class="p-3">
+<div class="flex gap-2 items-center bg-slate-800 rounded-lg border border-amber-900/30 px-3 py-2">
+<input class="bg-transparent border-none focus:ring-0 text-sm w-full text-slate-200" placeholder="Type an internal note..." type="text"/>
+<button class="text-amber-500 hover:text-amber-400"><span class="material-symbols-outlined">send</span></button>
+</div>
+</div>
+</div>
+<!-- Client Chat -->
+<div class="flex flex-col">
+<div class="p-3 border-b border-slate-700/50 flex items-center justify-between">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-primary text-sm">forum</span>
+<span class="text-xs font-bold uppercase text-primary tracking-wider">Client Communication</span>
+</div>
+</div>
+<div class="flex-1 overflow-y-auto p-4 flex flex-col gap-4">
+<div class="flex gap-3 flex-row-reverse">
+<div class="size-8 rounded-full bg-primary/20 shrink-0" data-alt="Client avatar" style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuAT5fUJvXKfcuIyu2TV5kb9w1o4cYUu5HgawbLTcVh2qUDQRGK-oxReUE6mvurEux-22lertx4WmmDZPsrj0IklNbUQrBDFQfV7uxS14s3VU3FmdjcaVF98Z1Y7HzFSNVxgmCWJFiaFVA2bB7h5R2sLcEyh8nm9ywklC2WOKeFYdj6BjQJODyENXILK0eOQdQgYq_0bz2UQx5MjCI26jzybmNr3-MULrW7FElHrvqgGQTwql_G3RD-0InRdBx1_x6L-c0AIohvCvqw'); background-size: cover;"></div>
+<div class="bg-primary/10 p-3 rounded-lg rounded-tr-none border border-primary/20">
+<p class="text-xs font-bold text-primary mb-1">Client - Jenny L.</p>
+<p class="text-sm text-slate-300">Love the hero section in v1! Can we try a version with more whitespace?</p>
+<span class="text-[10px] text-slate-500 mt-2 block">Yesterday</span>
+</div>
+</div>
+</div>
+<div class="p-3">
+<div class="flex gap-2 items-center bg-slate-800 rounded-lg border border-slate-700 px-3 py-2">
+<button class="text-slate-500 hover:text-white"><span class="material-symbols-outlined">add_circle</span></button>
+<input class="bg-transparent border-none focus:ring-0 text-sm w-full text-slate-200" placeholder="Message client..." type="text"/>
+<button class="text-primary hover:text-primary/80"><span class="material-symbols-outlined">send</span></button>
+</div>
+</div>
+</div>
+</div>
+</div>
+<!-- Right Sidebar: Client Brand Guide -->
+<aside class="w-[320px] border-l border-slate-700 bg-background-dark/50 flex flex-col">
+<div class="p-6 border-b border-slate-700">
+<h2 class="text-white text-base font-bold leading-normal flex items-center gap-2">
+<span class="material-symbols-outlined text-primary">auto_awesome</span>
+                    Client Brand Guide
+                </h2>
+<p class="text-slate-500 text-xs font-normal leading-normal mt-1">Quick access to SkyLine Tech assets</p>
+</div>
+<div class="flex-1 overflow-y-auto p-6 space-y-8">
+<!-- Logos Section -->
+<section>
+<h3 class="text-[10px] font-bold uppercase text-slate-500 tracking-[0.1em] mb-4">Logos</h3>
+<div class="grid grid-cols-2 gap-3">
+<div class="group relative aspect-square bg-slate-800 rounded-lg flex items-center justify-center p-4 border border-slate-700 hover:border-primary transition-all cursor-pointer">
+<div class="text-white opacity-40 group-hover:opacity-100"><span class="material-symbols-outlined text-3xl">logo_dev</span></div>
+<button class="absolute inset-0 bg-primary/80 text-white text-[10px] font-bold uppercase opacity-0 group-hover:opacity-100 flex items-center justify-center rounded-lg transition-opacity">Download</button>
+</div>
+<div class="group relative aspect-square bg-white rounded-lg flex items-center justify-center p-4 border border-slate-700 hover:border-primary transition-all cursor-pointer">
+<div class="text-slate-900"><span class="material-symbols-outlined text-3xl">logo_dev</span></div>
+<button class="absolute inset-0 bg-primary/80 text-white text-[10px] font-bold uppercase opacity-0 group-hover:opacity-100 flex items-center justify-center rounded-lg transition-opacity">Download</button>
+</div>
+</div>
+</section>
+<!-- Colors Section -->
+<section>
+<h3 class="text-[10px] font-bold uppercase text-slate-500 tracking-[0.1em] mb-4">Color Palette</h3>
+<div class="space-y-3">
+<div class="flex items-center justify-between p-2 bg-slate-800/50 rounded-lg border border-slate-700 hover:bg-slate-800 transition-colors group cursor-pointer">
+<div class="flex items-center gap-3">
+<div class="w-8 h-8 rounded bg-primary"></div>
+<div>
+<p class="text-xs text-white font-medium">Sky Blue</p>
+<p class="text-[10px] text-slate-500">#137FEC</p>
+</div>
+</div>
+<span class="material-symbols-outlined text-slate-600 group-hover:text-primary text-sm">content_copy</span>
+</div>
+<div class="flex items-center justify-between p-2 bg-slate-800/50 rounded-lg border border-slate-700 hover:bg-slate-800 transition-colors group cursor-pointer">
+<div class="flex items-center gap-3">
+<div class="w-8 h-8 rounded bg-[#101922]"></div>
+<div>
+<p class="text-xs text-white font-medium">Deep Navy</p>
+<p class="text-[10px] text-slate-500">#101922</p>
+</div>
+</div>
+<span class="material-symbols-outlined text-slate-600 group-hover:text-primary text-sm">content_copy</span>
+</div>
+<div class="flex items-center justify-between p-2 bg-slate-800/50 rounded-lg border border-slate-700 hover:bg-slate-800 transition-colors group cursor-pointer">
+<div class="flex items-center gap-3">
+<div class="w-8 h-8 rounded bg-[#f6f7f8]"></div>
+<div>
+<p class="text-xs text-white font-medium">Off-White</p>
+<p class="text-[10px] text-slate-500">#F6F7F8</p>
+</div>
+</div>
+<span class="material-symbols-outlined text-slate-600 group-hover:text-primary text-sm">content_copy</span>
+</div>
+</div>
+</section>
+<!-- Typography Section -->
+<section>
+<h3 class="text-[10px] font-bold uppercase text-slate-500 tracking-[0.1em] mb-4">Typography</h3>
+<div class="space-y-4">
+<div class="border-b border-slate-800 pb-3">
+<p class="text-xs text-slate-500 mb-1">Heading Font</p>
+<p class="text-lg font-bold text-white font-display">Inter Tight Bold</p>
+</div>
+<div class="border-b border-slate-800 pb-3">
+<p class="text-xs text-slate-500 mb-1">Body Font</p>
+<p class="text-sm font-normal text-slate-300">Inter Regular</p>
+</div>
+</div>
+</section>
+<!-- Guidelines Section -->
+<section>
+<button class="w-full flex items-center justify-between p-3 rounded-lg bg-primary/10 border border-primary/20 text-primary hover:bg-primary/20 transition-all">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-sm">menu_book</span>
+<span class="text-xs font-bold">Full Brand PDF</span>
+</div>
+<span class="material-symbols-outlined text-sm">open_in_new</span>
+</button>
+</section>
+</div>
+</aside>
+</main>
+</body></html>

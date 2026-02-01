@@ -6,7 +6,20 @@ import {
     updateUser,
     deleteUser,
     getDashboardStats,
-    getAnalytics
+    getAnalytics,
+    getPods,
+    assignToPod,
+    removeFromPod,
+    getCommThreads,
+    getCommThreadDetails,
+    flagCommThread,
+    getFinancialStats,
+    getTransactions,
+    getAdminRequests,
+    bulkUpdateRequests,
+    getUnassignedDesigners,
+    getRefundRequests,
+    handleRefund
 } from '../controllers/admin.controller.js';
 import { authenticate } from '../middleware/auth.middleware.js';
 import { isAdmin } from '../middleware/rbac.middleware.js';
@@ -44,5 +57,36 @@ router.get('/dashboard/stats', getDashboardStats);
 router.get('/analytics', [
     query('period').optional().isIn(['7d', '30d', '90d', '1y'])
 ], getAnalytics);
+
+// Pod Management
+router.get('/pods', getPods);
+router.get('/team-mapping', getPods); // Re-using getPods for team mapping view
+router.get('/designers/unassigned', getUnassignedDesigners);
+router.post('/pods/assign', [
+    body('podId').isUUID().withMessage('Valid pod ID required'),
+    body('designerId').isUUID().withMessage('Valid designer ID required')
+], assignToPod);
+router.delete('/pods/:podId/member/:userId', removeFromPod);
+
+// Communication Hub
+router.get('/comm/threads', getCommThreads);
+router.get('/comm/threads/:id', getCommThreadDetails);
+router.post('/comm/threads/:id/flag', [
+    body('reason').notEmpty().withMessage('Reason required')
+], flagCommThread);
+
+// Financials
+router.get('/financials/stats', getFinancialStats);
+router.get('/financials/transactions', getTransactions);
+router.get('/financials/refunds', getRefundRequests);
+router.post('/financials/refunds/:id', [
+    body('action').isIn(['approve', 'reject']).withMessage('Invalid action')
+], handleRefund);
+
+// Global Request Management
+router.get('/requests', getAdminRequests);
+router.patch('/requests/bulk', [
+    body('requestIds').isArray().withMessage('Request IDs must be an array'),
+], bulkUpdateRequests);
 
 export default router;

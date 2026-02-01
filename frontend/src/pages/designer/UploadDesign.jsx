@@ -1,207 +1,184 @@
 import { useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { ArrowLeftIcon, CloudArrowUpIcon } from '@heroicons/react/24/outline';
+import {
+    ArrowLeftIcon,
+    CloudArrowUpIcon,
+    XMarkIcon,
+    DocumentIcon,
+    PaperAirplaneIcon
+} from '@heroicons/react/24/outline';
+import useDesignerStore from '../../store/designerStore';
 import DashboardLayout from '../../components/layout/DashboardLayout';
-import FileUploader from '../../components/shared/FileUploader';
-import designerAPI from '../../api/designer';
-import showToast from '../../components/shared/Toast';
 
 const UploadDesign = () => {
     const { id } = useParams();
     const navigate = useNavigate();
+    const { uploadDesignFiles, submitForReview, isLoading } = useDesignerStore();
+
     const [files, setFiles] = useState([]);
-    const [versionNotes, setVersionNotes] = useState('');
-    const [uploading, setUploading] = useState(false);
-    const [uploadProgress, setUploadProgress] = useState(0);
+    const [notes, setNotes] = useState('');
+    const [isDragging, setIsDragging] = useState(false);
 
-    const handleFilesSelected = (newFiles) => {
-        setFiles([...files, ...newFiles]);
+    const handleDragOver = (e) => {
+        e.preventDefault();
+        setIsDragging(true);
     };
 
-    const handleRemoveFile = (index) => {
-        const newFiles = [...files];
-        newFiles.splice(index, 1);
-        setFiles(newFiles);
+    const handleDragLeave = () => {
+        setIsDragging(false);
     };
 
-    const handleSubmit = async () => {
+    const handleDrop = (e) => {
+        e.preventDefault();
+        setIsDragging(false);
+
+        const droppedFiles = Array.from(e.dataTransfer.files);
+        setFiles(prev => [...prev, ...droppedFiles]);
+    };
+
+    const handleFileSelect = (e) => {
+        const selectedFiles = Array.from(e.target.files);
+        setFiles(prev => [...prev, ...selectedFiles]);
+    };
+
+    const removeFile = (index) => {
+        setFiles(prev => prev.filter((_, i) => i !== index));
+    };
+
+    const handleUploadAndSubmit = async () => {
         if (files.length === 0) {
-            showToast.error('Please upload at least one file');
+            alert('Please select at least one file to upload');
             return;
         }
 
-        if (!versionNotes.trim()) {
-            showToast.error('Please add version notes');
-            return;
-        }
+        // Upload files
+        const uploadResult = await uploadDesignFiles(id, files);
 
-        try {
-            setUploading(true);
-            const formData = new FormData();
-            files.forEach((file) => {
-                formData.append('files', file);
-            });
-            formData.append('notes', versionNotes);
+        if (uploadResult.success) {
+            // Submit for review
+            const submitResult = await submitForReview(id, notes);
 
-            await designerAPI.uploadDesign(id, formData, {
-                onUploadProgress: (progressEvent) => {
-                    const progress = Math.round((progressEvent.loaded * 100) / progressEvent.total);
-                    setUploadProgress(progress);
-                },
-            });
-
-            showToast.success('Design uploaded successfully!');
-            navigate('/designer/workspace');
-        } catch (error) {
-            console.error('Upload failed:', error);
-            showToast.error('Failed to upload design');
-        } finally {
-            setUploading(false);
-            setUploadProgress(0);
+            if (submitResult.success) {
+                navigate(`/designer/tasks/${id}`);
+            }
         }
     };
 
-    const handleSaveDraft = async () => {
-        try {
-            // Save as draft logic
-            showToast.success('Draft saved');
-        } catch (error) {
-            showToast.error('Failed to save draft');
-        }
+    const formatFileSize = (bytes) => {
+        if (bytes < 1024) return bytes + ' B';
+        if (bytes < 1024 * 1024) return (bytes / 1024).toFixed(2) + ' KB';
+        return (bytes / (1024 * 1024)).toFixed(2) + ' MB';
     };
 
     return (
-        <DashboardLayout breadcrumbs={['Designer', 'Upload Design']}>
-            <div className="max-w-4xl mx-auto">
+        <DashboardLayout breadcrumbs={['Designer', 'Tasks', 'Upload Design']}>
+            <div className="max-w-4xl mx-auto space-y-6 animate-in fade-in duration-700">
                 {/* Header */}
-                <div className="mb-8">
+                <div className="flex items-center gap-4">
                     <button
-                        onClick={() => navigate('/designer/workspace')}
-                        className="flex items-center gap-2 text-gray-400 hover:text-white mb-4"
+                        onClick={() => navigate(`/designer/tasks/${id}`)}
+                        className="p-3 bg-white border border-gray-100 rounded-2xl hover:bg-gray-50 transition-all"
                     >
-                        <ArrowLeftIcon className="w-5 h-5" />
-                        Back to Workspace
+                        <ArrowLeftIcon className="w-5 h-5 text-gray-900" />
                     </button>
-                    <h1 className="text-3xl font-bold text-white mb-2">Upload Design Files</h1>
-                    <p className="text-gray-400">Upload your completed design files for review</p>
+                    <div>
+                        <h1 className="text-3xl font-black text-gray-900">Upload Design</h1>
+                        <p className="text-gray-500 font-medium mt-1">Upload your design files and submit for review</p>
+                    </div>
                 </div>
 
                 {/* Upload Area */}
-                <div className="bg-[#151B2E] rounded-lg p-8 border border-[#1E2638] mb-6">
-                    <h2 className="text-xl font-bold text-white mb-6">Design Files</h2>
+                <div className="bg-white rounded-3xl border border-gray-100 shadow-[0_8px_30px_rgb(0,0,0,0.02)] p-8">
+                    <div
+                        onDragOver={handleDragOver}
+                        onDragLeave={handleDragLeave}
+                        onDrop={handleDrop}
+                        className={`border-2 border-dashed rounded-3xl p-12 text-center transition-all ${isDragging
+                                ? 'border-blue-600 bg-blue-50'
+                                : 'border-gray-200 hover:border-blue-400 hover:bg-gray-50'
+                            }`}
+                    >
+                        <CloudArrowUpIcon className={`w-16 h-16 mx-auto mb-4 ${isDragging ? 'text-blue-600' : 'text-gray-400'}`} />
+                        <h3 className="text-xl font-black text-gray-900 mb-2">
+                            {isDragging ? 'Drop files here' : 'Drag and drop files'}
+                        </h3>
+                        <p className="text-gray-500 mb-4">or</p>
+                        <label className="inline-block px-6 py-3 bg-blue-600 text-white rounded-2xl font-bold hover:bg-blue-700 transition-all cursor-pointer shadow-lg shadow-blue-600/20">
+                            <span>Browse Files</span>
+                            <input
+                                type="file"
+                                multiple
+                                onChange={handleFileSelect}
+                                className="hidden"
+                                accept="image/*,video/*,.pdf,.ai,.psd,.fig"
+                            />
+                        </label>
+                        <p className="text-sm text-gray-400 mt-4">
+                            Supports: Images, Videos, PDF, AI, PSD, Figma files
+                        </p>
+                    </div>
 
-                    <FileUploader
-                        onFilesSelected={handleFilesSelected}
-                        files={files}
-                        onRemove={handleRemoveFile}
-                        maxFiles={20}
-                        maxSize={52428800} // 50MB
-                        accept={{
-                            'image/*': ['.png', '.jpg', '.jpeg', '.gif', '.svg'],
-                            'application/pdf': ['.pdf'],
-                            'application/zip': ['.zip'],
-                            'video/*': ['.mp4', '.mov'],
-                        }}
-                        multiple
-                    />
-
-                    {uploading && (
-                        <div className="mt-6">
-                            <div className="flex items-center justify-between mb-2">
-                                <span className="text-sm text-white">Uploading...</span>
-                                <span className="text-sm text-blue-500">{uploadProgress}%</span>
-                            </div>
-                            <div className="w-full bg-gray-700 rounded-full h-2">
-                                <div
-                                    className="bg-blue-500 h-2 rounded-full transition-all duration-300"
-                                    style={{ width: `${uploadProgress}%` }}
-                                />
-                            </div>
-                        </div>
-                    )}
-                </div>
-
-                {/* Version Notes */}
-                <div className="bg-[#151B2E] rounded-lg p-8 border border-[#1E2638] mb-6">
-                    <h2 className="text-xl font-bold text-white mb-4">Version Notes</h2>
-                    <textarea
-                        value={versionNotes}
-                        onChange={(e) => setVersionNotes(e.target.value)}
-                        placeholder="Describe the changes, design decisions, or any notes for the reviewer..."
-                        className="w-full px-4 py-3 bg-[#0A0E1A] border border-gray-700 rounded-lg text-white focus:border-blue-500 focus:outline-none resize-none"
-                        rows={6}
-                    />
-                    <p className="text-sm text-gray-400 mt-2">
-                        Be specific about what you've completed and any areas that need special attention.
-                    </p>
-                </div>
-
-                {/* Preview Section */}
-                {files.length > 0 && (
-                    <div className="bg-[#151B2E] rounded-lg p-8 border border-[#1E2638] mb-6">
-                        <h2 className="text-xl font-bold text-white mb-4">File Preview</h2>
-                        <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-                            {files.slice(0, 8).map((file, index) => (
-                                <div key={index} className="aspect-square bg-gradient-to-br from-gray-700 to-gray-800 rounded-lg flex items-center justify-center">
-                                    {file.type.startsWith('image/') ? (
-                                        <img
-                                            src={URL.createObjectURL(file)}
-                                            alt={file.name}
-                                            className="w-full h-full object-cover rounded-lg"
-                                        />
-                                    ) : (
-                                        <div className="text-center">
-                                            <CloudArrowUpIcon className="w-8 h-8 text-gray-400 mx-auto mb-2" />
-                                            <p className="text-xs text-gray-400 truncate px-2">{file.name}</p>
-                                        </div>
-                                    )}
+                    {/* File List */}
+                    {files.length > 0 && (
+                        <div className="mt-6 space-y-3">
+                            <h3 className="text-lg font-black text-gray-900">Selected Files ({files.length})</h3>
+                            {files.map((file, index) => (
+                                <div key={index} className="flex items-center gap-4 p-4 bg-gray-50 rounded-2xl border border-gray-100">
+                                    <DocumentIcon className="w-10 h-10 text-blue-600 flex-shrink-0" />
+                                    <div className="flex-1 min-w-0">
+                                        <p className="font-bold text-gray-900 truncate">{file.name}</p>
+                                        <p className="text-sm text-gray-500">{formatFileSize(file.size)}</p>
+                                    </div>
+                                    <button
+                                        onClick={() => removeFile(index)}
+                                        className="p-2 bg-white border border-gray-200 rounded-xl hover:bg-red-50 hover:border-red-200 transition-all"
+                                    >
+                                        <XMarkIcon className="w-5 h-5 text-gray-600 hover:text-red-600" />
+                                    </button>
                                 </div>
                             ))}
                         </div>
-                        {files.length > 8 && (
-                            <p className="text-sm text-gray-400 mt-4">
-                                +{files.length - 8} more files
-                            </p>
-                        )}
-                    </div>
-                )}
+                    )}
 
-                {/* Actions */}
-                <div className="flex items-center justify-between">
-                    <button
-                        onClick={handleSaveDraft}
-                        disabled={uploading}
-                        className="px-6 py-3 bg-gray-700 hover:bg-gray-600 text-white rounded-lg font-medium disabled:opacity-50"
-                    >
-                        Save as Draft
-                    </button>
-                    <button
-                        onClick={handleSubmit}
-                        disabled={uploading || files.length === 0}
-                        className="px-6 py-3 bg-blue-500 hover:bg-blue-600 text-white rounded-lg font-medium disabled:opacity-50 flex items-center gap-2"
-                    >
-                        <CloudArrowUpIcon className="w-5 h-5" />
-                        {uploading ? 'Uploading...' : 'Submit for Review'}
-                    </button>
-                </div>
-
-                {/* Guidelines */}
-                <div className="mt-8 grid grid-cols-2 gap-4">
-                    <div className="p-4 bg-[#151B2E] rounded-lg border border-[#1E2638]">
-                        <h3 className="text-white font-medium mb-2">📋 File Guidelines</h3>
-                        <ul className="text-sm text-gray-400 space-y-1">
-                            <li>• Max 50MB per file</li>
-                            <li>• Accepted: PNG, JPG, PDF, ZIP, MP4</li>
-                            <li>• Include source files when possible</li>
-                        </ul>
+                    {/* Notes */}
+                    <div className="mt-6">
+                        <label className="block text-sm font-bold text-gray-900 mb-2">
+                            Version Notes (Optional)
+                        </label>
+                        <textarea
+                            value={notes}
+                            onChange={(e) => setNotes(e.target.value)}
+                            placeholder="Add any notes about this version..."
+                            rows={4}
+                            className="w-full px-4 py-3 bg-gray-50 border border-gray-100 rounded-2xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent resize-none"
+                        />
                     </div>
-                    <div className="p-4 bg-[#151B2E] rounded-lg border border-[#1E2638]">
-                        <h3 className="text-white font-medium mb-2">✅ Best Practices</h3>
-                        <ul className="text-sm text-gray-400 space-y-1">
-                            <li>• Use descriptive file names</li>
-                            <li>• Include multiple formats</li>
-                            <li>• Add detailed version notes</li>
-                        </ul>
+
+                    {/* Actions */}
+                    <div className="mt-6 flex items-center gap-3">
+                        <button
+                            onClick={() => navigate(`/designer/tasks/${id}`)}
+                            className="flex-1 px-6 py-3 bg-white border border-gray-100 rounded-2xl text-gray-900 font-bold hover:bg-gray-50 transition-all"
+                        >
+                            Cancel
+                        </button>
+                        <button
+                            onClick={handleUploadAndSubmit}
+                            disabled={files.length === 0 || isLoading}
+                            className="flex-1 flex items-center justify-center gap-2 px-6 py-3 bg-blue-600 text-white rounded-2xl font-bold hover:bg-blue-700 transition-all shadow-lg shadow-blue-600/20 disabled:opacity-50 disabled:cursor-not-allowed"
+                        >
+                            {isLoading ? (
+                                <>
+                                    <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+                                    <span>Uploading...</span>
+                                </>
+                            ) : (
+                                <>
+                                    <PaperAirplaneIcon className="w-5 h-5" />
+                                    <span>Upload & Submit for Review</span>
+                                </>
+                            )}
+                        </button>
                     </div>
                 </div>
             </div>

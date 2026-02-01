@@ -37,9 +37,10 @@ const Sidebar = () => {
         switch (user?.role) {
             case 'client':
                 return [
-                    { name: 'Dashboard', path: '/client/dashboard', icon: HomeIcon },
-                    { name: 'Requests', path: '/client/requests', icon: DocumentTextIcon },
-                    { name: 'Deliveries', path: '/client/deliveries', icon: InboxIcon },
+                    { name: 'Dashboard', path: '/dashboard', icon: HomeIcon },
+                    { name: 'Active Requests', path: '/client/requests', icon: DocumentTextIcon },
+                    { name: 'Request History', path: '/client/requests/history', icon: InboxIcon },
+                    { name: 'Deliveries', path: '/client/deliveries', icon: CloudArrowUpIcon },
                     { name: 'Billing', path: '/client/billing', icon: CreditCardIcon },
                     { name: 'Settings', path: '/client/settings', icon: Cog6ToothIcon },
                 ];
@@ -65,11 +66,11 @@ const Sidebar = () => {
 
             case 'admin':
                 return [
-                    { name: 'Dashboard', path: '/admin/dashboard', icon: HomeIcon },
+                    { name: 'Dashboard', path: '/admin/dashboard', icon: HomeIcon, badge: unreadCount },
                     { name: 'Users', path: '/admin/users', icon: UsersIcon },
                     { name: 'Plans', path: '/admin/plans', icon: CubeIcon },
                     { name: 'Analytics', path: '/admin/analytics', icon: ChartBarIcon },
-                    { name: 'Testimonials', path: '/admin/testimonials', icon: StarIcon, badge: unreadCount },
+                    { name: 'Testimonials', path: '/admin/testimonials', icon: StarIcon },
                     { name: 'Leads', path: '/admin/leads', icon: BriefcaseIcon },
                     { name: 'Payouts', path: '/admin/payouts', icon: CurrencyDollarIcon },
                 ];
@@ -88,53 +89,53 @@ const Sidebar = () => {
     };
 
     const navigationItems = getNavigationItems();
-    const isDarkTheme = ['designer', 'manager', 'admin'].includes(user?.role);
+    const sidebarTheme = user?.role === 'client' ? 'light' : 'dark';
 
     return (
-        <div className={`fixed left-0 top-0 h-screen w-64 ${isDarkTheme ? 'bg-[#0A0E1A] border-r border-[#1E2638]' : 'bg-white border-r border-gray-200'} flex flex-col z-50`}>
+        <div className={`fixed left-0 top-0 h-screen w-64 ${sidebarTheme === 'dark' ? 'bg-[#0A0E1A] border-r border-[#1E2638]' : 'bg-white border-r border-gray-100 shadow-[4px_0_24px_rgba(0,0,0,0.02)]'} flex flex-col z-50 transition-colors duration-300`}>
             {/* Logo */}
-            <div className="p-6 border-b border-gray-200 dark:border-[#1E2638]">
-                <div className="flex items-center gap-2">
-                    <div className="w-8 h-8 bg-blue-500 rounded-lg flex items-center justify-center">
-                        <span className="text-white font-bold text-lg">W</span>
+            <div className={`p-8 ${sidebarTheme === 'dark' ? 'border-b border-[#1E2638]' : 'border-b border-gray-50'}`}>
+                <div className="flex items-center gap-3">
+                    <div className="w-10 h-10 bg-blue-600 rounded-xl flex items-center justify-center shadow-lg shadow-blue-600/20">
+                        <span className="text-white font-black text-xl">W</span>
                     </div>
-                    <span className={`text-xl font-bold ${isDarkTheme ? 'text-white' : 'text-gray-900'}`}>
-                        WebAsia
-                    </span>
+                    <div>
+                        <span className={`text-xl font-black tracking-tight ${sidebarTheme === 'dark' ? 'text-white' : 'text-gray-900'}`}>
+                            WebAsia
+                        </span>
+                        {user?.role && (
+                            <p className="text-[10px] font-black text-blue-600 uppercase tracking-widest leading-none mt-1">{user.role} Portal</p>
+                        )}
+                    </div>
                 </div>
-                {user?.role && (
-                    <p className="text-xs text-gray-400 mt-1 capitalize">{user.role} Portal</p>
-                )}
             </div>
 
             {/* Navigation */}
-            <nav className="flex-1 overflow-y-auto py-4 px-3">
-                <div className="space-y-1">
+            <nav className="flex-1 overflow-y-auto py-6 px-4">
+                <div className="space-y-1.5">
                     {navigationItems.map((item) => (
                         <NavLink
                             key={item.path}
                             to={item.path}
                             className={({ isActive }) =>
-                                `flex items-center justify-between gap-3 px-3 py-2.5 rounded-lg transition-all ${isActive
-                                    ? isDarkTheme
-                                        ? 'bg-blue-500 text-white'
-                                        : 'bg-blue-50 text-blue-600'
-                                    : isDarkTheme
+                                `flex items-center justify-between gap-3 px-4 py-3 rounded-2xl transition-all duration-200 group ${isActive
+                                    ? 'bg-blue-600 text-white shadow-lg shadow-blue-600/20'
+                                    : sidebarTheme === 'dark'
                                         ? 'text-gray-400 hover:bg-[#151B2E] hover:text-white'
-                                        : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900'
+                                        : 'text-gray-500 hover:bg-gray-50 hover:text-gray-900'
                                 }`
                             }
                         >
                             {({ isActive }) => (
                                 <>
                                     <div className="flex items-center gap-3">
-                                        <item.icon className="w-5 h-5" />
-                                        <span className="font-medium">{item.name}</span>
+                                        <item.icon className={`w-5 h-5 transition-colors ${isActive ? 'text-white' : 'text-gray-400 group-hover:text-blue-600'}`} />
+                                        <span className={`font-bold text-sm tracking-tight ${isActive ? 'text-white' : ''}`}>{item.name}</span>
                                     </div>
                                     {item.badge && item.badge > 0 && (
-                                        <span className={`px-2 py-0.5 rounded-full text-xs font-medium ${isActive
-                                                ? 'bg-white text-blue-600'
-                                                : 'bg-blue-500 text-white'
+                                        <span className={`px-2 py-0.5 rounded-full text-[10px] font-black ${isActive
+                                            ? 'bg-white/20 text-white'
+                                            : 'bg-blue-600 text-white'
                                             }`}>
                                             {item.badge}
                                         </span>
@@ -148,39 +149,42 @@ const Sidebar = () => {
 
             {/* Support Section (Client only) */}
             {user?.role === 'client' && (
-                <div className="p-4 border-t border-gray-200">
-                    <div className="bg-blue-50 rounded-lg p-4">
-                        <h3 className="text-sm font-medium text-gray-900 mb-1">SUPPORT</h3>
-                        <p className="text-xs text-gray-600 mb-3">Need help with a request?</p>
-                        <button className="w-full px-4 py-2 bg-blue-500 hover:bg-blue-600 text-white rounded-lg text-sm font-medium transition-colors">
-                            Contact Us
-                        </button>
+                <div className="p-6 border-t border-gray-50">
+                    <div className="bg-gradient-to-br from-blue-600 to-blue-700 rounded-3xl p-6 relative overflow-hidden group">
+                        <div className="absolute top-0 right-0 w-24 h-24 bg-white/10 rounded-full -mr-12 -mt-12 group-hover:scale-110 transition-transform"></div>
+                        <div className="relative z-10 space-y-4">
+                            <h3 className="text-white font-black text-base tracking-tight leading-tight">Priority <br />Support</h3>
+                            <p className="text-blue-100 text-[10px] font-medium leading-relaxed">Active 24/7 for our enterprise partners.</p>
+                            <button className="w-full py-2.5 bg-white text-blue-600 rounded-xl text-xs font-black uppercase tracking-widest hover:bg-blue-50 transition-colors shadow-lg">
+                                Chat Now
+                            </button>
+                        </div>
                     </div>
                 </div>
             )}
 
             {/* User Profile */}
-            <div className={`p-4 border-t ${isDarkTheme ? 'border-[#1E2638]' : 'border-gray-200'}`}>
-                <div className="flex items-center gap-3 mb-3">
-                    <div className="w-10 h-10 bg-blue-500 rounded-full flex items-center justify-center text-white font-medium">
+            <div className={`p-6 border-t ${sidebarTheme === 'dark' ? 'border-[#1E2638]' : 'border-gray-50'}`}>
+                <div className="flex items-center gap-4 mb-6">
+                    <div className="w-12 h-12 bg-gray-50 border border-gray-100 rounded-2xl flex items-center justify-center text-blue-600 font-black text-lg shadow-sm">
                         {user?.name?.charAt(0) || 'U'}
                     </div>
                     <div className="flex-1 min-w-0">
-                        <p className={`text-sm font-medium truncate ${isDarkTheme ? 'text-white' : 'text-gray-900'}`}>
+                        <p className={`text-sm font-black truncate ${sidebarTheme === 'dark' ? 'text-white' : 'text-gray-900'}`}>
                             {user?.name || 'User'}
                         </p>
-                        <p className="text-xs text-gray-400 truncate">{user?.email}</p>
+                        <p className="text-[10px] font-bold text-gray-400 truncate uppercase tracking-widest">{user?.email}</p>
                     </div>
                 </div>
                 <button
                     onClick={handleLogout}
-                    className={`w-full flex items-center gap-2 px-3 py-2 rounded-lg transition-colors ${isDarkTheme
-                            ? 'text-gray-400 hover:bg-[#151B2E] hover:text-white'
-                            : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900'
+                    className={`w-full flex items-center justify-center gap-3 py-3 border border-gray-100 rounded-2xl transition-all hover:bg-red-50 hover:border-red-100 hover:text-red-500 group ${sidebarTheme === 'dark'
+                        ? 'text-gray-400'
+                        : 'text-gray-500 bg-gray-50'
                         }`}
                 >
-                    <ArrowRightOnRectangleIcon className="w-5 h-5" />
-                    <span className="text-sm font-medium">Logout</span>
+                    <ArrowRightOnRectangleIcon className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
+                    <span className="text-xs font-black uppercase tracking-widest">Logout</span>
                 </button>
             </div>
         </div>

@@ -1,235 +1,148 @@
-import { useEffect, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { ClockIcon, PlayIcon, CloudArrowUpIcon } from '@heroicons/react/24/outline';
+import { useEffect } from 'react';
+import { useSearchParams, useNavigate } from 'react-router-dom';
+import {
+    ArrowLeftIcon,
+    DocumentTextIcon,
+    CloudArrowUpIcon,
+    PaperAirplaneIcon
+} from '@heroicons/react/24/outline';
+import useDesignerStore from '../../store/designerStore';
 import DashboardLayout from '../../components/layout/DashboardLayout';
-import useAuthStore from '../../store/authStore';
-import designerAPI from '../../api/designer';
-import DataTable from '../../components/shared/DataTable';
-import StatusBadge from '../../components/shared/StatusBadge';
-import Tabs from '../../components/shared/Tabs';
 
-const DesignerWorkspace = () => {
+const Workspace = () => {
+    const [searchParams] = useSearchParams();
     const navigate = useNavigate();
-    const { user } = useAuthStore();
-    const [tasks, setTasks] = useState([]);
-    const [priorityQueue, setPriorityQueue] = useState([]);
-    const [submissions, setSubmissions] = useState([]);
-    const [selectedTask, setSelectedTask] = useState(null);
-    const [loading, setLoading] = useState(true);
-    const [viewMode, setViewMode] = useState('list'); // 'list' or 'grid'
+    const taskId = searchParams.get('task');
+    const { currentTask, fetchTaskById, isLoading } = useDesignerStore();
 
     useEffect(() => {
-        fetchTasks();
-    }, []);
-
-    const fetchTasks = async () => {
-        try {
-            setLoading(true);
-            const response = await designerAPI.getAssignedRequests();
-            const allTasks = response.data || [];
-
-            setTasks(allTasks.filter(t => t.status === 'in-progress'));
-            setPriorityQueue(allTasks.filter(t => t.priority === 'urgent' || t.priority === 'high').slice(0, 2));
-            setSubmissions(allTasks.filter(t => t.status === 'in-review'));
-        } catch (error) {
-            console.error('Failed to fetch tasks:', error);
-        } finally {
-            setLoading(false);
+        if (taskId) {
+            fetchTaskById(taskId);
         }
-    };
+    }, [taskId, fetchTaskById]);
 
-    const columns = [
-        { key: 'title', label: 'TASK NAME', sortable: true },
-        {
-            key: 'client',
-            label: 'CLIENT',
-            render: (val, row) => <span className="text-sm text-white">{row.client?.name || 'N/A'}</span>
-        },
-        {
-            key: 'category',
-            label: 'SERVICE',
-            render: (val) => (
-                <span className="px-2 py-1 bg-blue-500/10 text-blue-500 rounded text-xs uppercase">
-                    {val}
-                </span>
-            )
-        },
-        {
-            key: 'deadline',
-            label: 'DEADLINE',
-            render: (val) => <span className="text-sm text-white">{val || 'N/A'}</span>
-        },
-        {
-            key: 'status',
-            label: 'STATUS',
-            render: (val) => <StatusBadge status={val} size="sm" />
-        },
-    ];
+    if (!taskId) {
+        return (
+            <DashboardLayout breadcrumbs={['Designer', 'Workspace']}>
+                <div className="text-center py-20">
+                    <h2 className="text-2xl font-black text-gray-900 mb-2">No Task Selected</h2>
+                    <p className="text-gray-500 mb-6">Please select a task to work on</p>
+                    <button
+                        onClick={() => navigate('/designer/tasks')}
+                        className="px-6 py-3 bg-blue-600 text-white rounded-2xl font-bold hover:bg-blue-700 transition-all"
+                    >
+                        View My Tasks
+                    </button>
+                </div>
+            </DashboardLayout>
+        );
+    }
+
+    if (isLoading || !currentTask) {
+        return (
+            <DashboardLayout breadcrumbs={['Designer', 'Workspace', 'Loading...']}>
+                <div className="text-center py-20">
+                    <div className="inline-block animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
+                    <p className="mt-4 text-gray-500 font-medium">Loading workspace...</p>
+                </div>
+            </DashboardLayout>
+        );
+    }
 
     return (
-        <DashboardLayout breadcrumbs={['Designer', 'Workspace']}>
-            <div className="flex gap-6">
-                {/* Main Content */}
-                <div className="flex-1">
-                    {/* Header */}
-                    <div className="mb-6">
-                        <h1 className="text-2xl font-bold text-white mb-2">Priority Queue</h1>
-                        <p className="text-gray-400">Focus on the most urgent tasks first.</p>
-                    </div>
-
-                    {/* Priority Queue */}
-                    <div className="grid grid-cols-2 gap-4 mb-8">
-                        {priorityQueue.map((task) => (
-                            <div
-                                key={task.id}
-                                className="bg-gradient-to-br from-red-500/20 to-orange-500/20 border-2 border-red-500 rounded-lg p-6 cursor-pointer hover:from-red-500/30 hover:to-orange-500/30 transition-all"
-                                onClick={() => setSelectedTask(task)}
-                            >
-                                <div className="flex items-start justify-between mb-4">
-                                    <div>
-                                        <span className="text-xs text-red-400 font-medium">URGENT • {task.deadline}</span>
-                                        <h3 className="text-lg font-bold text-white mt-1">{task.title}</h3>
-                                        <p className="text-sm text-gray-300 mt-1">Client: {task.client?.name}</p>
-                                    </div>
-                                    <div className="p-2 bg-red-500/20 rounded">
-                                        <ClockIcon className="w-5 h-5 text-red-400" />
-                                    </div>
-                                </div>
-                                <button className="px-4 py-2 bg-white text-red-600 rounded-lg text-sm font-medium hover:bg-gray-100 transition-colors">
-                                    View Brief →
-                                </button>
+        <DashboardLayout breadcrumbs={['Designer', 'Workspace', currentTask.title]}>
+            <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 animate-in fade-in duration-700">
+                {/* Left Sidebar - Task Brief */}
+                <div className="lg:col-span-1 space-y-6">
+                    <div className="bg-white rounded-3xl border border-gray-100 shadow-[0_8px_30px_rgb(0,0,0,0.02)] p-6 sticky top-6">
+                        <div className="flex items-center gap-3 mb-6">
+                            <div className="p-2 bg-blue-50 rounded-xl">
+                                <DocumentTextIcon className="w-6 h-6 text-blue-600" />
                             </div>
-                        ))}
-                    </div>
-
-                    {/* My Active Tasks */}
-                    <div className="mb-8">
-                        <div className="flex items-center justify-between mb-4">
-                            <h2 className="text-xl font-bold text-white">My Active Tasks</h2>
-                            <div className="flex items-center gap-2">
-                                <button
-                                    onClick={() => setViewMode('grid')}
-                                    className={`p-2 rounded ${viewMode === 'grid' ? 'bg-blue-500 text-white' : 'text-gray-400 hover:text-white'}`}
-                                >
-                                    Grid
-                                </button>
-                                <button
-                                    onClick={() => setViewMode('list')}
-                                    className={`p-2 rounded ${viewMode === 'list' ? 'bg-blue-500 text-white' : 'text-gray-400 hover:text-white'}`}
-                                >
-                                    List
-                                </button>
-                            </div>
+                            <h2 className="text-xl font-black text-gray-900">Task Brief</h2>
                         </div>
 
-                        <DataTable
-                            columns={columns}
-                            data={tasks}
-                            loading={loading}
-                            onRowClick={(row) => navigate(`/designer/tasks/${row.id}`)}
-                            emptyMessage="No active tasks"
-                        />
-                    </div>
+                        <div className="space-y-4">
+                            <div>
+                                <h3 className="text-sm font-bold text-gray-500 mb-1">Title</h3>
+                                <p className="text-gray-900 font-medium">{currentTask.title}</p>
+                            </div>
 
-                    {/* Submissions for Review */}
-                    <div>
-                        <h2 className="text-xl font-bold text-white mb-4">Submissions for Review</h2>
-                        <div className="space-y-3">
-                            {submissions.map((submission) => (
-                                <div
-                                    key={submission.id}
-                                    className="bg-[#151B2E] rounded-lg p-4 border border-[#1E2638] flex items-center justify-between"
-                                >
-                                    <div className="flex items-center gap-4">
-                                        <div className="w-16 h-16 bg-gradient-to-br from-blue-500 to-purple-500 rounded"></div>
-                                        <div>
-                                            <h3 className="text-white font-medium">{submission.title}</h3>
-                                            <p className="text-sm text-gray-400">Submitted for review</p>
-                                        </div>
+                            <div>
+                                <h3 className="text-sm font-bold text-gray-500 mb-1">Description</h3>
+                                <p className="text-sm text-gray-700 leading-relaxed">
+                                    {currentTask.description || 'No description provided'}
+                                </p>
+                            </div>
+
+                            <div>
+                                <h3 className="text-sm font-bold text-gray-500 mb-1">Service Type</h3>
+                                <span className="inline-block px-3 py-1 bg-blue-50 text-blue-700 rounded-full text-xs font-bold">
+                                    {currentTask.serviceType?.replace('_', ' ')}
+                                </span>
+                            </div>
+
+                            {currentTask.specifications && (
+                                <div>
+                                    <h3 className="text-sm font-bold text-gray-500 mb-1">Specifications</h3>
+                                    <div className="bg-gray-50 rounded-2xl p-4 max-h-64 overflow-y-auto">
+                                        <pre className="text-xs text-gray-700 whitespace-pre-wrap font-mono">
+                                            {JSON.stringify(currentTask.specifications, null, 2)}
+                                        </pre>
                                     </div>
-                                    <StatusBadge status="in-review" />
                                 </div>
-                            ))}
+                            )}
+
+                            <button
+                                onClick={() => navigate(`/designer/tasks/${currentTask.id}`)}
+                                className="w-full flex items-center justify-center gap-2 px-4 py-3 bg-gray-50 text-gray-900 rounded-2xl font-bold hover:bg-gray-100 transition-all"
+                            >
+                                <ArrowLeftIcon className="w-5 h-5" />
+                                <span>Back to Task Details</span>
+                            </button>
                         </div>
                     </div>
                 </div>
 
-                {/* Sidebar */}
-                <div className="w-96 space-y-6">
-                    {selectedTask ? (
-                        <div className="bg-[#151B2E] rounded-lg p-6 border border-[#1E2638]">
-                            <div className="flex items-center justify-between mb-4">
-                                <h3 className="text-lg font-bold text-white">Task Details</h3>
-                                <button
-                                    onClick={() => setSelectedTask(null)}
-                                    className="text-gray-400 hover:text-white"
-                                >
-                                    ✕
-                                </button>
-                            </div>
+                {/* Right Area - Work Canvas */}
+                <div className="lg:col-span-2 space-y-6">
+                    <div className="bg-white rounded-3xl border border-gray-100 shadow-[0_8px_30px_rgb(0,0,0,0.02)] p-8">
+                        <div className="text-center py-12">
+                            <CloudArrowUpIcon className="w-24 h-24 text-gray-300 mx-auto mb-6" />
+                            <h2 className="text-2xl font-black text-gray-900 mb-2">Your Canvas</h2>
+                            <p className="text-gray-500 mb-8">Upload your design work when ready</p>
 
-                            <div className="space-y-4">
-                                <div>
-                                    <p className="text-xs text-blue-400 font-medium mb-1">ACTIVE SESSION</p>
-                                    <h2 className="text-xl font-bold text-white mb-2">{selectedTask.title}</h2>
-                                    <p className="text-sm text-gray-400">
-                                        {selectedTask.category} • Due in {selectedTask.deadline}
-                                    </p>
-                                </div>
-
-                                <div className="p-4 bg-[#0A0E1A] rounded-lg">
-                                    <h4 className="text-sm font-medium text-white mb-2">CREATIVE BRIEF</h4>
-                                    <p className="text-sm text-gray-400">{selectedTask.description}</p>
-                                </div>
-
-                                <div>
-                                    <h4 className="text-sm font-medium text-white mb-3">BRAND ASSETS</h4>
-                                    <div className="grid grid-cols-2 gap-2">
-                                        <div className="p-3 bg-blue-500/10 rounded text-center">
-                                            <div className="w-8 h-8 bg-blue-500 rounded mx-auto mb-1"></div>
-                                            <p className="text-xs text-blue-400">Color Palette</p>
-                                        </div>
-                                        <div className="p-3 bg-blue-500/10 rounded text-center">
-                                            <div className="w-8 h-8 bg-blue-500 rounded mx-auto mb-1"></div>
-                                            <p className="text-xs text-blue-400">Logo Pack</p>
-                                        </div>
-                                    </div>
-                                </div>
-
-                                <div className="p-4 bg-[#0A0E1A] rounded-lg">
-                                    <h4 className="text-sm font-medium text-white mb-2">NOTES & ACTIVITY</h4>
-                                    <div className="space-y-2">
-                                        <div className="flex items-start gap-2">
-                                            <div className="w-6 h-6 bg-gray-600 rounded-full flex-shrink-0"></div>
-                                            <div>
-                                                <p className="text-xs text-gray-400">Remember to use the new rounded corners for all cloud components.</p>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-
-                                <button
-                                    onClick={() => navigate(`/designer/tasks/${selectedTask.id}/upload`)}
-                                    className="w-full px-4 py-3 bg-blue-500 hover:bg-blue-600 text-white rounded-lg font-medium flex items-center justify-center gap-2"
-                                >
-                                    <PlayIcon className="w-5 h-5" />
-                                    Start Work
-                                </button>
-                            </div>
+                            <button
+                                onClick={() => navigate(`/designer/upload/${currentTask.id}`)}
+                                className="inline-flex items-center gap-2 px-8 py-4 bg-blue-600 text-white rounded-2xl font-bold hover:bg-blue-700 transition-all shadow-lg shadow-blue-600/20"
+                            >
+                                <CloudArrowUpIcon className="w-6 h-6" />
+                                <span>Upload Design Files</span>
+                            </button>
                         </div>
-                    ) : (
-                        <div className="bg-[#151B2E] rounded-lg p-6 border border-[#1E2638] text-center">
-                            <p className="text-gray-400">Select a task to view details</p>
+                    </div>
+
+                    {/* Reference Files */}
+                    {currentTask.files && currentTask.files.length > 0 && (
+                        <div className="bg-white rounded-3xl border border-gray-100 shadow-[0_8px_30px_rgb(0,0,0,0.02)] p-8">
+                            <h3 className="text-xl font-black text-gray-900 mb-4">Reference Files</h3>
+                            <div className="grid grid-cols-2 gap-4">
+                                {currentTask.files.map((file) => (
+                                    <div key={file.id} className="bg-gray-50 rounded-2xl p-4 border border-gray-100">
+                                        <DocumentTextIcon className="w-12 h-12 text-gray-400 mb-3" />
+                                        <p className="font-bold text-gray-900 text-sm truncate">{file.originalName}</p>
+                                        <p className="text-xs text-gray-500 mt-1">
+                                            {(file.fileSize / 1024).toFixed(2)} KB
+                                        </p>
+                                    </div>
+                                ))}
+                            </div>
                         </div>
                     )}
-
-                    <button className="w-full px-4 py-3 bg-blue-500 hover:bg-blue-600 text-white rounded-lg font-medium">
-                        + New Project
-                    </button>
                 </div>
             </div>
         </DashboardLayout>
     );
 };
 
-export default DesignerWorkspace;
+export default Workspace;

@@ -1,0 +1,376 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Super Admin Command Center | WebAsia</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#137fec",
+                        "background-light": "#f6f7f8",
+                        "background-dark": "#101922",
+                    },
+                    fontFamily: {
+                        "display": ["Inter"]
+                    },
+                    borderRadius: {"DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px"},
+                },
+            },
+        }
+    </script>
+<style>
+        body { font-family: 'Inter', sans-serif; }
+        .sidebar-dark { background-color: #0d141b; }
+        .custom-scrollbar::-webkit-scrollbar { width: 4px; }
+        .custom-scrollbar::-webkit-scrollbar-track { background: transparent; }
+        .custom-scrollbar::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 10px; }
+    </style>
+</head>
+<body class="bg-background-light dark:bg-background-dark text-[#0d141b] dark:text-slate-50 font-display">
+<div class="flex min-h-screen">
+<!-- Sidebar -->
+<aside class="sidebar-dark w-64 flex-shrink-0 flex flex-col justify-between p-4 text-slate-300 border-r border-slate-800">
+<div class="flex flex-col gap-8">
+<div class="flex items-center gap-3 px-2">
+<div class="bg-primary p-2 rounded-lg">
+<svg class="size-6 text-white" fill="none" viewbox="0 0 48 48" xmlns="http://www.w3.org/2000/svg">
+<path d="M44 4H30.6666V17.3334H17.3334V30.6666H4V44H44V4Z" fill="currentColor"></path>
+</svg>
+</div>
+<div>
+<h1 class="text-white text-base font-bold leading-none">WebAsia</h1>
+<p class="text-slate-500 text-xs font-medium">Command Center</p>
+</div>
+</div>
+<nav class="flex flex-col gap-1">
+<a class="flex items-center gap-3 px-3 py-2.5 rounded-lg bg-primary text-white" href="#">
+<span class="material-symbols-outlined text-[22px]">dashboard</span>
+<span class="text-sm font-medium">Dashboard</span>
+</a>
+<a class="flex items-center gap-3 px-3 py-2.5 rounded-lg hover:bg-slate-800 hover:text-white transition-colors" href="#">
+<span class="material-symbols-outlined text-[22px]">palette</span>
+<span class="text-sm font-medium">Designers</span>
+</a>
+<a class="flex items-center gap-3 px-3 py-2.5 rounded-lg hover:bg-slate-800 hover:text-white transition-colors" href="#">
+<span class="material-symbols-outlined text-[22px]">group</span>
+<span class="text-sm font-medium">Clients</span>
+</a>
+<a class="flex items-center gap-3 px-3 py-2.5 rounded-lg hover:bg-slate-800 hover:text-white transition-colors" href="#">
+<span class="material-symbols-outlined text-[22px]">receipt_long</span>
+<span class="text-sm font-medium">Plans</span>
+</a>
+<a class="flex items-center gap-3 px-3 py-2.5 rounded-lg hover:bg-slate-800 hover:text-white transition-colors" href="#">
+<span class="material-symbols-outlined text-[22px]">payments</span>
+<span class="text-sm font-medium">Financials</span>
+</a>
+</nav>
+<div class="pt-4 border-t border-slate-800">
+<p class="px-3 text-[10px] font-bold uppercase tracking-wider text-slate-500 mb-2">Internal Tools</p>
+<a class="flex items-center gap-3 px-3 py-2.5 rounded-lg hover:bg-slate-800 hover:text-white transition-colors" href="#">
+<span class="material-symbols-outlined text-[22px]">hub</span>
+<span class="text-sm font-medium">Affiliates</span>
+</a>
+<a class="flex items-center gap-3 px-3 py-2.5 rounded-lg hover:bg-slate-800 hover:text-white transition-colors" href="#">
+<span class="material-symbols-outlined text-[22px]">analytics</span>
+<span class="text-sm font-medium">Growth Reports</span>
+</a>
+</div>
+</div>
+<div class="flex flex-col gap-4 mt-auto">
+<div class="flex items-center gap-3 px-3 py-2 bg-slate-800/50 rounded-xl">
+<div class="size-9 rounded-full bg-cover bg-center" data-alt="Admin user profile picture" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuBQCP6Dcn1VzoYh-nPqinUbt-wYLGoxPc6VNGgJ2sBIdfip84n4cnGKJ_yy3jO_Xs1Bb0b6RE9ugdyEZagDD2z8eHX-jbPSCVbzXDPxpLkDAQKWLLBhRuSxv4dI01KK6vBzJNCIqNG-1FnXcvhXb01tOcvEihbbSpQjnxviqUObjtdsn_u7-ISOG_6WSA3CNfQVNC7NKSBeSby-dEpyXrTu6FrKQrGYNu6OiF6MbDAedfKOZKM0hGtUHtcOisrtXl1q2ed-eZomdks");'></div>
+<div class="flex-1 overflow-hidden">
+<p class="text-xs font-bold text-white truncate">Marcus Chen</p>
+<p class="text-[10px] text-slate-400 truncate">Super Admin</p>
+</div>
+</div>
+<button class="w-full flex items-center justify-center gap-2 bg-slate-800 hover:bg-slate-700 text-white py-2 rounded-lg text-sm font-bold transition-colors">
+<span class="material-symbols-outlined text-sm">settings</span>
+                    System Settings
+                </button>
+</div>
+</aside>
+<!-- Main Content -->
+<main class="flex-1 flex flex-col min-w-0 bg-background-light dark:bg-background-dark">
+<!-- Header -->
+<header class="h-16 flex items-center justify-between px-8 border-b border-[#e7edf3] dark:border-slate-800 bg-white dark:bg-slate-900 sticky top-0 z-10">
+<div class="flex items-center gap-4 flex-1 max-w-xl">
+<label class="relative w-full">
+<span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-[#4c739a] text-xl">search</span>
+<input class="w-full pl-10 pr-4 py-2 bg-[#f0f2f5] dark:bg-slate-800 border-none rounded-lg text-sm focus:ring-2 focus:ring-primary/50 transition-all placeholder:text-[#4c739a]" placeholder="Search clients, designers, or invoices..." type="text"/>
+</label>
+</div>
+<div class="flex items-center gap-3 pl-8">
+<button class="p-2 rounded-lg bg-[#f0f2f5] dark:bg-slate-800 text-[#0d141b] dark:text-slate-300 relative">
+<span class="material-symbols-outlined text-[20px]">notifications</span>
+<span class="absolute top-2 right-2 size-2 bg-red-500 rounded-full border-2 border-white dark:border-slate-900"></span>
+</button>
+<button class="p-2 rounded-lg bg-[#f0f2f5] dark:bg-slate-800 text-[#0d141b] dark:text-slate-300">
+<span class="material-symbols-outlined text-[20px]">help</span>
+</button>
+<div class="h-8 w-[1px] bg-slate-200 dark:bg-slate-700 mx-2"></div>
+<button class="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-primary text-white text-sm font-bold">
+<span class="material-symbols-outlined text-[18px]">add</span>
+                        New Task
+                    </button>
+</div>
+</header>
+<div class="p-8 overflow-y-auto custom-scrollbar">
+<!-- KPI Section -->
+<div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+<div class="bg-white dark:bg-slate-900 p-6 rounded-xl border border-[#cfdbe7] dark:border-slate-800 shadow-sm">
+<div class="flex justify-between items-start mb-4">
+<p class="text-[#4c739a] dark:text-slate-400 text-sm font-semibold uppercase tracking-wider">Total MRR</p>
+<span class="material-symbols-outlined text-primary">monitoring</span>
+</div>
+<div class="flex items-baseline gap-2">
+<h3 class="text-3xl font-bold text-[#0d141b] dark:text-white">$42,500</h3>
+<span class="text-green-600 text-sm font-bold flex items-center">
+<span class="material-symbols-outlined text-sm">arrow_upward</span>12.5%
+                            </span>
+</div>
+<p class="text-xs text-[#4c739a] mt-2">v.s. $37,800 last month</p>
+</div>
+<div class="bg-white dark:bg-slate-900 p-6 rounded-xl border border-[#cfdbe7] dark:border-slate-800 shadow-sm">
+<div class="flex justify-between items-start mb-4">
+<p class="text-[#4c739a] dark:text-slate-400 text-sm font-semibold uppercase tracking-wider">Active Subscriptions</p>
+<span class="material-symbols-outlined text-primary">card_membership</span>
+</div>
+<div class="flex items-baseline gap-2">
+<h3 class="text-3xl font-bold text-[#0d141b] dark:text-white">124</h3>
+<span class="text-red-500 text-sm font-bold flex items-center">
+<span class="material-symbols-outlined text-sm">arrow_downward</span>2.1%
+                            </span>
+</div>
+<p class="text-xs text-[#4c739a] mt-2">6 churned in last 7 days</p>
+</div>
+<div class="bg-white dark:bg-slate-900 p-6 rounded-xl border border-[#cfdbe7] dark:border-slate-800 shadow-sm">
+<div class="flex justify-between items-start mb-4">
+<p class="text-[#4c739a] dark:text-slate-400 text-sm font-semibold uppercase tracking-wider">Designer Workload</p>
+<span class="material-symbols-outlined text-primary">groups_3</span>
+</div>
+<div class="flex items-baseline gap-2">
+<h3 class="text-3xl font-bold text-[#0d141b] dark:text-white">78%</h3>
+<span class="text-green-600 text-sm font-bold flex items-center">
+<span class="material-symbols-outlined text-sm">arrow_upward</span>5%
+                            </span>
+</div>
+<div class="w-full bg-[#e7edf3] dark:bg-slate-800 h-2 rounded-full mt-3 overflow-hidden">
+<div class="bg-primary h-full" style="width: 78%"></div>
+</div>
+</div>
+</div>
+<div class="grid grid-cols-1 xl:grid-cols-3 gap-8">
+<!-- Pending Approvals Queue -->
+<div class="xl:col-span-2 space-y-4">
+<div class="flex items-center justify-between">
+<h2 class="text-xl font-bold text-[#0d141b] dark:text-white flex items-center gap-2">
+<span class="material-symbols-outlined text-primary">clock_loader_40</span>
+                                Pending Approvals
+                            </h2>
+<a class="text-sm font-bold text-primary hover:underline" href="#">View All Backlog</a>
+</div>
+<div class="bg-white dark:bg-slate-900 rounded-xl border border-[#cfdbe7] dark:border-slate-800 overflow-hidden shadow-sm">
+<table class="w-full text-left border-collapse">
+<thead>
+<tr class="bg-slate-50 dark:bg-slate-800/50 border-b border-[#cfdbe7] dark:border-slate-800">
+<th class="px-6 py-4 text-xs font-bold uppercase tracking-wider text-[#4c739a]">Preview</th>
+<th class="px-6 py-4 text-xs font-bold uppercase tracking-wider text-[#4c739a]">Client &amp; Project</th>
+<th class="px-6 py-4 text-xs font-bold uppercase tracking-wider text-[#4c739a]">Designer</th>
+<th class="px-6 py-4 text-xs font-bold uppercase tracking-wider text-[#4c739a]">Type</th>
+<th class="px-6 py-4 text-xs font-bold uppercase tracking-wider text-[#4c739a] text-right">Actions</th>
+</tr>
+</thead>
+<tbody class="divide-y divide-[#cfdbe7] dark:divide-slate-800">
+<tr class="hover:bg-slate-50/50 dark:hover:bg-slate-800/20 transition-colors">
+<td class="px-6 py-4">
+<div class="size-12 rounded-lg bg-cover bg-center border border-slate-200 dark:border-slate-700" data-alt="Branding design preview" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuC43FDoLPKXYJL9j1twW6uHilw0vMzNnOztIHzcjUxpk8stmY39mBmdw_slibarqfNrBKFmu_rw3_JOyt3yWwikGL_jXAziExC4FsOfkp9oAV_F3PWElkaBZ66En5rTOd1aH752wz9iNh_SQ8CMJ2TZRvitRIU7dFusuJ_hAgWwrgm_E6uQeuepJ53ic_XsdF1h5LpHV0knlzYl3hm46ea4tW8WgA-x-EDFcoL28cqWlsb9HO5wLCXHlodS8UNcLd_WH2iX7DKtJ6U");'></div>
+</td>
+<td class="px-6 py-4">
+<p class="text-sm font-bold text-[#0d141b] dark:text-white">TechFlow Inc.</p>
+<p class="text-xs text-[#4c739a]">Brand Identity Revamp</p>
+</td>
+<td class="px-6 py-4">
+<div class="flex items-center gap-2">
+<div class="size-6 rounded-full bg-cover bg-center" data-alt="Designer Alex Rivera" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuDIX2VD7PmMZqO9uKTITtiq3JodMzcP18jn3qSiti5prCduAYsFFld49wo9SzH7wN7G7u9iWORZGRCBKCKPCEy57Je65Apq6k5ktxFKldIe3Et-O0F9WuGp27hGOFAOCj53QO2yWjx8Id8gNceykk2OAIvXX2bMDlsUU6Ow563ly6E14CsSsDdsPQAk798a7O-6Fl2O9rlXVu2lJF3UPAlejFqwAoIbtrFFRZf6ODxc7q72_hO6S313AWNvyHOYcGGHTZ3BNHB-U4A");'></div>
+<span class="text-sm text-[#0d141b] dark:text-slate-300">Alex Rivera</span>
+</div>
+</td>
+<td class="px-6 py-4">
+<span class="px-2 py-1 text-[10px] font-bold bg-[#e7edf3] dark:bg-slate-800 text-[#0d141b] dark:text-slate-300 rounded">BRANDING</span>
+</td>
+<td class="px-6 py-4 text-right">
+<div class="flex justify-end gap-2">
+<button class="size-8 rounded-lg flex items-center justify-center text-[#4c739a] hover:bg-slate-100 dark:hover:bg-slate-800">
+<span class="material-symbols-outlined text-[18px]">visibility</span>
+</button>
+<button class="size-8 rounded-lg flex items-center justify-center text-green-600 hover:bg-green-50 dark:hover:bg-green-900/20">
+<span class="material-symbols-outlined text-[18px]">check_circle</span>
+</button>
+</div>
+</td>
+</tr>
+<tr class="hover:bg-slate-50/50 dark:hover:bg-slate-800/20 transition-colors">
+<td class="px-6 py-4">
+<div class="size-12 rounded-lg bg-cover bg-center border border-slate-200 dark:border-slate-700" data-alt="UI Design dashboard preview" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuDe9P9Mt1Ubv9ciFBpauvzOd71mTSpm4-9Hyua1GQ5BlsD_Mw9YuQ3aRnsoqXz-1wGg28YIp6C2QQELdzI0LW8h9LLuLl8w-otaPR-G81T0Zp1Y40wV3S50HM_1uQu7GGpVNZm7lIhG2qQW9JTkQ-HCGcNtuXA6jVEBusnHyOSKAMMJPvmIA_qFxJh-CGQnndE0l6tXEOenq644lTznCzusazkEBQbImoi-UMj2zZ6ejEtxmUOf2uvS0Z-dZC-XtJO0O3A9bwmEtCM");'></div>
+</td>
+<td class="px-6 py-4">
+<p class="text-sm font-bold text-[#0d141b] dark:text-white">GreenPulse</p>
+<p class="text-xs text-[#4c739a]">Admin Dashboard UI</p>
+</td>
+<td class="px-6 py-4">
+<div class="flex items-center gap-2">
+<div class="size-6 rounded-full bg-cover bg-center" data-alt="Designer Sarah Chen" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuCox4Nw442RDPdMZ2oQyf8GJFVCU2a2RcCFWTXdbnPvhuZzyN8K50UUGEHAzQ3QybPasy99zfLyvIKLcbgeyvh7W2jbylB6YD1OeI2H08wotSSvVaCwh-8bKSNx5Cvoo37yxFnw6JOEEGgxAZ_jlUP7p4B48FIuS3sSug2FCcE93Xe0KIOLRkl8XeOlLBWN3JzrEwLxoUbYqvExREXIog2hLLH1azTcJJQldhlX_geN9QlDqKBZetzLZW54QPg9lTSpR0fE7qRUi3Y");'></div>
+<span class="text-sm text-[#0d141b] dark:text-slate-300">Sarah Chen</span>
+</div>
+</td>
+<td class="px-6 py-4">
+<span class="px-2 py-1 text-[10px] font-bold bg-[#e7edf3] dark:bg-slate-800 text-[#0d141b] dark:text-slate-300 rounded">WEB/UI</span>
+</td>
+<td class="px-6 py-4 text-right">
+<div class="flex justify-end gap-2">
+<button class="size-8 rounded-lg flex items-center justify-center text-[#4c739a] hover:bg-slate-100 dark:hover:bg-slate-800">
+<span class="material-symbols-outlined text-[18px]">visibility</span>
+</button>
+<button class="size-8 rounded-lg flex items-center justify-center text-green-600 hover:bg-green-50 dark:hover:bg-green-900/20">
+<span class="material-symbols-outlined text-[18px]">check_circle</span>
+</button>
+</div>
+</td>
+</tr>
+<tr class="hover:bg-slate-50/50 dark:hover:bg-slate-800/20 transition-colors">
+<td class="px-6 py-4">
+<div class="size-12 rounded-lg bg-cover bg-center border border-slate-200 dark:border-slate-700" data-alt="Marketing presentation preview" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuBmJKSJS-VXiSZEhsBrwLgEGQUSSr5clv8wydJxEnP1xP8kLe5AN2lZWziP2AxNwlR4b7PKRhr2ksAlZj_KG_kqqJRISzp53Zvt3D9eVk9SzqG6lpEjbN7p7wnXV2HRfK6yGaqA4BMA0KapuZ7sD_0sPILqpVT6yK_1nqmYmlPoPB6rg9zcx1iD6Drp5KEozLN_qy3cbd25RmkzWvR6Z5Bg1YQ3d8_MFc4K5l19aCnBFhlJoL_GxrcCR18cXM3NL1zLhlVdWUjN3HE");'></div>
+</td>
+<td class="px-6 py-4">
+<p class="text-sm font-bold text-[#0d141b] dark:text-white">CloudScale</p>
+<p class="text-xs text-[#4c739a]">Pitch Deck Design</p>
+</td>
+<td class="px-6 py-4">
+<div class="flex items-center gap-2">
+<div class="size-6 rounded-full bg-cover bg-center" data-alt="Designer Mike Ross" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuCc58QLv_rpiZsljSSYhzh8DF_KA81DKWv4rP1nQUwfvZ--kdMk_EHBcQ2QMtNFDRg-91SYfDqhocZ42zXvxGLnt3JZtSeICW0o-v1eaXWen3a_Fip01iuz2fstc1_d1WvhbIWRH_vPei6xFPKJF7EXyB2iqeXUdxuKP0wTAWlgTwMDqOAx6djTU_Kz5kJrhhCpF-dg2RNY4bQoWOf7uYeq02CCfGFZRcKBPyxu8xdoXSElkuG5S8f2696cSVe8-HRYfvXJB1FnjcI");'></div>
+<span class="text-sm text-[#0d141b] dark:text-slate-300">Mike Ross</span>
+</div>
+</td>
+<td class="px-6 py-4">
+<span class="px-2 py-1 text-[10px] font-bold bg-[#e7edf3] dark:bg-slate-800 text-[#0d141b] dark:text-slate-300 rounded">PRESENTATION</span>
+</td>
+<td class="px-6 py-4 text-right">
+<div class="flex justify-end gap-2">
+<button class="size-8 rounded-lg flex items-center justify-center text-[#4c739a] hover:bg-slate-100 dark:hover:bg-slate-800">
+<span class="material-symbols-outlined text-[18px]">visibility</span>
+</button>
+<button class="size-8 rounded-lg flex items-center justify-center text-green-600 hover:bg-green-50 dark:hover:bg-green-900/20">
+<span class="material-symbols-outlined text-[18px]">check_circle</span>
+</button>
+</div>
+</td>
+</tr>
+</tbody>
+</table>
+<div class="px-6 py-4 bg-slate-50 dark:bg-slate-800/20 text-center">
+<button class="text-sm font-bold text-[#4c739a] hover:text-[#0d141b] transition-colors">Load more pending tasks (12 remaining)</button>
+</div>
+</div>
+</div>
+<!-- Side Widgets -->
+<div class="space-y-8">
+<!-- Quick Actions -->
+<div>
+<h2 class="text-xl font-bold text-[#0d141b] dark:text-white mb-4">Quick Links</h2>
+<div class="grid grid-cols-1 gap-3">
+<button class="flex items-center gap-4 p-4 bg-white dark:bg-slate-900 rounded-xl border border-[#cfdbe7] dark:border-slate-800 shadow-sm hover:border-primary transition-all text-left">
+<div class="size-10 rounded-lg bg-blue-100 dark:bg-blue-900/30 flex items-center justify-center text-primary">
+<span class="material-symbols-outlined">settings_suggest</span>
+</div>
+<div>
+<p class="text-sm font-bold text-[#0d141b] dark:text-white">Manage Plans</p>
+<p class="text-xs text-[#4c739a]">Pricing, tiers, and limits</p>
+</div>
+</button>
+<button class="flex items-center gap-4 p-4 bg-white dark:bg-slate-900 rounded-xl border border-[#cfdbe7] dark:border-slate-800 shadow-sm hover:border-primary transition-all text-left">
+<div class="size-10 rounded-lg bg-purple-100 dark:bg-purple-900/30 flex items-center justify-center text-purple-600">
+<span class="material-symbols-outlined">badge</span>
+</div>
+<div>
+<p class="text-sm font-bold text-[#0d141b] dark:text-white">Designer Management</p>
+<p class="text-xs text-[#4c739a]">Hiring, roles, and payouts</p>
+</div>
+</button>
+<button class="flex items-center gap-4 p-4 bg-white dark:bg-slate-900 rounded-xl border border-[#cfdbe7] dark:border-slate-800 shadow-sm hover:border-primary transition-all text-left">
+<div class="size-10 rounded-lg bg-orange-100 dark:bg-orange-900/30 flex items-center justify-center text-orange-600">
+<span class="material-symbols-outlined">account_balance_wallet</span>
+</div>
+<div>
+<p class="text-sm font-bold text-[#0d141b] dark:text-white">Affiliate Payouts</p>
+<p class="text-xs text-[#4c739a]">Process $4.2k pending</p>
+</div>
+</button>
+</div>
+</div>
+<!-- Activity Log -->
+<div>
+<h2 class="text-xl font-bold text-[#0d141b] dark:text-white mb-4">Activity Log</h2>
+<div class="bg-white dark:bg-slate-900 rounded-xl border border-[#cfdbe7] dark:border-slate-800 p-6 shadow-sm">
+<div class="space-y-6">
+<div class="flex gap-4 relative">
+<div class="absolute left-4 top-8 bottom-[-24px] w-[1px] bg-slate-100 dark:bg-slate-800"></div>
+<div class="size-8 rounded-full bg-cover bg-center shrink-0" data-alt="Activity user avatar" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuC4qP-nSp_kWWgUK3_kT8PYYj_xwz1Pc74JzuUx-t6CMA58YYPN0B9lUuiY2S3GVc2_SM4b66S6yYK-q4n9H1vR8qSJ2KgJSSfAjtHZ8hb-XqsQoE9Kgk0bY_zQzuO0vuKcwU2GAKMMOiPtq1UPzvuMca-E1cyOxHyo_OJxBCw1-pHpssu3Clg13vwYKOGg4WSS18klQ3gfJFDYnMktS8S5Eco1WrjK5RZWJT4R3J7d5z37WOkdMr-pUL5BTtg8CGhG--a3zyByeVw");'></div>
+<div>
+<p class="text-sm text-[#0d141b] dark:text-slate-300">
+<span class="font-bold">Lisa Wong</span> approved <span class="font-bold text-primary">UI Kit v2.1</span>
+</p>
+<p class="text-[11px] text-[#4c739a] mt-1">14 minutes ago</p>
+</div>
+</div>
+<div class="flex gap-4 relative">
+<div class="absolute left-4 top-8 bottom-[-24px] w-[1px] bg-slate-100 dark:bg-slate-800"></div>
+<div class="size-8 rounded-full bg-primary flex items-center justify-center text-white shrink-0">
+<span class="material-symbols-outlined text-sm">rocket_launch</span>
+</div>
+<div>
+<p class="text-sm text-[#0d141b] dark:text-slate-300">
+<span class="font-bold text-primary">NexGen Media</span> upgraded to <span class="font-bold">Pro Monthly</span>
+</p>
+<p class="text-[11px] text-[#4c739a] mt-1">2 hours ago</p>
+</div>
+</div>
+<div class="flex gap-4 relative">
+<div class="absolute left-4 top-8 bottom-[-24px] w-[1px] bg-slate-100 dark:bg-slate-800"></div>
+<div class="size-8 rounded-full bg-cover bg-center shrink-0" data-alt="Activity user avatar" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuAMP0kE5x2FfAdT3GlUakbvK-v6hLtPy5zkkyzq6zyah1r2ocBNyPNRX8qtEZM0hiXTG-oTTbSvo3UBQCsTUv7uT0j8aeV_Xt1bWZMWhoYu1tuxlBiqX7KTjiUz2-4XTONE-gyH5g1hV3fpVMUHrigJgs4u5ZIX4dQRhkmPn6qLYau0G4dsn7A-x1w-crIeTIN1UxdmgyG8u9xSQb8zsczmPEIoxEIBzrEXpw8dMbporGKa9xn7BcWOixaXjm2A7nYR9_yDY0VpHf4");'></div>
+<div>
+<p class="text-sm text-[#0d141b] dark:text-slate-300">
+<span class="font-bold">David Smith</span> requested a revision on <span class="font-bold text-primary">Landing Page #4</span>
+</p>
+<p class="text-[11px] text-[#4c739a] mt-1">5 hours ago</p>
+</div>
+</div>
+<div class="flex gap-4">
+<div class="size-8 rounded-full bg-orange-100 dark:bg-orange-900/30 flex items-center justify-center text-orange-600 shrink-0">
+<span class="material-symbols-outlined text-sm">warning</span>
+</div>
+<div>
+<p class="text-sm text-[#0d141b] dark:text-slate-300">
+                                                System Alert: <span class="font-bold">Stripe Webhook</span> delay detected
+                                            </p>
+<p class="text-[11px] text-[#4c739a] mt-1">8 hours ago</p>
+</div>
+</div>
+</div>
+<button class="w-full mt-6 pt-4 border-t border-slate-100 dark:border-slate-800 text-xs font-bold text-primary hover:text-primary/80">View Full System Log</button>
+</div>
+</div>
+</div>
+</div>
+</div>
+</main>
+</div>
+</body></html>

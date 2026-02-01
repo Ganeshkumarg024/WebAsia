@@ -3,7 +3,8 @@ import {
     getMyNotifications,
     markNotificationAsRead,
     markAllAsRead,
-    deleteNotification
+    deleteNotification,
+    getUnreadCount
 } from '../controllers/notification.controller.js';
 import { authenticate } from '../middleware/auth.middleware.js';
 
@@ -14,6 +15,8 @@ router.use(authenticate);
 
 // Get my notifications
 router.get('/', getMyNotifications);
+// Get unread count
+router.get('/unread-count', getUnreadCount);
 
 // Mark notification as read
 router.patch('/:id/read', markNotificationAsRead);

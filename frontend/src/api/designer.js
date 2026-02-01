@@ -1,74 +1,68 @@
 import apiClient from './client';
 
 export const designerAPI = {
-    // Get assigned requests
-    getAssignedRequests: async (params = {}) => {
-        const response = await apiClient.get('/designer/requests', { params });
-        return response.data;
-    },
-
-    // Get request details
-    getRequestDetails: async (id) => {
-        const response = await apiClient.get(`/designer/requests/${id}`);
-        return response.data;
-    },
-
-    // Update request status
-    updateRequestStatus: async (id, status, notes) => {
-        const response = await apiClient.put(`/designer/requests/${id}/status`, {
-            status,
-            notes,
-        });
-        return response.data;
-    },
-
-    // Upload design files
-    uploadDesign: async (requestId, files, version, notes) => {
-        const formData = new FormData();
-
-        files.forEach(file => {
-            formData.append('files', file);
-        });
-
-        if (version) formData.append('version', version);
-        if (notes) formData.append('notes', notes);
-
-        const response = await apiClient.post(
-            `/designer/requests/${requestId}/designs`,
-            formData,
-            {
-                headers: {
-                    'Content-Type': 'multipart/form-data',
-                },
-            }
-        );
-        return response.data;
-    },
-
-    // Get workload statistics
-    getWorkload: async () => {
-        const response = await apiClient.get('/designer/workload');
-        return response.data;
-    },
-
-    // Get dashboard stats
+    // Get dashboard statistics
     getDashboardStats: async () => {
+        const response = await apiClient.get('/designer/dashboard/stats');
+        return response.data;
+    },
+
+    // Get my tasks
+    getMyTasks: async (params = {}) => {
+        const response = await apiClient.get('/designer/tasks', { params });
+        return response.data;
+    },
+
+    // Get task by ID
+    getTaskById: async (id) => {
+        const response = await apiClient.get(`/designer/tasks/${id}`);
+        return response.data;
+    },
+
+    // Start task
+    startTask: async (id) => {
+        const response = await apiClient.post(`/designer/tasks/${id}/start`);
+        return response.data;
+    },
+
+    // Submit for review
+    submitForReview: async (id, notes) => {
+        const response = await apiClient.post(`/designer/tasks/${id}/submit`, { notes });
+        return response.data;
+    },
+
+    // Update task status
+    updateTaskStatus: async (id, status, notes = null) => {
+        const response = await apiClient.patch(`/designer/tasks/${id}/status`, { status, notes });
+        return response.data;
+    },
+
+    // Get task statistics
+    getTaskStats: async () => {
         const response = await apiClient.get('/designer/stats');
         return response.data;
     },
 
-    // Add comment to request
-    addComment: async (requestId, comment) => {
-        const response = await apiClient.post(`/designer/requests/${requestId}/comments`, {
-            comment,
-        });
+    // Get analytics
+    getAnalytics: async (period = 'month') => {
+        const response = await apiClient.get('/designer/analytics', { params: { period } });
         return response.data;
     },
 
-    // Request clarification
-    requestClarification: async (requestId, message) => {
-        const response = await apiClient.post(`/designer/requests/${requestId}/clarification`, {
-            message,
+    // Upload design files
+    uploadDesignFiles: async (requestId, files, fileType = 'design_version') => {
+        const formData = new FormData();
+        formData.append('requestId', requestId);
+        formData.append('fileType', fileType);
+
+        for (let i = 0; i < files.length; i++) {
+            formData.append('files', files[i]);
+        }
+
+        const response = await apiClient.post('/files/upload-multiple', formData, {
+            headers: {
+                'Content-Type': 'multipart/form-data',
+            },
         });
         return response.data;
     },

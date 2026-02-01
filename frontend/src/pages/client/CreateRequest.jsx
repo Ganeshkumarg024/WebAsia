@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { ChevronLeftIcon, ChevronRightIcon } from '@heroicons/react/24/outline';
+import { ChevronLeftIcon, ChevronRightIcon, SparklesIcon, ClockIcon } from '@heroicons/react/24/outline';
 import FileUploader from '../../components/shared/FileUploader';
 import DashboardLayout from '../../components/layout/DashboardLayout';
 import useRequestStore from '../../store/requestStore';
@@ -23,28 +23,28 @@ const CreateRequest = () => {
         {
             id: 'graphic-design',
             name: 'Graphic Design',
-            description: 'Logo, social media, print ads, and brand identity',
-            image: '/assets/categories/graphic-design.jpg',
+            description: 'Logo, social media, print ads, and brand identity.',
+            image: 'https://lh3.googleusercontent.com/aida-public/AB6AXuAXuxr4cnLscTasexqUzU0boCusP-7LHSUG6kc9laTbJrBA6Re0Desib9b46J7QRNja15UXbCRByKHbele3E93J9OFen9Z8N48Wjj88gUoZ0UQCS1Sd_U0muRGYrgGIoJiHnDZ9V6MG_UUVd5ziIdCKdM48dSTyYTnh9urXXwYOtuesTLM2qasQXjmW67cT2ytvwudNzAt5Shwvb5xZXmmrABovi6ENzGQiz1h8neSB4cH1-Qy7bllZdKWiZ0fRgNB4Q7z4an4az5U',
         },
         {
             id: 'video-production',
             name: 'Video Production',
-            description: 'Short ads, motion graphics, and professional editing',
-            image: '/assets/categories/video.jpg',
+            description: 'Short ads, motion graphics, and professional editing.',
+            image: 'https://lh3.googleusercontent.com/aida-public/AB6AXuDKYdIdLuDoVRk9Xueb28GleXJxjCyQKj8yncfqz8PWJTfW3H8L6yiPe2fNNdBd_lXQmDb5EekO2s43VCocyC0ib5mmF9z_RQt48D2ZoMcMmV8WqksBu0MwqOzqdxVXVZWBj1bnEp54EglyQbLlyZzzXVZ1LMcXFtLb4adAZsc5jHOv9jOs9tR2e7_nfR6qqWsfGOxrPruO56u7OaFwieLKvmWusOZGvZI0R10A1AMlGDIjG3jlE0TltMZBiRHjL14elRTarxqbQk0',
         },
         {
             id: 'web-development',
             name: 'Web Development',
-            description: 'Landing pages, UI/UX design, and React components',
-            image: '/assets/categories/web.jpg',
+            description: 'Landing pages, UI/UX design, and React components.',
+            image: 'https://lh3.googleusercontent.com/aida-public/AB6AXuANiExtv25Yt5gw9CN9VEeXFaFZtFRt4PE5pxnrC4gdJY2httr5O32Wh7QuksMmHOr6V4nwg9yIL0UJTPyXmsWXSlhiC_1MgaDXSHEkmkNCcOkV3UWwCBr6etYlDd9BjeHR7IrjMyTQoCSJ6vHnPiZ8pWANm754XkXMreYol4qZ6QagnQh-EgiXM9l7diI7yCE7USU8--SrCjIQfZCqVLBrtLy9wqMLN1kEohr9KCAuKHaEWda5AWTU8fpFLXMjcGOlwadRizdf7JU',
         },
     ];
 
     const steps = [
-        { id: 1, name: 'CATEGORY', label: 'Category' },
-        { id: 2, name: 'DETAILS', label: 'Details' },
-        { id: 3, name: 'ASSETS', label: 'Assets' },
-        { id: 4, name: 'OUTPUT', label: 'Output' },
+        { id: 1, name: 'CATEGORY', label: 'Category', icon: 'category' },
+        { id: 2, name: 'DETAILS', label: 'Details', icon: 'description' },
+        { id: 3, name: 'ASSETS', label: 'Assets', icon: 'cloud_upload' },
+        { id: 4, name: 'OUTPUT', label: 'Output', icon: 'output' },
     ];
 
     const handleNext = () => {
@@ -80,67 +80,77 @@ const CreateRequest = () => {
 
     return (
         <DashboardLayout breadcrumbs={['Requests', 'Create New']}>
-            <div className="max-w-4xl mx-auto">
-                {/* Header */}
-                <div className="mb-8">
-                    <h1 className="text-3xl font-bold text-white mb-2">Submit New Creative Request</h1>
-                    <p className="text-gray-400">
-                        Tell us what you need and our experts will handle the rest.
-                    </p>
+            <div className="max-w-4xl mx-auto space-y-10 animate-in fade-in slide-in-from-bottom-4 duration-700">
+                {/* Headline Section */}
+                <div className="space-y-2">
+                    <h1 className="text-4xl font-black text-gray-900 tracking-tight">
+                        Submit <span className="text-blue-600">New Request</span>
+                    </h1>
+                    <p className="text-gray-500 font-medium">Tell us what you need and our experts will handle the rest.</p>
                 </div>
 
-                {/* Progress Steps */}
-                <div className="mb-8">
-                    <div className="flex items-center justify-between">
+                {/* Progress Stepper */}
+                <div className="bg-white rounded-3xl border border-gray-100 p-2 shadow-[0_8px_30px_rgb(0,0,0,0.02)] overflow-hidden">
+                    <div className="flex items-center">
                         {steps.map((step, index) => (
-                            <div key={step.id} className="flex items-center flex-1">
-                                <div className="flex flex-col items-center flex-1">
-                                    <div
-                                        className={`w-10 h-10 rounded-full flex items-center justify-center font-medium transition-colors ${index <= currentStep
-                                            ? 'bg-blue-500 text-white'
-                                            : 'bg-gray-700 text-gray-400'
-                                            }`}
-                                    >
-                                        {step.id}
-                                    </div>
-                                    <p
-                                        className={`text-xs mt-2 font-medium ${index <= currentStep ? 'text-blue-500' : 'text-gray-400'
-                                            }`}
-                                    >
-                                        {step.name}
-                                    </p>
-                                </div>
-                                {index < steps.length - 1 && (
-                                    <div
-                                        className={`h-0.5 flex-1 mx-2 ${index < currentStep ? 'bg-blue-500' : 'bg-gray-700'
-                                            }`}
-                                    />
-                                )}
-                            </div>
+                            <button
+                                key={step.id}
+                                onClick={() => index < currentStep && setCurrentStep(index)}
+                                className={`flex-1 flex flex-col items-center justify-center py-4 rounded-2xl transition-all duration-300 ${index === currentStep
+                                    ? 'bg-blue-600 text-white shadow-lg shadow-blue-600/20'
+                                    : index < currentStep
+                                        ? 'text-blue-600 bg-blue-50/50'
+                                        : 'text-gray-400'
+                                    }`}
+                            >
+                                <span className={`text-[10px] font-black uppercase tracking-widest leading-none ${index === currentStep ? 'text-white' : index < currentStep ? 'text-blue-600' : 'text-gray-400'}`}>
+                                    {step.id}. {step.name}
+                                </span>
+                            </button>
                         ))}
                     </div>
                 </div>
 
-                {/* Step Content */}
-                <div className="bg-[#151B2E] rounded-lg p-8 border border-[#1E2638] mb-6">
+                {/* Form Content */}
+                <div className="bg-white rounded-[40px] border border-gray-100 p-10 shadow-[0_20px_60px_rgb(0,0,0,0.03)] relative overflow-hidden">
+                    <div className="absolute top-0 right-0 w-64 h-64 bg-blue-50/30 rounded-full -mr-32 -mt-32 blur-3xl"></div>
+
                     {/* Step 1: Category */}
                     {currentStep === 0 && (
-                        <div>
-                            <h2 className="text-xl font-bold text-white mb-6">Select Service Category</h2>
-                            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                        <div className="relative z-10 space-y-8">
+                            <div className="space-y-1">
+                                <h2 className="text-2xl font-black text-gray-900 tracking-tight">Select Category</h2>
+                                <p className="text-gray-500 text-sm font-medium">What kind of creative magic do you need today?</p>
+                            </div>
+                            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                                 {categories.map((category) => (
-                                    <button
-                                        key={category.id}
-                                        onClick={() => setFormData({ ...formData, category: category.id })}
-                                        className={`p-6 rounded-lg border-2 transition-all text-left ${formData.category === category.id
-                                            ? 'border-blue-500 bg-blue-500/10'
-                                            : 'border-gray-700 hover:border-gray-600'
-                                            }`}
-                                    >
-                                        <div className="w-full h-32 bg-gradient-to-br from-gray-700 to-gray-800 rounded-lg mb-4"></div>
-                                        <h3 className="text-lg font-bold text-white mb-2">{category.name}</h3>
-                                        <p className="text-sm text-gray-400">{category.description}</p>
-                                    </button>
+                                    <label key={category.id} className="group cursor-pointer relative block">
+                                        <input
+                                            type="radio"
+                                            name="category"
+                                            value={category.id}
+                                            checked={formData.category === category.id}
+                                            onChange={() => setFormData({ ...formData, category: category.id })}
+                                            className="sr-only peer"
+                                        />
+                                        <div className={`h-full p-6 rounded-[32px] border-2 transition-all duration-300 flex flex-col ${formData.category === category.id
+                                            ? 'border-blue-600 bg-blue-50/30 shadow-xl shadow-blue-600/5'
+                                            : 'border-gray-50 bg-gray-50/30 hover:border-blue-200 hover:bg-white'
+                                            }`}>
+                                            <div
+                                                className="w-full h-32 mb-6 rounded-2xl bg-cover bg-center border border-gray-100 shadow-inner group-hover:scale-[1.02] transition-transform duration-500"
+                                                style={{ backgroundImage: `url(${category.image})` }}
+                                            ></div>
+                                            <h3 className={`font-black text-lg mb-2 tracking-tight ${formData.category === category.id ? 'text-blue-600' : 'text-gray-900'}`}>{category.name}</h3>
+                                            <p className="text-xs text-gray-500 leading-relaxed font-medium flex-1">{category.description}</p>
+                                            <div className="mt-6 flex justify-end">
+                                                <div className={`w-8 h-8 rounded-xl border-2 flex items-center justify-center transition-all ${formData.category === category.id ? 'border-blue-600 bg-blue-600 text-white' : 'border-gray-200'
+                                                    }`}>
+                                                    {formData.category === category.id && <span className="font-bold text-sm">✓</span>}
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </label>
                                 ))}
                             </div>
                         </div>
@@ -148,62 +158,64 @@ const CreateRequest = () => {
 
                     {/* Step 2: Details */}
                     {currentStep === 1 && (
-                        <div className="space-y-6">
-                            <h2 className="text-xl font-bold text-white mb-6">Request Details</h2>
-
-                            <div>
-                                <label className="block text-sm font-medium text-white mb-2">
-                                    Project Title *
-                                </label>
-                                <input
-                                    type="text"
-                                    value={formData.title}
-                                    onChange={(e) => setFormData({ ...formData, title: e.target.value })}
-                                    className="w-full px-4 py-3 bg-[#0A0E1A] border border-gray-700 rounded-lg text-white focus:border-blue-500 focus:outline-none"
-                                    placeholder="e.g., Logo Design for Tech Startup"
-                                />
+                        <div className="relative z-10 space-y-10">
+                            <div className="space-y-1">
+                                <h2 className="text-2xl font-black text-gray-900 tracking-tight">Project Details</h2>
+                                <p className="text-gray-500 text-sm font-medium">Give us the blueprint for your vision.</p>
                             </div>
 
-                            <div>
-                                <label className="block text-sm font-medium text-white mb-2">
-                                    Description *
-                                </label>
-                                <textarea
-                                    value={formData.description}
-                                    onChange={(e) => setFormData({ ...formData, description: e.target.value })}
-                                    rows={6}
-                                    className="w-full px-4 py-3 bg-[#0A0E1A] border border-gray-700 rounded-lg text-white focus:border-blue-500 focus:outline-none resize-none"
-                                    placeholder="Describe your project requirements in detail..."
-                                />
-                            </div>
-
-                            <div className="grid grid-cols-2 gap-4">
-                                <div>
-                                    <label className="block text-sm font-medium text-white mb-2">
-                                        Priority
-                                    </label>
-                                    <select
-                                        value={formData.priority}
-                                        onChange={(e) => setFormData({ ...formData, priority: e.target.value })}
-                                        className="w-full px-4 py-3 bg-[#0A0E1A] border border-gray-700 rounded-lg text-white focus:border-blue-500 focus:outline-none"
-                                    >
-                                        <option value="low">Low</option>
-                                        <option value="medium">Medium</option>
-                                        <option value="high">High</option>
-                                        <option value="urgent">Urgent</option>
-                                    </select>
+                            <div className="space-y-8">
+                                <div className="space-y-3">
+                                    <label className="text-[10px] font-black text-gray-400 uppercase tracking-[0.2em] px-1">Project Title</label>
+                                    <input
+                                        type="text"
+                                        value={formData.title}
+                                        onChange={(e) => setFormData({ ...formData, title: e.target.value })}
+                                        className="w-full bg-gray-50/50 border border-gray-100 rounded-2xl py-5 px-6 text-gray-900 font-bold focus:bg-white focus:border-blue-600 focus:ring-4 focus:ring-blue-600/5 transition-all outline-none placeholder-gray-300 text-lg"
+                                        placeholder="e.g., Q4 Branding Refresh"
+                                    />
                                 </div>
 
-                                <div>
-                                    <label className="block text-sm font-medium text-white mb-2">
-                                        Deadline (Optional)
-                                    </label>
-                                    <input
-                                        type="date"
-                                        value={formData.deadline}
-                                        onChange={(e) => setFormData({ ...formData, deadline: e.target.value })}
-                                        className="w-full px-4 py-3 bg-[#0A0E1A] border border-gray-700 rounded-lg text-white focus:border-blue-500 focus:outline-none"
+                                <div className="space-y-3">
+                                    <label className="text-[10px] font-black text-gray-400 uppercase tracking-[0.2em] px-1">Detailed Brief</label>
+                                    <textarea
+                                        value={formData.description}
+                                        onChange={(e) => setFormData({ ...formData, description: e.target.value })}
+                                        rows={6}
+                                        className="w-full bg-gray-50/50 border border-gray-100 rounded-[32px] py-5 px-6 text-gray-900 font-medium focus:bg-white focus:border-blue-600 focus:ring-4 focus:ring-blue-600/5 transition-all outline-none resize-none placeholder-gray-300"
+                                        placeholder="Describe your vision, target audience, and any specific requirements..."
                                     />
+                                </div>
+
+                                <div className="grid grid-cols-1 md:grid-cols-2 gap-10">
+                                    <div className="space-y-3">
+                                        <label className="text-[10px] font-black text-gray-400 uppercase tracking-[0.2em] px-1">Priority Level</label>
+                                        <div className="grid grid-cols-2 gap-3">
+                                            {['low', 'medium', 'high', 'urgent'].map((prio) => (
+                                                <button
+                                                    key={prio}
+                                                    type="button"
+                                                    onClick={() => setFormData({ ...formData, priority: prio })}
+                                                    className={`py-4 px-4 rounded-2xl text-[10px] font-black uppercase tracking-widest border-2 transition-all ${formData.priority === prio
+                                                        ? 'border-blue-600 bg-blue-600 text-white shadow-lg shadow-blue-600/20'
+                                                        : 'border-transparent bg-gray-50 text-gray-400 hover:bg-gray-100'
+                                                        }`}
+                                                >
+                                                    {prio}
+                                                </button>
+                                            ))}
+                                        </div>
+                                    </div>
+
+                                    <div className="space-y-3">
+                                        <label className="text-[10px] font-black text-gray-400 uppercase tracking-[0.2em] px-1">Target Deadline</label>
+                                        <input
+                                            type="date"
+                                            value={formData.deadline}
+                                            onChange={(e) => setFormData({ ...formData, deadline: e.target.value })}
+                                            className="w-full bg-gray-50/50 border border-gray-100 rounded-2xl py-5 px-6 text-gray-900 font-bold focus:bg-white focus:border-blue-600 focus:ring-4 focus:ring-blue-600/5 transition-all outline-none"
+                                        />
+                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -211,107 +223,122 @@ const CreateRequest = () => {
 
                     {/* Step 3: Assets */}
                     {currentStep === 2 && (
-                        <div>
-                            <h2 className="text-xl font-bold text-white mb-6">Upload Reference Files</h2>
-                            <FileUploader
-                                onFilesSelected={(files) => setFormData({ ...formData, files: [...formData.files, ...files] })}
-                                files={formData.files}
-                                onRemove={(index) => {
-                                    const newFiles = [...formData.files];
-                                    newFiles.splice(index, 1);
-                                    setFormData({ ...formData, files: newFiles });
-                                }}
-                                maxFiles={10}
-                                multiple
-                            />
+                        <div className="relative z-10 space-y-8">
+                            <div className="space-y-1">
+                                <h2 className="text-2xl font-black text-gray-900 tracking-tight">Assets & Inspiration</h2>
+                                <p className="text-gray-500 text-sm font-medium">Upload brand guidelines or reference files.</p>
+                            </div>
+
+                            <div className="bg-gray-50/50 border-4 border-dashed border-gray-100 rounded-[40px] p-12 text-center hover:border-blue-600/30 transition-all group">
+                                <FileUploader
+                                    onFilesSelected={(files) => setFormData({ ...formData, files: [...formData.files, ...files] })}
+                                    files={formData.files}
+                                    onRemove={(index) => {
+                                        const newFiles = [...formData.files];
+                                        newFiles.splice(index, 1);
+                                        setFormData({ ...formData, files: newFiles });
+                                    }}
+                                    maxFiles={10}
+                                    multiple
+                                />
+                            </div>
                         </div>
                     )}
 
                     {/* Step 4: Output */}
                     {currentStep === 3 && (
-                        <div>
-                            <h2 className="text-xl font-bold text-white mb-6">Review & Submit</h2>
-                            <div className="space-y-4">
-                                <div className="p-4 bg-[#0A0E1A] rounded-lg">
-                                    <p className="text-sm text-gray-400 mb-1">Category</p>
-                                    <p className="text-white font-medium">
-                                        {categories.find(c => c.id === formData.category)?.name}
-                                    </p>
+                        <div className="relative z-10 space-y-10">
+                            <div className="space-y-1">
+                                <h2 className="text-2xl font-black text-gray-900 tracking-tight">Review Submission</h2>
+                                <p className="text-gray-500 text-sm font-medium">Double check your details before sending them to the kiln.</p>
+                            </div>
+
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                <div className="p-8 bg-gray-50/50 rounded-[32px] border border-gray-100">
+                                    <p className="text-[10px] font-black text-gray-400 uppercase tracking-[0.2em] mb-2">Category</p>
+                                    <p className="text-gray-900 font-black text-xl tracking-tight">{categories.find(c => c.id === formData.category)?.name}</p>
                                 </div>
-                                <div className="p-4 bg-[#0A0E1A] rounded-lg">
-                                    <p className="text-sm text-gray-400 mb-1">Title</p>
-                                    <p className="text-white font-medium">{formData.title}</p>
+                                <div className="p-8 bg-gray-50/50 rounded-[32px] border border-gray-100">
+                                    <p className="text-[10px] font-black text-gray-400 uppercase tracking-[0.2em] mb-2">Priority</p>
+                                    <p className="text-blue-600 font-black text-xl tracking-tight uppercase">{formData.priority}</p>
                                 </div>
-                                <div className="p-4 bg-[#0A0E1A] rounded-lg">
-                                    <p className="text-sm text-gray-400 mb-1">Description</p>
-                                    <p className="text-white">{formData.description}</p>
+                                <div className="md:col-span-2 p-8 bg-gray-50/50 rounded-[32px] border border-gray-100">
+                                    <p className="text-[10px] font-black text-gray-400 uppercase tracking-[0.2em] mb-2">Title</p>
+                                    <p className="text-gray-900 font-black text-2xl tracking-tight leading-tight">{formData.title}</p>
                                 </div>
-                                <div className="p-4 bg-[#0A0E1A] rounded-lg">
-                                    <p className="text-sm text-gray-400 mb-1">Files Attached</p>
-                                    <p className="text-white font-medium">{formData.files.length} files</p>
+                                <div className="md:col-span-2 p-8 bg-gray-50/50 rounded-[32px] border border-gray-100">
+                                    <p className="text-[10px] font-black text-gray-400 uppercase tracking-[0.2em] mb-2">Brief Summary</p>
+                                    <p className="text-gray-600 text-base font-medium leading-relaxed">{formData.description}</p>
+                                </div>
+                                <div className="p-8 bg-gray-50/50 rounded-[32px] border border-gray-100">
+                                    <p className="text-[10px] font-black text-gray-400 uppercase tracking-[0.2em] mb-2">Assets</p>
+                                    <p className="text-gray-900 font-black text-xl tracking-tight">{formData.files.length} Files Attached</p>
+                                </div>
+                                <div className="p-8 bg-gray-50/50 rounded-[32px] border border-gray-100">
+                                    <p className="text-[10px] font-black text-gray-400 uppercase tracking-[0.2em] mb-2">Target Date</p>
+                                    <p className="text-gray-900 font-black text-xl tracking-tight">{formData.deadline ? new Date(formData.deadline).toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' }) : 'Flexible'}</p>
                                 </div>
                             </div>
                         </div>
                     )}
+
                 </div>
 
-                {/* Navigation */}
-                <div className="flex items-center justify-between">
+                {/* Footer Navigation */}
+                <div className="flex items-center justify-between gap-6 pt-4">
                     <button
                         onClick={handleBack}
                         disabled={currentStep === 0}
-                        className="px-6 py-3 text-gray-400 hover:text-white disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
+                        className="px-8 py-4 text-xs font-black uppercase tracking-widest text-gray-400 hover:text-gray-900 hover:bg-gray-50 rounded-2xl transition-all flex items-center gap-2 disabled:opacity-0 disabled:pointer-events-none"
                     >
                         <ChevronLeftIcon className="w-5 h-5" />
                         Back
                     </button>
-
-                    {currentStep < steps.length - 1 ? (
-                        <button
-                            onClick={handleNext}
-                            className="px-6 py-3 bg-blue-500 hover:bg-blue-600 text-white rounded-lg font-medium flex items-center gap-2"
-                        >
-                            Next Step
-                            <ChevronRightIcon className="w-5 h-5" />
-                        </button>
-                    ) : (
-                        <button
-                            onClick={handleSubmit}
-                            disabled={isLoading}
-                            className="px-6 py-3 bg-blue-500 hover:bg-blue-600 text-white rounded-lg font-medium disabled:opacity-50"
-                        >
-                            {isLoading ? 'Submitting...' : 'Submit Request'}
-                        </button>
-                    )}
+                    <div className="flex items-center gap-6">
+                        <span className="text-[10px] font-black text-blue-600/30 uppercase tracking-[0.2em] hidden sm:block">Draft auto-saved</span>
+                        {currentStep < steps.length - 1 ? (
+                            <button
+                                onClick={handleNext}
+                                className="group px-10 py-5 bg-blue-600 hover:bg-blue-700 text-white text-sm font-black uppercase tracking-widest rounded-[24px] shadow-xl shadow-blue-600/20 transition-all flex items-center gap-3 hover:-translate-y-1"
+                            >
+                                Next Step
+                                <ChevronRightIcon className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
+                            </button>
+                        ) : (
+                            <button
+                                onClick={handleSubmit}
+                                disabled={isLoading}
+                                className="group px-10 py-5 bg-blue-600 hover:bg-blue-700 text-white text-sm font-black uppercase tracking-widest rounded-[24px] shadow-xl shadow-blue-600/20 transition-all flex items-center gap-3 hover:-translate-y-1 disabled:opacity-50"
+                            >
+                                {isLoading ? 'Sending to Kiln...' : 'Launch Request'}
+                                <ChevronRightIcon className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
+                            </button>
+                        )}
+                    </div>
                 </div>
 
-                {/* Help Section */}
-                <div className="mt-8 grid grid-cols-2 gap-4">
-                    <div className="p-4 bg-[#151B2E] rounded-lg border border-[#1E2638]">
-                        <div className="flex items-start gap-3">
-                            <div className="p-2 bg-blue-500/10 rounded">
-                                <span className="text-2xl">💡</span>
-                            </div>
-                            <div>
-                                <h3 className="text-white font-medium mb-1">Need help choosing?</h3>
-                                <p className="text-sm text-gray-400">
-                                    If your request spans multiple categories, select the one that fits the majority of the work.
-                                </p>
-                            </div>
+                {/* Information Grid */}
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div className="flex gap-6 p-8 rounded-[32px] bg-blue-600 text-white shadow-xl shadow-blue-600/10">
+                        <div className="w-12 h-12 bg-white/10 rounded-2xl flex items-center justify-center shrink-0">
+                            <SparklesIcon className="w-6 h-6 text-white" />
+                        </div>
+                        <div>
+                            <h4 className="text-lg font-black tracking-tight mb-2">Need advice?</h4>
+                            <p className="text-xs text-blue-100 leading-relaxed font-medium">
+                                If your request involves complex logic or multiple deliverables, select "Web Development" and we'll schedule a kick-off call.
+                            </p>
                         </div>
                     </div>
-
-                    <div className="p-4 bg-[#151B2E] rounded-lg border border-[#1E2638]">
-                        <div className="flex items-start gap-3">
-                            <div className="p-2 bg-blue-500/10 rounded">
-                                <span className="text-2xl">⏱️</span>
-                            </div>
-                            <div>
-                                <h3 className="text-white font-medium mb-1">Turnaround Time</h3>
-                                <p className="text-sm text-gray-400">
-                                    Standard requests are delivered within 48-72 hours. High-priority requests average 24 hours.
-                                </p>
-                            </div>
+                    <div className="flex gap-6 p-8 rounded-[32px] bg-white border border-gray-100 shadow-[0_8px_30px_rgb(0,0,0,0.02)]">
+                        <div className="w-12 h-12 bg-gray-50 rounded-2xl flex items-center justify-center shrink-0">
+                            <ClockIcon className="w-6 h-6 text-blue-600" />
+                        </div>
+                        <div>
+                            <h4 className="text-lg font-black text-gray-900 tracking-tight mb-2">Turnaround</h4>
+                            <p className="text-xs text-gray-400 leading-relaxed font-medium">
+                                Most assets are delivered within 48 hours. Urgent requests move to the front of the queue automatically.
+                            </p>
                         </div>
                     </div>
                 </div>

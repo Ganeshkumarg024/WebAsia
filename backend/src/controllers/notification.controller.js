@@ -64,6 +64,31 @@ export const getMyNotifications = async (req, res) => {
     }
 };
 
+export const getUnreadCount = async (req, res) => {
+    try {
+        const count = await Notification.count({
+            where: {
+                userId: req.user.id,
+                isRead: false
+            }
+        });
+
+        res.json({
+            success: true,
+            data: { count }
+        });
+    } catch (error) {
+        console.error('Get unread count error:', error);
+        res.status(500).json({
+            success: false,
+            error: {
+                code: 'SERVER_ERROR',
+                message: 'Failed to fetch unread count'
+            }
+        });
+    }
+};
+
 export const markNotificationAsRead = async (req, res) => {
     try {
         const { id } = req.params;

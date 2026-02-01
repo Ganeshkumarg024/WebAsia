@@ -105,6 +105,16 @@ const Request = sequelize.define('Request', {
         type: DataTypes.JSONB,
         allowNull: true,
         field: 'credits_cost'
+    },
+    isFlagged: {
+        type: DataTypes.BOOLEAN,
+        defaultValue: false,
+        field: 'is_flagged'
+    },
+    flagReason: {
+        type: DataTypes.TEXT,
+        allowNull: true,
+        field: 'flag_reason'
     }
 }, {
     tableName: 'requests',

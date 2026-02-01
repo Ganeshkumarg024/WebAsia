@@ -1,0 +1,327 @@
+<!DOCTYPE html>
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Deliveries &amp; Downloads Hub - WebAsia</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#137fec",
+                        "background-light": "#f6f7f8",
+                        "background-dark": "#101922",
+                    },
+                    fontFamily: {
+                        "display": ["Inter"]
+                    },
+                    borderRadius: {"DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px"},
+                },
+            },
+        }
+    </script>
+<style type="text/tailwindcss">
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+        .hide-scrollbar::-webkit-scrollbar {
+            display: none;
+        }
+        .hide-scrollbar {
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }
+    </style>
+</head>
+<body class="bg-background-light dark:bg-background-dark text-slate-900 dark:text-slate-100 font-display">
+<div class="flex min-h-screen">
+<aside class="w-64 border-r border-slate-200 dark:border-slate-800 bg-white dark:bg-background-dark flex flex-col justify-between p-4 sticky top-0 h-screen">
+<div class="flex flex-col gap-8">
+<div class="flex items-center gap-3 px-2">
+<div class="bg-primary rounded-lg size-10 flex items-center justify-center text-white">
+<span class="material-symbols-outlined">wb_cloudy</span>
+</div>
+<div class="flex flex-col">
+<h1 class="text-slate-900 dark:text-white text-base font-bold leading-tight">WebAsia</h1>
+<p class="text-slate-500 dark:text-slate-400 text-xs font-normal">Creative Services</p>
+</div>
+</div>
+<nav class="flex flex-col gap-1">
+<a class="flex items-center gap-3 px-3 py-2 text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-lg transition-colors" href="#">
+<span class="material-symbols-outlined text-[20px]">dashboard</span>
+<p class="text-sm font-medium">Dashboard</p>
+</a>
+<a class="flex items-center gap-3 px-3 py-2 text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-lg transition-colors" href="#">
+<span class="material-symbols-outlined text-[20px]">layers</span>
+<p class="text-sm font-medium">Requests</p>
+</a>
+<a class="flex items-center gap-3 px-3 py-2 rounded-lg bg-primary text-white" href="#">
+<span class="material-symbols-outlined text-[20px]">cloud_download</span>
+<p class="text-sm font-medium">Deliveries</p>
+</a>
+<a class="flex items-center gap-3 px-3 py-2 text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-lg transition-colors" href="#">
+<span class="material-symbols-outlined text-[20px]">payments</span>
+<p class="text-sm font-medium">Billing</p>
+</a>
+<a class="flex items-center gap-3 px-3 py-2 text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-lg transition-colors" href="#">
+<span class="material-symbols-outlined text-[20px]">settings</span>
+<p class="text-sm font-medium">Settings</p>
+</a>
+</nav>
+</div>
+<div class="flex flex-col gap-4">
+<div class="p-4 bg-primary/10 rounded-xl border border-primary/20">
+<p class="text-xs font-bold text-primary uppercase tracking-wider mb-1">Support</p>
+<p class="text-xs text-slate-600 dark:text-slate-400 mb-3">Questions about a file?</p>
+<button class="w-full py-2 bg-primary text-white text-xs font-bold rounded-lg hover:bg-primary/90 transition-colors">
+                    Contact Us
+                </button>
+</div>
+</div>
+</aside>
+<main class="flex-1 flex flex-col">
+<header class="flex items-center justify-between border-b border-slate-200 dark:border-slate-800 bg-white dark:bg-background-dark px-8 py-4 sticky top-0 z-10">
+<div class="flex items-center gap-8">
+<div class="flex items-center gap-2">
+<span class="text-slate-400 material-symbols-outlined text-[20px]">chevron_right</span>
+<h2 class="text-slate-900 dark:text-white text-lg font-bold tracking-tight">Client Portal</h2>
+</div>
+</div>
+<div class="flex items-center gap-4">
+<button class="p-2 rounded-lg bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400 hover:text-primary transition-colors">
+<span class="material-symbols-outlined text-[22px]">notifications</span>
+</button>
+<div class="h-8 w-px bg-slate-200 dark:bg-slate-800"></div>
+<div class="flex items-center gap-3">
+<div class="text-right hidden sm:block">
+<p class="text-sm font-bold text-slate-900 dark:text-white">Alex Johnson</p>
+<p class="text-xs text-slate-500">Pro Plan Client</p>
+</div>
+<div class="size-10 rounded-full bg-slate-200 dark:bg-slate-700 bg-cover bg-center ring-2 ring-primary/20" style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuCaQN1jDCVnZXV70DLhZDTpdbmmPe853RtpCcZ6166B9r7LAv8I-uHt3XkSJmu5OACVFlxNGbLg_t-khdY2ii_V_THH6HTh8ZZf0C09WsnXsWKfx5K5m8No7PaP8RZRuzGAhv9HS7LsyTgQr9iOD76kbUpIRUzAH-AsHybVXakdbAjHmmE3sE85uu6U2WWmCDv-BBoSVK9qdvYaJtyTLey4Hr1o5BGQyEZItb74eBQO6ATzwXU26ZFmFHaH8M2br1lprSTn1jWjDg8')"></div>
+</div>
+</div>
+</header>
+<div class="p-8 max-w-7xl mx-auto w-full space-y-8">
+<div class="flex flex-col md:flex-row md:items-end justify-between gap-6">
+<div class="space-y-1">
+<div class="flex items-center gap-2 text-sm text-slate-500 mb-2">
+<span>Dashboard</span>
+<span class="material-symbols-outlined text-xs">chevron_right</span>
+<span class="text-primary font-medium">Deliveries</span>
+</div>
+<h1 class="text-4xl font-black text-slate-900 dark:text-white tracking-tight">Client Deliveries &amp; Downloads Hub</h1>
+<p class="text-slate-500 dark:text-slate-400">Access and manage all your project assets and source files.</p>
+</div>
+<div class="flex p-1 bg-slate-200 dark:bg-slate-800 rounded-xl w-fit">
+<button class="px-6 py-2 rounded-lg bg-white dark:bg-slate-700 text-slate-900 dark:text-white shadow-sm text-sm font-bold flex items-center gap-2">
+<span class="material-symbols-outlined text-[18px]">photo_library</span>
+                        Final Renders
+                    </button>
+<button class="px-6 py-2 rounded-lg text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white text-sm font-bold flex items-center gap-2">
+<span class="material-symbols-outlined text-[18px]">developer_board</span>
+                        Source Files
+                    </button>
+</div>
+</div>
+<div class="flex flex-col lg:flex-row gap-4 items-center bg-white dark:bg-background-dark p-4 rounded-2xl border border-slate-200 dark:border-slate-800">
+<div class="relative flex-1 w-full">
+<span class="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 material-symbols-outlined text-[20px]">search</span>
+<input class="w-full bg-slate-100 dark:bg-slate-800 border-none rounded-xl py-2.5 pl-10 pr-4 text-sm focus:ring-2 focus:ring-primary text-slate-900 dark:text-white" placeholder="Search by project name or file..."/>
+</div>
+<div class="flex gap-4 w-full lg:w-auto">
+<div class="flex items-center gap-2 bg-slate-100 dark:bg-slate-800 px-3 py-2.5 rounded-xl flex-1 lg:flex-none">
+<span class="text-slate-400 material-symbols-outlined text-[18px]">sort</span>
+<select class="bg-transparent border-none text-sm font-medium focus:ring-0 p-0 pr-8 text-slate-900 dark:text-white">
+<option>Newest First</option>
+<option>Oldest First</option>
+<option>Project A-Z</option>
+</select>
+</div>
+<div class="flex items-center gap-2 bg-slate-100 dark:bg-slate-800 px-3 py-2.5 rounded-xl flex-1 lg:flex-none">
+<span class="text-slate-400 material-symbols-outlined text-[18px]">filter_list</span>
+<select class="bg-transparent border-none text-sm font-medium focus:ring-0 p-0 pr-8 text-slate-900 dark:text-white">
+<option>All Formats</option>
+<option>PNG/JPG</option>
+<option>MP4/MOV</option>
+<option>PDF</option>
+<option>ZIP</option>
+</select>
+</div>
+</div>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-8">
+<div class="group bg-white dark:bg-background-dark border border-slate-200 dark:border-slate-800 rounded-2xl overflow-hidden hover:border-primary/50 transition-all hover:shadow-xl hover:shadow-primary/5">
+<div class="aspect-video w-full bg-slate-200 dark:bg-slate-800 relative group-hover:brightness-95 transition-all overflow-hidden">
+<img alt="Abstract colorful branding" class="w-full h-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuA1plSzFNqx71B1-WvVj6JMjArKohvOLFcB8znA8F-1HF3jx4AH9McLFzRDbogtsxq5wuRESzbJFBJak3PscM9zDHAR3NonAgQyUCfS9T7NASABwCwQvh-eTor4-NmzgEqg7HzuS9jOANmYQZ8kttwwZqKupbl332gWiDZjnUfb4Uwov1OA6bE1PqzFPdpckthTXEz5YmapioEefLLpSj_uWbc1yePk-m5sdrmkkZdQszpRYdesVS7XVsXKf-vm_dO0aTiPEl5bS4k"/>
+<div class="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-3">
+<button class="size-10 bg-white rounded-full flex items-center justify-center text-slate-900 hover:scale-110 transition-transform">
+<span class="material-symbols-outlined">zoom_in</span>
+</button>
+<button class="size-10 bg-primary rounded-full flex items-center justify-center text-white hover:scale-110 transition-transform">
+<span class="material-symbols-outlined">download</span>
+</button>
+</div>
+</div>
+<div class="p-6">
+<div class="flex justify-between items-start mb-4">
+<div>
+<span class="text-[10px] font-black uppercase tracking-widest text-primary mb-1 block">Branding &amp; Identity</span>
+<h3 class="text-lg font-extrabold text-slate-900 dark:text-white leading-tight">Q4 Brand Refresh Assets</h3>
+</div>
+<span class="bg-slate-100 dark:bg-slate-800 text-slate-500 text-[10px] font-bold px-2 py-1 rounded">2h ago</span>
+</div>
+<div class="grid grid-cols-2 gap-4 mb-6">
+<div class="p-3 bg-slate-50 dark:bg-slate-800/50 rounded-xl">
+<p class="text-[10px] text-slate-400 font-bold uppercase mb-1">Total Size</p>
+<p class="text-sm font-bold text-slate-700 dark:text-slate-200">124.5 MB</p>
+</div>
+<div class="p-3 bg-slate-50 dark:bg-slate-800/50 rounded-xl">
+<p class="text-[10px] text-slate-400 font-bold uppercase mb-1">Format</p>
+<p class="text-sm font-bold text-slate-700 dark:text-slate-200">ZIP (PNG, SVG)</p>
+</div>
+</div>
+<button class="w-full py-3 bg-primary text-white font-bold rounded-xl flex items-center justify-center gap-2 hover:bg-primary/90 transition-colors shadow-lg shadow-primary/20">
+<span class="material-symbols-outlined text-[20px]">file_download</span>
+                            Download All Assets
+                        </button>
+</div>
+</div>
+<div class="group bg-white dark:bg-background-dark border border-slate-200 dark:border-slate-800 rounded-2xl overflow-hidden hover:border-primary/50 transition-all hover:shadow-xl hover:shadow-primary/5">
+<div class="aspect-video w-full bg-slate-200 dark:bg-slate-800 relative group-hover:brightness-95 transition-all overflow-hidden">
+<img alt="UI Dashboard Prototype" class="w-full h-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCk9ZN4aWXUYoywMbQdK-KaUzN9J3d92WKR4Pny0jqHylBAuTpr9uR-v7LDKdKAsrsvm0GWCcAxnmrTf9_B8viqg4dgfs0MB5B6ahOJktDFiZtL0xLB8C_L8OdAdfZNGqGw8FAVmM19GZAzmbFml-Xoi80cgMM2mGYhuR0JcwRuYATkbxPr-3EF1ARv4M5qckDBzA-au2imp-px9EFqwvvdtiCzuD-BVU1HeiypwVLzq00UitSrKfPsauFJi0g6udqF-rLRZB5Y9qE"/>
+<div class="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-3">
+<button class="size-10 bg-white rounded-full flex items-center justify-center text-slate-900 hover:scale-110 transition-transform">
+<span class="material-symbols-outlined">zoom_in</span>
+</button>
+<button class="size-10 bg-primary rounded-full flex items-center justify-center text-white hover:scale-110 transition-transform">
+<span class="material-symbols-outlined">download</span>
+</button>
+</div>
+</div>
+<div class="p-6">
+<div class="flex justify-between items-start mb-4">
+<div>
+<span class="text-[10px] font-black uppercase tracking-widest text-primary mb-1 block">Web Development</span>
+<h3 class="text-lg font-extrabold text-slate-900 dark:text-white leading-tight">Admin Dashboard UI Kit</h3>
+</div>
+<span class="bg-slate-100 dark:bg-slate-800 text-slate-500 text-[10px] font-bold px-2 py-1 rounded">Yesterday</span>
+</div>
+<div class="grid grid-cols-2 gap-4 mb-6">
+<div class="p-3 bg-slate-50 dark:bg-slate-800/50 rounded-xl">
+<p class="text-[10px] text-slate-400 font-bold uppercase mb-1">Total Size</p>
+<p class="text-sm font-bold text-slate-700 dark:text-slate-200">42.8 MB</p>
+</div>
+<div class="p-3 bg-slate-50 dark:bg-slate-800/50 rounded-xl">
+<p class="text-[10px] text-slate-400 font-bold uppercase mb-1">Format</p>
+<p class="text-sm font-bold text-slate-700 dark:text-slate-200">Figma, PDF</p>
+</div>
+</div>
+<button class="w-full py-3 bg-primary text-white font-bold rounded-xl flex items-center justify-center gap-2 hover:bg-primary/90 transition-colors shadow-lg shadow-primary/20">
+<span class="material-symbols-outlined text-[20px]">file_download</span>
+                            Download All Assets
+                        </button>
+</div>
+</div>
+<div class="group bg-white dark:bg-background-dark border border-slate-200 dark:border-slate-800 rounded-2xl overflow-hidden hover:border-primary/50 transition-all hover:shadow-xl hover:shadow-primary/5">
+<div class="aspect-video w-full bg-slate-200 dark:bg-slate-800 relative group-hover:brightness-95 transition-all overflow-hidden">
+<div class="w-full h-full flex items-center justify-center bg-slate-100 dark:bg-slate-800">
+<span class="material-symbols-outlined text-6xl text-slate-300 dark:text-slate-600">movie</span>
+</div>
+<div class="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-3">
+<button class="size-10 bg-white rounded-full flex items-center justify-center text-slate-900 hover:scale-110 transition-transform">
+<span class="material-symbols-outlined">play_arrow</span>
+</button>
+<button class="size-10 bg-primary rounded-full flex items-center justify-center text-white hover:scale-110 transition-transform">
+<span class="material-symbols-outlined">download</span>
+</button>
+</div>
+</div>
+<div class="p-6">
+<div class="flex justify-between items-start mb-4">
+<div>
+<span class="text-[10px] font-black uppercase tracking-widest text-primary mb-1 block">Motion Graphics</span>
+<h3 class="text-lg font-extrabold text-slate-900 dark:text-white leading-tight">Product Explainer Video</h3>
+</div>
+<span class="bg-slate-100 dark:bg-slate-800 text-slate-500 text-[10px] font-bold px-2 py-1 rounded">3 days ago</span>
+</div>
+<div class="grid grid-cols-2 gap-4 mb-6">
+<div class="p-3 bg-slate-50 dark:bg-slate-800/50 rounded-xl">
+<p class="text-[10px] text-slate-400 font-bold uppercase mb-1">Total Size</p>
+<p class="text-sm font-bold text-slate-700 dark:text-slate-200">850.2 MB</p>
+</div>
+<div class="p-3 bg-slate-50 dark:bg-slate-800/50 rounded-xl">
+<p class="text-[10px] text-slate-400 font-bold uppercase mb-1">Format</p>
+<p class="text-sm font-bold text-slate-700 dark:text-slate-200">MP4 (4K)</p>
+</div>
+</div>
+<button class="w-full py-3 bg-primary text-white font-bold rounded-xl flex items-center justify-center gap-2 hover:bg-primary/90 transition-colors shadow-lg shadow-primary/20">
+<span class="material-symbols-outlined text-[20px]">file_download</span>
+                            Download Video Files
+                        </button>
+</div>
+</div>
+<div class="group bg-white dark:bg-background-dark border border-slate-200 dark:border-slate-800 rounded-2xl overflow-hidden hover:border-primary/50 transition-all hover:shadow-xl hover:shadow-primary/5">
+<div class="aspect-video w-full bg-slate-200 dark:bg-slate-800 relative group-hover:brightness-95 transition-all overflow-hidden">
+<div class="w-full h-full flex items-center justify-center bg-blue-50 dark:bg-blue-900/10">
+<span class="material-symbols-outlined text-6xl text-blue-200 dark:text-blue-900/40">description</span>
+</div>
+<div class="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-3">
+<button class="size-10 bg-white rounded-full flex items-center justify-center text-slate-900 hover:scale-110 transition-transform">
+<span class="material-symbols-outlined">visibility</span>
+</button>
+<button class="size-10 bg-primary rounded-full flex items-center justify-center text-white hover:scale-110 transition-transform">
+<span class="material-symbols-outlined">download</span>
+</button>
+</div>
+</div>
+<div class="p-6">
+<div class="flex justify-between items-start mb-4">
+<div>
+<span class="text-[10px] font-black uppercase tracking-widest text-primary mb-1 block">Copywriting</span>
+<h3 class="text-lg font-extrabold text-slate-900 dark:text-white leading-tight">Social Media Content Plan</h3>
+</div>
+<span class="bg-slate-100 dark:bg-slate-800 text-slate-500 text-[10px] font-bold px-2 py-1 rounded">5 days ago</span>
+</div>
+<div class="grid grid-cols-2 gap-4 mb-6">
+<div class="p-3 bg-slate-50 dark:bg-slate-800/50 rounded-xl">
+<p class="text-[10px] text-slate-400 font-bold uppercase mb-1">Total Size</p>
+<p class="text-sm font-bold text-slate-700 dark:text-slate-200">1.2 MB</p>
+</div>
+<div class="p-3 bg-slate-50 dark:bg-slate-800/50 rounded-xl">
+<p class="text-[10px] text-slate-400 font-bold uppercase mb-1">Format</p>
+<p class="text-sm font-bold text-slate-700 dark:text-slate-200">DOCX, PDF</p>
+</div>
+</div>
+<button class="w-full py-3 bg-primary text-white font-bold rounded-xl flex items-center justify-center gap-2 hover:bg-primary/90 transition-colors shadow-lg shadow-primary/20">
+<span class="material-symbols-outlined text-[20px]">file_download</span>
+                            Download Content
+                        </button>
+</div>
+</div>
+</div>
+<div class="flex items-center justify-between pt-8 border-t border-slate-200 dark:border-slate-800">
+<p class="text-sm text-slate-500 font-medium">Showing 4 of 24 completed deliveries</p>
+<div class="flex gap-2">
+<button class="size-10 flex items-center justify-center rounded-xl border border-slate-200 dark:border-slate-800 text-slate-500 hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors">
+<span class="material-symbols-outlined">chevron_left</span>
+</button>
+<button class="size-10 flex items-center justify-center rounded-xl bg-primary text-white font-bold">1</button>
+<button class="size-10 flex items-center justify-center rounded-xl border border-slate-200 dark:border-slate-800 text-slate-500 hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors">2</button>
+<button class="size-10 flex items-center justify-center rounded-xl border border-slate-200 dark:border-slate-800 text-slate-500 hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors">3</button>
+<button class="size-10 flex items-center justify-center rounded-xl border border-slate-200 dark:border-slate-800 text-slate-500 hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors">
+<span class="material-symbols-outlined">chevron_right</span>
+</button>
+</div>
+</div>
+</div>
+</main>
+</div>
+
+</body></html>

@@ -15,13 +15,13 @@ export const notificationsAPI = {
 
     // Mark notification as read
     markAsRead: async (id) => {
-        const response = await apiClient.put(`/notifications/${id}/read`);
+        const response = await apiClient.patch(`/notifications/${id}/read`);
         return response.data;
     },
 
     // Mark all as read
     markAllAsRead: async () => {
-        const response = await apiClient.put('/notifications/read-all');
+        const response = await apiClient.post('/notifications/read-all');
         return response.data;
     },
 

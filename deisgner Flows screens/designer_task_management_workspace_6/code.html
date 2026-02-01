@@ -1,0 +1,294 @@
+<!DOCTYPE html>
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Designer Professional Profile - WebAsia</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#137fec",
+                        "background-light": "#f6f7f8",
+                        "background-dark": "#101922",
+                    },
+                    fontFamily: {
+                        "display": ["Inter"]
+                    },
+                    borderRadius: {"DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px"},
+                },
+            },
+        }
+    </script>
+<style type="text/tailwindcss">
+        body { font-family: 'Inter', sans-serif; }
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .scrollbar-hide::-webkit-scrollbar {
+            display: none;
+        }
+    </style>
+</head>
+<body class="bg-background-light dark:bg-background-dark text-slate-900 dark:text-slate-100 min-h-screen flex flex-col">
+<header class="flex items-center justify-between whitespace-nowrap border-b border-solid border-slate-200 dark:border-[#233648] px-10 py-3 bg-white dark:bg-background-dark sticky top-0 z-50">
+<div class="flex items-center gap-8">
+<div class="flex items-center gap-4 text-primary">
+<div class="size-6">
+<svg fill="none" viewBox="0 0 48 48" xmlns="http://www.w3.org/2000/svg"><path d="M6 6H42L36 24L42 42H6L12 24L6 6Z" fill="currentColor"></path></svg>
+</div>
+<h2 class="text-slate-900 dark:text-white text-lg font-bold leading-tight tracking-[-0.015em]">WebAsia Creative</h2>
+</div>
+<label class="flex flex-col min-w-40 h-10 max-w-64">
+<div class="flex w-full flex-1 items-stretch rounded-lg h-full">
+<div class="text-slate-400 dark:text-[#92adc9] flex border-none bg-slate-100 dark:bg-[#233648] items-center justify-center pl-4 rounded-l-lg border-r-0">
+<span class="material-symbols-outlined text-xl">search</span>
+</div>
+<input class="form-input flex w-full min-w-0 flex-1 resize-none overflow-hidden rounded-lg text-slate-900 dark:text-white focus:outline-0 focus:ring-0 border-none bg-slate-100 dark:bg-[#233648] focus:border-none h-full placeholder:text-slate-400 dark:placeholder:text-[#92adc9] px-4 rounded-l-none border-l-0 pl-2 text-base font-normal leading-normal" placeholder="Search projects..."/>
+</div>
+</label>
+</div>
+<div class="flex flex-1 justify-end gap-8">
+<div class="flex items-center gap-9">
+<a class="text-slate-600 dark:text-white text-sm font-medium leading-normal hover:text-primary transition-colors" href="#">Dashboard</a>
+<a class="text-slate-600 dark:text-white text-sm font-medium leading-normal hover:text-primary transition-colors" href="#">Tasks</a>
+<a class="text-slate-600 dark:text-white text-sm font-medium leading-normal hover:text-primary transition-colors" href="#">Assets</a>
+<a class="text-primary text-sm font-bold leading-normal border-b-2 border-primary" href="#">Profile</a>
+</div>
+<div class="flex gap-2">
+<button class="flex items-center justify-center rounded-lg h-10 w-10 bg-slate-100 dark:bg-[#233648] text-slate-600 dark:text-white">
+<span class="material-symbols-outlined">notifications</span>
+</button>
+<div class="bg-center bg-no-repeat aspect-square bg-cover rounded-full size-10 border-2 border-primary" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuBKi5xIyFgYefhzOk_Uw5noVjk4ZCzxCF9C1l2aehgDmHp6y2A1_LA-fcMmR4v0qS1F04Jlg4aYPEw6DICh1UoiQ7ZdY07PiquZU6ODcgr-N4foz1qFyLgY5QXh-9DoY1jTZv-kLsNDLi9Rpk3IrlaPefm592GkHZ4ZI-XaEsII6g-ejcfRW8j1uEgMJsgB0AsZN1f_VUiFvadzl2hP3pHpxyMT4GMWCWFc4mXic9GZN9ta6u98g-AWChJmwTcCGxu_nJ4CdNaHuiE");'></div>
+</div>
+</div>
+</header>
+<div class="flex flex-1 overflow-hidden">
+<aside class="w-64 border-r border-slate-200 dark:border-[#233648] flex flex-col bg-white dark:bg-background-dark p-4 shrink-0">
+<div class="flex flex-col gap-1">
+<div class="flex items-center gap-3 px-3 py-2 rounded-lg bg-primary text-white">
+<span class="material-symbols-outlined text-xl">person</span>
+<p class="text-sm font-medium leading-normal">General Profile</p>
+</div>
+<div class="flex items-center gap-3 px-3 py-2 text-slate-600 dark:text-white hover:bg-slate-100 dark:hover:bg-[#233648] rounded-lg cursor-pointer">
+<span class="material-symbols-outlined text-xl">palette</span>
+<p class="text-sm font-medium leading-normal">Portfolio</p>
+</div>
+<div class="flex items-center gap-3 px-3 py-2 text-slate-600 dark:text-white hover:bg-slate-100 dark:hover:bg-[#233648] rounded-lg cursor-pointer">
+<span class="material-symbols-outlined text-xl">military_tech</span>
+<p class="text-sm font-medium leading-normal">Badges &amp; Skills</p>
+</div>
+<div class="flex items-center gap-3 px-3 py-2 text-slate-600 dark:text-white hover:bg-slate-100 dark:hover:bg-[#233648] rounded-lg cursor-pointer">
+<span class="material-symbols-outlined text-xl">settings</span>
+<p class="text-sm font-medium leading-normal">Account Settings</p>
+</div>
+<div class="flex items-center gap-3 px-3 py-2 text-slate-600 dark:text-white hover:bg-slate-100 dark:hover:bg-[#233648] rounded-lg cursor-pointer">
+<span class="material-symbols-outlined text-xl">notifications_active</span>
+<p class="text-sm font-medium leading-normal">Notifications</p>
+</div>
+</div>
+</aside>
+<main class="flex-1 overflow-y-auto bg-slate-50 dark:bg-background-dark/50">
+<div class="max-w-[1000px] mx-auto p-10">
+<div class="bg-white dark:bg-[#192633] rounded-2xl p-8 border border-slate-200 dark:border-transparent shadow-sm mb-8">
+<div class="flex flex-col md:flex-row items-center md:items-start gap-8">
+<div class="relative">
+<div class="size-32 rounded-2xl bg-center bg-cover border-4 border-slate-50 dark:border-[#233648] shadow-lg" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuBKi5xIyFgYefhzOk_Uw5noVjk4ZCzxCF9C1l2aehgDmHp6y2A1_LA-fcMmR4v0qS1F04Jlg4aYPEw6DICh1UoiQ7ZdY07PiquZU6ODcgr-N4foz1qFyLgY5QXh-9DoY1jTZv-kLsNDLi9Rpk3IrlaPefm592GkHZ4ZI-XaEsII6g-ejcfRW8j1uEgMJsgB0AsZN1f_VUiFvadzl2hP3pHpxyMT4GMWCWFc4mXic9GZN9ta6u98g-AWChJmwTcCGxu_nJ4CdNaHuiE");'></div>
+<button class="absolute -bottom-2 -right-2 bg-primary text-white size-8 rounded-full flex items-center justify-center border-2 border-white dark:border-[#192633] shadow-md">
+<span class="material-symbols-outlined text-base">edit</span>
+</button>
+</div>
+<div class="flex-1 text-center md:text-left">
+<div class="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-4">
+<div>
+<h1 class="text-slate-900 dark:text-white text-3xl font-bold">Alex Rivera</h1>
+<p class="text-primary font-semibold text-lg">Senior Illustrator</p>
+</div>
+<div class="flex items-center gap-3 bg-slate-100 dark:bg-[#233648] px-4 py-2 rounded-xl">
+<div class="flex flex-col">
+<span class="text-[10px] text-slate-500 dark:text-[#92adc9] font-bold uppercase tracking-widest">Work Availability</span>
+<span class="text-sm font-medium text-green-500">Available for Tasks</span>
+</div>
+<label class="relative inline-flex items-center cursor-pointer">
+<input checked="" class="sr-only peer" type="checkbox"/>
+<div class="w-11 h-6 bg-slate-300 peer-focus:outline-none rounded-full peer dark:bg-slate-600 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-gray-600 peer-checked:bg-primary"></div>
+</label>
+</div>
+</div>
+<div class="flex flex-wrap justify-center md:justify-start gap-2 mb-6">
+<span class="px-3 py-1 bg-slate-100 dark:bg-[#233648] text-slate-600 dark:text-slate-300 text-xs font-semibold rounded-full border border-slate-200 dark:border-transparent">UI/UX Design</span>
+<span class="px-3 py-1 bg-slate-100 dark:bg-[#233648] text-slate-600 dark:text-slate-300 text-xs font-semibold rounded-full border border-slate-200 dark:border-transparent">Motion Graphics</span>
+<span class="px-3 py-1 bg-slate-100 dark:bg-[#233648] text-slate-600 dark:text-slate-300 text-xs font-semibold rounded-full border border-slate-200 dark:border-transparent">Isometric Illustration</span>
+<span class="px-3 py-1 bg-slate-100 dark:bg-[#233648] text-slate-600 dark:text-slate-300 text-xs font-semibold rounded-full border border-slate-200 dark:border-transparent">Brand Strategy</span>
+<button class="px-3 py-1 border border-dashed border-primary text-primary text-xs font-semibold rounded-full hover:bg-primary/10 transition-colors">+ Add Skill</button>
+</div>
+<div class="flex items-center justify-center md:justify-start gap-6">
+<div class="flex flex-col">
+<span class="text-xl font-bold dark:text-white">128</span>
+<span class="text-xs text-slate-500 dark:text-[#92adc9]">Tasks Completed</span>
+</div>
+<div class="w-px h-8 bg-slate-200 dark:bg-[#233648]"></div>
+<div class="flex flex-col">
+<span class="text-xl font-bold dark:text-white">4.9/5</span>
+<span class="text-xs text-slate-500 dark:text-[#92adc9]">Avg. Quality Score</span>
+</div>
+<div class="w-px h-8 bg-slate-200 dark:bg-[#233648]"></div>
+<div class="flex flex-col">
+<span class="text-xl font-bold dark:text-white">2.5 yrs</span>
+<span class="text-xs text-slate-500 dark:text-[#92adc9]">Platform Tenure</span>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+<div class="lg:col-span-1 space-y-8">
+<div class="bg-white dark:bg-[#192633] rounded-2xl p-6 border border-slate-200 dark:border-transparent shadow-sm">
+<h3 class="text-slate-900 dark:text-white text-lg font-bold mb-4 flex items-center gap-2">
+<span class="material-symbols-outlined text-amber-500">workspace_premium</span>
+                            Performance Badges
+                        </h3>
+<div class="grid grid-cols-2 gap-4">
+<div class="flex flex-col items-center p-3 bg-slate-50 dark:bg-[#233648] rounded-xl text-center">
+<div class="size-12 rounded-full bg-orange-100 dark:bg-orange-900/30 flex items-center justify-center mb-2">
+<span class="material-symbols-outlined text-orange-600">bolt</span>
+</div>
+<span class="text-[10px] font-bold text-slate-900 dark:text-white uppercase tracking-tighter">Speed Demon</span>
+<span class="text-[9px] text-slate-500 dark:text-[#92adc9]">Avg. Turnaround &lt; 6h</span>
+</div>
+<div class="flex flex-col items-center p-3 bg-slate-50 dark:bg-[#233648] rounded-xl text-center">
+<div class="size-12 rounded-full bg-blue-100 dark:bg-blue-900/30 flex items-center justify-center mb-2">
+<span class="material-symbols-outlined text-blue-600">verified</span>
+</div>
+<span class="text-[10px] font-bold text-slate-900 dark:text-white uppercase tracking-tighter">Quality Master</span>
+<span class="text-[9px] text-slate-500 dark:text-[#92adc9]">Zero Revision Wins</span>
+</div>
+<div class="flex flex-col items-center p-3 bg-slate-50 dark:bg-[#233648] rounded-xl text-center">
+<div class="size-12 rounded-full bg-purple-100 dark:bg-purple-900/30 flex items-center justify-center mb-2">
+<span class="material-symbols-outlined text-purple-600">diversity_3</span>
+</div>
+<span class="text-[10px] font-bold text-slate-900 dark:text-white uppercase tracking-tighter">Team Player</span>
+<span class="text-[9px] text-slate-500 dark:text-[#92adc9]">Highly Collaborated</span>
+</div>
+<div class="flex flex-col items-center p-3 bg-slate-50 dark:bg-[#233648] rounded-xl text-center opacity-40">
+<div class="size-12 rounded-full bg-slate-100 dark:bg-[#233648] flex items-center justify-center mb-2">
+<span class="material-symbols-outlined text-slate-400">lock</span>
+</div>
+<span class="text-[10px] font-bold text-slate-400 uppercase tracking-tighter">Elite Status</span>
+<span class="text-[9px] text-slate-500 dark:text-[#92adc9]">Locked Badge</span>
+</div>
+</div>
+</div>
+<div class="bg-white dark:bg-[#192633] rounded-2xl p-6 border border-slate-200 dark:border-transparent shadow-sm">
+<h3 class="text-slate-900 dark:text-white text-lg font-bold mb-6">Account Settings</h3>
+<form class="space-y-4">
+<div>
+<label class="block text-xs font-bold text-slate-500 dark:text-[#92adc9] uppercase mb-2">Email Address</label>
+<input class="w-full bg-slate-50 dark:bg-[#233648] border-none rounded-lg text-sm text-slate-900 dark:text-white focus:ring-primary h-11" type="email" value="alex.rivera@webasia.com"/>
+</div>
+<div>
+<label class="block text-xs font-bold text-slate-500 dark:text-[#92adc9] uppercase mb-2">Password</label>
+<div class="relative">
+<input class="w-full bg-slate-50 dark:bg-[#233648] border-none rounded-lg text-sm text-slate-900 dark:text-white focus:ring-primary h-11" type="password" value="********"/>
+<button class="absolute right-3 top-2.5 text-slate-400"><span class="material-symbols-outlined text-xl">visibility</span></button>
+</div>
+</div>
+<div class="pt-4 border-t border-slate-100 dark:border-[#233648] mt-4">
+<div class="flex items-center justify-between mb-4">
+<span class="text-sm font-medium dark:text-white">Email Notifications</span>
+<input checked="" class="rounded text-primary focus:ring-primary bg-slate-100 dark:bg-[#233648] border-none" type="checkbox"/>
+</div>
+<div class="flex items-center justify-between">
+<span class="text-sm font-medium dark:text-white">SMS Task Alerts</span>
+<input class="rounded text-primary focus:ring-primary bg-slate-100 dark:bg-[#233648] border-none" type="checkbox"/>
+</div>
+</div>
+<button class="w-full bg-primary text-white font-bold h-11 rounded-lg mt-6 shadow-lg shadow-primary/20">Save Profile Changes</button>
+</form>
+</div>
+</div>
+<div class="lg:col-span-2 space-y-8">
+<div class="bg-white dark:bg-[#192633] rounded-2xl p-8 border border-slate-200 dark:border-transparent shadow-sm">
+<div class="flex items-center justify-between mb-8">
+<div>
+<h3 class="text-slate-900 dark:text-white text-xl font-bold">Portfolio Showcase</h3>
+<p class="text-slate-500 dark:text-[#92adc9] text-sm">Recently approved best work samples</p>
+</div>
+<button class="flex items-center gap-2 text-primary font-bold text-sm">
+<span class="material-symbols-outlined text-lg">add_a_photo</span>
+                                Manage Portfolio
+                            </button>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+<div class="group relative overflow-hidden rounded-xl border border-slate-100 dark:border-[#233648] bg-slate-50 dark:bg-[#233648]/30">
+<div class="aspect-video bg-center bg-cover" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuB1ym7DJQLIYyvsnNdOV9sL9xqNUNuGV_LKzpg2v-YmC9ABoV1PAbqxL4q-MMC5_sTkCaFRZmRDSFh68CgNGK-RpJRDlxnyhs2Rnkv6sKjdLLLXhQveVHzD6rtTZVnxM5ZSO7Wd2xuDUw6_DyMazkPki8vzTJx8ZSmnCaVm8jfvTMLLjW7PgTK3uTFINiSZiRVW--fPoSaks9irjlGwONhUKgycrVQFc3rRNtyX16M4smIwhVmJWsrzlk9KoFoPXNMuThmg2TnmS28");'></div>
+<div class="p-4">
+<div class="flex items-center justify-between mb-1">
+<h4 class="text-slate-900 dark:text-white font-bold">Cloud SaaS Illustration</h4>
+<span class="text-[10px] font-bold text-primary px-2 py-0.5 bg-primary/10 rounded">ISOMETRIC</span>
+</div>
+<p class="text-slate-500 dark:text-[#92adc9] text-xs">Featured in TechFlow Solutions Hero Page</p>
+</div>
+<div class="absolute inset-0 bg-primary/80 opacity-0 group-hover:opacity-100 flex items-center justify-center transition-all duration-300">
+<button class="bg-white text-primary px-4 py-2 rounded-lg font-bold text-sm flex items-center gap-2">
+<span class="material-symbols-outlined">visibility</span>
+                                        View Project
+                                    </button>
+</div>
+</div>
+<div class="group relative overflow-hidden rounded-xl border border-slate-100 dark:border-[#233648] bg-slate-50 dark:bg-[#233648]/30">
+<div class="aspect-video bg-center bg-cover" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuDsnlDveIoSiP8l9RXNsPioRxvnvJl68ZXyu7iqYcBiL2PtMMV92zvUDvwdsw6yUUanEx4-oS88U32XBCefnZh9BuuwkVQMF7fTYL3TcudoOrf7aj_8lMyPS3b3p63-ZFI23NS-vdlDLPYEXGGPo2Ohbk9CY2Wadfih4RuNUBbpXT9j5Y2aU1m8Lp_wBh4aYwZ5LBQgvj9LJOlmso1Qi36HBKHWawsAhxyZ68srYDzuOexhRXwbLme_Gmos5r3YQnqobxmc4gBhLlA");'></div>
+<div class="p-4">
+<div class="flex items-center justify-between mb-1">
+<h4 class="text-slate-900 dark:text-white font-bold">Analytics Dashboard</h4>
+<span class="text-[10px] font-bold text-blue-500 px-2 py-0.5 bg-blue-500/10 rounded">UI KIT</span>
+</div>
+<p class="text-slate-500 dark:text-[#92adc9] text-xs">Main platform interface for DataViz</p>
+</div>
+<div class="absolute inset-0 bg-primary/80 opacity-0 group-hover:opacity-100 flex items-center justify-center transition-all duration-300">
+<button class="bg-white text-primary px-4 py-2 rounded-lg font-bold text-sm flex items-center gap-2">
+<span class="material-symbols-outlined">visibility</span>
+                                        View Project
+                                    </button>
+</div>
+</div>
+<div class="group relative overflow-hidden rounded-xl border border-slate-100 dark:border-[#233648] bg-slate-50 dark:bg-[#233648]/30">
+<div class="aspect-video bg-center bg-cover opacity-80" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuBKi5xIyFgYefhzOk_Uw5noVjk4ZCzxCF9C1l2aehgDmHp6y2A1_LA-fcMmR4v0qS1F04Jlg4aYPEw6DICh1UoiQ7ZdY07PiquZU6ODcgr-N4foz1qFyLgY5QXh-9DoY1jTZv-kLsNDLi9Rpk3IrlaPefm592GkHZ4ZI-XaEsII6g-ejcfRW8j1uEgMJsgB0AsZN1f_VUiFvadzl2hP3pHpxyMT4GMWCWFc4mXic9GZN9ta6u98g-AWChJmwTcCGxu_nJ4CdNaHuiE"); opacity: 0.5;'>
+<div class="w-full h-full flex items-center justify-center bg-slate-900/40">
+<span class="material-symbols-outlined text-4xl text-white">play_circle</span>
+</div>
+</div>
+<div class="p-4">
+<div class="flex items-center justify-between mb-1">
+<h4 class="text-slate-900 dark:text-white font-bold">Brand Story Animation</h4>
+<span class="text-[10px] font-bold text-purple-500 px-2 py-0.5 bg-purple-500/10 rounded">MOTION</span>
+</div>
+<p class="text-slate-500 dark:text-[#92adc9] text-xs">Social media campaign for EcoStore</p>
+</div>
+<div class="absolute inset-0 bg-primary/80 opacity-0 group-hover:opacity-100 flex items-center justify-center transition-all duration-300">
+<button class="bg-white text-primary px-4 py-2 rounded-lg font-bold text-sm flex items-center gap-2">
+<span class="material-symbols-outlined">visibility</span>
+                                        View Project
+                                    </button>
+</div>
+</div>
+<div class="border-2 border-dashed border-slate-200 dark:border-[#233648] rounded-xl flex flex-col items-center justify-center p-8 cursor-pointer hover:bg-slate-50 dark:hover:bg-[#233648]/20 transition-colors group">
+<div class="size-12 rounded-full bg-slate-100 dark:bg-[#233648] flex items-center justify-center mb-4 text-slate-400 group-hover:text-primary group-hover:bg-primary/10">
+<span class="material-symbols-outlined">add</span>
+</div>
+<p class="text-sm font-bold text-slate-500 dark:text-[#92adc9]">Add Recent Work</p>
+<p class="text-[10px] text-slate-400 mt-1">Files up to 50MB</p>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</main>
+</div>
+
+</body></html>

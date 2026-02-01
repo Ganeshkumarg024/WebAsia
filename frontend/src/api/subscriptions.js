@@ -1,70 +1,53 @@
 import apiClient from './client';
 
 export const subscriptionsAPI = {
-    // Get all subscription plans
+    // Get all available plans
     getPlans: async () => {
         const response = await apiClient.get('/subscription-plans');
         return response.data;
     },
 
-    // Get plan by ID
-    getPlanById: async (id) => {
-        const response = await apiClient.get(`/subscription-plans/${id}`);
-        return response.data;
-    },
-
-    // Get current user's subscription
+    // Get current subscription
     getCurrentSubscription: async () => {
         const response = await apiClient.get('/subscriptions/current');
         return response.data;
     },
 
-    // Get all user subscriptions
-    getSubscriptions: async () => {
-        const response = await apiClient.get('/subscriptions');
+    // Create subscription
+    createSubscription: async (planId, paymentData) => {
+        const response = await apiClient.post('/subscriptions/create', { planId, ...paymentData });
         return response.data;
     },
 
-    // Create new subscription
-    subscribe: async (planId, paymentMethodId) => {
-        const response = await apiClient.post('/subscriptions', {
-            planId,
-            paymentMethodId,
-        });
+    // Upgrade subscription
+    upgradeSubscription: async (newPlanId) => {
+        const response = await apiClient.post('/subscriptions/upgrade', { planId: newPlanId });
+        return response.data;
+    },
+
+    // Downgrade subscription
+    downgradeSubscription: async (newPlanId) => {
+        const response = await apiClient.post('/subscriptions/downgrade', { planId: newPlanId });
         return response.data;
     },
 
     // Cancel subscription
-    cancelSubscription: async (id, reason) => {
-        const response = await apiClient.post(`/subscriptions/${id}/cancel`, { reason });
+    cancelSubscription: async (reason) => {
+        const response = await apiClient.post('/subscriptions/cancel', { reason });
         return response.data;
     },
 
-    // Pause subscription
-    pauseSubscription: async (id) => {
-        const response = await apiClient.post(`/subscriptions/${id}/pause`);
+    // Reactivate subscription
+    reactivateSubscription: async () => {
+        const response = await apiClient.post('/subscriptions/reactivate');
         return response.data;
     },
 
-    // Resume subscription
-    resumeSubscription: async (id) => {
-        const response = await apiClient.post(`/subscriptions/${id}/resume`);
+    // Get subscription history
+    getSubscriptionHistory: async () => {
+        const response = await apiClient.get('/subscriptions/history');
         return response.data;
-    },
-
-    // Update payment method
-    updatePaymentMethod: async (id, paymentMethodId) => {
-        const response = await apiClient.put(`/subscriptions/${id}/payment-method`, {
-            paymentMethodId,
-        });
-        return response.data;
-    },
-
-    // Get subscription usage
-    getUsage: async (id) => {
-        const response = await apiClient.get(`/subscriptions/${id}/usage`);
-        return response.data;
-    },
+    }
 };
 
 export default subscriptionsAPI;

@@ -1,4 +1,4 @@
-import { Request, User, Subscription, SubscriptionPlan } from '../models/index.js';
+import { Request, User, Subscription, SubscriptionPlan, File, RequestActivity } from '../models/index.js';
 import { deductCredits } from './subscription.controller.js';
 import { Op } from 'sequelize';
 import sequelize from '../config/database.js';
@@ -79,6 +79,15 @@ export const createRequest = async (req, res) => {
                 slaHours: subscription.plan.turnaroundHours
             });
 
+            // Create activity
+            await RequestActivity.create({
+                requestId: request.id,
+                userId: req.user.id,
+                activityType: 'created',
+                description: `Request created and added to queue at position ${queuePosition}`,
+                isSystemGenerated: true
+            });
+
             return res.status(201).json({
                 success: true,
                 message: 'Request added to queue',
@@ -97,6 +106,15 @@ export const createRequest = async (req, res) => {
             status: 'active',
             priority,
             slaHours: subscription.plan.turnaroundHours
+        });
+
+        // Create activity
+        await RequestActivity.create({
+            requestId: request.id,
+            userId: req.user.id,
+            activityType: 'created',
+            description: 'Request created',
+            isSystemGenerated: true
         });
 
         res.status(201).json({
@@ -164,7 +182,8 @@ export const getRequestById = async (req, res) => {
             include: [
                 { model: User, as: 'client', attributes: ['id', 'firstName', 'lastName', 'email'] },
                 { model: User, as: 'designer', attributes: ['id', 'firstName', 'lastName', 'email'] },
-                { model: User, as: 'manager', attributes: ['id', 'firstName', 'lastName', 'email'] }
+                { model: User, as: 'manager', attributes: ['id', 'firstName', 'lastName', 'email'] },
+                { model: File, as: 'files' }
             ]
         });
 
@@ -251,6 +270,16 @@ export const updateRequestStatus = async (req, res) => {
 
         await request.update(updates);
 
+        // Create activity
+        await RequestActivity.create({
+            requestId: request.id,
+            userId: req.user.id,
+            activityType: status === 'completed' ? 'completed' : 'status_changed',
+            description: `Status changed to ${status}`,
+            metadata: { previousStatus: request.status, newStatus: status },
+            isSystemGenerated: false
+        });
+
         res.json({
             success: true,
             message: 'Request status updated',
@@ -308,6 +337,15 @@ export const cancelRequest = async (req, res) => {
             }
         });
 
+        // Create activity
+        await RequestActivity.create({
+            requestId: request.id,
+            userId: req.user.id,
+            activityType: 'cancelled',
+            description: `Request cancelled${reason ? `: ${reason}` : ''}`,
+            isSystemGenerated: false
+        });
+
         // Activate next queued request
         await activateNextQueuedRequest(req.user.id);
 
@@ -328,6 +366,247 @@ export const cancelRequest = async (req, res) => {
     }
 };
 
+/**
+ * Submit feedback for a request
+ * POST /api/requests/:id/feedback
+ */
+export const submitFeedback = async (req, res) => {
+    try {
+        const { id } = req.params;
+        const { feedback, requestRevision = false } = req.body;
+
+        const request = await Request.findOne({
+            where: {
+                id,
+                clientId: req.user.id
+            }
+        });
+
+        if (!request) {
+            return res.status(404).json({
+                success: false,
+                error: {
+                    code: 'NOT_FOUND',
+                    message: 'Request not found'
+                }
+            });
+        }
+
+        // Update request status if revision requested
+        if (requestRevision) {
+            await request.update({ status: 'revision_requested' });
+        }
+
+        // Create activity
+        await RequestActivity.create({
+            requestId: request.id,
+            userId: req.user.id,
+            activityType: requestRevision ? 'revision_requested' : 'feedback_received',
+            description: feedback,
+            metadata: { requestRevision },
+            isSystemGenerated: false
+        });
+
+        res.json({
+            success: true,
+            message: 'Feedback submitted successfully',
+            data: request
+        });
+    } catch (error) {
+        console.error('Submit feedback error:', error);
+        res.status(500).json({
+            success: false,
+            error: {
+                code: 'SERVER_ERROR',
+                message: 'Failed to submit feedback'
+            }
+        });
+    }
+};
+
+/**
+ * Approve request
+ * POST /api/requests/:id/approve
+ */
+export const approveRequest = async (req, res) => {
+    try {
+        const { id } = req.params;
+
+        const request = await Request.findOne({
+            where: {
+                id,
+                clientId: req.user.id
+            }
+        });
+
+        if (!request) {
+            return res.status(404).json({
+                success: false,
+                error: {
+                    code: 'NOT_FOUND',
+                    message: 'Request not found'
+                }
+            });
+        }
+
+        await request.update({
+            status: 'completed',
+            completedAt: new Date()
+        });
+
+        // Create activity
+        await RequestActivity.create({
+            requestId: request.id,
+            userId: req.user.id,
+            activityType: 'approved_by_client',
+            description: 'Client approved the final delivery',
+            isSystemGenerated: false
+        });
+
+        // Deduct credits
+        try {
+            await deductCredits(request.subscriptionId, request.serviceType, 1);
+        } catch (error) {
+            console.error('Credit deduction error:', error);
+        }
+
+        // Activate next queued request
+        await activateNextQueuedRequest(req.user.id);
+
+        res.json({
+            success: true,
+            message: 'Request approved successfully',
+            data: request
+        });
+    } catch (error) {
+        console.error('Approve request error:', error);
+        res.status(500).json({
+            success: false,
+            error: {
+                code: 'SERVER_ERROR',
+                message: 'Failed to approve request'
+            }
+        });
+    }
+};
+
+/**
+ * Get request activity timeline
+ * GET /api/requests/:id/activity
+ */
+export const getRequestActivity = async (req, res) => {
+    try {
+        const { id } = req.params;
+
+        const request = await Request.findByPk(id);
+
+        if (!request) {
+            return res.status(404).json({
+                success: false,
+                error: {
+                    code: 'NOT_FOUND',
+                    message: 'Request not found'
+                }
+            });
+        }
+
+        // Check authorization
+        const isAuthorized =
+            request.clientId === req.user.id ||
+            request.assignedDesignerId === req.user.id ||
+            request.assignedManagerId === req.user.id ||
+            req.user.role === 'admin';
+
+        if (!isAuthorized) {
+            return res.status(403).json({
+                success: false,
+                error: {
+                    code: 'FORBIDDEN',
+                    message: 'Access denied'
+                }
+            });
+        }
+
+        const activities = await RequestActivity.findAll({
+            where: { requestId: id },
+            include: [
+                { model: User, as: 'user', attributes: ['id', 'firstName', 'lastName', 'role'] }
+            ],
+            order: [['createdAt', 'DESC']]
+        });
+
+        res.json({
+            success: true,
+            data: activities
+        });
+    } catch (error) {
+        console.error('Get request activity error:', error);
+        res.status(500).json({
+            success: false,
+            error: {
+                code: 'SERVER_ERROR',
+                message: 'Failed to fetch request activity'
+            }
+        });
+    }
+};
+
+/**
+ * Change request priority
+ * PATCH /api/requests/:id/priority
+ */
+export const changePriority = async (req, res) => {
+    try {
+        const { id } = req.params;
+        const { priority } = req.body;
+
+        const request = await Request.findOne({
+            where: {
+                id,
+                clientId: req.user.id
+            }
+        });
+
+        if (!request) {
+            return res.status(404).json({
+                success: false,
+                error: {
+                    code: 'NOT_FOUND',
+                    message: 'Request not found'
+                }
+            });
+        }
+
+        const oldPriority = request.priority;
+        await request.update({ priority });
+
+        // Create activity
+        await RequestActivity.create({
+            requestId: request.id,
+            userId: req.user.id,
+            activityType: 'priority_changed',
+            description: `Priority changed from ${oldPriority} to ${priority}`,
+            metadata: { oldPriority, newPriority: priority },
+            isSystemGenerated: false
+        });
+
+        res.json({
+            success: true,
+            message: 'Priority updated successfully',
+            data: request
+        });
+    } catch (error) {
+        console.error('Change priority error:', error);
+        res.status(500).json({
+            success: false,
+            error: {
+                code: 'SERVER_ERROR',
+                message: 'Failed to change priority'
+            }
+        });
+    }
+};
+
 // Helper function to activate next queued request
 async function activateNextQueuedRequest(clientId) {
     try {
@@ -343,6 +622,15 @@ async function activateNextQueuedRequest(clientId) {
             await nextRequest.update({
                 status: 'active',
                 queuePosition: null
+            });
+
+            // Create activity
+            await RequestActivity.create({
+                requestId: nextRequest.id,
+                userId: clientId,
+                activityType: 'status_changed',
+                description: 'Request moved from queue to active',
+                isSystemGenerated: true
             });
 
             // Update queue positions for remaining requests

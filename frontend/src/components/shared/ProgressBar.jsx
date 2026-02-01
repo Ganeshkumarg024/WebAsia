@@ -12,29 +12,29 @@ const ProgressBar = ({
     const percentage = Math.min(Math.round((value / max) * 100), 100);
 
     const colorClasses = {
-        primary: 'bg-blue-500',
-        success: 'bg-green-500',
-        warning: 'bg-yellow-500',
-        error: 'bg-red-500',
+        primary: 'bg-blue-600 shadow-[0_0_12px_rgba(37,99,235,0.2)]',
+        success: 'bg-green-600 shadow-[0_0_12px_rgba(22,163,74,0.2)]',
+        warning: 'bg-amber-600 shadow-[0_0_12px_rgba(217,119,6,0.2)]',
+        error: 'bg-red-600 shadow-[0_0_12px_rgba(220,38,38,0.2)]',
     };
 
     const sizeClasses = {
-        sm: 'h-1',
-        md: 'h-2',
-        lg: 'h-3',
+        sm: 'h-1.5',
+        md: 'h-3',
+        lg: 'h-4',
     };
 
     return (
         <div className={className}>
             {showLabel && (
-                <div className="flex items-center justify-between mb-2">
-                    <span className="text-sm text-gray-400">{label}</span>
-                    <span className="text-sm font-medium text-white">{percentage}%</span>
+                <div className="flex items-center justify-between mb-3 px-1">
+                    <span className="text-[10px] font-black text-gray-400 uppercase tracking-widest">{label}</span>
+                    <span className="text-xs font-black text-gray-900 tracking-tight">{percentage}%</span>
                 </div>
             )}
-            <div className={`w-full bg-gray-700 rounded-full overflow-hidden ${sizeClasses[size]}`}>
+            <div className={`w-full bg-gray-100/80 rounded-full overflow-hidden p-0.5 border border-gray-50 ${sizeClasses[size]}`}>
                 <div
-                    className={`${colorClasses[color]} ${sizeClasses[size]} rounded-full transition-all duration-300 ease-out`}
+                    className={`${colorClasses[color]} h-full rounded-full transition-all duration-1000 ease-out shadow-sm`}
                     style={{ width: `${percentage}%` }}
                 />
             </div>

@@ -1,0 +1,362 @@
+<!DOCTYPE html>
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Financials &amp; Revenue Control | WebAsia</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#137fec",
+                        "background-light": "#f6f7f8",
+                        "background-dark": "#101922",
+                    },
+                    fontFamily: {
+                        "display": ["Inter"]
+                    },
+                    borderRadius: {"DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px"},
+                },
+            },
+        }
+    </script>
+<style type="text/tailwindcss">
+        body { font-family: 'Inter', sans-serif; }
+        .sidebar-dark { background-color: #0d141b; }
+        .custom-scrollbar::-webkit-scrollbar { width: 4px; }
+        .custom-scrollbar::-webkit-scrollbar-track { background: transparent; }
+        .custom-scrollbar::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 10px; }
+        .chart-bar { transition: height 0.3s ease; }
+    </style>
+</head>
+<body class="bg-background-light dark:bg-background-dark text-[#0d141b] dark:text-slate-50 font-display">
+<div class="flex min-h-screen">
+<aside class="sidebar-dark w-64 flex-shrink-0 flex flex-col justify-between p-4 text-slate-300 border-r border-slate-800">
+<div class="flex flex-col gap-8">
+<div class="flex items-center gap-3 px-2">
+<div class="bg-primary p-2 rounded-lg">
+<svg class="size-6 text-white" fill="none" viewBox="0 0 48 48" xmlns="http://www.w3.org/2000/svg">
+<path d="M44 4H30.6666V17.3334H17.3334V30.6666H4V44H44V4Z" fill="currentColor"></path>
+</svg>
+</div>
+<div>
+<h1 class="text-white text-base font-bold leading-none">WebAsia</h1>
+<p class="text-slate-500 text-xs font-medium">Financial Control</p>
+</div>
+</div>
+<nav class="flex flex-col gap-1">
+<a class="flex items-center gap-3 px-3 py-2.5 rounded-lg hover:bg-slate-800 hover:text-white transition-colors" href="#">
+<span class="material-symbols-outlined text-[22px]">dashboard</span>
+<span class="text-sm font-medium">Dashboard</span>
+</a>
+<a class="flex items-center gap-3 px-3 py-2.5 rounded-lg bg-primary text-white" href="#">
+<span class="material-symbols-outlined text-[22px]">payments</span>
+<span class="text-sm font-medium">Financials</span>
+</a>
+<a class="flex items-center gap-3 px-3 py-2.5 rounded-lg hover:bg-slate-800 hover:text-white transition-colors" href="#">
+<span class="material-symbols-outlined text-[22px]">receipt_long</span>
+<span class="text-sm font-medium">Invoices</span>
+</a>
+<a class="flex items-center gap-3 px-3 py-2.5 rounded-lg hover:bg-slate-800 hover:text-white transition-colors" href="#">
+<span class="material-symbols-outlined text-[22px]">currency_exchange</span>
+<span class="text-sm font-medium">Refunds</span>
+</a>
+<a class="flex items-center gap-3 px-3 py-2.5 rounded-lg hover:bg-slate-800 hover:text-white transition-colors" href="#">
+<span class="material-symbols-outlined text-[22px]">account_balance</span>
+<span class="text-sm font-medium">Tax Settings</span>
+</a>
+</nav>
+<div class="pt-4 border-t border-slate-800">
+<p class="px-3 text-[10px] font-bold uppercase tracking-wider text-slate-500 mb-2">B2B Tools</p>
+<a class="flex items-center gap-3 px-3 py-2.5 rounded-lg hover:bg-slate-800 hover:text-white transition-colors" href="#">
+<span class="material-symbols-outlined text-[22px]">edit_document</span>
+<span class="text-sm font-medium">Manual Generator</span>
+</a>
+</div>
+</div>
+<div class="flex flex-col gap-4 mt-auto">
+<div class="flex items-center gap-3 px-3 py-2 bg-slate-800/50 rounded-xl">
+<div class="size-9 rounded-full bg-cover bg-center" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuBQCP6Dcn1VzoYh-nPqinUbt-wYLGoxPc6VNGgJ2sBIdfip84n4cnGKJ_yy3jO_Xs1Bb0b6RE9ugdyEZagDD2z8eHX-jbPSCVbzXDPxpLkDAQKWLLBhRuSxv4dI01KK6vBzJNCIqNG-1FnXcvhXb01tOcvEihbbSpQjnxviqUObjtdsn_u7-ISOG_6WSA3CNfQVNC7NKSBeSby-dEpyXrTu6FrKQrGYNu6OiF6MbDAedfKOZKM0hGtUHtcOisrtXl1q2ed-eZomdks");'></div>
+<div class="flex-1 overflow-hidden">
+<p class="text-xs font-bold text-white truncate">Marcus Chen</p>
+<p class="text-[10px] text-slate-400 truncate">Super Admin</p>
+</div>
+</div>
+</div>
+</aside>
+<main class="flex-1 flex flex-col min-w-0 bg-background-light dark:bg-background-dark">
+<header class="h-16 flex items-center justify-between px-8 border-b border-[#e7edf3] dark:border-slate-800 bg-white dark:bg-slate-900 sticky top-0 z-10">
+<div class="flex items-center gap-4 flex-1">
+<h2 class="text-lg font-bold text-[#0d141b] dark:text-white">Financials &amp; Revenue Control</h2>
+</div>
+<div class="flex items-center gap-4">
+<div class="flex bg-[#f0f2f5] dark:bg-slate-800 p-1 rounded-lg">
+<button class="px-3 py-1 text-xs font-bold bg-white dark:bg-slate-700 shadow-sm rounded-md">Real-time</button>
+<button class="px-3 py-1 text-xs font-bold text-[#4c739a]">Last 30 Days</button>
+</div>
+<button class="flex items-center gap-2 px-4 py-2 rounded-lg bg-primary text-white text-sm font-bold">
+<span class="material-symbols-outlined text-[18px]">receipt</span>
+                    Generate Invoice
+                </button>
+</div>
+</header>
+<div class="p-8 overflow-y-auto custom-scrollbar">
+<div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
+<div class="bg-white dark:bg-slate-900 p-5 rounded-xl border border-[#cfdbe7] dark:border-slate-800 shadow-sm">
+<p class="text-[#4c739a] dark:text-slate-400 text-[10px] font-bold uppercase tracking-wider mb-3">Monthly Recurring Revenue</p>
+<div class="flex items-baseline gap-2">
+<h3 class="text-2xl font-bold text-[#0d141b] dark:text-white">$142,500</h3>
+<span class="text-green-600 text-xs font-bold flex items-center"><span class="material-symbols-outlined text-xs">arrow_upward</span>8.4%</span>
+</div>
+<div class="mt-4 flex items-end gap-1 h-12">
+<div class="bg-primary/20 w-full rounded-t-sm h-1/2"></div>
+<div class="bg-primary/20 w-full rounded-t-sm h-2/3"></div>
+<div class="bg-primary/20 w-full rounded-t-sm h-1/2"></div>
+<div class="bg-primary/20 w-full rounded-t-sm h-3/4"></div>
+<div class="bg-primary/20 w-full rounded-t-sm h-1/2"></div>
+<div class="bg-primary/20 w-full rounded-t-sm h-5/6"></div>
+<div class="bg-primary w-full rounded-t-sm h-full"></div>
+</div>
+</div>
+<div class="bg-white dark:bg-slate-900 p-5 rounded-xl border border-[#cfdbe7] dark:border-slate-800 shadow-sm">
+<p class="text-[#4c739a] dark:text-slate-400 text-[10px] font-bold uppercase tracking-wider mb-3">Churn Rate</p>
+<div class="flex items-baseline gap-2">
+<h3 class="text-2xl font-bold text-[#0d141b] dark:text-white">2.4%</h3>
+<span class="text-red-500 text-xs font-bold flex items-center"><span class="material-symbols-outlined text-xs">arrow_upward</span>0.3%</span>
+</div>
+<p class="text-[11px] text-[#4c739a] mt-2">Target: &lt; 2.0%</p>
+</div>
+<div class="bg-white dark:bg-slate-900 p-5 rounded-xl border border-[#cfdbe7] dark:border-slate-800 shadow-sm">
+<p class="text-[#4c739a] dark:text-slate-400 text-[10px] font-bold uppercase tracking-wider mb-3">ARPU</p>
+<div class="flex items-baseline gap-2">
+<h3 class="text-2xl font-bold text-[#0d141b] dark:text-white">$840</h3>
+<span class="text-green-600 text-xs font-bold flex items-center"><span class="material-symbols-outlined text-xs">arrow_upward</span>$12</span>
+</div>
+<p class="text-[11px] text-[#4c739a] mt-2">Avg Revenue Per User</p>
+</div>
+<div class="bg-white dark:bg-slate-900 p-5 rounded-xl border border-[#cfdbe7] dark:border-slate-800 shadow-sm">
+<p class="text-[#4c739a] dark:text-slate-400 text-[10px] font-bold uppercase tracking-wider mb-3">Total Refunds</p>
+<div class="flex items-baseline gap-2">
+<h3 class="text-2xl font-bold text-[#0d141b] dark:text-white">$3,120</h3>
+<span class="text-slate-500 text-xs font-bold">14 cases</span>
+</div>
+<button class="w-full mt-3 py-1.5 text-xs font-bold border border-slate-200 dark:border-slate-700 rounded hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors">Manage Cases</button>
+</div>
+</div>
+<div class="grid grid-cols-1 xl:grid-cols-3 gap-8">
+<div class="xl:col-span-2 space-y-4">
+<div class="flex items-center justify-between">
+<h2 class="text-lg font-bold text-[#0d141b] dark:text-white flex items-center gap-2">
+<span class="material-symbols-outlined text-primary">history</span>
+                            Transaction Log
+                        </h2>
+<div class="flex gap-2">
+<button class="px-3 py-1.5 text-xs font-bold border border-[#cfdbe7] dark:border-slate-800 rounded flex items-center gap-1 bg-white dark:bg-slate-900">
+<span class="material-symbols-outlined text-sm">filter_list</span> Filter
+                            </button>
+<button class="px-3 py-1.5 text-xs font-bold border border-[#cfdbe7] dark:border-slate-800 rounded flex items-center gap-1 bg-white dark:bg-slate-900">
+<span class="material-symbols-outlined text-sm">download</span> Export
+                            </button>
+</div>
+</div>
+<div class="bg-white dark:bg-slate-900 rounded-xl border border-[#cfdbe7] dark:border-slate-800 overflow-hidden shadow-sm">
+<table class="w-full text-left border-collapse">
+<thead>
+<tr class="bg-slate-50 dark:bg-slate-800/50 border-b border-[#cfdbe7] dark:border-slate-800">
+<th class="px-6 py-4 text-[10px] font-bold uppercase tracking-wider text-[#4c739a]">Transaction ID</th>
+<th class="px-6 py-4 text-[10px] font-bold uppercase tracking-wider text-[#4c739a]">Client</th>
+<th class="px-6 py-4 text-[10px] font-bold uppercase tracking-wider text-[#4c739a]">Plan</th>
+<th class="px-6 py-4 text-[10px] font-bold uppercase tracking-wider text-[#4c739a]">Amount</th>
+<th class="px-6 py-4 text-[10px] font-bold uppercase tracking-wider text-[#4c739a]">Status</th>
+<th class="px-6 py-4 text-[10px] font-bold uppercase tracking-wider text-[#4c739a] text-right">Action</th>
+</tr>
+</thead>
+<tbody class="divide-y divide-[#cfdbe7] dark:divide-slate-800">
+<tr class="hover:bg-slate-50/50 dark:hover:bg-slate-800/20 transition-colors">
+<td class="px-6 py-4 font-mono text-xs text-[#4c739a]">#WA-98234-TX</td>
+<td class="px-6 py-4">
+<p class="text-sm font-bold text-[#0d141b] dark:text-white">Skyline Dynamics</p>
+<p class="text-[10px] text-[#4c739a]">20 mins ago</p>
+</td>
+<td class="px-6 py-4">
+<span class="px-2 py-1 text-[10px] font-bold bg-blue-50 dark:bg-blue-900/20 text-blue-600 rounded uppercase">Pro Monthly</span>
+</td>
+<td class="px-6 py-4 text-sm font-bold">$2,499.00</td>
+<td class="px-6 py-4">
+<span class="flex items-center gap-1.5 text-xs font-medium text-green-600">
+<span class="size-1.5 rounded-full bg-green-600"></span> Success
+                                        </span>
+</td>
+<td class="px-6 py-4 text-right">
+<button class="material-symbols-outlined text-[#4c739a] hover:text-primary transition-colors">more_vert</button>
+</td>
+</tr>
+<tr class="hover:bg-slate-50/50 dark:hover:bg-slate-800/20 transition-colors">
+<td class="px-6 py-4 font-mono text-xs text-[#4c739a]">#WA-98233-TX</td>
+<td class="px-6 py-4">
+<p class="text-sm font-bold text-[#0d141b] dark:text-white">Velvet Agency</p>
+<p class="text-[10px] text-[#4c739a]">2 hours ago</p>
+</td>
+<td class="px-6 py-4">
+<span class="px-2 py-1 text-[10px] font-bold bg-purple-50 dark:bg-purple-900/20 text-purple-600 rounded uppercase">Scale Plan</span>
+</td>
+<td class="px-6 py-4 text-sm font-bold">$4,800.00</td>
+<td class="px-6 py-4">
+<span class="flex items-center gap-1.5 text-xs font-medium text-green-600">
+<span class="size-1.5 rounded-full bg-green-600"></span> Success
+                                        </span>
+</td>
+<td class="px-6 py-4 text-right">
+<button class="material-symbols-outlined text-[#4c739a] hover:text-primary transition-colors">more_vert</button>
+</td>
+</tr>
+<tr class="hover:bg-slate-50/50 dark:hover:bg-slate-800/20 transition-colors text-red-600">
+<td class="px-6 py-4 font-mono text-xs opacity-70">#WA-98232-TX</td>
+<td class="px-6 py-4">
+<p class="text-sm font-bold">Urban Retailers</p>
+<p class="text-[10px] opacity-70">5 hours ago</p>
+</td>
+<td class="px-6 py-4">
+<span class="px-2 py-1 text-[10px] font-bold bg-slate-100 dark:bg-slate-800 text-slate-500 rounded uppercase">Enterprise</span>
+</td>
+<td class="px-6 py-4 text-sm font-bold">-$1,200.00</td>
+<td class="px-6 py-4">
+<span class="flex items-center gap-1.5 text-xs font-medium">
+<span class="size-1.5 rounded-full bg-red-600"></span> Refunded
+                                        </span>
+</td>
+<td class="px-6 py-4 text-right">
+<button class="material-symbols-outlined text-[#4c739a] hover:text-primary transition-colors">more_vert</button>
+</td>
+</tr>
+<tr class="hover:bg-slate-50/50 dark:hover:bg-slate-800/20 transition-colors">
+<td class="px-6 py-4 font-mono text-xs text-[#4c739a]">#WA-98231-TX</td>
+<td class="px-6 py-4">
+<p class="text-sm font-bold text-[#0d141b] dark:text-white">Pulse Tech</p>
+<p class="text-[10px] text-[#4c739a]">Yesterday</p>
+</td>
+<td class="px-6 py-4">
+<span class="px-2 py-1 text-[10px] font-bold bg-blue-50 dark:bg-blue-900/20 text-blue-600 rounded uppercase">Pro Yearly</span>
+</td>
+<td class="px-6 py-4 text-sm font-bold">$24,000.00</td>
+<td class="px-6 py-4">
+<span class="flex items-center gap-1.5 text-xs font-medium text-green-600">
+<span class="size-1.5 rounded-full bg-green-600"></span> Success
+                                        </span>
+</td>
+<td class="px-6 py-4 text-right">
+<button class="material-symbols-outlined text-[#4c739a] hover:text-primary transition-colors">more_vert</button>
+</td>
+</tr>
+</tbody>
+</table>
+<div class="px-6 py-3 border-t border-[#cfdbe7] dark:border-slate-800 flex justify-between items-center bg-slate-50/30 dark:bg-slate-900/30">
+<p class="text-[11px] text-[#4c739a]">Showing 4 of 1,245 transactions</p>
+<div class="flex gap-2">
+<button class="p-1 rounded hover:bg-slate-200 dark:hover:bg-slate-800"><span class="material-symbols-outlined text-sm">chevron_left</span></button>
+<button class="p-1 rounded hover:bg-slate-200 dark:hover:bg-slate-800"><span class="material-symbols-outlined text-sm">chevron_right</span></button>
+</div>
+</div>
+</div>
+</div>
+<div class="space-y-8">
+<div>
+<h2 class="text-lg font-bold text-[#0d141b] dark:text-white mb-4">Tax &amp; Invoice Systems</h2>
+<div class="space-y-3">
+<div class="p-4 bg-white dark:bg-slate-900 rounded-xl border border-[#cfdbe7] dark:border-slate-800 shadow-sm">
+<div class="flex items-center justify-between mb-3">
+<div class="flex items-center gap-3">
+<div class="size-9 rounded-lg bg-indigo-100 dark:bg-indigo-900/30 flex items-center justify-center text-indigo-600">
+<span class="material-symbols-outlined">payments</span>
+</div>
+<div>
+<p class="text-sm font-bold text-[#0d141b] dark:text-white">Stripe International</p>
+<p class="text-[10px] text-[#4c739a]">Global Payments Gateway</p>
+</div>
+</div>
+<span class="px-2 py-0.5 text-[10px] font-bold bg-green-100 text-green-600 rounded">LIVE</span>
+</div>
+<div class="grid grid-cols-2 gap-2">
+<button class="py-1.5 text-[10px] font-bold border border-slate-200 dark:border-slate-800 rounded">API Config</button>
+<button class="py-1.5 text-[10px] font-bold border border-slate-200 dark:border-slate-800 rounded">Logs</button>
+</div>
+</div>
+<div class="p-4 bg-white dark:bg-slate-900 rounded-xl border border-[#cfdbe7] dark:border-slate-800 shadow-sm">
+<div class="flex items-center justify-between mb-3">
+<div class="flex items-center gap-3">
+<div class="size-9 rounded-lg bg-orange-100 dark:bg-orange-900/30 flex items-center justify-center text-orange-600">
+<span class="material-symbols-outlined">description</span>
+</div>
+<div>
+<p class="text-sm font-bold text-[#0d141b] dark:text-white">India GST System</p>
+<p class="text-[10px] text-[#4c739a]">HSN/SAC Compliance</p>
+</div>
+</div>
+<span class="px-2 py-0.5 text-[10px] font-bold bg-green-100 text-green-600 rounded">ACTIVE</span>
+</div>
+<div class="flex flex-col gap-2">
+<div class="flex items-center justify-between text-[11px] p-2 bg-[#f0f2f5] dark:bg-slate-800 rounded">
+<span class="text-[#4c739a]">GST Default Rate:</span>
+<span class="font-bold">18%</span>
+</div>
+<button class="py-1.5 text-[10px] font-bold border border-slate-200 dark:border-slate-800 rounded">Manage Regional Rules</button>
+</div>
+</div>
+</div>
+</div>
+<div>
+<h2 class="text-lg font-bold text-[#0d141b] dark:text-white mb-4">Quick Tools</h2>
+<div class="bg-primary/5 dark:bg-primary/10 rounded-xl border border-primary/20 p-5">
+<div class="flex items-center gap-3 mb-4">
+<div class="size-10 rounded-full bg-primary flex items-center justify-center text-white">
+<span class="material-symbols-outlined">add_card</span>
+</div>
+<div>
+<p class="text-sm font-bold text-[#0d141b] dark:text-white">B2B Manual Generator</p>
+<p class="text-[11px] text-[#4c739a]">For custom deals &amp; wire transfers</p>
+</div>
+</div>
+<div class="space-y-2">
+<input class="w-full text-xs px-3 py-2 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-lg focus:ring-1 focus:ring-primary outline-none" placeholder="Client Name / ID" type="text"/>
+<input class="w-full text-xs px-3 py-2 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-lg focus:ring-1 focus:ring-primary outline-none" placeholder="Amount ($)" type="number"/>
+<button class="w-full py-2 bg-primary text-white text-xs font-bold rounded-lg shadow-sm hover:bg-primary/90 transition-colors">
+                                    Create Custom Invoice
+                                </button>
+</div>
+</div>
+</div>
+<div>
+<div class="flex items-center justify-between mb-4">
+<h2 class="text-lg font-bold text-[#0d141b] dark:text-white">Refund Queue</h2>
+<span class="px-2 py-0.5 text-[10px] font-bold bg-red-100 text-red-600 rounded-full">3 Urgent</span>
+</div>
+<div class="bg-white dark:bg-slate-900 rounded-xl border border-[#cfdbe7] dark:border-slate-800 overflow-hidden shadow-sm">
+<div class="p-4 border-b border-[#cfdbe7] dark:border-slate-800">
+<div class="flex items-start justify-between">
+<div>
+<p class="text-xs font-bold text-[#0d141b] dark:text-white">Nova Solutions</p>
+<p class="text-[10px] text-red-500 font-medium">Dispute: Design Quality</p>
+</div>
+<p class="text-xs font-bold">$1,250</p>
+</div>
+<div class="mt-3 flex gap-2">
+<button class="flex-1 py-1.5 bg-red-50 text-red-600 text-[10px] font-bold rounded">Reject</button>
+<button class="flex-1 py-1.5 bg-green-50 text-green-600 text-[10px] font-bold rounded">Approve</button>
+</div>
+</div>
+<div class="p-3 bg-slate-50 dark:bg-slate-800/30 text-center">
+<button class="text-[10px] font-bold text-primary hover:underline">View All Refund Requests</button>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</main>
+</div>
+
+</body></html>

@@ -6,17 +6,18 @@ import useNotificationStore from '../../store/notificationStore';
 const DashboardLayout = ({ children, title, breadcrumbs }) => {
     const { user } = useAuthStore();
     const { unreadCount } = useNotificationStore();
+    // Only designers, managers, and admins use the dark theme. Clients use a professional light theme.
     const isDarkTheme = ['designer', 'manager', 'admin'].includes(user?.role);
 
     return (
-        <div className={`min-h-screen ${isDarkTheme ? 'bg-[#0A0E1A]' : 'bg-gray-50'}`}>
+        <div className={`min-h-screen ${isDarkTheme ? 'bg-[#0A0E1A]' : 'bg-[#F8FAFC]'}`}>
             <Sidebar />
 
             {/* Main Content Area */}
             <div className="ml-64">
                 {/* Top Header */}
-                <header className={`sticky top-0 z-40 ${isDarkTheme ? 'bg-[#0A0E1A] border-b border-[#1E2638]' : 'bg-white border-b border-gray-200'}`}>
-                    <div className="flex items-center justify-between px-6 py-4">
+                <header className={`sticky top-0 z-40 ${isDarkTheme ? 'bg-[#0A0E1A] border-b border-[#1E2638]' : 'bg-white border-b border-gray-100 shadow-sm'}`}>
+                    <div className="flex items-center justify-between px-8 py-4">
                         {/* Search Bar (for some roles) */}
                         {['designer', 'manager', 'admin'].includes(user?.role) && (
                             <div className="flex-1 max-w-md">
@@ -26,13 +27,14 @@ const DashboardLayout = ({ children, title, breadcrumbs }) => {
                                         type="text"
                                         placeholder="Search tasks, clients, or designers..."
                                         className={`w-full pl-10 pr-4 py-2 rounded-lg border ${isDarkTheme
-                                                ? 'bg-[#151B2E] border-gray-700 text-white placeholder-gray-400'
-                                                : 'bg-gray-50 border-gray-200 text-gray-900 placeholder-gray-500'
-                                            } focus:outline-none focus:border-blue-500`}
+                                            ? 'bg-[#151B2E] border-gray-700 text-white placeholder-gray-400'
+                                            : 'bg-gray-50 border-gray-100 text-gray-900 placeholder-gray-500'
+                                            } focus:outline-none focus:border-blue-500 transition-all`}
                                     />
                                 </div>
                             </div>
                         )}
+
 
                         {/* Breadcrumbs */}
                         {breadcrumbs && (
@@ -51,10 +53,15 @@ const DashboardLayout = ({ children, title, breadcrumbs }) => {
                         {/* Right Side Actions */}
                         <div className="flex items-center gap-4">
                             {/* Notifications */}
-                            <button className="relative p-2 hover:bg-gray-100 dark:hover:bg-[#151B2E] rounded-lg transition-colors">
-                                <BellIcon className={`w-6 h-6 ${isDarkTheme ? 'text-gray-400' : 'text-gray-600'}`} />
+                            <button
+                                className="relative p-2 rounded-lg text-gray-400 hover:text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
+                                aria-label="Notifications"
+                            >
+                                <BellIcon className="w-6 h-6" />
                                 {unreadCount > 0 && (
-                                    <span className="absolute top-1 right-1 w-2 h-2 bg-red-500 rounded-full"></span>
+                                    <div className="absolute top-0 right-0 w-3 h-3 bg-red-500 rounded-full flex items-center justify-center text-xs text-white">
+                                        {unreadCount}
+                                    </div>
                                 )}
                             </button>
 

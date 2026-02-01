@@ -19,36 +19,21 @@ export const authAPI = {
         return response.data;
     },
 
-    // Get current user
-    getCurrentUser: async () => {
-        const response = await apiClient.get('/auth/me');
+    // Google OAuth
+    googleAuth: async (googleToken) => {
+        const response = await apiClient.post('/auth/google', { token: googleToken });
+        return response.data;
+    },
+
+    // LinkedIn OAuth
+    linkedinAuth: async (linkedinCode) => {
+        const response = await apiClient.post('/auth/linkedin', { code: linkedinCode });
         return response.data;
     },
 
     // Refresh token
     refreshToken: async (refreshToken) => {
-        const response = await apiClient.post('/auth/refresh', { refreshToken });
-        return response.data;
-    },
-
-    // Forgot password
-    forgotPassword: async (email) => {
-        const response = await apiClient.post('/auth/forgot-password', { email });
-        return response.data;
-    },
-
-    // Reset password
-    resetPassword: async (token, newPassword) => {
-        const response = await apiClient.post('/auth/reset-password', {
-            token,
-            newPassword,
-        });
-        return response.data;
-    },
-
-    // Send verification email
-    sendVerificationEmail: async () => {
-        const response = await apiClient.post('/auth/send-verification');
+        const response = await apiClient.post('/auth/refresh-token', { refreshToken });
         return response.data;
     },
 
@@ -57,6 +42,30 @@ export const authAPI = {
         const response = await apiClient.post('/auth/verify-email', { token });
         return response.data;
     },
+
+    // Resend verification email
+    resendVerification: async (email) => {
+        const response = await apiClient.post('/auth/resend-verification', { email });
+        return response.data;
+    },
+
+    // Request password reset
+    requestPasswordReset: async (email) => {
+        const response = await apiClient.post('/auth/forgot-password', { email });
+        return response.data;
+    },
+
+    // Reset password
+    resetPassword: async (token, newPassword) => {
+        const response = await apiClient.post('/auth/reset-password', { token, newPassword });
+        return response.data;
+    },
+
+    // Get current user
+    getCurrentUser: async () => {
+        const response = await apiClient.get('/auth/me');
+        return response.data;
+    }
 };
 
 export default authAPI;

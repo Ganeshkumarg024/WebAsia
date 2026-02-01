@@ -24,6 +24,7 @@ import fileRoutes from './routes/file.routes.js';
 import messageRoutes from './routes/message.routes.js';
 import notificationRoutes from './routes/notification.routes.js';
 import adminRoutes from './routes/admin.routes.js';
+import clientRoutes from './routes/client.routes.js';
 
 // Import socket handlers
 import { setupSocketHandlers } from './socket/handlers.js';
@@ -86,6 +87,7 @@ app.use('/api/files', fileRoutes);
 app.use('/api/messages', messageRoutes);
 app.use('/api/notifications', notificationRoutes);
 app.use('/api/admin', adminRoutes);
+app.use('/api/client', clientRoutes);
 
 // 404 handler
 app.use((req, res) => {

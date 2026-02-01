@@ -1,0 +1,365 @@
+<!DOCTYPE html>
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Designer Global Asset Library - WebAsia</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#137fec",
+                        "background-light": "#f6f7f8",
+                        "background-dark": "#101922",
+                    },
+                    fontFamily: {
+                        "display": ["Inter"]
+                    },
+                    borderRadius: {"DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px"},
+                },
+            },
+        }
+    </script>
+<style type="text/tailwindcss">
+        body { font-family: 'Inter', sans-serif; }
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .asset-card:hover .asset-actions { opacity: 1; }
+        .custom-scrollbar::-webkit-scrollbar { width: 6px; }
+        .custom-scrollbar::-webkit-scrollbar-track { background: transparent; }
+        .custom-scrollbar::-webkit-scrollbar-thumb { background: #233648; border-radius: 10px; }
+    </style>
+</head>
+<body class="bg-background-light dark:bg-background-dark text-slate-900 dark:text-slate-100 min-h-screen flex flex-col">
+<header class="flex items-center justify-between whitespace-nowrap border-b border-solid border-slate-200 dark:border-[#233648] px-10 py-3 bg-white dark:bg-background-dark sticky top-0 z-50">
+<div class="flex items-center gap-8">
+<div class="flex items-center gap-4 text-primary">
+<div class="size-6">
+<svg fill="none" viewBox="0 0 48 48" xmlns="http://www.w3.org/2000/svg"><path d="M6 6H42L36 24L42 42H6L12 24L6 6Z" fill="currentColor"></path></svg>
+</div>
+<h2 class="text-slate-900 dark:text-white text-lg font-bold leading-tight tracking-[-0.015em]">WebAsia Creative</h2>
+</div>
+<label class="flex flex-col min-w-40 h-10 max-w-96">
+<div class="flex w-full flex-1 items-stretch rounded-lg h-full">
+<div class="text-slate-400 dark:text-[#92adc9] flex border-none bg-slate-100 dark:bg-[#233648] items-center justify-center pl-4 rounded-l-lg border-r-0">
+<span class="material-symbols-outlined text-xl">search</span>
+</div>
+<input class="form-input flex w-full min-w-0 flex-1 resize-none overflow-hidden rounded-lg text-slate-900 dark:text-white focus:outline-0 focus:ring-0 border-none bg-slate-100 dark:bg-[#233648] focus:border-none h-full placeholder:text-slate-400 dark:placeholder:text-[#92adc9] px-4 rounded-l-none border-l-0 pl-2 text-base font-normal leading-normal" placeholder="Search assets, tags, or file types..."/>
+</div>
+</label>
+</div>
+<div class="flex flex-1 justify-end gap-8">
+<div class="flex items-center gap-9">
+<a class="text-slate-600 dark:text-white text-sm font-medium leading-normal hover:text-primary transition-colors" href="#">Dashboard</a>
+<a class="text-slate-600 dark:text-white text-sm font-medium leading-normal hover:text-primary transition-colors" href="#">Tasks</a>
+<a class="text-primary text-sm font-bold leading-normal border-b-2 border-primary" href="#">Assets</a>
+<a class="text-slate-600 dark:text-white text-sm font-medium leading-normal hover:text-primary transition-colors" href="#">Clients</a>
+</div>
+<div class="flex gap-2">
+<button class="flex items-center justify-center rounded-lg h-10 w-10 bg-slate-100 dark:bg-[#233648] text-slate-600 dark:text-white">
+<span class="material-symbols-outlined">notifications</span>
+</button>
+<div class="bg-center bg-no-repeat aspect-square bg-cover rounded-full size-10 border-2 border-primary" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuBKi5xIyFgYefhzOk_Uw5noVjk4ZCzxCF9C1l2aehgDmHp6y2A1_LA-fcMmR4v0qS1F04Jlg4aYPEw6DICh1UoiQ7ZdY07PiquZU6ODcgr-N4foz1qFyLgY5QXh-9DoY1jTZv-kLsNDLi9Rpk3IrlaPefm592GkHZ4ZI-XaEsII6g-ejcfRW8j1uEgMJsgB0AsZN1f_VUiFvadzl2hP3pHpxyMT4GMWCWFc4mXic9GZN9ta6u98g-AWChJmwTcCGxu_nJ4CdNaHuiE");'></div>
+</div>
+</div>
+</header>
+<div class="flex flex-1 overflow-hidden">
+<aside class="w-64 border-r border-slate-200 dark:border-[#233648] flex flex-col justify-between bg-white dark:bg-background-dark p-4 shrink-0">
+<div class="flex flex-col gap-6">
+<div class="flex flex-col px-3">
+<h1 class="text-slate-900 dark:text-white text-lg font-bold leading-normal">Alex Rivera</h1>
+<p class="text-slate-500 dark:text-[#92adc9] text-sm font-normal leading-normal">Senior Illustrator</p>
+</div>
+<div class="flex flex-col gap-1">
+<div class="flex items-center gap-3 px-3 py-2 text-slate-600 dark:text-white hover:bg-slate-100 dark:hover:bg-[#233648] rounded-lg cursor-pointer">
+<span class="material-symbols-outlined text-xl">folder</span>
+<p class="text-sm font-medium leading-normal">All Assets</p>
+</div>
+<div class="flex items-center gap-3 px-3 py-2 rounded-lg bg-primary text-white">
+<span class="material-symbols-outlined text-xl">auto_awesome</span>
+<p class="text-sm font-medium leading-normal">Internal Resources</p>
+</div>
+<div class="flex items-center gap-3 px-3 py-2 text-slate-600 dark:text-white hover:bg-slate-100 dark:hover:bg-[#233648] rounded-lg cursor-pointer">
+<span class="material-symbols-outlined text-xl">business_center</span>
+<p class="text-sm font-medium leading-normal">Client Assets</p>
+</div>
+<div class="flex items-center gap-3 px-3 py-2 text-slate-600 dark:text-white hover:bg-slate-100 dark:hover:bg-[#233648] rounded-lg cursor-pointer">
+<span class="material-symbols-outlined text-xl">history</span>
+<p class="text-sm font-medium leading-normal">Recently Used</p>
+</div>
+<div class="flex items-center gap-3 px-3 py-2 text-slate-600 dark:text-white hover:bg-slate-100 dark:hover:bg-[#233648] rounded-lg cursor-pointer">
+<span class="material-symbols-outlined text-xl">star</span>
+<p class="text-sm font-medium leading-normal">Favorites</p>
+</div>
+</div>
+<div class="mt-4 px-3">
+<h4 class="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-3">Popular Tags</h4>
+<div class="flex flex-wrap gap-2">
+<span class="px-2 py-1 bg-slate-100 dark:bg-[#233648] rounded text-[10px] text-slate-600 dark:text-slate-300">#vector</span>
+<span class="px-2 py-1 bg-slate-100 dark:bg-[#233648] rounded text-[10px] text-slate-600 dark:text-slate-300">#ui-kit</span>
+<span class="px-2 py-1 bg-slate-100 dark:bg-[#233648] rounded text-[10px] text-slate-600 dark:text-slate-300">#brand-guide</span>
+</div>
+</div>
+</div>
+<div class="flex flex-col gap-2">
+<button class="flex items-center justify-center rounded-lg h-11 px-4 bg-primary text-white text-sm font-bold leading-normal shadow-lg shadow-primary/20">
+<span class="material-symbols-outlined mr-2">upload</span>
+<span class="truncate">Upload Asset</span>
+</button>
+</div>
+</aside>
+<main class="flex-1 overflow-y-auto bg-slate-50 dark:bg-background-dark/50 custom-scrollbar">
+<div class="max-w-[1400px] mx-auto p-8">
+<div class="flex justify-between items-end mb-8">
+<div>
+<h2 class="text-slate-900 dark:text-white text-3xl font-bold leading-tight tracking-tight">Global Asset Library</h2>
+<p class="text-slate-500 dark:text-[#92adc9] mt-1">Access shared resources and client-specific brand assets.</p>
+</div>
+<div class="flex gap-4">
+<div class="flex items-center gap-2 bg-white dark:bg-[#192633] border border-slate-200 dark:border-[#233648] p-1.5 rounded-lg shadow-sm">
+<button class="px-3 py-1.5 bg-primary/10 text-primary rounded-md text-xs font-bold flex items-center gap-2">
+<span class="material-symbols-outlined text-sm">grid_view</span> Grid
+                        </button>
+<button class="px-3 py-1.5 text-slate-500 dark:text-[#92adc9] text-xs font-medium flex items-center gap-2 hover:bg-slate-50 dark:hover:bg-slate-800 rounded-md">
+<span class="material-symbols-outlined text-sm">list</span> List
+                        </button>
+</div>
+</div>
+</div>
+<div class="mb-10 group relative border-2 border-dashed border-slate-300 dark:border-[#233648] rounded-2xl bg-white/50 dark:bg-[#192633]/30 p-8 text-center transition-all hover:border-primary hover:bg-primary/5 cursor-pointer">
+<div class="flex flex-col items-center gap-3">
+<div class="size-12 rounded-full bg-slate-100 dark:bg-[#233648] flex items-center justify-center text-primary group-hover:scale-110 transition-transform">
+<span class="material-symbols-outlined text-3xl">add_to_photos</span>
+</div>
+<div>
+<p class="text-slate-900 dark:text-white font-bold text-lg">Add New Global Assets</p>
+<p class="text-slate-500 dark:text-[#92adc9] text-sm">Drag and drop files here or click to browse</p>
+</div>
+<div class="flex gap-3 text-[10px] text-slate-400 dark:text-[#6a84a0] font-medium uppercase tracking-widest mt-2">
+<span>SVG</span> • <span>PNG</span> • <span>JSON</span> • <span>AI</span> • <span>FIG</span>
+</div>
+</div>
+</div>
+<section class="mb-12">
+<div class="flex justify-between items-center mb-4">
+<h3 class="text-slate-900 dark:text-white text-xl font-bold flex items-center gap-2">
+<span class="material-symbols-outlined text-primary">folder_shared</span>
+                        Internal Resources
+                    </h3>
+<button class="text-primary text-sm font-bold hover:underline">See All Folders</button>
+</div>
+<div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+<div class="bg-white dark:bg-[#192633] p-5 rounded-xl border border-slate-200 dark:border-transparent shadow-sm hover:shadow-md transition-shadow group cursor-pointer">
+<div class="flex justify-between items-start mb-4">
+<div class="p-3 bg-amber-100 dark:bg-amber-900/30 text-amber-600 rounded-lg">
+<span class="material-symbols-outlined text-3xl">auto_awesome_motion</span>
+</div>
+<span class="text-xs font-bold text-slate-400">124 Items</span>
+</div>
+<h4 class="text-slate-900 dark:text-white font-bold mb-1">UI Templates</h4>
+<p class="text-slate-500 dark:text-[#92adc9] text-xs">Figma and Sketch base files</p>
+</div>
+<div class="bg-white dark:bg-[#192633] p-5 rounded-xl border border-slate-200 dark:border-transparent shadow-sm hover:shadow-md transition-shadow group cursor-pointer">
+<div class="flex justify-between items-start mb-4">
+<div class="p-3 bg-blue-100 dark:bg-blue-900/30 text-blue-600 rounded-lg">
+<span class="material-symbols-outlined text-3xl">token</span>
+</div>
+<span class="text-xs font-bold text-slate-400">850 Items</span>
+</div>
+<h4 class="text-slate-900 dark:text-white font-bold mb-1">Icon Library</h4>
+<p class="text-slate-500 dark:text-[#92adc9] text-xs">Full SVG set for all projects</p>
+</div>
+<div class="bg-white dark:bg-[#192633] p-5 rounded-xl border border-slate-200 dark:border-transparent shadow-sm hover:shadow-md transition-shadow group cursor-pointer">
+<div class="flex justify-between items-start mb-4">
+<div class="p-3 bg-purple-100 dark:bg-purple-900/30 text-purple-600 rounded-lg">
+<span class="material-symbols-outlined text-3xl">font_download</span>
+</div>
+<span class="text-xs font-bold text-slate-400">42 Items</span>
+</div>
+<h4 class="text-slate-900 dark:text-white font-bold mb-1">Corporate Fonts</h4>
+<p class="text-slate-500 dark:text-[#92adc9] text-xs">Licensed OTF and WOFF files</p>
+</div>
+<div class="bg-white dark:bg-[#192633] p-5 rounded-xl border border-slate-200 dark:border-transparent shadow-sm hover:shadow-md transition-shadow group cursor-pointer">
+<div class="flex justify-between items-start mb-4">
+<div class="p-3 bg-emerald-100 dark:bg-emerald-900/30 text-emerald-600 rounded-lg">
+<span class="material-symbols-outlined text-3xl">photo_library</span>
+</div>
+<span class="text-xs font-bold text-slate-400">56 Items</span>
+</div>
+<h4 class="text-slate-900 dark:text-white font-bold mb-1">Stock Photography</h4>
+<p class="text-slate-500 dark:text-[#92adc9] text-xs">Curated high-res imagery</p>
+</div>
+</div>
+</section>
+<section class="mb-12">
+<div class="flex justify-between items-center mb-6">
+<h3 class="text-slate-900 dark:text-white text-xl font-bold flex items-center gap-2">
+<span class="material-symbols-outlined text-primary">corporate_fare</span>
+                        Client Brand Assets
+                    </h3>
+<div class="flex items-center gap-3">
+<select class="form-select bg-white dark:bg-[#192633] border-slate-200 dark:border-[#233648] rounded-lg text-sm text-slate-600 dark:text-[#92adc9] py-1.5 focus:ring-primary">
+<option>All Clients</option>
+<option>TechFlow Solutions</option>
+<option>DataViz Inc.</option>
+<option>SwiftDelivery</option>
+</select>
+</div>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+<div class="group relative bg-white dark:bg-[#192633] rounded-xl border border-slate-200 dark:border-transparent overflow-hidden shadow-sm">
+<div class="h-40 bg-slate-100 dark:bg-[#233648] flex items-center justify-center p-8">
+<div class="w-full h-full bg-contain bg-center bg-no-repeat grayscale group-hover:grayscale-0 transition-all duration-300" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuDsnlDveIoSiP8l9RXNsPioRxvnvJl68ZXyu7iqYcBiL2PtMMV92zvUDvwdsw6yUUanEx4-oS88U32XBCefnZh9BuuwkVQMF7fTYL3TcudoOrf7aj_8lMyPS3b3p63-ZFI23NS-vdlDLPYEXGGPo2Ohbk9CY2Wadfih4RuNUBbpXT9j5Y2aU1m8Lp_wBh4aYwZ5LBQgvj9LJOlmso1Qi36HBKHWawsAhxyZ68srYDzuOexhRXwbLme_Gmos5r3YQnqobxmc4gBhLlA");'></div>
+</div>
+<div class="p-4">
+<div class="flex justify-between items-start mb-2">
+<h5 class="text-slate-900 dark:text-white font-bold text-sm">Primary Logo Pack</h5>
+<span class="text-[10px] bg-slate-100 dark:bg-[#233648] px-2 py-0.5 rounded text-slate-500 uppercase">Vector</span>
+</div>
+<p class="text-slate-500 dark:text-[#92adc9] text-xs">Client: TechFlow Solutions</p>
+<div class="mt-4 flex gap-2">
+<button class="flex-1 py-1.5 bg-slate-100 dark:bg-[#233648] text-slate-700 dark:text-white text-[10px] font-bold rounded hover:bg-slate-200 dark:hover:bg-slate-700">PREVIEW</button>
+<button class="p-1.5 bg-primary/10 text-primary rounded hover:bg-primary/20">
+<span class="material-symbols-outlined text-sm">download</span>
+</button>
+</div>
+</div>
+</div>
+<div class="group relative bg-white dark:bg-[#192633] rounded-xl border border-slate-200 dark:border-transparent overflow-hidden shadow-sm">
+<div class="h-40 bg-slate-100 dark:bg-[#233648] flex items-center justify-center p-8">
+<div class="w-full h-full bg-contain bg-center bg-no-repeat grayscale group-hover:grayscale-0 transition-all duration-300" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuB1ym7DJQLIYyvsnNdOV9sL9xqNUNuGV_LKzpg2v-YmC9ABoV1PAbqxL4q-MMC5_sTkCaFRZmRDSFh68CgNGK-RpJRDlxnyhs2Rnkv6sKjdLLLXhQveVHzD6rtTZVnxM5ZSO7Wd2xuDUw6_DyMazkPki8vzTJx8ZSmnCaVm8jfvTMLLjW7PgTK3uTFINiSZiRVW--fPoSaks9irjlGwONhUKgycrVQFc3rRNtyX16M4smIwhVmJWsrzlk9KoFoPXNMuThmg2TnmS28");'></div>
+</div>
+<div class="p-4">
+<div class="flex justify-between items-start mb-2">
+<h5 class="text-slate-900 dark:text-white font-bold text-sm">Brand Guidelines v2</h5>
+<span class="text-[10px] bg-slate-100 dark:bg-[#233648] px-2 py-0.5 rounded text-slate-500 uppercase">PDF</span>
+</div>
+<p class="text-slate-500 dark:text-[#92adc9] text-xs">Client: DataViz Inc.</p>
+<div class="mt-4 flex gap-2">
+<button class="flex-1 py-1.5 bg-slate-100 dark:bg-[#233648] text-slate-700 dark:text-white text-[10px] font-bold rounded hover:bg-slate-200 dark:hover:bg-slate-700">READ</button>
+<button class="p-1.5 bg-primary/10 text-primary rounded hover:bg-primary/20">
+<span class="material-symbols-outlined text-sm">download</span>
+</button>
+</div>
+</div>
+</div>
+<div class="group relative bg-white dark:bg-[#192633] rounded-xl border border-slate-200 dark:border-transparent overflow-hidden shadow-sm">
+<div class="h-40 bg-slate-100 dark:bg-[#233648] flex items-center justify-center p-8">
+<div class="flex flex-col items-center gap-2">
+<div class="flex gap-2">
+<div class="size-8 rounded-full bg-[#137fec]"></div>
+<div class="size-8 rounded-full bg-[#ff7b54]"></div>
+<div class="size-8 rounded-full bg-[#233648]"></div>
+</div>
+<span class="text-[10px] font-mono text-slate-400">#137FEC • #FF7B54</span>
+</div>
+</div>
+<div class="p-4">
+<div class="flex justify-between items-start mb-2">
+<h5 class="text-slate-900 dark:text-white font-bold text-sm">Color Swatches</h5>
+<span class="text-[10px] bg-slate-100 dark:bg-[#233648] px-2 py-0.5 rounded text-slate-500 uppercase">ASE</span>
+</div>
+<p class="text-slate-500 dark:text-[#92adc9] text-xs">Client: SwiftDelivery</p>
+<div class="mt-4 flex gap-2">
+<button class="flex-1 py-1.5 bg-slate-100 dark:bg-[#233648] text-slate-700 dark:text-white text-[10px] font-bold rounded hover:bg-slate-200 dark:hover:bg-slate-700">COPY HEX</button>
+<button class="p-1.5 bg-primary/10 text-primary rounded hover:bg-primary/20">
+<span class="material-symbols-outlined text-sm">download</span>
+</button>
+</div>
+</div>
+</div>
+</div>
+</section>
+</div>
+</main>
+<aside class="w-[320px] border-l border-slate-200 dark:border-[#233648] flex flex-col bg-white dark:bg-[#192633] shrink-0">
+<div class="p-6 border-b border-slate-200 dark:border-[#233648]">
+<h3 class="text-slate-900 dark:text-white text-lg font-bold mb-4">Recently Used</h3>
+<div class="flex flex-col gap-4">
+<div class="flex items-center gap-3 group cursor-pointer">
+<div class="size-10 bg-slate-100 dark:bg-[#233648] rounded-lg flex items-center justify-center shrink-0">
+<span class="material-symbols-outlined text-primary">description</span>
+</div>
+<div class="flex-1 overflow-hidden">
+<p class="text-slate-900 dark:text-white text-xs font-bold truncate">Social_Media_Kit_Final.ai</p>
+<p class="text-[10px] text-slate-500 dark:text-[#92adc9]">2 hours ago • TechFlow</p>
+</div>
+</div>
+<div class="flex items-center gap-3 group cursor-pointer">
+<div class="size-10 bg-slate-100 dark:bg-[#233648] rounded-lg flex items-center justify-center shrink-0">
+<span class="material-symbols-outlined text-primary">image</span>
+</div>
+<div class="flex-1 overflow-hidden">
+<p class="text-slate-900 dark:text-white text-xs font-bold truncate">Banner_Illustration_v4.svg</p>
+<p class="text-[10px] text-slate-500 dark:text-[#92adc9]">Yesterday • Global Resources</p>
+</div>
+</div>
+<div class="flex items-center gap-3 group cursor-pointer">
+<div class="size-10 bg-slate-100 dark:bg-[#233648] rounded-lg flex items-center justify-center shrink-0">
+<span class="material-symbols-outlined text-primary">style</span>
+</div>
+<div class="flex-1 overflow-hidden">
+<p class="text-slate-900 dark:text-white text-xs font-bold truncate">UI_Colors_Main.ase</p>
+<p class="text-[10px] text-slate-500 dark:text-[#92adc9]">2 days ago • DataViz Inc.</p>
+</div>
+</div>
+</div>
+</div>
+<div class="p-6 flex-1 overflow-y-auto custom-scrollbar">
+<h4 class="text-slate-900 dark:text-white text-sm font-bold uppercase tracking-wider mb-4">Asset Statistics</h4>
+<div class="bg-slate-50 dark:bg-[#233648]/30 rounded-xl p-4 mb-8">
+<div class="space-y-4">
+<div class="flex justify-between items-center text-xs">
+<span class="text-slate-500 dark:text-[#92adc9]">Total Library Size</span>
+<span class="text-slate-900 dark:text-white font-bold">1.2 GB</span>
+</div>
+<div class="w-full bg-slate-200 dark:bg-slate-700 h-1.5 rounded-full overflow-hidden">
+<div class="bg-primary h-full w-[65%]"></div>
+</div>
+<div class="grid grid-cols-2 gap-2 mt-2">
+<div class="text-[10px]">
+<span class="block text-slate-500">Vector Files</span>
+<span class="text-slate-900 dark:text-white font-bold">428</span>
+</div>
+<div class="text-[10px]">
+<span class="block text-slate-500">Raster Files</span>
+<span class="text-slate-900 dark:text-white font-bold">192</span>
+</div>
+</div>
+</div>
+</div>
+<h4 class="text-slate-900 dark:text-white text-sm font-bold uppercase tracking-wider mb-4">Asset Type Filters</h4>
+<div class="space-y-2">
+<label class="flex items-center gap-3 p-2 rounded-lg hover:bg-slate-50 dark:hover:bg-[#233648] cursor-pointer">
+<input checked="" class="form-checkbox rounded border-slate-300 dark:border-slate-700 text-primary focus:ring-primary bg-transparent" type="checkbox"/>
+<span class="text-sm text-slate-600 dark:text-slate-300">Vectors &amp; Logos</span>
+</label>
+<label class="flex items-center gap-3 p-2 rounded-lg hover:bg-slate-50 dark:hover:bg-[#233648] cursor-pointer">
+<input checked="" class="form-checkbox rounded border-slate-300 dark:border-slate-700 text-primary focus:ring-primary bg-transparent" type="checkbox"/>
+<span class="text-sm text-slate-600 dark:text-slate-300">UI Kits &amp; Design Docs</span>
+</label>
+<label class="flex items-center gap-3 p-2 rounded-lg hover:bg-slate-50 dark:hover:bg-[#233648] cursor-pointer">
+<input class="form-checkbox rounded border-slate-300 dark:border-slate-700 text-primary focus:ring-primary bg-transparent" type="checkbox"/>
+<span class="text-sm text-slate-600 dark:text-slate-300">Brand Guidelines</span>
+</label>
+<label class="flex items-center gap-3 p-2 rounded-lg hover:bg-slate-50 dark:hover:bg-[#233648] cursor-pointer">
+<input class="form-checkbox rounded border-slate-300 dark:border-slate-700 text-primary focus:ring-primary bg-transparent" type="checkbox"/>
+<span class="text-sm text-slate-600 dark:text-slate-300">Stock Assets</span>
+</label>
+</div>
+</div>
+<div class="p-6 border-t border-slate-200 dark:border-[#233648] bg-slate-50/50 dark:bg-background-dark">
+<button class="w-full flex items-center justify-center gap-2 bg-slate-100 dark:bg-[#233648] text-slate-700 dark:text-white h-11 rounded-lg font-bold hover:bg-slate-200 dark:hover:bg-slate-700 transition-colors">
+<span class="material-symbols-outlined text-lg">sync</span>
+                Sync Library
+            </button>
+</div>
+</aside>
+</div>
+
+</body></html>

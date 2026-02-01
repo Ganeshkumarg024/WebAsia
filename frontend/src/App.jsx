@@ -15,6 +15,9 @@ import ClientDashboard from './pages/client/Dashboard';
 import CreateRequest from './pages/client/CreateRequest';
 import RequestDetail from './pages/client/RequestDetail';
 import MyRequests from './pages/client/MyRequests';
+import ClientDeliveries from './pages/client/Deliveries';
+import ClientBilling from './pages/client/Billing';
+import ClientSettings from './pages/client/Settings';
 
 // Designer Pages
 import DesignerWorkspace from './pages/designer/Workspace';
@@ -41,6 +44,8 @@ import LeadManager from './pages/admin/LeadManager';
 import AffiliatePayouts from './pages/admin/AffiliatePayouts';
 import Users from './pages/admin/Users';
 import Analytics from './pages/admin/Analytics';
+import GlobalRequests from './pages/admin/GlobalRequests';
+import TeamMapping from './pages/admin/TeamMapping';
 
 // Affiliate Pages
 import AffiliateDashboard from './pages/affiliate/Dashboard';
@@ -84,7 +89,15 @@ function App() {
                 }
             />
             <Route
-                path="/requests"
+                path="/client/requests"
+                element={
+                    <ProtectedRoute roles={['client']}>
+                        <MyRequests />
+                    </ProtectedRoute>
+                }
+            />
+            <Route
+                path="/client/requests/history"
                 element={
                     <ProtectedRoute roles={['client']}>
                         <MyRequests />
@@ -108,10 +121,26 @@ function App() {
                 }
             />
             <Route
-                path="/client/requests"
+                path="/client/deliveries"
                 element={
                     <ProtectedRoute roles={['client']}>
-                        <MyRequests />
+                        <ClientDeliveries />
+                    </ProtectedRoute>
+                }
+            />
+            <Route
+                path="/client/billing"
+                element={
+                    <ProtectedRoute roles={['client']}>
+                        <ClientBilling />
+                    </ProtectedRoute>
+                }
+            />
+            <Route
+                path="/client/settings"
+                element={
+                    <ProtectedRoute roles={['client']}>
+                        <ClientSettings />
                     </ProtectedRoute>
                 }
             />
@@ -226,6 +255,14 @@ function App() {
                 }
             />
             <Route
+                path="/admin/team-mapping"
+                element={
+                    <ProtectedRoute roles={['admin']}>
+                        <TeamMapping />
+                    </ProtectedRoute>
+                }
+            />
+            <Route
                 path="/admin/plans"
                 element={
                     <ProtectedRoute roles={['admin']}>
@@ -270,6 +307,14 @@ function App() {
                 element={
                     <ProtectedRoute roles={['admin']}>
                         <Users />
+                    </ProtectedRoute>
+                }
+            />
+            <Route
+                path="/admin/requests"
+                element={
+                    <ProtectedRoute roles={['admin']}>
+                        <GlobalRequests />
                     </ProtectedRoute>
                 }
             />

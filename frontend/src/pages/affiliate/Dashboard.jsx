@@ -224,4 +224,9 @@ const AffiliateDashboard = () => {
                         </p>
                     </div>
                 </div>
-            </div>
+            </div>
+        </DashboardLayout>
+    );
+};
+
+export default AffiliateDashboard;

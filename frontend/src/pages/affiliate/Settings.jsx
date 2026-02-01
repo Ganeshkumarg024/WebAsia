@@ -197,4 +197,9 @@ const AffiliateSettings = () => {
                         {saving ? 'Saving...' : 'Save Settings'}
                     </button>
                 </div>
-            </div>
+            </div>
+        </DashboardLayout>
+    );
+};
+
+export default AffiliateSettings;

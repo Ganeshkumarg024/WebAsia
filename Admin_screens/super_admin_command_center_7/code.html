@@ -1,0 +1,323 @@
+<!DOCTYPE html>
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Platform System Settings Console | WebAsia</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#137fec",
+                        "background-light": "#f6f7f8",
+                        "background-dark": "#101922",
+                    },
+                    fontFamily: {
+                        "display": ["Inter"]
+                    },
+                    borderRadius: {"DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px"},
+                },
+            },
+        }
+    </script>
+<style type="text/tailwindcss">
+        body { font-family: 'Inter', sans-serif; }
+        .sidebar-dark { background-color: #0d141b; }
+        .custom-scrollbar::-webkit-scrollbar { width: 4px; }
+        .custom-scrollbar::-webkit-scrollbar-track { background: transparent; }
+        .custom-scrollbar::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 10px; }
+    </style>
+</head>
+<body class="bg-background-light dark:bg-background-dark text-[#0d141b] dark:text-slate-50 font-display">
+<div class="flex min-h-screen">
+<aside class="sidebar-dark w-64 flex-shrink-0 flex flex-col justify-between p-4 text-slate-300 border-r border-slate-800">
+<div class="flex flex-col gap-8">
+<div class="flex items-center gap-3 px-2">
+<div class="bg-primary p-2 rounded-lg">
+<svg class="size-6 text-white" fill="none" viewBox="0 0 48 48" xmlns="http://www.w3.org/2000/svg">
+<path d="M44 4H30.6666V17.3334H17.3334V30.6666H4V44H44V4Z" fill="currentColor"></path>
+</svg>
+</div>
+<div>
+<h1 class="text-white text-base font-bold leading-none">WebAsia</h1>
+<p class="text-slate-500 text-xs font-medium">System Admin</p>
+</div>
+</div>
+<nav class="flex flex-col gap-1">
+<a class="flex items-center gap-3 px-3 py-2.5 rounded-lg hover:bg-slate-800 hover:text-white transition-colors" href="#">
+<span class="material-symbols-outlined text-[22px]">dashboard</span>
+<span class="text-sm font-medium">Dashboard</span>
+</a>
+<a class="flex items-center gap-3 px-3 py-2.5 rounded-lg bg-primary text-white" href="#">
+<span class="material-symbols-outlined text-[22px]">settings</span>
+<span class="text-sm font-medium">System Settings</span>
+</a>
+<a class="flex items-center gap-3 px-3 py-2.5 rounded-lg hover:bg-slate-800 hover:text-white transition-colors" href="#">
+<span class="material-symbols-outlined text-[22px]">security</span>
+<span class="text-sm font-medium">Security Log</span>
+</a>
+<a class="flex items-center gap-3 px-3 py-2.5 rounded-lg hover:bg-slate-800 hover:text-white transition-colors" href="#">
+<span class="material-symbols-outlined text-[22px]">api</span>
+<span class="text-sm font-medium">Integrations</span>
+</a>
+<a class="flex items-center gap-3 px-3 py-2.5 rounded-lg hover:bg-slate-800 hover:text-white transition-colors" href="#">
+<span class="material-symbols-outlined text-[22px]">schedule</span>
+<span class="text-sm font-medium">SLA Config</span>
+</a>
+</nav>
+</div>
+<div class="flex flex-col gap-4 mt-auto">
+<div class="flex items-center gap-3 px-3 py-2 bg-slate-800/50 rounded-xl">
+<div class="size-9 rounded-full bg-cover bg-center" data-alt="Admin user profile picture" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuBQCP6Dcn1VzoYh-nPqinUbt-wYLGoxPc6VNGgJ2sBIdfip84n4cnGKJ_yy3jO_Xs1Bb0b6RE9ugdyEZagDD2z8eHX-jbPSCVbzXDPxpLkDAQKWLLBhRuSxv4dI01KK6vBzJNCIqNG-1FnXcvhXb01tOcvEihbbSpQjnxviqUObjtdsn_u7-ISOG_6WSA3CNfQVNC7NKSBeSby-dEpyXrTu6FrKQrGYNu6OiF6MbDAedfKOZKM0hGtUHtcOisrtXl1q2ed-eZomdks");'></div>
+<div class="flex-1 overflow-hidden">
+<p class="text-xs font-bold text-white truncate">Marcus Chen</p>
+<p class="text-[10px] text-slate-400 truncate">Super Admin</p>
+</div>
+</div>
+</div>
+</aside>
+<main class="flex-1 flex flex-col min-w-0 bg-background-light dark:bg-background-dark">
+<header class="h-16 flex items-center justify-between px-8 border-b border-[#e7edf3] dark:border-slate-800 bg-white dark:bg-slate-900 sticky top-0 z-10">
+<div class="flex flex-col">
+<h2 class="text-lg font-bold text-[#0d141b] dark:text-white">Platform System Settings</h2>
+<p class="text-xs text-[#4c739a]">Master configuration console for WebAsia Creative Services</p>
+</div>
+<div class="flex items-center gap-4">
+<div class="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-orange-50 dark:bg-orange-900/20 border border-orange-100 dark:border-orange-800">
+<span class="text-[10px] font-bold text-orange-600 uppercase tracking-wider">Maintenance Mode</span>
+<button aria-checked="false" class="relative inline-flex h-5 w-9 flex-shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none bg-slate-200 dark:bg-slate-700" role="switch">
+<span class="pointer-events-none inline-block h-4 w-4 transform rounded-full bg-white shadow ring-0 transition duration-200 ease-in-out translate-x-0"></span>
+</button>
+</div>
+<button class="flex items-center gap-2 px-4 py-2 rounded-lg bg-primary text-white text-sm font-bold shadow-sm hover:bg-primary/90 transition-all">
+                    Save Changes
+                </button>
+</div>
+</header>
+<div class="p-8 overflow-y-auto custom-scrollbar">
+<div class="max-w-6xl mx-auto space-y-8">
+<section class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+<div class="lg:col-span-1">
+<h3 class="text-base font-bold text-[#0d141b] dark:text-white">General Settings</h3>
+<p class="text-sm text-[#4c739a] mt-1">Configure your platform's public identity and core communications.</p>
+</div>
+<div class="lg:col-span-2 space-y-4">
+<div class="bg-white dark:bg-slate-900 p-6 rounded-xl border border-[#cfdbe7] dark:border-slate-800 shadow-sm space-y-4">
+<div class="grid grid-cols-2 gap-4">
+<div class="space-y-1">
+<label class="text-xs font-bold text-[#4c739a] uppercase">Brand Name</label>
+<input class="w-full text-sm border-slate-200 dark:border-slate-700 dark:bg-slate-800 rounded-lg focus:ring-primary" type="text" value="WebAsia Creative Services"/>
+</div>
+<div class="space-y-1">
+<label class="text-xs font-bold text-[#4c739a] uppercase">System Email</label>
+<input class="w-full text-sm border-slate-200 dark:border-slate-700 dark:bg-slate-800 rounded-lg focus:ring-primary" type="email" value="noreply@webasia.io"/>
+</div>
+</div>
+<div class="flex items-center gap-6 pt-2">
+<div class="size-20 bg-slate-50 dark:bg-slate-800 rounded-xl border border-dashed border-slate-300 dark:border-slate-600 flex flex-col items-center justify-center text-[#4c739a] cursor-pointer hover:border-primary transition-colors">
+<span class="material-symbols-outlined text-2xl">upload_file</span>
+<span class="text-[10px] font-bold mt-1">Logo Light</span>
+</div>
+<div class="size-20 bg-slate-900 rounded-xl border border-dashed border-slate-700 flex flex-col items-center justify-center text-slate-400 cursor-pointer hover:border-primary transition-colors">
+<span class="material-symbols-outlined text-2xl">upload_file</span>
+<span class="text-[10px] font-bold mt-1">Logo Dark</span>
+</div>
+<div class="flex-1">
+<p class="text-xs text-[#4c739a]">Recommended: 512x512px SVG or PNG. Transparent background preferred.</p>
+</div>
+</div>
+</div>
+</div>
+</section>
+<hr class="border-[#e7edf3] dark:border-slate-800"/>
+<section class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+<div class="lg:col-span-1">
+<h3 class="text-base font-bold text-[#0d141b] dark:text-white">SLA &amp; Business Hours</h3>
+<p class="text-sm text-[#4c739a] mt-1">Set turnaround times and operational windows for client requests.</p>
+</div>
+<div class="lg:col-span-2">
+<div class="bg-white dark:bg-slate-900 p-6 rounded-xl border border-[#cfdbe7] dark:border-slate-800 shadow-sm">
+<div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+<div class="space-y-4">
+<div class="space-y-1">
+<label class="text-xs font-bold text-[#4c739a] uppercase">Standard Turnaround (Hours)</label>
+<div class="flex items-center gap-2">
+<input class="w-24 text-sm border-slate-200 dark:border-slate-700 dark:bg-slate-800 rounded-lg" type="number" value="24"/>
+<span class="text-sm text-slate-500">hours</span>
+</div>
+</div>
+<div class="space-y-1">
+<label class="text-xs font-bold text-[#4c739a] uppercase">Express Turnaround (Hours)</label>
+<div class="flex items-center gap-2">
+<input class="w-24 text-sm border-slate-200 dark:border-slate-700 dark:bg-slate-800 rounded-lg" type="number" value="12"/>
+<span class="text-sm text-slate-500">hours</span>
+</div>
+</div>
+</div>
+<div class="space-y-2">
+<label class="text-xs font-bold text-[#4c739a] uppercase">Working Days</label>
+<div class="flex flex-wrap gap-2">
+<button class="px-3 py-1.5 rounded-lg bg-primary text-white text-[11px] font-bold">MON</button>
+<button class="px-3 py-1.5 rounded-lg bg-primary text-white text-[11px] font-bold">TUE</button>
+<button class="px-3 py-1.5 rounded-lg bg-primary text-white text-[11px] font-bold">WED</button>
+<button class="px-3 py-1.5 rounded-lg bg-primary text-white text-[11px] font-bold">THU</button>
+<button class="px-3 py-1.5 rounded-lg bg-primary text-white text-[11px] font-bold">FRI</button>
+<button class="px-3 py-1.5 rounded-lg bg-slate-100 dark:bg-slate-800 text-slate-400 text-[11px] font-bold">SAT</button>
+<button class="px-3 py-1.5 rounded-lg bg-slate-100 dark:bg-slate-800 text-slate-400 text-[11px] font-bold">SUN</button>
+</div>
+<div class="pt-4 flex items-center gap-4">
+<div class="flex-1">
+<label class="text-[10px] text-[#4c739a] block mb-1">Shift Start</label>
+<input class="w-full text-xs border-slate-200 dark:border-slate-700 dark:bg-slate-800 rounded-lg" type="time" value="09:00"/>
+</div>
+<div class="flex-1">
+<label class="text-[10px] text-[#4c739a] block mb-1">Shift End</label>
+<input class="w-full text-xs border-slate-200 dark:border-slate-700 dark:bg-slate-800 rounded-lg" type="time" value="18:00"/>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</section>
+<hr class="border-[#e7edf3] dark:border-slate-800"/>
+<section class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+<div class="lg:col-span-1">
+<h3 class="text-base font-bold text-[#0d141b] dark:text-white">Integration Settings</h3>
+<p class="text-sm text-[#4c739a] mt-1">Connect your cloud storage, payment gateways, and email providers.</p>
+</div>
+<div class="lg:col-span-2">
+<div class="space-y-4">
+<div class="bg-white dark:bg-slate-900 p-4 rounded-xl border border-[#cfdbe7] dark:border-slate-800 shadow-sm flex items-center gap-4">
+<div class="size-10 rounded-lg bg-orange-100 dark:bg-orange-900/30 flex items-center justify-center text-orange-600">
+<span class="material-symbols-outlined">cloud_queue</span>
+</div>
+<div class="flex-1 grid grid-cols-2 gap-4">
+<div class="space-y-1">
+<label class="text-[10px] font-bold text-[#4c739a]">AWS S3 Access Key</label>
+<input class="w-full text-xs border-slate-200 dark:border-slate-700 dark:bg-slate-800 rounded-lg" type="password" value="••••••••••••••••"/>
+</div>
+<div class="space-y-1">
+<label class="text-[10px] font-bold text-[#4c739a]">AWS Bucket Region</label>
+<input class="w-full text-xs border-slate-200 dark:border-slate-700 dark:bg-slate-800 rounded-lg" type="text" value="ap-south-1"/>
+</div>
+</div>
+</div>
+<div class="bg-white dark:bg-slate-900 p-4 rounded-xl border border-[#cfdbe7] dark:border-slate-800 shadow-sm flex items-center gap-4">
+<div class="size-10 rounded-lg bg-blue-100 dark:bg-blue-900/30 flex items-center justify-center text-blue-600">
+<span class="material-symbols-outlined">payments</span>
+</div>
+<div class="flex-1 grid grid-cols-2 gap-4">
+<div class="space-y-1">
+<label class="text-[10px] font-bold text-[#4c739a]">Razorpay Key ID</label>
+<input class="w-full text-xs border-slate-200 dark:border-slate-700 dark:bg-slate-800 rounded-lg" type="password" value="••••••••••••••••"/>
+</div>
+<div class="space-y-1 text-right">
+<span class="inline-flex items-center gap-1 px-2 py-1 rounded-full bg-green-100 dark:bg-green-900/20 text-green-600 text-[10px] font-bold mt-4">
+<span class="size-1.5 bg-green-600 rounded-full"></span>
+                                            CONNECTED
+                                        </span>
+</div>
+</div>
+</div>
+<div class="bg-white dark:bg-slate-900 p-4 rounded-xl border border-[#cfdbe7] dark:border-slate-800 shadow-sm flex items-center gap-4">
+<div class="size-10 rounded-lg bg-teal-100 dark:bg-teal-900/30 flex items-center justify-center text-teal-600">
+<span class="material-symbols-outlined">send</span>
+</div>
+<div class="flex-1 space-y-1">
+<label class="text-[10px] font-bold text-[#4c739a]">SendGrid API Key</label>
+<div class="relative">
+<input class="w-full text-xs border-slate-200 dark:border-slate-700 dark:bg-slate-800 rounded-lg pr-10" type="password" value="SG.••••••••••••••••••••••••••••••••"/>
+<button class="absolute right-2 top-1/2 -translate-y-1/2 text-slate-400 hover:text-primary">
+<span class="material-symbols-outlined text-sm">visibility</span>
+</button>
+</div>
+</div>
+</div>
+</div>
+</div>
+</section>
+<hr class="border-[#e7edf3] dark:border-slate-800"/>
+<section class="space-y-4">
+<div class="flex items-center justify-between">
+<div>
+<h3 class="text-base font-bold text-[#0d141b] dark:text-white">Security Audit Log</h3>
+<p class="text-sm text-[#4c739a]">Monitoring system-wide administrative actions and security events.</p>
+</div>
+<button class="text-sm font-bold text-primary hover:underline flex items-center gap-1">
+<span class="material-symbols-outlined text-sm">download</span> Export CSV
+                        </button>
+</div>
+<div class="bg-white dark:bg-slate-900 rounded-xl border border-[#cfdbe7] dark:border-slate-800 overflow-hidden shadow-sm">
+<table class="w-full text-left border-collapse">
+<thead>
+<tr class="bg-slate-50 dark:bg-slate-800/50 border-b border-[#cfdbe7] dark:border-slate-800">
+<th class="px-6 py-4 text-xs font-bold uppercase tracking-wider text-[#4c739a]">Timestamp</th>
+<th class="px-6 py-4 text-xs font-bold uppercase tracking-wider text-[#4c739a]">Admin</th>
+<th class="px-6 py-4 text-xs font-bold uppercase tracking-wider text-[#4c739a]">Action</th>
+<th class="px-6 py-4 text-xs font-bold uppercase tracking-wider text-[#4c739a]">IP Address</th>
+<th class="px-6 py-4 text-xs font-bold uppercase tracking-wider text-[#4c739a] text-right">Status</th>
+</tr>
+</thead>
+<tbody class="divide-y divide-[#cfdbe7] dark:divide-slate-800">
+<tr class="hover:bg-slate-50/50 dark:hover:bg-slate-800/20 transition-colors">
+<td class="px-6 py-4 text-xs text-slate-500">Oct 24, 2023 14:22:10</td>
+<td class="px-6 py-4">
+<div class="flex items-center gap-2">
+<div class="size-6 rounded-full bg-cover bg-center" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuBQCP6Dcn1VzoYh-nPqinUbt-wYLGoxPc6VNGgJ2sBIdfip84n4cnGKJ_yy3jO_Xs1Bb0b6RE9ugdyEZagDD2z8eHX-jbPSCVbzXDPxpLkDAQKWLLBhRuSxv4dI01KK6vBzJNCIqNG-1FnXcvhXb01tOcvEihbbSpQjnxviqUObjtdsn_u7-ISOG_6WSA3CNfQVNC7NKSBeSby-dEpyXrTu6FrKQrGYNu6OiF6MbDAedfKOZKM0hGtUHtcOisrtXl1q2ed-eZomdks");'></div>
+<span class="text-sm font-medium">Marcus Chen</span>
+</div>
+</td>
+<td class="px-6 py-4 text-sm">Changed Razorpay API Keys</td>
+<td class="px-6 py-4 text-xs font-mono text-slate-500">192.168.1.1</td>
+<td class="px-6 py-4 text-right">
+<span class="px-2 py-0.5 rounded text-[10px] font-bold bg-green-100 text-green-700">SUCCESS</span>
+</td>
+</tr>
+<tr class="hover:bg-slate-50/50 dark:hover:bg-slate-800/20 transition-colors">
+<td class="px-6 py-4 text-xs text-slate-500">Oct 24, 2023 12:05:45</td>
+<td class="px-6 py-4">
+<div class="flex items-center gap-2">
+<div class="size-6 rounded-full bg-cover bg-center" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuC4qP-nSp_kWWgUK3_kT8PYYj_xwz1Pc74JzuUx-t6CMA58YYPN0B9lUuiY2S3GVc2_SM4b66S6yYK-q4n9H1vR8qSJ2KgJSSfAjtHZ8hb-XqsQoE9Kgk0bY_zQzuO0vuKcwU2GAKMMOiPtq1UPzvuMca-E1cyOxHyo_OJxBCw1-pHpssu3Clg13vwYKOGg4WSS18klQ3gfJFDYnMktS8S5Eco1WrjK5RZWJT4R3J7d5z37WOkdMr-pUL5BTtg8CGhG--a3zyByeVw");'></div>
+<span class="text-sm font-medium">Lisa Wong</span>
+</div>
+</td>
+<td class="px-6 py-4 text-sm">Updated SLA Business Hours</td>
+<td class="px-6 py-4 text-xs font-mono text-slate-500">172.16.254.1</td>
+<td class="px-6 py-4 text-right">
+<span class="px-2 py-0.5 rounded text-[10px] font-bold bg-green-100 text-green-700">SUCCESS</span>
+</td>
+</tr>
+<tr class="hover:bg-slate-50/50 dark:hover:bg-slate-800/20 transition-colors">
+<td class="px-6 py-4 text-xs text-slate-500">Oct 23, 2023 18:40:12</td>
+<td class="px-6 py-4">
+<div class="flex items-center gap-2">
+<div class="size-6 rounded-full bg-slate-200 flex items-center justify-center text-slate-500">
+<span class="material-symbols-outlined text-sm">person</span>
+</div>
+<span class="text-sm font-medium">System Core</span>
+</div>
+</td>
+<td class="px-6 py-4 text-sm">Failed Login Attempt (Admin Panel)</td>
+<td class="px-6 py-4 text-xs font-mono text-slate-500">45.22.112.8</td>
+<td class="px-6 py-4 text-right">
+<span class="px-2 py-0.5 rounded text-[10px] font-bold bg-red-100 text-red-700">ALERT</span>
+</td>
+</tr>
+</tbody>
+</table>
+<div class="px-6 py-4 bg-slate-50 dark:bg-slate-800/20 text-center">
+<button class="text-xs font-bold text-[#4c739a] hover:text-[#0d141b] transition-colors">View Full Security Audit Log</button>
+</div>
+</div>
+</section>
+</div>
+</div>
+</main>
+</div>
+
+</body></html>

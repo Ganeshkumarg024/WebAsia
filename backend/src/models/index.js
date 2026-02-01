@@ -6,6 +6,11 @@ import Request from './Request.js';
 import File from './File.js';
 import Message from './Message.js';
 import Notification from './Notification.js';
+import Affiliate from './Affiliate.js';
+import Referral from './Referral.js';
+import Testimonial from './Testimonial.js';
+import Payment from './Payment.js';
+import RequestActivity from './RequestActivity.js';
 
 // User associations
 User.hasMany(Subscription, { foreignKey: 'userId', as: 'subscriptions' });
@@ -15,6 +20,12 @@ User.hasMany(Request, { foreignKey: 'assignedManagerId', as: 'managerRequests' }
 User.hasMany(File, { foreignKey: 'uploadedBy', as: 'uploadedFiles' });
 User.hasMany(Message, { foreignKey: 'senderId', as: 'sentMessages' });
 User.hasMany(Notification, { foreignKey: 'userId', as: 'notifications' });
+User.hasOne(Affiliate, { foreignKey: 'userId', as: 'affiliate' });
+User.hasMany(Testimonial, { foreignKey: 'userId', as: 'testimonials' });
+User.hasMany(Payment, { foreignKey: 'userId', as: 'payments' });
+User.hasMany(RequestActivity, { foreignKey: 'userId', as: 'activities' });
+User.belongsTo(User, { foreignKey: 'managerId', as: 'manager' });
+User.hasMany(User, { foreignKey: 'managerId', as: 'designers' });
 
 // SubscriptionPlan associations
 SubscriptionPlan.hasMany(Subscription, { foreignKey: 'planId', as: 'subscriptions' });
@@ -23,6 +34,7 @@ SubscriptionPlan.hasMany(Subscription, { foreignKey: 'planId', as: 'subscription
 Subscription.belongsTo(User, { foreignKey: 'userId', as: 'user' });
 Subscription.belongsTo(SubscriptionPlan, { foreignKey: 'planId', as: 'plan' });
 Subscription.hasMany(Request, { foreignKey: 'subscriptionId', as: 'requests' });
+Subscription.hasMany(Payment, { foreignKey: 'subscriptionId', as: 'payments' });
 
 // Request associations
 Request.belongsTo(User, { foreignKey: 'clientId', as: 'client' });
@@ -31,6 +43,8 @@ Request.belongsTo(User, { foreignKey: 'assignedManagerId', as: 'manager' });
 Request.belongsTo(Subscription, { foreignKey: 'subscriptionId', as: 'subscription' });
 Request.hasMany(File, { foreignKey: 'requestId', as: 'files' });
 Request.hasMany(Message, { foreignKey: 'requestId', as: 'messages' });
+Request.hasMany(Testimonial, { foreignKey: 'requestId', as: 'testimonials' });
+Request.hasMany(RequestActivity, { foreignKey: 'requestId', as: 'activities' });
 
 // File associations
 File.belongsTo(Request, { foreignKey: 'requestId', as: 'request' });
@@ -45,6 +59,29 @@ Message.belongsTo(File, { foreignKey: 'fileId', as: 'file' });
 
 // Notification associations
 Notification.belongsTo(User, { foreignKey: 'userId', as: 'user' });
+
+// Affiliate associations
+Affiliate.belongsTo(User, { foreignKey: 'userId', as: 'user' });
+Affiliate.belongsTo(User, { foreignKey: 'approvedBy', as: 'approver' });
+Affiliate.hasMany(Referral, { foreignKey: 'affiliateId', as: 'referrals' });
+
+// Referral associations
+Referral.belongsTo(Affiliate, { foreignKey: 'affiliateId', as: 'affiliate' });
+Referral.belongsTo(User, { foreignKey: 'referredUserId', as: 'referredUser' });
+Referral.belongsTo(Subscription, { foreignKey: 'subscriptionId', as: 'subscription' });
+
+// Testimonial associations
+Testimonial.belongsTo(User, { foreignKey: 'userId', as: 'user' });
+Testimonial.belongsTo(Request, { foreignKey: 'requestId', as: 'request' });
+Testimonial.belongsTo(User, { foreignKey: 'approvedBy', as: 'approver' });
+
+// Payment associations
+Payment.belongsTo(User, { foreignKey: 'userId', as: 'user' });
+Payment.belongsTo(Subscription, { foreignKey: 'subscriptionId', as: 'subscription' });
+
+// RequestActivity associations
+RequestActivity.belongsTo(Request, { foreignKey: 'requestId', as: 'request' });
+RequestActivity.belongsTo(User, { foreignKey: 'userId', as: 'user' });
 
 // Sync database (development only)
 export const syncDatabase = async (options = {}) => {
@@ -65,5 +102,10 @@ export {
     Request,
     File,
     Message,
-    Notification
+    Notification,
+    Affiliate,
+    Referral,
+    Testimonial,
+    Payment,
+    RequestActivity
 };

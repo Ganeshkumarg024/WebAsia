@@ -5,7 +5,11 @@ import {
     getMyRequests,
     getRequestById,
     updateRequestStatus,
-    cancelRequest
+    cancelRequest,
+    submitFeedback,
+    approveRequest,
+    getRequestActivity,
+    changePriority
 } from '../controllers/request.controller.js';
 import { authenticate } from '../middleware/auth.middleware.js';
 import { isClient, isClientOrAdmin } from '../middleware/rbac.middleware.js';
@@ -47,5 +51,22 @@ router.patch('/:id/status', [
 router.post('/:id/cancel', isClient, [
     body('reason').optional().isString()
 ], cancelRequest);
+
+// Submit feedback
+router.post('/:id/feedback', isClient, [
+    body('feedback').trim().notEmpty().withMessage('Feedback is required'),
+    body('requestRevision').optional().isBoolean()
+], submitFeedback);
+
+// Approve request
+router.post('/:id/approve', isClient, approveRequest);
+
+// Get request activity timeline
+router.get('/:id/activity', getRequestActivity);
+
+// Change priority
+router.patch('/:id/priority', isClient, [
+    body('priority').isIn(['normal', 'urgent']).withMessage('Invalid priority')
+], changePriority);
 
 export default router;

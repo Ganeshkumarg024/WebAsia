@@ -7,9 +7,9 @@ export const requestsAPI = {
         return response.data;
     },
 
-    // Get all user requests with pagination
-    getRequests: async (params = {}) => {
-        const response = await apiClient.get('/requests', { params });
+    // Get all user requests
+    getMyRequests: async (params = {}) => {
+        const response = await apiClient.get('/requests/my-requests', { params });
         return response.data;
     },
 
@@ -19,50 +19,56 @@ export const requestsAPI = {
         return response.data;
     },
 
-    // Update request
-    updateRequest: async (id, data) => {
-        const response = await apiClient.put(`/requests/${id}`, data);
+    // Update request status
+    updateRequestStatus: async (id, status, feedback = null) => {
+        const response = await apiClient.patch(`/requests/${id}/status`, { status, feedback });
         return response.data;
     },
 
-    // Delete request
-    deleteRequest: async (id) => {
-        const response = await apiClient.delete(`/requests/${id}`);
-        return response.data;
-    },
-
-    // Add revision feedback
-    addRevision: async (id, feedback) => {
-        const response = await apiClient.post(`/requests/${id}/revisions`, { feedback });
-        return response.data;
-    },
-
-    // Approve design
-    approveDesign: async (id) => {
-        const response = await apiClient.post(`/requests/${id}/approve`);
+    // Cancel request
+    cancelRequest: async (id, reason) => {
+        const response = await apiClient.post(`/requests/${id}/cancel`, { reason });
         return response.data;
     },
 
     // Upload reference files
-    uploadReferences: async (id, files) => {
+    uploadFiles: async (id, files) => {
         const formData = new FormData();
         files.forEach(file => {
             formData.append('files', file);
         });
 
-        const response = await apiClient.post(`/requests/${id}/references`, formData, {
+        const response = await apiClient.post(`/requests/${id}/upload-files`, formData, {
             headers: {
-                'Content-Type': 'multipart/form-data',
-            },
+                'Content-Type': 'multipart/form-data'
+            }
         });
         return response.data;
     },
 
-    // Get request statistics
-    getStats: async () => {
-        const response = await apiClient.get('/requests/stats');
+    // Submit feedback/revision request
+    submitFeedback: async (id, feedback) => {
+        const response = await apiClient.post(`/requests/${id}/feedback`, { feedback });
         return response.data;
     },
+
+    // Approve final delivery
+    approveRequest: async (id) => {
+        const response = await apiClient.post(`/requests/${id}/approve`);
+        return response.data;
+    },
+
+    // Get request activity timeline
+    getRequestActivity: async (id) => {
+        const response = await apiClient.get(`/requests/${id}/activity`);
+        return response.data;
+    },
+
+    // Change request priority
+    changePriority: async (id, priority) => {
+        const response = await apiClient.patch(`/requests/${id}/priority`, { priority });
+        return response.data;
+    }
 };
 
 export default requestsAPI;

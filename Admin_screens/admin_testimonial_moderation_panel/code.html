@@ -1,0 +1,488 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Admin Testimonial Moderation Panel</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#137fec",
+                        "background-light": "#f6f7f8",
+                        "background-dark": "#101922",
+                    },
+                    fontFamily: {
+                        "display": ["Inter"]
+                    },
+                    borderRadius: {"DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px"},
+                },
+            },
+        }
+    </script>
+<style>
+        body { font-family: 'Inter', sans-serif; }
+        .material-symbols-outlined { font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24; }
+        .filled-icon { font-variation-settings: 'FILL' 1; }
+    </style>
+</head>
+<body class="bg-background-light dark:bg-background-dark text-slate-900 dark:text-slate-100 min-h-screen">
+<!-- Top Navigation Bar -->
+<header class="border-b border-slate-200 dark:border-slate-800 bg-white dark:bg-[#111a22] sticky top-0 z-50">
+<div class="max-w-[1440px] mx-auto px-6 h-16 flex items-center justify-between">
+<div class="flex items-center gap-8">
+<div class="flex items-center gap-3">
+<div class="bg-primary p-1.5 rounded-lg text-white">
+<span class="material-symbols-outlined text-xl block">dashboard_customize</span>
+</div>
+<h2 class="text-lg font-bold tracking-tight">WebAsia Admin</h2>
+</div>
+<nav class="hidden md:flex items-center gap-6">
+<a class="text-sm font-medium text-slate-500 hover:text-primary dark:text-slate-400 dark:hover:text-white transition-colors" href="#">Dashboard</a>
+<a class="text-sm font-medium text-slate-500 hover:text-primary dark:text-slate-400 dark:hover:text-white transition-colors" href="#">Orders</a>
+<a class="text-sm font-medium text-primary dark:text-primary" href="#">Testimonials</a>
+<a class="text-sm font-medium text-slate-500 hover:text-primary dark:text-slate-400 dark:hover:text-white transition-colors" href="#">Clients</a>
+</nav>
+</div>
+<div class="flex items-center gap-4">
+<div class="relative group">
+<span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 text-lg">search</span>
+<input class="pl-10 pr-4 py-1.5 bg-slate-100 dark:bg-slate-800 border-none rounded-lg text-sm focus:ring-2 focus:ring-primary w-64" placeholder="Search testimonials..." type="text"/>
+</div>
+<div class="h-8 w-8 rounded-full bg-slate-200 dark:bg-slate-700 overflow-hidden">
+<img alt="Admin Profile" class="w-full h-full object-cover" data-alt="Headshot of a professional male administrator" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDN-c-TY-WLs9xZngB5UVyuA01CRDWlfYg63ROIC36KvqhaLpjqdIEFwGpBBu-uP1YxQzTMCgQs6ChXKVW8q5YJAUrxv4wYgYL5WB3J8RlSY3KSCMH-u73O6Ax3J-uirC81hnvcI_LKwpbP-_52u4CYXpEH34P2TDa5IXnWVQU0yMnjBIkV0jcD8tqpYbkRhKlqRB_9Y87byxCcFScNqim2Qzr1XY6vNj-WsmGCjWR--jzQldbaUzx_3gzVlzNtdZJxD3EBDqkasEw"/>
+</div>
+</div>
+</div>
+</header>
+<main class="max-w-[1440px] mx-auto p-6 lg:p-10 space-y-8">
+<!-- Page Heading & Stats -->
+<div class="flex flex-col lg:flex-row lg:items-end justify-between gap-6">
+<div class="space-y-1">
+<h1 class="text-3xl font-black tracking-tight">Testimonial Moderation</h1>
+<p class="text-slate-500 dark:text-slate-400 max-w-2xl">Review, filter, and manage client feedback. Curate the best testimonials for the public-facing subscription portal.</p>
+</div>
+<div class="flex gap-3">
+<button class="flex items-center gap-2 px-4 py-2 bg-slate-200 dark:bg-slate-800 hover:bg-slate-300 dark:hover:bg-slate-700 rounded-lg text-sm font-bold transition-all">
+<span class="material-symbols-outlined text-lg">download</span>
+                    Export CSV
+                </button>
+<button class="flex items-center gap-2 px-4 py-2 bg-primary text-white hover:bg-primary/90 rounded-lg text-sm font-bold shadow-lg shadow-primary/20 transition-all">
+<span class="material-symbols-outlined text-lg">add</span>
+                    Add Internal Note
+                </button>
+</div>
+</div>
+<!-- Quick Stats -->
+<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+<div class="bg-white dark:bg-slate-900 p-6 rounded-xl border border-slate-200 dark:border-slate-800 shadow-sm">
+<p class="text-sm font-medium text-slate-500 dark:text-slate-400">Total Feedback</p>
+<div class="flex items-end gap-2 mt-1">
+<h3 class="text-2xl font-bold">1,284</h3>
+<span class="text-emerald-500 text-xs font-bold mb-1">+12%</span>
+</div>
+</div>
+<div class="bg-white dark:bg-slate-900 p-6 rounded-xl border border-slate-200 dark:border-slate-800 shadow-sm">
+<p class="text-sm font-medium text-slate-500 dark:text-slate-400">Pending Consent</p>
+<h3 class="text-2xl font-bold mt-1">42</h3>
+</div>
+<div class="bg-white dark:bg-slate-900 p-6 rounded-xl border border-slate-200 dark:border-slate-800 shadow-sm">
+<p class="text-sm font-medium text-slate-500 dark:text-slate-400">Publicly Visible</p>
+<div class="flex items-end gap-2 mt-1">
+<h3 class="text-2xl font-bold">156</h3>
+<span class="text-emerald-500 text-xs font-bold mb-1">+5%</span>
+</div>
+</div>
+<div class="bg-white dark:bg-slate-900 p-6 rounded-xl border border-slate-200 dark:border-slate-800 shadow-sm">
+<p class="text-sm font-medium text-slate-500 dark:text-slate-400">Average Rating</p>
+<div class="flex items-center gap-1 mt-1 text-amber-500">
+<h3 class="text-2xl font-bold text-slate-900 dark:text-white mr-1">4.8</h3>
+<span class="material-symbols-outlined filled-icon text-lg">star</span>
+</div>
+</div>
+</div>
+<!-- Filters -->
+<div class="bg-white dark:bg-slate-900 p-4 rounded-xl border border-slate-200 dark:border-slate-800 shadow-sm space-y-4">
+<div class="flex flex-wrap items-center gap-3">
+<div class="text-sm font-bold text-slate-400 uppercase tracking-wider pr-2">Filter By:</div>
+<button class="flex items-center gap-2 px-3 py-1.5 bg-slate-100 dark:bg-slate-800 hover:bg-primary/10 dark:hover:bg-primary/20 border border-transparent hover:border-primary/30 rounded-lg text-sm transition-all group">
+<span class="font-medium">Service Type</span>
+<span class="material-symbols-outlined text-slate-400 group-hover:text-primary">expand_more</span>
+</button>
+<button class="flex items-center gap-2 px-3 py-1.5 bg-slate-100 dark:bg-slate-800 hover:bg-primary/10 dark:hover:bg-primary/20 border border-transparent hover:border-primary/30 rounded-lg text-sm transition-all group">
+<span class="font-medium">Rating</span>
+<span class="material-symbols-outlined text-slate-400 group-hover:text-primary">expand_more</span>
+</button>
+<button class="flex items-center gap-2 px-3 py-1.5 bg-slate-100 dark:bg-slate-800 hover:bg-primary/10 dark:hover:bg-primary/20 border border-transparent hover:border-primary/30 rounded-lg text-sm transition-all group">
+<span class="font-medium">Consent Status</span>
+<span class="material-symbols-outlined text-slate-400 group-hover:text-primary">expand_more</span>
+</button>
+<div class="ml-auto flex items-center gap-2">
+<span class="text-sm text-slate-500">Showing 24 of 1,284 entries</span>
+</div>
+</div>
+<div class="flex flex-wrap gap-2 border-t border-slate-100 dark:border-slate-800 pt-4">
+<div class="bg-primary/10 text-primary px-2.5 py-1 rounded-full text-xs font-bold flex items-center gap-1.5">
+                    UI/UX Design
+                    <span class="material-symbols-outlined text-sm cursor-pointer">close</span>
+</div>
+<div class="bg-primary/10 text-primary px-2.5 py-1 rounded-full text-xs font-bold flex items-center gap-1.5">
+                    4 Stars &amp; Up
+                    <span class="material-symbols-outlined text-sm cursor-pointer">close</span>
+</div>
+<button class="text-xs text-slate-400 hover:text-primary font-medium ml-2">Clear all filters</button>
+</div>
+</div>
+<!-- Table Container -->
+<div class="bg-white dark:bg-slate-900 rounded-xl border border-slate-200 dark:border-slate-800 shadow-sm overflow-hidden">
+<div class="overflow-x-auto">
+<table class="w-full text-left border-collapse">
+<thead class="bg-slate-50 dark:bg-slate-800/50 text-slate-500 dark:text-slate-400 border-b border-slate-200 dark:border-slate-800">
+<tr>
+<th class="px-6 py-4 text-xs font-bold uppercase tracking-wider w-12">
+<input class="rounded border-slate-300 dark:border-slate-700 bg-transparent text-primary focus:ring-primary" type="checkbox"/>
+</th>
+<th class="px-6 py-4 text-xs font-bold uppercase tracking-wider">Client</th>
+<th class="px-6 py-4 text-xs font-bold uppercase tracking-wider">Service &amp; Rating</th>
+<th class="px-6 py-4 text-xs font-bold uppercase tracking-wider">Comment</th>
+<th class="px-6 py-4 text-xs font-bold uppercase tracking-wider">Consent</th>
+<th class="px-6 py-4 text-xs font-bold uppercase tracking-wider">Moderation</th>
+<th class="px-6 py-4 text-xs font-bold uppercase tracking-wider">Featured</th>
+</tr>
+</thead>
+<tbody class="divide-y divide-slate-100 dark:divide-slate-800">
+<!-- Entry 1: Approved and Featured -->
+<tr class="hover:bg-slate-50/50 dark:hover:bg-slate-800/20 transition-colors">
+<td class="px-6 py-4"><input class="rounded border-slate-300 dark:border-slate-700 bg-transparent text-primary focus:ring-primary" type="checkbox"/></td>
+<td class="px-6 py-4">
+<div class="flex items-center gap-3">
+<div class="w-10 h-10 rounded-lg bg-slate-200 dark:bg-slate-700 overflow-hidden shrink-0">
+<img alt="Sarah Chen" class="w-full h-full object-cover" data-alt="Portrait of Sarah Chen, a female client" src="https://lh3.googleusercontent.com/aida-public/AB6AXuB0lC0TsEltaMFq0gyaA3CLyji7NLaVNgoJN0bQxUADDPKXKEgSx_IhRvtI9ZtbzA3DM7O4jZ4_Hkut8mjJKhc4pnZXLUjhz4_CPf_euR3REr4s7mYvBviaACIa88aQfG-HjVB7hoMO2rb83vyyfIDMWnd2iasXxZ6IuFeqDM06zMRBzd690bF5KZQT_X5J-YDjGKNG9h1cpSchGtsuGM3x8iez_dJjd4t2t-FE5krppFQHIiepLJdjOeeLwBCNrd7he2CLrc8ZoJI"/>
+</div>
+<div>
+<p class="font-bold text-sm">Sarah Chen</p>
+<p class="text-xs text-slate-500">TechFlow Systems</p>
+</div>
+</div>
+</td>
+<td class="px-6 py-4">
+<span class="px-2 py-0.5 rounded bg-blue-100 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400 text-[10px] font-bold uppercase">UI/UX Design</span>
+<div class="flex items-center mt-1 text-amber-500">
+<span class="material-symbols-outlined filled-icon text-sm">star</span>
+<span class="material-symbols-outlined filled-icon text-sm">star</span>
+<span class="material-symbols-outlined filled-icon text-sm">star</span>
+<span class="material-symbols-outlined filled-icon text-sm">star</span>
+<span class="material-symbols-outlined filled-icon text-sm">star</span>
+</div>
+</td>
+<td class="px-6 py-4">
+<p class="text-sm line-clamp-2 max-w-xs text-slate-600 dark:text-slate-300">
+                                    The new landing page increased our conversion rate by 40%. The team was incredibly responsive and understood our brand perfectly.
+                                </p>
+<button class="text-xs text-primary font-bold mt-1 hover:underline">Edit Notes</button>
+</td>
+<td class="px-6 py-4">
+<div class="flex items-center gap-1.5 text-emerald-500">
+<span class="material-symbols-outlined text-base">check_circle</span>
+<span class="text-xs font-bold uppercase">Yes</span>
+</div>
+</td>
+<td class="px-6 py-4">
+<label class="relative inline-flex items-center cursor-pointer">
+<input checked="" class="sr-only peer" type="checkbox"/>
+<div class="w-11 h-6 bg-slate-200 peer-focus:outline-none dark:bg-slate-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-primary"></div>
+<span class="ml-3 text-xs font-medium text-slate-500 dark:text-slate-400">Public</span>
+</label>
+</td>
+<td class="px-6 py-4">
+<button class="text-primary hover:text-primary/80 transition-all">
+<span class="material-symbols-outlined filled-icon">grade</span>
+</button>
+</td>
+</tr>
+<!-- Entry 2: No Consent -->
+<tr class="hover:bg-slate-50/50 dark:hover:bg-slate-800/20 transition-colors">
+<td class="px-6 py-4"><input class="rounded border-slate-300 dark:border-slate-700 bg-transparent text-primary focus:ring-primary" type="checkbox"/></td>
+<td class="px-6 py-4">
+<div class="flex items-center gap-3">
+<div class="w-10 h-10 rounded-lg bg-slate-200 dark:bg-slate-700 overflow-hidden shrink-0">
+<img alt="Marcus Lee" class="w-full h-full object-cover" data-alt="Portrait of Marcus Lee, a male client" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCv39Or6sn9ikfNI6u4S8AGn2UC6YLojSx7juJ-pmBZcUr8suAnzJmuHiCCn5JxC07bz0oBubz1WS-biZAUY7U9HUrqjJcP6hsEECF30_txmBojQdj6X88Tjy9qAqqksgmje8VZithUpf9r3nYMOpnxggMCvpZfpbPtNXzbvgMzOdv-eG-w3wggp0nvS5wOLJXqjqHFhKbUCDIZP_DpOYG9uI_4w7O81wziUggWkqHtxtJW5cJZm_fXoJ91vuGQKlf4PZOIMZCKE2Q"/>
+</div>
+<div>
+<p class="font-bold text-sm">Marcus Lee</p>
+<p class="text-xs text-slate-500">Global Logistics</p>
+</div>
+</div>
+</td>
+<td class="px-6 py-4">
+<span class="px-2 py-0.5 rounded bg-purple-100 dark:bg-purple-900/30 text-purple-600 dark:text-purple-400 text-[10px] font-bold uppercase">Web Development</span>
+<div class="flex items-center mt-1 text-amber-500">
+<span class="material-symbols-outlined filled-icon text-sm">star</span>
+<span class="material-symbols-outlined filled-icon text-sm">star</span>
+<span class="material-symbols-outlined filled-icon text-sm">star</span>
+<span class="material-symbols-outlined filled-icon text-sm">star</span>
+<span class="material-symbols-outlined text-sm">star</span>
+</div>
+</td>
+<td class="px-6 py-4">
+<p class="text-sm line-clamp-2 max-w-xs text-slate-600 dark:text-slate-300">
+                                    Solid integration. A few bugs in the initial beta, but support was fast. Overall satisfied with the performance.
+                                </p>
+<div class="mt-1 flex items-center gap-1 text-[10px] bg-slate-100 dark:bg-slate-800 p-1 rounded italic text-slate-500 border-l-2 border-primary">
+                                    Internal: Follow up on the dashboard bug.
+                                </div>
+</td>
+<td class="px-6 py-4">
+<div class="flex items-center gap-1.5 text-slate-400">
+<span class="material-symbols-outlined text-base">cancel</span>
+<span class="text-xs font-bold uppercase">No</span>
+</div>
+</td>
+<td class="px-6 py-4 opacity-50 cursor-not-allowed group">
+<label class="relative inline-flex items-center pointer-events-none">
+<input class="sr-only peer" disabled="" type="checkbox"/>
+<div class="w-11 h-6 bg-slate-200 dark:bg-slate-700 peer-focus:outline-none rounded-full after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all"></div>
+<span class="ml-3 text-xs font-medium text-slate-400">Locked</span>
+</label>
+</td>
+<td class="px-6 py-4">
+<button class="text-slate-300 dark:text-slate-700 cursor-not-allowed">
+<span class="material-symbols-outlined">grade</span>
+</button>
+</td>
+</tr>
+<!-- Entry 3: Mixed status -->
+<tr class="hover:bg-slate-50/50 dark:hover:bg-slate-800/20 transition-colors">
+<td class="px-6 py-4"><input class="rounded border-slate-300 dark:border-slate-700 bg-transparent text-primary focus:ring-primary" type="checkbox"/></td>
+<td class="px-6 py-4">
+<div class="flex items-center gap-3">
+<div class="w-10 h-10 rounded-lg bg-slate-200 dark:bg-slate-700 overflow-hidden shrink-0">
+<img alt="Elena Rodriguez" class="w-full h-full object-cover" data-alt="Portrait of Elena Rodriguez, a female client" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDOocd2-kyZlilW-rE5nuidK3neyvFxt7RbRHVq0rw9hMFvfBDWmS5i-o8TdOPG4MzH3ormDZJHLe_VeHLorPXsSc9JsqJRC2-SLPjqnBAQRLksnPqe3BfF2aMlkt0XIqPXgK0ZDWWc4eUIVEvNAppCHu19PL0BNoPZtmDq_zqtONx5GI6OBmOBLpKAwyhXFXrPyTcxwU82N0RviqDE5dcbmH2_FN-_YjViO3u0g22Jak3vbWxu6560NcMr_kz6qdW5k5IH7mSEUUQ"/>
+</div>
+<div>
+<p class="font-bold text-sm">Elena Rodriguez</p>
+<p class="text-xs text-slate-500">Design Co.</p>
+</div>
+</div>
+</td>
+<td class="px-6 py-4">
+<span class="px-2 py-0.5 rounded bg-emerald-100 dark:bg-emerald-900/30 text-emerald-600 dark:text-emerald-400 text-[10px] font-bold uppercase">Subscription</span>
+<div class="flex items-center mt-1 text-amber-500">
+<span class="material-symbols-outlined filled-icon text-sm">star</span>
+<span class="material-symbols-outlined filled-icon text-sm">star</span>
+<span class="material-symbols-outlined filled-icon text-sm">star</span>
+<span class="material-symbols-outlined filled-icon text-sm">star</span>
+<span class="material-symbols-outlined filled-icon text-sm">star</span>
+</div>
+</td>
+<td class="px-6 py-4">
+<p class="text-sm line-clamp-2 max-w-xs text-slate-600 dark:text-slate-300">
+                                    The subscription model has been a game-changer for our internal design team. Highly recommend!
+                                </p>
+<button class="text-xs text-primary font-bold mt-1 hover:underline">Add Note</button>
+</td>
+<td class="px-6 py-4">
+<div class="flex items-center gap-1.5 text-emerald-500">
+<span class="material-symbols-outlined text-base">check_circle</span>
+<span class="text-xs font-bold uppercase">Yes</span>
+</div>
+</td>
+<td class="px-6 py-4">
+<label class="relative inline-flex items-center cursor-pointer">
+<input class="sr-only peer" type="checkbox"/>
+<div class="w-11 h-6 bg-slate-200 peer-focus:outline-none dark:bg-slate-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-primary"></div>
+<span class="ml-3 text-xs font-medium text-slate-500 dark:text-slate-400">Offline</span>
+</label>
+</td>
+<td class="px-6 py-4">
+<button class="text-slate-300 dark:text-slate-700 hover:text-primary transition-all">
+<span class="material-symbols-outlined">grade</span>
+</button>
+</td>
+</tr>
+<!-- Entry 4: Featured star -->
+<tr class="hover:bg-slate-50/50 dark:hover:bg-slate-800/20 transition-colors">
+<td class="px-6 py-4"><input class="rounded border-slate-300 dark:border-slate-700 bg-transparent text-primary focus:ring-primary" type="checkbox"/></td>
+<td class="px-6 py-4">
+<div class="flex items-center gap-3">
+<div class="w-10 h-10 rounded-lg bg-slate-200 dark:bg-slate-700 overflow-hidden shrink-0">
+<img alt="David Smith" class="w-full h-full object-cover" data-alt="Portrait of David Smith, a male client" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDMmlyr4RIlSjwscC_XUDPcr4dTF2Yd6JPrw3CmLsu4SeQBm4Q6KOQQF9rc9vKyJteR5htwjzxUHChMK2r8J2QJsO3jnS6dA9MrPT8hMrNmKuszRiLN33DOU6GpvKUmi8QgvobnurjB1JitifmwIIisRLxzYs0SYjxN6Ws1kPEqc0kKZOff5VoaIhG1kKwKx80qnu1TiY0k8_82p9gFq5QLw2SY3cLFBUNaBYvjuGgcRMVK21_ASvUhiIj8KFP6QyU_m1ZQRYSeZ-Y"/>
+</div>
+<div>
+<p class="font-bold text-sm">David Smith</p>
+<p class="text-xs text-slate-500">Growth Hub</p>
+</div>
+</div>
+</td>
+<td class="px-6 py-4">
+<span class="px-2 py-0.5 rounded bg-blue-100 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400 text-[10px] font-bold uppercase">UI/UX Design</span>
+<div class="flex items-center mt-1 text-amber-500">
+<span class="material-symbols-outlined filled-icon text-sm">star</span>
+<span class="material-symbols-outlined filled-icon text-sm">star</span>
+<span class="material-symbols-outlined filled-icon text-sm">star</span>
+<span class="material-symbols-outlined filled-icon text-sm">star</span>
+<span class="material-symbols-outlined filled-icon text-sm">star</span>
+</div>
+</td>
+<td class="px-6 py-4">
+<p class="text-sm line-clamp-2 max-w-xs text-slate-600 dark:text-slate-300">
+                                    Incredible attention to detail. Our stakeholders were blown away by the final prototype.
+                                </p>
+<button class="text-xs text-primary font-bold mt-1 hover:underline">Edit Notes</button>
+</td>
+<td class="px-6 py-4">
+<div class="flex items-center gap-1.5 text-emerald-500">
+<span class="material-symbols-outlined text-base">check_circle</span>
+<span class="text-xs font-bold uppercase">Yes</span>
+</div>
+</td>
+<td class="px-6 py-4">
+<label class="relative inline-flex items-center cursor-pointer">
+<input checked="" class="sr-only peer" type="checkbox"/>
+<div class="w-11 h-6 bg-slate-200 peer-focus:outline-none dark:bg-slate-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-primary"></div>
+<span class="ml-3 text-xs font-medium text-slate-500 dark:text-slate-400">Public</span>
+</label>
+</td>
+<td class="px-6 py-4">
+<button class="text-primary hover:text-primary/80 transition-all">
+<span class="material-symbols-outlined filled-icon">grade</span>
+</button>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+<!-- Pagination -->
+<div class="px-6 py-4 bg-slate-50 dark:bg-slate-800/30 border-t border-slate-200 dark:border-slate-800 flex items-center justify-between">
+<span class="text-sm text-slate-500">Page 1 of 54</span>
+<div class="flex items-center gap-2">
+<button class="p-2 rounded hover:bg-slate-200 dark:hover:bg-slate-700 disabled:opacity-30" disabled="">
+<span class="material-symbols-outlined">chevron_left</span>
+</button>
+<button class="px-3 py-1 rounded bg-primary text-white text-sm font-bold">1</button>
+<button class="px-3 py-1 rounded hover:bg-slate-200 dark:hover:bg-slate-700 text-sm font-bold">2</button>
+<button class="px-3 py-1 rounded hover:bg-slate-200 dark:hover:bg-slate-700 text-sm font-bold">3</button>
+<button class="p-2 rounded hover:bg-slate-200 dark:hover:bg-slate-700">
+<span class="material-symbols-outlined">chevron_right</span>
+</button>
+</div>
+</div>
+</div>
+<!-- Sidebar / Details Preview Area (Simulated Drawer) -->
+<div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+<div class="lg:col-span-2 bg-white dark:bg-slate-900 rounded-xl border border-slate-200 dark:border-slate-800 p-6 shadow-sm">
+<div class="flex items-center justify-between mb-6">
+<h2 class="text-xl font-bold">Review Selected Entry</h2>
+<span class="text-xs bg-slate-100 dark:bg-slate-800 text-slate-500 px-2 py-1 rounded">Last edited by Admin 2 mins ago</span>
+</div>
+<div class="space-y-6">
+<div class="flex gap-4">
+<div class="w-16 h-16 rounded-xl bg-slate-100 dark:bg-slate-800 flex items-center justify-center">
+<span class="material-symbols-outlined text-3xl text-slate-400">person</span>
+</div>
+<div>
+<h4 class="text-lg font-bold">Marcus Lee</h4>
+<p class="text-slate-500 text-sm">Global Logistics • Web Development Project</p>
+<div class="flex items-center gap-2 mt-1">
+<div class="flex text-amber-500">
+<span class="material-symbols-outlined filled-icon text-sm">star</span>
+<span class="material-symbols-outlined filled-icon text-sm">star</span>
+<span class="material-symbols-outlined filled-icon text-sm">star</span>
+<span class="material-symbols-outlined filled-icon text-sm">star</span>
+<span class="material-symbols-outlined text-sm">star</span>
+</div>
+<span class="text-xs text-slate-400 font-medium">Submitted Oct 12, 2023</span>
+</div>
+</div>
+</div>
+<div class="space-y-2">
+<label class="text-xs font-bold text-slate-400 uppercase tracking-widest">Client Testimonial</label>
+<blockquote class="p-4 bg-slate-50 dark:bg-slate-800/50 rounded-lg text-slate-700 dark:text-slate-300 italic border-l-4 border-primary/30">
+                            "Solid integration. A few bugs in the initial beta, but support was fast. Overall satisfied with the performance. The team went above and beyond to fix the API endpoint issues within 24 hours."
+                        </blockquote>
+</div>
+<div class="space-y-2">
+<label class="text-xs font-bold text-slate-400 uppercase tracking-widest">Internal Only Notes</label>
+<textarea class="w-full bg-slate-50 dark:bg-slate-800 border-slate-200 dark:border-slate-700 rounded-lg focus:ring-primary focus:border-primary text-sm p-4" placeholder="Add private notes for the team here..." rows="4"></textarea>
+<p class="text-[10px] text-slate-500">These notes are never visible to the client or on the public website.</p>
+</div>
+<div class="flex justify-end gap-3 pt-4 border-t border-slate-100 dark:border-slate-800">
+<button class="px-6 py-2 rounded-lg text-sm font-bold text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors">Discard</button>
+<button class="px-6 py-2 rounded-lg text-sm font-bold bg-primary text-white shadow-lg shadow-primary/20 hover:bg-primary/90 transition-all">Save Note &amp; Refresh</button>
+</div>
+</div>
+</div>
+<!-- Guidelines Sidebar -->
+<div class="space-y-6">
+<div class="bg-gradient-to-br from-primary to-blue-700 rounded-xl p-6 text-white shadow-xl shadow-primary/20">
+<h3 class="text-lg font-bold mb-2">Curation Guidelines</h3>
+<ul class="space-y-3">
+<li class="flex gap-3 text-sm">
+<span class="material-symbols-outlined text-blue-200">check_circle</span>
+<span>Only publish 4+ star reviews.</span>
+</li>
+<li class="flex gap-3 text-sm">
+<span class="material-symbols-outlined text-blue-200">check_circle</span>
+<span>Verify "Public Consent" is checked before enabling the toggle.</span>
+</li>
+<li class="flex gap-3 text-sm">
+<span class="material-symbols-outlined text-blue-200">check_circle</span>
+<span>Edit internal notes if the client mentions specific technical debt.</span>
+</li>
+<li class="flex gap-3 text-sm">
+<span class="material-symbols-outlined text-blue-200">check_circle</span>
+<span>Feature a maximum of 6 testimonials for the homepage.</span>
+</li>
+</ul>
+</div>
+<div class="bg-white dark:bg-slate-900 rounded-xl border border-slate-200 dark:border-slate-800 p-6 shadow-sm">
+<h3 class="font-bold mb-4">Activity Stream</h3>
+<div class="space-y-4">
+<div class="flex gap-3">
+<div class="w-2 h-2 rounded-full bg-emerald-500 mt-1.5 shrink-0"></div>
+<div>
+<p class="text-xs font-bold">New Feedback</p>
+<p class="text-[10px] text-slate-500">Sarah Chen just submitted a 5-star review.</p>
+<p class="text-[10px] text-slate-400 mt-0.5">2 minutes ago</p>
+</div>
+</div>
+<div class="flex gap-3">
+<div class="w-2 h-2 rounded-full bg-primary mt-1.5 shrink-0"></div>
+<div>
+<p class="text-xs font-bold">Featured Updated</p>
+<p class="text-[10px] text-slate-500">Admin featured David Smith's testimonial.</p>
+<p class="text-[10px] text-slate-400 mt-0.5">1 hour ago</p>
+</div>
+</div>
+<div class="flex gap-3">
+<div class="w-2 h-2 rounded-full bg-amber-500 mt-1.5 shrink-0"></div>
+<div>
+<p class="text-xs font-bold">Consent Request Sent</p>
+<p class="text-[10px] text-slate-500">Sent automated email to Marcus Lee.</p>
+<p class="text-[10px] text-slate-400 mt-0.5">4 hours ago</p>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</main>
+<footer class="max-w-[1440px] mx-auto px-6 py-8 border-t border-slate-200 dark:border-slate-800 flex flex-col md:flex-row items-center justify-between gap-4">
+<div class="flex items-center gap-2 text-slate-400">
+<span class="material-symbols-outlined text-lg">verified_user</span>
+<span class="text-xs font-medium uppercase tracking-widest">Secure Admin Session</span>
+</div>
+<div class="flex items-center gap-6">
+<a class="text-xs text-slate-500 hover:text-primary" href="#">System Logs</a>
+<a class="text-xs text-slate-500 hover:text-primary" href="#">API Documentation</a>
+<a class="text-xs text-slate-500 hover:text-primary" href="#">Privacy Policy</a>
+</div>
+<p class="text-xs text-slate-500">© 2023 WebAsia Creative Services. All rights reserved.</p>
+</footer>
+</body></html>
