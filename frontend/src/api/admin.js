@@ -74,6 +74,11 @@ export const adminAPI = {
     },
 
     // Subscription Plans Management
+    getPlans: async () => {
+        const response = await apiClient.get('/admin/plans');
+        return response.data;
+    },
+
     getPlan: async (id) => {
         const response = await apiClient.get(`/admin/plans/${id}`);
         return response.data;

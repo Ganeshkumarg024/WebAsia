@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import DashboardLayout from '../../components/layout/DashboardLayout';
+import Modal from '../../components/shared/Modal';
 import useAdminStore from '../../store/adminStore';
 import {
     MagnifyingGlassIcon,
@@ -9,11 +10,12 @@ import {
     ExclamationTriangleIcon,
     ClockIcon,
     CheckCircleIcon,
-    EllipsisVerticalIcon
+    EllipsisVerticalIcon,
+    UserPlusIcon
 } from '@heroicons/react/24/outline';
 
 const GlobalRequests = () => {
-    const { requests, loading, fetchAdminRequests, bulkUpdateRequests } = useAdminStore();
+    const { requests, designers, loading, fetchAdminRequests, fetchDesigners, bulkUpdateRequests } = useAdminStore();
     const [selectedRequests, setSelectedRequests] = useState([]);
     const [searchQuery, setSearchQuery] = useState('');
     const [filters, setFilters] = useState({
@@ -23,9 +25,19 @@ const GlobalRequests = () => {
         clientId: 'All Clients'
     });
 
+    // Modal State
+    const [isAssignModalOpen, setIsAssignModalOpen] = useState(false);
+    const [selectedDesignerId, setSelectedDesignerId] = useState('');
+    const [assigningRequestIds, setAssigningRequestIds] = useState([]); // IDs to assign
+
     useEffect(() => {
         fetchAdminRequests({ ...filters, search: searchQuery });
     }, [filters, searchQuery]);
+
+    useEffect(() => {
+        // Fetch designers for the filter and assignment dropdowns
+        fetchDesigners();
+    }, []);
 
     const handleSelectAll = (e) => {
         if (e.target.checked) {
@@ -41,6 +53,30 @@ const GlobalRequests = () => {
         } else {
             setSelectedRequests([...selectedRequests, id]);
         }
+    };
+
+    const openAssignModal = (ids) => {
+        setAssigningRequestIds(ids);
+        setSelectedDesignerId('');
+        setIsAssignModalOpen(true);
+    };
+
+    const handleAssignDesigner = async () => {
+        if (!selectedDesignerId || assigningRequestIds.length === 0) return;
+
+        await bulkUpdateRequests({
+            requestIds: assigningRequestIds,
+            designerId: selectedDesignerId,
+            status: 'assigned' // Automatically update status to assigned
+        });
+
+        // Refresh with current filters to ensure UI is consistent
+        // (Since the store action might fetch default list)
+        fetchAdminRequests({ ...filters, search: searchQuery });
+
+        setIsAssignModalOpen(false);
+        setAssigningRequestIds([]);
+        setSelectedRequests([]); // Clear selection after bulk action
     };
 
     const getPriorityStyles = (priority) => {
@@ -86,6 +122,10 @@ const GlobalRequests = () => {
         }
     };
 
+    // Toggle row action menu (simplified for now, ideally strictly controlled or use a library)
+    // For this implementation, I'll just put the button there. A real dropdown needs more state or a headless UI component.
+    // I will add a simple direct action button for "Assign" instead of a dropdown to keep it clean and robust for now.
+
     return (
         <DashboardLayout breadcrumbs={['Admin', 'Global Requests']}>
             <div className="flex items-center justify-between mb-8">
@@ -116,7 +156,10 @@ const GlobalRequests = () => {
                                 onChange={(e) => setFilters({ ...filters, [key]: e.target.value })}
                             >
                                 <option>All {key.charAt(0).toUpperCase() + key.slice(1).replace('Id', '')}s</option>
-                                {/* These would normally be populated from store data */}
+                                {/* Populate designers filter */}
+                                {key === 'designerId' && designers.map(d => (
+                                    <option key={d.id} value={d.id}>{d.firstName} {d.lastName}</option>
+                                ))}
                             </select>
                         </div>
                     ))}
@@ -130,9 +173,12 @@ const GlobalRequests = () => {
                     </span>
                     {selectedRequests.length > 0 && (
                         <>
-                            <button className="px-4 py-2 rounded-xl bg-gray-50 dark:bg-slate-800 text-sm font-bold text-gray-900 dark:text-white border border-gray-100 dark:border-slate-700 flex items-center gap-2 hover:bg-gray-100 dark:hover:bg-slate-700 transition-all">
-                                <ArrowPathRoundedSquareIcon className="w-5 h-5" />
-                                Bulk Reassign
+                            <button
+                                onClick={() => openAssignModal(selectedRequests)}
+                                className="px-4 py-2 rounded-xl bg-gray-50 dark:bg-slate-800 text-sm font-bold text-gray-900 dark:text-white border border-gray-100 dark:border-slate-700 flex items-center gap-2 hover:bg-gray-100 dark:hover:bg-slate-700 transition-all"
+                            >
+                                <UserPlusIcon className="w-5 h-5" />
+                                Bulk Assign
                             </button>
                             <button className="px-4 py-2 rounded-xl bg-gray-50 dark:bg-slate-800 text-sm font-bold text-gray-900 dark:text-white border border-gray-100 dark:border-slate-700 flex items-center gap-2 hover:bg-gray-100 dark:hover:bg-slate-700 transition-all">
                                 <ArrowPathRoundedSquareIcon className="w-5 h-5" />
@@ -243,9 +289,18 @@ const GlobalRequests = () => {
                                                 )}
                                             </td>
                                             <td className="px-6 py-4 text-right">
-                                                <button className="p-2 rounded-lg text-gray-400 hover:bg-gray-100 dark:hover:bg-slate-800 transition-all">
-                                                    <EllipsisVerticalIcon className="w-5 h-5" />
-                                                </button>
+                                                <div className="flex items-center justify-end gap-2">
+                                                    <button
+                                                        onClick={() => openAssignModal([request.id])}
+                                                        className="p-2 rounded-lg text-blue-600 hover:bg-blue-50 dark:hover:bg-blue-900/20 transition-all"
+                                                        title="Assign Designer"
+                                                    >
+                                                        <UserPlusIcon className="w-5 h-5" />
+                                                    </button>
+                                                    <button className="p-2 rounded-lg text-gray-400 hover:bg-gray-100 dark:hover:bg-slate-800 transition-all">
+                                                        <EllipsisVerticalIcon className="w-5 h-5" />
+                                                    </button>
+                                                </div>
                                             </td>
                                         </tr>
                                     );
@@ -273,6 +328,54 @@ const GlobalRequests = () => {
                     </div>
                 </div>
             </div>
+
+            {/* Assignment Modal */}
+            <Modal
+                isOpen={isAssignModalOpen}
+                onClose={() => setIsAssignModalOpen(false)}
+                title="Assign Designer"
+                size="md"
+            >
+                <div>
+                    <p className="text-sm text-gray-500 dark:text-gray-400 mb-6">
+                        Select a designer to assign to the selected <strong>{assigningRequestIds.length}</strong> request(s).
+                    </p>
+
+                    <div className="space-y-4">
+                        <label className="block text-xs font-bold text-gray-500 uppercase tracking-wider">
+                            Choose Designer
+                        </label>
+                        <select
+                            className="w-full bg-gray-50 dark:bg-slate-800 border-none rounded-xl text-sm focus:ring-2 focus:ring-blue-500/50 text-gray-900 dark:text-gray-200 py-3 px-4"
+                            value={selectedDesignerId}
+                            onChange={(e) => setSelectedDesignerId(e.target.value)}
+                        >
+                            <option value="">Select a designer</option>
+                            {designers.map((designer) => (
+                                <option key={designer.id} value={designer.id}>
+                                    {designer.firstName} {designer.lastName} ({designer.activeTasks || 0} active tasks)
+                                </option>
+                            ))}
+                        </select>
+                    </div>
+
+                    <div className="mt-8 flex justify-end gap-3">
+                        <button
+                            onClick={() => setIsAssignModalOpen(false)}
+                            className="px-4 py-2 rounded-xl border border-gray-100 dark:border-slate-700 text-sm font-bold text-gray-600 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-slate-800 transition-all"
+                        >
+                            Cancel
+                        </button>
+                        <button
+                            onClick={handleAssignDesigner}
+                            disabled={!selectedDesignerId}
+                            className="px-4 py-2 rounded-xl bg-blue-600 text-white text-sm font-bold shadow-lg shadow-blue-500/20 hover:bg-blue-700 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+                        >
+                            Assign Designer
+                        </button>
+                    </div>
+                </div>
+            </Modal>
         </DashboardLayout>
     );
 };

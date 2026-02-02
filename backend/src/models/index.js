@@ -13,6 +13,7 @@ import Payment from './Payment.js';
 import RequestActivity from './RequestActivity.js';
 import BrandAsset from './BrandAsset.js';
 import FinancialLog from './FinancialLog.js';
+import Lead from './Lead.js';
 
 // User associations
 User.hasMany(Subscription, { foreignKey: 'userId', as: 'subscriptions' });
@@ -123,5 +124,6 @@ export {
     Payment,
     RequestActivity,
     BrandAsset,
-    FinancialLog
+    FinancialLog,
+    Lead
 };

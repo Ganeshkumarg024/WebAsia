@@ -27,6 +27,7 @@ import {
     updateAffiliateCommission,
     approvePayout
 } from '../controllers/admin.controller.js';
+import { getAllPlans } from '../controllers/subscriptionPlan.controller.js';
 import { authenticate } from '../middleware/auth.middleware.js';
 import { isAdmin } from '../middleware/rbac.middleware.js';
 
@@ -104,5 +105,33 @@ router.post('/testimonials/:id/reject', rejectTestimonial);
 router.get('/affiliates', getAllAffiliates);
 router.patch('/affiliates/:id/commission', updateAffiliateCommission);
 router.post('/affiliates/payouts/:id/approve', approvePayout);
+
+// Affiliate Management
+router.get('/affiliates', getAllAffiliates);
+router.patch('/affiliates/:id/commission', updateAffiliateCommission);
+router.post('/affiliates/payouts/:id/approve', approvePayout);
+
+// Plans Management
+router.get('/plans', getAllPlans);
+
+// Lead Management
+import {
+    getAllLeads,
+    createLead,
+    updateLeadStatus,
+    createQuote
+} from '../controllers/lead.controller.js';
+
+router.get('/leads', getAllLeads);
+router.post('/leads', [
+    body('company').notEmpty().withMessage('Company name required'),
+    body('contactName').notEmpty().withMessage('Contact name required'),
+    body('email').isEmail().withMessage('Valid email required')
+], createLead);
+router.patch('/leads/:id/status', updateLeadStatus);
+router.post('/leads/:id/quote', [
+    body('amount').isNumeric().withMessage('Valid amount required'),
+    body('notes').notEmpty().withMessage('Notes required')
+], createQuote);
 
 export default router;

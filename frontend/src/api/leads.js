@@ -21,7 +21,7 @@ export const leadsAPI = {
 
     // Update lead status
     updateStatus: async (id, status, notes) => {
-        const response = await apiClient.put(`/admin/leads/${id}/status`, { status, notes });
+        const response = await apiClient.patch(`/admin/leads/${id}/status`, { status, notes });
         return response.data;
     },
 

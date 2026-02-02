@@ -3,6 +3,7 @@ import adminAPI from '../api/admin';
 
 const useAdminStore = create((set, get) => ({
     users: [],
+    designers: [], // Dedicated list for assignment dropdowns
     selectedUser: null,
     plans: [],
     pods: [],
@@ -13,6 +14,7 @@ const useAdminStore = create((set, get) => ({
     commThreads: [],
     selectedThread: null,
     analytics: null,
+    testimonials: [],
     loading: false,
     error: null,
 
@@ -22,6 +24,16 @@ const useAdminStore = create((set, get) => ({
         try {
             const { data } = await adminAPI.getUsers(params);
             set({ users: data, loading: false });
+        } catch (error) {
+            set({ error: error.message, loading: false });
+        }
+    },
+
+    fetchDesigners: async () => {
+        set({ loading: true, error: null });
+        try {
+            const { data } = await adminAPI.getUsers({ role: 'designer', status: 'active' });
+            set({ designers: data, loading: false });
         } catch (error) {
             set({ error: error.message, loading: false });
         }
@@ -45,11 +57,9 @@ const useAdminStore = create((set, get) => ({
         set({ loading: true, error: null });
         try {
             // Assuming a generic getPlans exists in common or within admin context
-            const { data } = await adminAPI.getUsers({ role: 'admin' }); // Placeholder logic if needed
-            // Actually plans are often separate. Looking at API:
-            // adminAPI.createPlan, updatePlan, deletePlan exist. 
-            // Need a fetchPlans. Let's assume we use regular subscription API or add it here.
-            // For now, placeholders based on adminAPI structure.
+            const { data } = await adminAPI.getPlans();
+            set({ plans: data, loading: false });
+
         } catch (error) {
             set({ error: error.message, loading: false });
         }
@@ -184,15 +194,7 @@ const useAdminStore = create((set, get) => ({
         }
     },
 
-    fetchCommThreads: async (params) => {
-        set({ loading: true, error: null });
-        try {
-            const { data } = await adminAPI.getCommThreads(params);
-            set({ commThreads: data, loading: false });
-        } catch (error) {
-            set({ error: error.message, loading: false });
-        }
-    },
+
 
     fetchCommThreadDetails: async (id) => {
         set({ loading: true, error: null });
@@ -251,15 +253,7 @@ const useAdminStore = create((set, get) => ({
     },
 
     // Pod Management Actions
-    fetchPods: async () => {
-        set({ loading: true, error: null });
-        try {
-            const { data } = await adminAPI.getPods();
-            set({ pods: data, loading: false });
-        } catch (error) {
-            set({ error: error.message, loading: false });
-        }
-    },
+
 
     fetchUnassignedDesigners: async () => {
         set({ loading: true, error: null });
@@ -271,20 +265,7 @@ const useAdminStore = create((set, get) => ({
         }
     },
 
-    assignToPod: async (podId, designerId) => {
-        set({ loading: true, error: null });
-        try {
-            await adminAPI.assignToPod({ podId, designerId });
-            // Refresh both
-            const [podsData, unassignedData] = await Promise.all([
-                adminAPI.getPods(),
-                adminAPI.getUnassignedDesigners()
-            ]);
-            set({ pods: podsData.data, unassignedDesigners: unassignedData.data, loading: false });
-        } catch (error) {
-            set({ error: error.message, loading: false });
-        }
-    },
+
 
     // Analytics
     fetchAdminAnalytics: async (period) => {

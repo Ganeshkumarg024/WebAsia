@@ -1,4 +1,4 @@
-import { useState, useMemo } from 'prop-types';
+import { useState, useMemo } from 'react';
 import PropTypes from 'prop-types';
 import { ChevronUpIcon, ChevronDownIcon } from '@heroicons/react/24/outline';
 
@@ -40,11 +40,11 @@ const DataTable = ({
 
     if (loading) {
         return (
-            <div className="bg-[#151B2E] rounded-lg border border-[#1E2638] overflow-hidden">
+            <div className="bg-white rounded-2xl border border-gray-100 overflow-hidden shadow-sm">
                 <div className="animate-pulse p-6">
-                    <div className="h-4 bg-gray-700 rounded w-full mb-4"></div>
-                    <div className="h-4 bg-gray-700 rounded w-full mb-4"></div>
-                    <div className="h-4 bg-gray-700 rounded w-full"></div>
+                    <div className="h-4 bg-gray-50 rounded w-full mb-4"></div>
+                    <div className="h-4 bg-gray-50 rounded w-full mb-4"></div>
+                    <div className="h-4 bg-gray-50 rounded w-full"></div>
                 </div>
             </div>
         );
@@ -52,22 +52,22 @@ const DataTable = ({
 
     if (!data || data.length === 0) {
         return (
-            <div className="bg-[#151B2E] rounded-lg border border-[#1E2638] p-12 text-center">
-                <p className="text-gray-400">{emptyMessage}</p>
+            <div className="bg-white rounded-2xl border border-gray-100 p-12 text-center shadow-sm">
+                <p className="text-gray-400 font-medium">{emptyMessage}</p>
             </div>
         );
     }
 
     return (
-        <div className="bg-[#151B2E] rounded-lg border border-[#1E2638] overflow-hidden">
+        <div className="bg-white rounded-2xl border border-gray-100 overflow-hidden shadow-sm">
             <div className="overflow-x-auto">
                 <table className="w-full">
-                    <thead className="bg-[#0A0E1A] border-b border-[#1E2638]">
+                    <thead className="bg-gray-50/50 border-b border-gray-100">
                         <tr>
                             {columns.map((column) => (
                                 <th
                                     key={column.key}
-                                    className={`px-6 py-4 text-left text-xs font-medium text-gray-400 uppercase tracking-wider ${sortable && column.sortable !== false ? 'cursor-pointer hover:text-white' : ''
+                                    className={`px-6 py-4 text-left text-[10px] font-black text-gray-400 uppercase tracking-widest ${sortable && column.sortable !== false ? 'cursor-pointer hover:text-gray-900' : ''
                                         }`}
                                     onClick={() => column.sortable !== false && handleSort(column.key)}
                                 >
@@ -75,9 +75,9 @@ const DataTable = ({
                                         {column.label}
                                         {sortable && column.sortable !== false && sortConfig.key === column.key && (
                                             sortConfig.direction === 'asc' ? (
-                                                <ChevronUpIcon className="w-4 h-4" />
+                                                <ChevronUpIcon className="w-4 h-4 text-blue-600" />
                                             ) : (
-                                                <ChevronDownIcon className="w-4 h-4" />
+                                                <ChevronDownIcon className="w-4 h-4 text-blue-600" />
                                             )
                                         )}
                                     </div>
@@ -85,18 +85,18 @@ const DataTable = ({
                             ))}
                         </tr>
                     </thead>
-                    <tbody className="divide-y divide-[#1E2638]">
+                    <tbody className="divide-y divide-gray-50">
                         {sortedData.map((row, index) => (
                             <tr
                                 key={row.id || index}
-                                className={`${onRowClick ? 'cursor-pointer hover:bg-[#1E2638]' : ''
-                                    } transition-colors`}
+                                className={`${onRowClick ? 'cursor-pointer hover:bg-gray-50' : ''
+                                    } transition-colors group`}
                                 onClick={() => onRowClick && onRowClick(row)}
                             >
                                 {columns.map((column) => (
                                     <td key={column.key} className="px-6 py-4 whitespace-nowrap">
                                         {column.render ? column.render(row[column.key], row) : (
-                                            <span className="text-sm text-white">{row[column.key]}</span>
+                                            <span className="text-sm text-gray-600 font-medium">{row[column.key]}</span>
                                         )}
                                     </td>
                                 ))}

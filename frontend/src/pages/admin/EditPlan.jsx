@@ -80,42 +80,42 @@ const EditPlan = () => {
                 <div className="mb-8">
                     <button
                         onClick={() => navigate('/admin/plans')}
-                        className="flex items-center gap-2 text-gray-400 hover:text-white mb-4"
+                        className="flex items-center gap-2 text-gray-500 hover:text-gray-900 mb-4 transition-colors font-medium"
                     >
-                        <ArrowLeftIcon className="w-5 h-5" />
+                        <ArrowLeftIcon className="w-4 h-4" />
                         Back to Plans
                     </button>
-                    <h1 className="text-3xl font-bold text-white mb-2">
+                    <h1 className="text-3xl font-black text-gray-900 mb-2 tracking-tight">
                         {id === 'new' ? 'Create New Plan' : 'Edit Plan'}
                     </h1>
-                    <p className="text-gray-400">Configure subscription plan details</p>
+                    <p className="text-gray-500 font-medium">Configure subscription plan details</p>
                 </div>
 
                 {/* Basic Info */}
-                <div className="bg-[#151B2E] rounded-lg p-6 border border-[#1E2638] mb-6">
-                    <h2 className="text-lg font-bold text-white mb-4">Basic Information</h2>
+                <div className="bg-white rounded-2xl p-6 border border-gray-100 shadow-sm mb-6">
+                    <h2 className="text-lg font-bold text-gray-900 mb-4">Basic Information</h2>
                     <div className="space-y-4">
                         <div>
-                            <label className="block text-sm font-medium text-white mb-2">
+                            <label className="block text-xs font-bold text-gray-500 uppercase tracking-wide mb-2">
                                 Plan Name *
                             </label>
                             <input
                                 type="text"
                                 value={plan.name}
                                 onChange={(e) => setPlan({ ...plan, name: e.target.value })}
-                                className="w-full px-4 py-3 bg-[#0A0E1A] border border-gray-700 rounded-lg text-white focus:border-blue-500 focus:outline-none"
+                                className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl text-gray-900 font-medium focus:bg-white focus:border-blue-500 focus:ring-4 focus:ring-blue-500/10 outline-none transition-all"
                                 placeholder="Professional"
                             />
                         </div>
 
                         <div>
-                            <label className="block text-sm font-medium text-white mb-2">
+                            <label className="block text-xs font-bold text-gray-500 uppercase tracking-wide mb-2">
                                 Description
                             </label>
                             <textarea
                                 value={plan.description}
                                 onChange={(e) => setPlan({ ...plan, description: e.target.value })}
-                                className="w-full px-4 py-3 bg-[#0A0E1A] border border-gray-700 rounded-lg text-white focus:border-blue-500 focus:outline-none resize-none"
+                                className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl text-gray-900 font-medium focus:bg-white focus:border-blue-500 focus:ring-4 focus:ring-blue-500/10 outline-none transition-all resize-none"
                                 rows={3}
                                 placeholder="Perfect for growing businesses"
                             />
@@ -123,27 +123,27 @@ const EditPlan = () => {
 
                         <div className="grid grid-cols-2 gap-4">
                             <div>
-                                <label className="block text-sm font-medium text-white mb-2">
+                                <label className="block text-xs font-bold text-gray-500 uppercase tracking-wide mb-2">
                                     Price ($/month) *
                                 </label>
                                 <input
                                     type="number"
                                     value={plan.price}
                                     onChange={(e) => setPlan({ ...plan, price: e.target.value })}
-                                    className="w-full px-4 py-3 bg-[#0A0E1A] border border-gray-700 rounded-lg text-white focus:border-blue-500 focus:outline-none"
+                                    className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl text-gray-900 font-medium focus:bg-white focus:border-blue-500 focus:ring-4 focus:ring-blue-500/10 outline-none transition-all"
                                     placeholder="299"
                                 />
                             </div>
 
                             <div>
-                                <label className="block text-sm font-medium text-white mb-2">
+                                <label className="block text-xs font-bold text-gray-500 uppercase tracking-wide mb-2">
                                     Credits per Month
                                 </label>
                                 <input
                                     type="number"
                                     value={plan.creditsPerMonth}
                                     onChange={(e) => setPlan({ ...plan, creditsPerMonth: e.target.value })}
-                                    className="w-full px-4 py-3 bg-[#0A0E1A] border border-gray-700 rounded-lg text-white focus:border-blue-500 focus:outline-none"
+                                    className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl text-gray-900 font-medium focus:bg-white focus:border-blue-500 focus:ring-4 focus:ring-blue-500/10 outline-none transition-all"
                                     placeholder="20"
                                 />
                             </div>
@@ -151,27 +151,27 @@ const EditPlan = () => {
 
                         <div className="grid grid-cols-2 gap-4">
                             <div>
-                                <label className="block text-sm font-medium text-white mb-2">
+                                <label className="block text-xs font-bold text-gray-500 uppercase tracking-wide mb-2">
                                     Concurrent Tasks
                                 </label>
                                 <input
                                     type="number"
                                     value={plan.concurrentTasks}
                                     onChange={(e) => setPlan({ ...plan, concurrentTasks: e.target.value })}
-                                    className="w-full px-4 py-3 bg-[#0A0E1A] border border-gray-700 rounded-lg text-white focus:border-blue-500 focus:outline-none"
+                                    className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl text-gray-900 font-medium focus:bg-white focus:border-blue-500 focus:ring-4 focus:ring-blue-500/10 outline-none transition-all"
                                     placeholder="2"
                                 />
                             </div>
 
                             <div>
-                                <label className="block text-sm font-medium text-white mb-2">
+                                <label className="block text-xs font-bold text-gray-500 uppercase tracking-wide mb-2">
                                     Turnaround Time (hours)
                                 </label>
                                 <input
                                     type="number"
                                     value={plan.turnaroundTime}
                                     onChange={(e) => setPlan({ ...plan, turnaroundTime: e.target.value })}
-                                    className="w-full px-4 py-3 bg-[#0A0E1A] border border-gray-700 rounded-lg text-white focus:border-blue-500 focus:outline-none"
+                                    className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl text-gray-900 font-medium focus:bg-white focus:border-blue-500 focus:ring-4 focus:ring-blue-500/10 outline-none transition-all"
                                     placeholder="48"
                                 />
                             </div>
@@ -180,12 +180,12 @@ const EditPlan = () => {
                 </div>
 
                 {/* Features */}
-                <div className="bg-[#151B2E] rounded-lg p-6 border border-[#1E2638] mb-6">
+                <div className="bg-white rounded-2xl p-6 border border-gray-100 shadow-sm mb-6">
                     <div className="flex items-center justify-between mb-4">
-                        <h2 className="text-lg font-bold text-white">Features</h2>
+                        <h2 className="text-lg font-bold text-gray-900">Features</h2>
                         <button
                             onClick={handleAddFeature}
-                            className="px-3 py-1 bg-blue-500 hover:bg-blue-600 text-white rounded text-sm flex items-center gap-1"
+                            className="px-3 py-1.5 bg-blue-50 hover:bg-blue-100 text-blue-600 rounded-lg text-xs font-bold uppercase tracking-wide flex items-center gap-1 transition-colors"
                         >
                             <PlusIcon className="w-4 h-4" />
                             Add Feature
@@ -198,14 +198,14 @@ const EditPlan = () => {
                                     type="text"
                                     value={feature}
                                     onChange={(e) => handleFeatureChange(index, e.target.value)}
-                                    className="flex-1 px-4 py-2 bg-[#0A0E1A] border border-gray-700 rounded-lg text-white focus:border-blue-500 focus:outline-none"
+                                    className="flex-1 px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl text-gray-900 font-medium focus:bg-white focus:border-blue-500 focus:ring-4 focus:ring-blue-500/10 outline-none transition-all"
                                     placeholder="Feature description"
                                 />
                                 <button
                                     onClick={() => handleRemoveFeature(index)}
-                                    className="p-2 hover:bg-gray-700 rounded transition-colors"
+                                    className="p-3 hover:bg-red-50 text-gray-400 hover:text-red-500 rounded-xl transition-all"
                                 >
-                                    <TrashIcon className="w-5 h-5 text-red-500" />
+                                    <TrashIcon className="w-5 h-5" />
                                 </button>
                             </div>
                         ))}
@@ -213,16 +213,16 @@ const EditPlan = () => {
                 </div>
 
                 {/* Status */}
-                <div className="bg-[#151B2E] rounded-lg p-6 border border-[#1E2638] mb-6">
-                    <h2 className="text-lg font-bold text-white mb-4">Status</h2>
-                    <label className="flex items-center gap-3 cursor-pointer">
+                <div className="bg-white rounded-2xl p-6 border border-gray-100 shadow-sm mb-6">
+                    <h2 className="text-lg font-bold text-gray-900 mb-4">Status</h2>
+                    <label className="flex items-center gap-3 cursor-pointer group">
                         <input
                             type="checkbox"
                             checked={plan.isActive}
                             onChange={(e) => setPlan({ ...plan, isActive: e.target.checked })}
-                            className="w-5 h-5 rounded border-gray-600 bg-gray-700 text-blue-500 focus:ring-blue-500"
+                            className="w-5 h-5 rounded border-gray-300 text-blue-600 focus:ring-blue-500 transition-all"
                         />
-                        <span className="text-white">Active (visible to users)</span>
+                        <span className="text-gray-700 font-medium group-hover:text-gray-900">Active (visible to users)</span>
                     </label>
                 </div>
 
@@ -230,14 +230,14 @@ const EditPlan = () => {
                 <div className="flex items-center gap-4">
                     <button
                         onClick={() => navigate('/admin/plans')}
-                        className="flex-1 px-6 py-3 bg-gray-700 hover:bg-gray-600 text-white rounded-lg font-medium"
+                        className="flex-1 px-6 py-4 bg-white border border-gray-200 text-gray-900 hover:bg-gray-50 rounded-xl text-sm font-black uppercase tracking-widest shadow-sm transition-all"
                     >
                         Cancel
                     </button>
                     <button
                         onClick={handleSave}
                         disabled={loading}
-                        className="flex-1 px-6 py-3 bg-blue-500 hover:bg-blue-600 text-white rounded-lg font-medium disabled:opacity-50"
+                        className="flex-1 px-6 py-4 bg-blue-600 hover:bg-blue-700 text-white rounded-xl text-sm font-black uppercase tracking-widest shadow-xl shadow-blue-500/20 transition-all disabled:opacity-50 hover:-translate-y-0.5"
                     >
                         {loading ? 'Saving...' : id === 'new' ? 'Create Plan' : 'Save Changes'}
                     </button>

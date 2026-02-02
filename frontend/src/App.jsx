@@ -53,6 +53,7 @@ import Financials from './pages/admin/Financials';
 import CommHub from './pages/admin/CommHub';
 import Testimonials from './pages/admin/Testimonials';
 import GlobalRequestDetail from './pages/admin/GlobalRequestDetail';
+import AdminSettings from './pages/admin/Settings';
 
 // Affiliate Pages
 import PartnerAffiliateDashboard from './pages/affiliate/Dashboard';
@@ -393,8 +394,32 @@ function App() {
                     </ProtectedRoute>
                 }
             />
+            <Route
+                path="/admin/leads"
+                element={
+                    <ProtectedRoute roles={['admin']}>
+                        <LeadManager />
+                    </ProtectedRoute>
+                }
+            />
+            <Route
+                path="/admin/payouts"
+                element={
+                    <ProtectedRoute roles={['admin']}>
+                        <AffiliatePayouts />
+                    </ProtectedRoute>
+                }
+            />
 
-            {/* Landing Page */}
+
+            <Route
+                path="/admin/settings"
+                element={
+                    <ProtectedRoute roles={['admin']}>
+                        <AdminSettings />
+                    </ProtectedRoute>
+                }
+            />
             <Route path="/" element={<LandingPage />} />
 
             {/* Default redirect */}
