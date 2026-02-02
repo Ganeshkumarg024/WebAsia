@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { BellIcon, MagnifyingGlassIcon, XMarkIcon, CheckIcon } from '@heroicons/react/24/outline';
+import { BellIcon, MagnifyingGlassIcon, XMarkIcon, CheckIcon, Bars3Icon } from '@heroicons/react/24/outline';
 import Sidebar from './Sidebar';
 import useAuthStore from '../../store/authStore';
 import useNotificationStore from '../../store/notificationStore';
@@ -9,6 +9,7 @@ const DashboardLayout = ({ children, title, breadcrumbs }) => {
     const { user } = useAuthStore();
     const { notifications, unreadCount, markAsRead, markAllAsRead, fetchUnreadCount } = useNotificationStore();
     const [showNotifications, setShowNotifications] = useState(false);
+    const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
     // Only designers, managers, and admins use the dark theme. Clients use a professional light theme.
     const isDarkTheme = ['designer', 'manager', 'admin'].includes(user?.role);
@@ -19,16 +20,24 @@ const DashboardLayout = ({ children, title, breadcrumbs }) => {
 
     return (
         <div className={`min-h-screen ${isDarkTheme ? 'bg-[#0A0E1A]' : 'bg-[#F8FAFC]'}`}>
-            <Sidebar />
+            <Sidebar isOpen={isMobileMenuOpen} onClose={() => setIsMobileMenuOpen(false)} />
 
             {/* Main Content Area */}
-            <div className="ml-64">
+            <div className="lg:ml-64 transition-all duration-300">
                 {/* Top Header */}
                 <header className={`sticky top-0 z-40 ${isDarkTheme ? 'bg-[#0A0E1A] border-b border-[#1E2638]' : 'bg-white border-b border-gray-100 shadow-sm'}`}>
-                    <div className="flex items-center justify-between px-8 py-4">
+                    <div className="flex items-center justify-between px-4 lg:px-8 py-4 gap-4">
+                        {/* Mobile Menu Button */}
+                        <button
+                            onClick={() => setIsMobileMenuOpen(true)}
+                            className={`lg:hidden p-2 -ml-2 rounded-lg ${isDarkTheme ? 'text-white hover:bg-[#151B2E]' : 'text-gray-600 hover:bg-gray-100'}`}
+                        >
+                            <Bars3Icon className="w-6 h-6" />
+                        </button>
+
                         {/* Search Bar (for some roles) */}
                         {['designer', 'manager', 'admin'].includes(user?.role) && (
-                            <div className="flex-1 max-w-md">
+                            <div className="flex-1 max-w-md hidden md:block">
                                 <div className="relative">
                                     <MagnifyingGlassIcon className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
                                     <input
@@ -46,7 +55,7 @@ const DashboardLayout = ({ children, title, breadcrumbs }) => {
 
                         {/* Breadcrumbs */}
                         {breadcrumbs && (
-                            <div className="flex items-center gap-2 text-sm">
+                            <div className="hidden md:flex items-center gap-2 text-sm">
                                 {breadcrumbs.map((crumb, index) => (
                                     <div key={index} className="flex items-center gap-2">
                                         {index > 0 && <span className="text-gray-400">/</span>}
@@ -59,7 +68,7 @@ const DashboardLayout = ({ children, title, breadcrumbs }) => {
                         )}
 
                         {/* Right Side Actions */}
-                        <div className="flex items-center gap-4 relative">
+                        <div className="flex items-center gap-2 lg:gap-4 relative ml-auto">
                             {/* Notifications */}
                             <button
                                 onClick={() => setShowNotifications(!showNotifications)}
@@ -122,7 +131,7 @@ const DashboardLayout = ({ children, title, breadcrumbs }) => {
                 </header>
 
                 {/* Page Content */}
-                <main className="p-6">
+                <main className="p-4 lg:p-6">
                     {children}
                 </main>
             </div>

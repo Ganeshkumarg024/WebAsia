@@ -74,7 +74,7 @@ const DashboardRedirect = () => {
         case 'manager': return <Navigate to="/manager/dashboard" />;
         case 'designer': return <Navigate to="/designer/dashboard" />;
         case 'affiliate': return <Navigate to="/affiliate/dashboard" />;
-        default: return <Navigate to="/client/requests" />;
+        default: return <Navigate to="/client/dashboard" />;
     }
 };
 
@@ -115,6 +115,14 @@ function App() {
             />
 
             {/* Protected Routes - Client */}
+            <Route
+                path="/client/dashboard"
+                element={
+                    <ProtectedRoute roles={['client']}>
+                        <ClientDashboard />
+                    </ProtectedRoute>
+                }
+            />
             <Route
                 path="/client/requests"
                 element={
