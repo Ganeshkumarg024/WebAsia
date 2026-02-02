@@ -5,7 +5,8 @@ import {
     getRequestFiles,
     getFileDownloadUrl,
     deleteFile,
-    streamFile
+    streamFile,
+    getFiles
 } from '../controllers/file.controller.js';
 import { authenticate } from '../middleware/auth.middleware.js';
 import { uploadSingle, uploadMultiple, handleMulterError } from '../middleware/upload.middleware.js';
@@ -29,6 +30,9 @@ router.get('/request/:requestId', getRequestFiles);
 
 // Get download URL for a file
 router.get('/:id/download', getFileDownloadUrl);
+
+// Get all files
+router.get('/', getFiles);
 
 // Delete file
 router.delete('/:id', deleteFile);

@@ -109,6 +109,37 @@ const useAuthStore = create((set, get) => ({
         }
     },
 
+    // Update Profile
+    updateProfile: async (profileData) => {
+        set({ isLoading: true, error: null });
+        try {
+            const data = await authAPI.updateProfile(profileData);
+            const user = data.data; // Assuming backend returns updated user object
+
+            localStorage.setItem('user', JSON.stringify(user));
+            set({ user, isLoading: false });
+            return { success: true };
+        } catch (error) {
+            const errorMessage = error.response?.data?.error?.message || 'Failed to update profile';
+            set({ error: errorMessage, isLoading: false });
+            return { success: false, error: errorMessage };
+        }
+    },
+
+    // Change Password
+    changePassword: async (passwordData) => {
+        set({ isLoading: true, error: null });
+        try {
+            await authAPI.changePassword(passwordData);
+            set({ isLoading: false });
+            return { success: true };
+        } catch (error) {
+            const errorMessage = error.response?.data?.error?.message || 'Failed to change password';
+            set({ error: errorMessage, isLoading: false });
+            return { success: false, error: errorMessage };
+        }
+    },
+
     // Clear error
     clearError: () => set({ error: null }),
 }));

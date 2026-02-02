@@ -10,55 +10,50 @@ const Deliveries = () => {
     const [activeTab, setActiveTab] = useState('Final Renders');
 
     useEffect(() => {
-        // Mock data for now as filesAPI might not have a dedicated deliveries endpoint yet
-        const mockDeliveries = [
-            {
-                id: 1,
-                title: 'Q4 Brand Refresh Assets',
-                category: 'Branding & Identity',
-                timeAgo: '2h ago',
-                size: '124.5 MB',
-                format: 'ZIP (PNG, SVG)',
-                image: 'https://lh3.googleusercontent.com/aida-public/AB6AXuA1plSzFNqx71B1-WvVj6JMjArKohvOLFcB8znA8F-1HF3jx4AH9McLFzRDbogtsxq5wuRESzbJFBJak3PscM9zDHAR3NonAgQyUCfS9T7NASABwCwQvh-eTor4-NmzgEqg7HzuS9jOANmYQZ8kttwwZqKupbl332gWiDZjnUfb4Uwov1OA6bE1PqzFPdpckthTXEz5YmapioEefLLpSj_uWbc1yePk-m5sdrmkkZdQszpRYdesVS7XVsXKf-vm_dO0aTiPEl5bS4k',
-                type: 'Final Renders'
-            },
-            {
-                id: 2,
-                title: 'Admin Dashboard UI Kit',
-                category: 'Web Development',
-                timeAgo: 'Yesterday',
-                size: '42.8 MB',
-                format: 'Figma, PDF',
-                image: 'https://lh3.googleusercontent.com/aida-public/AB6AXuCk9ZN4aWXUYoywMbQdK-KaUzN9J3d92WKR4Pny0jqHylBAuTpr9uR-v7LDKdKAsrsvm0GWCcAxnmrTf9_B8viqg4dgfs0MB5B6ahOJktDFiZtL0xLB8C_L8OdAdfZNGqGw8FAVmM19GZAzmbFml-Xoi80cgMM2mGYhuR0JcwRuYATkbxPr-3EF1ARv4M5qckDBzA-au2imp-px9EFqwvvdtiCzuD-BVU1HeiypwVLzq00UitSrKfPsauFJi0g6udqF-rLRZB5Y9qE',
-                type: 'Final Renders'
-            },
-            {
-                id: 3,
-                title: 'Product Explainer Video',
-                category: 'Motion Graphics',
-                timeAgo: '3 days ago',
-                size: '850.2 MB',
-                format: 'MP4 (4K)',
-                type: 'Final Renders',
-                icon: 'movie'
-            },
-            {
-                id: 4,
-                title: 'Social Media Content Plan',
-                category: 'Copywriting',
-                timeAgo: '5 days ago',
-                size: '1.2 MB',
-                format: 'DOCX, PDF',
-                type: 'Source Files',
-                icon: 'description'
-            }
-        ];
-
-        setTimeout(() => {
-            setDeliveries(mockDeliveries);
-            setLoading(false);
-        }, 500);
+        fetchFiles();
     }, []);
+
+    const fetchFiles = async () => {
+        setLoading(true);
+        try {
+            // Fetch files with filtering if needed, e.g. { fileType: 'delivery' }
+            // For now, we fetch all and let filter logic on frontend or backend handle it
+            const response = await filesAPI.getFiles();
+            const files = response.data || [];
+
+            // Map backend file object to UI delivery object structure
+            const mappedDeliveries = files.map(file => ({
+                id: file.id,
+                title: file.originalName, // Uses original filename as title for now
+                category: file.metadata?.category || 'General',
+                timeAgo: new Date(file.createdAt).toLocaleDateString(),
+                size: formatBytes(file.fileSize),
+                format: file.fileType?.toUpperCase(),
+                image: file.thumbnailUrl || null, // Assuming backend provides this
+                type: file.metadata?.type || 'Final Renders', // Needs to match tabs: 'Final Renders' or 'Source Files'
+                icon: file.mimeType?.startsWith('video') ? 'movie' : 'description',
+                downloadUrl: file.downloadUrl || null
+            }));
+
+            // If no files from backend yet, we can keep using mock for demo or switch to empty
+            // setDeliveries(mappedDeliveries.length ? mappedDeliveries : []);
+            setDeliveries(mappedDeliveries);
+
+        } catch (error) {
+            console.error('Failed to fetch deliverables:', error);
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    const formatBytes = (bytes, decimals = 2) => {
+        if (!+bytes) return '0 Bytes';
+        const k = 1024;
+        const dm = decimals < 0 ? 0 : decimals;
+        const sizes = ['Bytes', 'KB', 'MB', 'GB', 'TB'];
+        const i = Math.floor(Math.log(bytes) / Math.log(k));
+        return `${parseFloat((bytes / Math.pow(k, i)).toFixed(dm))} ${sizes[i]}`;
+    };
 
     const filteredDeliveries = deliveries.filter(d =>
         (d.type === activeTab) &&
@@ -190,7 +185,18 @@ const Deliveries = () => {
                                             <p className="text-sm font-black text-gray-700 line-clamp-1">{delivery.format}</p>
                                         </div>
                                     </div>
-                                    <button className="group/btn w-full py-4.5 bg-blue-600 text-white text-[10px] font-black uppercase tracking-[0.2em] rounded-2xl flex items-center justify-center gap-3 hover:bg-blue-700 transition-all shadow-xl shadow-blue-600/10 active:scale-95">
+                                    <button
+                                        onClick={async () => {
+                                            if (delivery.id) { // Ensure ID exists
+                                                try {
+                                                    await filesAPI.downloadFile(delivery.id, delivery.title);
+                                                } catch (e) {
+                                                    console.error('Download failed', e);
+                                                }
+                                            }
+                                        }}
+                                        className="group/btn w-full py-4.5 bg-blue-600 text-white text-[10px] font-black uppercase tracking-[0.2em] rounded-2xl flex items-center justify-center gap-3 hover:bg-blue-700 transition-all shadow-xl shadow-blue-600/10 active:scale-95"
+                                    >
                                         <span>Download Archive</span>
                                         <CloudArrowDownIcon className="w-5 h-5 group-hover/btn:translate-y-0.5 transition-transform" />
                                     </button>

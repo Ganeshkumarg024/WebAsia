@@ -2,9 +2,10 @@ import { useState } from 'react';
 import { UserIcon, ShieldCheckIcon, BellIcon, CameraIcon, LockClosedIcon } from '@heroicons/react/24/outline';
 import DashboardLayout from '../../components/layout/DashboardLayout';
 import useAuthStore from '../../store/authStore';
+import toast from 'react-hot-toast';
 
 const Settings = () => {
-    const { user } = useAuthStore();
+    const { user, updateProfile, changePassword, isLoading } = useAuthStore();
     const [activeSection, setActiveSection] = useState('Profile');
     const [formData, setFormData] = useState({
         firstName: user?.name?.split(' ')[0] || '',
@@ -31,6 +32,45 @@ const Settings = () => {
             ...prev,
             [name]: type === 'checkbox' ? checked : value
         }));
+    };
+
+    const handleCommitState = async () => {
+        if (activeSection === 'Security') {
+            if (!formData.currentPassword || !formData.newPassword || !formData.confirmPassword) {
+                toast.error('Please fill in all password fields');
+                return;
+            }
+            if (formData.newPassword !== formData.confirmPassword) {
+                toast.error('New passwords do not match');
+                return;
+            }
+
+            const result = await changePassword({
+                currentPassword: formData.currentPassword,
+                newPassword: formData.newPassword
+            });
+
+            if (result.success) {
+                toast.success('Password updated successfully');
+                setFormData(prev => ({ ...prev, currentPassword: '', newPassword: '', confirmPassword: '' }));
+            } else {
+                toast.error(result.error || 'Failed to update password');
+            }
+        } else {
+            // Profile & Notifications (Assume merged for now or just Profile)
+            const result = await updateProfile({
+                firstName: formData.firstName,
+                lastName: formData.lastName,
+                bio: formData.bio,
+                // Add notification prefs if backend supports them
+            });
+
+            if (result.success) {
+                toast.success('Profile updated successfully');
+            } else {
+                toast.error(result.error || 'Failed to update profile');
+            }
+        }
     };
 
     return (
@@ -247,8 +287,12 @@ const Settings = () => {
                         </div>
 
                         <div className="px-10 py-8 bg-gray-50/50 border-t border-gray-50 flex justify-end relative z-10">
-                            <button className="px-12 py-4 bg-blue-600 text-white text-xs font-black uppercase tracking-widest rounded-2xl hover:bg-blue-700 transition-all shadow-2xl shadow-blue-600/20 hover:-translate-y-1">
-                                Commit State
+                            <button
+                                onClick={handleCommitState}
+                                disabled={isLoading}
+                                className="px-12 py-4 bg-blue-600 text-white text-xs font-black uppercase tracking-widest rounded-2xl hover:bg-blue-700 transition-all shadow-2xl shadow-blue-600/20 hover:-translate-y-1 disabled:opacity-50 disabled:cursor-not-allowed"
+                            >
+                                {isLoading ? 'Committing...' : 'Commit State'}
                             </button>
                         </div>
                     </div>

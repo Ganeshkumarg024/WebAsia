@@ -356,3 +356,39 @@ export const streamFile = async (req, res) => {
         });
     }
 };
+
+export const getFiles = async (req, res) => {
+    try {
+        const { fileType, category } = req.query;
+        const where = {};
+
+        // If not admin, only show files related to user
+        if (req.user.role !== 'admin') {
+            where.uploadedBy = req.user.id;
+        }
+
+        if (fileType) where.fileType = fileType;
+
+        const files = await File.findAll({
+            where,
+            include: [
+                { model: User, as: 'uploader', attributes: ['id', 'firstName', 'lastName'] }
+            ],
+            order: [['created_at', 'DESC']]
+        });
+
+        res.json({
+            success: true,
+            data: files
+        });
+    } catch (error) {
+        console.error('Get files error:', error);
+        res.status(500).json({
+            success: false,
+            error: {
+                code: 'SERVER_ERROR',
+                message: 'Failed to fetch files'
+            }
+        });
+    }
+};

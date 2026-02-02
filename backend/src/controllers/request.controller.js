@@ -154,7 +154,7 @@ export const getMyRequests = async (req, res) => {
                 { model: User, as: 'designer', attributes: ['id', 'firstName', 'lastName', 'email'] },
                 { model: User, as: 'manager', attributes: ['id', 'firstName', 'lastName', 'email'] }
             ],
-            order: [['createdAt', 'DESC']]
+            order: [['created_at', 'DESC']]
         });
 
         res.json({

@@ -14,7 +14,7 @@ const CreateRequest = () => {
         category: '',
         title: '',
         description: '',
-        priority: 'medium',
+        priority: 'normal',
         deadline: '',
         files: [],
     });
@@ -69,7 +69,12 @@ const CreateRequest = () => {
             return;
         }
 
-        const result = await createRequest(formData);
+        const payload = {
+            ...formData,
+            serviceType: formData.category.replace(/-/g, '_'), // Match backend enum format
+        };
+
+        const result = await createRequest(payload);
         if (result.success) {
             showToast.success('Request created successfully!');
             navigate('/client/requests');
@@ -191,7 +196,7 @@ const CreateRequest = () => {
                                     <div className="space-y-3">
                                         <label className="text-[10px] font-black text-gray-400 uppercase tracking-[0.2em] px-1">Priority Level</label>
                                         <div className="grid grid-cols-2 gap-3">
-                                            {['low', 'medium', 'high', 'urgent'].map((prio) => (
+                                            {['normal', 'urgent'].map((prio) => (
                                                 <button
                                                     key={prio}
                                                     type="button"
@@ -343,7 +348,7 @@ const CreateRequest = () => {
                     </div>
                 </div>
             </div>
-        </DashboardLayout>
+        </DashboardLayout >
     );
 };
 
