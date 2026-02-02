@@ -170,10 +170,10 @@ const LeadManager = () => {
     ];
 
     const stats = {
-        new: leads.filter(l => l.status === 'new').length,
-        contacted: leads.filter(l => l.status === 'contacted').length,
-        quoted: leads.filter(l => l.status === 'quoted').length,
-        won: leads.filter(l => l.status === 'won').length,
+        new: (leads || []).filter(l => l.status === 'new').length,
+        contacted: (leads || []).filter(l => l.status === 'contacted').length,
+        quoted: (leads || []).filter(l => l.status === 'quoted').length,
+        won: (leads || []).filter(l => l.status === 'won').length,
     };
 
     return (

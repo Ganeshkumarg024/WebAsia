@@ -1,3 +1,5 @@
+import { Op, DataTypes } from 'sequelize';
+import bcrypt from 'bcryptjs';
 import { User, Subscription, Request, SubscriptionPlan, Message, Payment, Testimonial, Affiliate, FinancialLog, Referral } from '../models/index.js';
 
 // ... (existing code)
@@ -78,8 +80,7 @@ export const approvePayout = async (req, res) => {
         res.status(500).json({ success: false, error: { message: 'Failed to process payout' } });
     }
 };
-import { Op } from 'sequelize';
-import bcrypt from 'bcryptjs';
+
 
 export const getAllUsers = async (req, res) => {
     try {
@@ -708,7 +709,7 @@ export const getAdminRequests = async (req, res) => {
         if (search) {
             where[Op.or] = [
                 { title: { [Op.iLike]: `%${search}%` } },
-                { id: { [Op.cast]: { type: DataTypes.TEXT, value: { [Op.iLike]: `%${search}%` } } } } // Simplified for UUID search
+                { specifications: { [Op.iLike]: `%${search}%` } }
             ];
         }
 

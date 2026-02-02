@@ -46,19 +46,19 @@ const Modal = ({
                             leaveTo="opacity-0 scale-95"
                         >
                             <Dialog.Panel
-                                className={`w-full ${sizeClasses[size]} transform overflow-hidden rounded-lg bg-[#151B2E] border border-[#1E2638] shadow-xl transition-all`}
+                                className={`w-full ${sizeClasses[size]} transform overflow-hidden rounded-2xl bg-white border border-gray-100 shadow-2xl transition-all`}
                             >
                                 {(title || showCloseButton) && (
-                                    <div className="flex items-center justify-between px-6 py-4 border-b border-[#1E2638]">
+                                    <div className="flex items-center justify-between px-6 py-4 border-b border-gray-50">
                                         {title && (
-                                            <Dialog.Title className="text-lg font-semibold text-white">
+                                            <Dialog.Title className="text-lg font-bold text-gray-900">
                                                 {title}
                                             </Dialog.Title>
                                         )}
                                         {showCloseButton && (
                                             <button
                                                 onClick={onClose}
-                                                className="p-1 hover:bg-gray-700 rounded transition-colors"
+                                                className="p-2 hover:bg-gray-50 rounded-xl transition-colors"
                                             >
                                                 <XMarkIcon className="w-5 h-5 text-gray-400" />
                                             </button>

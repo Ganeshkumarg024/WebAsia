@@ -69,7 +69,7 @@ const Sidebar = ({ isOpen, onClose }) => {
                 return [
                     { name: 'Dashboard', path: '/admin/dashboard', icon: HomeIcon, badge: unreadCount },
                     { name: 'Request Queue', path: '/admin/requests', icon: ClipboardDocumentListIcon },
-                    { name: 'Assign Designers', path: '/admin/team-mapping', icon: UsersIcon },
+                    // { name: 'Assign Designers', path: '/admin/team-mapping', icon: Squares2X2Icon },
                     { name: 'Users', path: '/admin/users', icon: UsersIcon },
                     { name: 'Plans', path: '/admin/plans', icon: CubeIcon },
                     { name: 'Analytics', path: '/admin/analytics', icon: ChartBarIcon },

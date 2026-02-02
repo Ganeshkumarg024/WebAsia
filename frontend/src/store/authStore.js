@@ -3,10 +3,10 @@ import { authAPI } from '../api/auth';
 import { initializeSocket, disconnectSocket } from '../socket';
 
 const useAuthStore = create((set, get) => ({
-    user: JSON.parse(localStorage.getItem('user')) || null,
-    accessToken: localStorage.getItem('accessToken') || null,
-    refreshToken: localStorage.getItem('refreshToken') || null,
-    isAuthenticated: !!localStorage.getItem('accessToken') && !!localStorage.getItem('user'),
+    user: JSON.parse(sessionStorage.getItem('user')) || null,
+    accessToken: sessionStorage.getItem('accessToken') || null,
+    refreshToken: sessionStorage.getItem('refreshToken') || null,
+    isAuthenticated: !!sessionStorage.getItem('accessToken') && !!sessionStorage.getItem('user'),
     isLoading: false,
     error: null,
 
@@ -17,10 +17,10 @@ const useAuthStore = create((set, get) => ({
             const data = await authAPI.login(credentials);
             const { user, accessToken, refreshToken } = data.data;
 
-            // Store in localStorage
-            localStorage.setItem('user', JSON.stringify(user));
-            localStorage.setItem('accessToken', accessToken);
-            localStorage.setItem('refreshToken', refreshToken);
+            // Store in sessionStorage
+            sessionStorage.setItem('user', JSON.stringify(user));
+            sessionStorage.setItem('accessToken', accessToken);
+            sessionStorage.setItem('refreshToken', refreshToken);
 
             set({
                 user,
@@ -48,10 +48,10 @@ const useAuthStore = create((set, get) => ({
             const data = await authAPI.register(userData);
             const { user, accessToken, refreshToken } = data.data;
 
-            // Store in localStorage
-            localStorage.setItem('user', JSON.stringify(user));
-            localStorage.setItem('accessToken', accessToken);
-            localStorage.setItem('refreshToken', refreshToken);
+            // Store in sessionStorage
+            sessionStorage.setItem('user', JSON.stringify(user));
+            sessionStorage.setItem('accessToken', accessToken);
+            sessionStorage.setItem('refreshToken', refreshToken);
 
             set({
                 user,
@@ -82,10 +82,10 @@ const useAuthStore = create((set, get) => ({
             // Disconnect socket
             disconnectSocket();
 
-            // Clear localStorage
-            localStorage.removeItem('user');
-            localStorage.removeItem('accessToken');
-            localStorage.removeItem('refreshToken');
+            // Clear sessionStorage
+            sessionStorage.removeItem('user');
+            sessionStorage.removeItem('accessToken');
+            sessionStorage.removeItem('refreshToken');
 
             set({
                 user: null,
@@ -102,7 +102,7 @@ const useAuthStore = create((set, get) => ({
             const data = await authAPI.getCurrentUser();
             const user = data.data;
 
-            localStorage.setItem('user', JSON.stringify(user));
+            sessionStorage.setItem('user', JSON.stringify(user));
             set({ user });
         } catch (error) {
             console.error('Refresh user error:', error);
@@ -116,7 +116,7 @@ const useAuthStore = create((set, get) => ({
             const data = await authAPI.updateProfile(profileData);
             const user = data.data; // Assuming backend returns updated user object
 
-            localStorage.setItem('user', JSON.stringify(user));
+            sessionStorage.setItem('user', JSON.stringify(user));
             set({ user, isLoading: false });
             return { success: true };
         } catch (error) {

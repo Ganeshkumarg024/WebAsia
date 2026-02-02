@@ -132,16 +132,16 @@ const AdminDashboard = () => {
                             Pod Health
                         </h2>
                         <div className="space-y-6">
-                            {pods.length > 0 ? pods.slice(0, 5).map((pod, i) => (
+                            {(pods || []).length > 0 ? (pods || []).slice(0, 5).map((pod, i) => (
                                 <div key={pod.id || i}>
                                     <div className="flex items-center justify-between mb-2">
-                                        <h4 className="text-xs font-bold text-gray-900">{pod.name}</h4>
-                                        <span className="text-[10px] font-bold text-gray-400">{pod.utilization || Math.floor(Math.random() * 40) + 60}% Workload</span>
+                                        <h4 className="text-xs font-bold text-gray-900">{pod.firstName || 'Manager'}'s Pod</h4>
+                                        <span className="text-[10px] font-bold text-gray-400">{pod.utilization || 0}% Workload</span>
                                     </div>
                                     <div className="w-full h-1.5 bg-gray-100 rounded-full overflow-hidden">
-                                        <div className={`h-full ${['bg-green-500', 'bg-orange-500', 'bg-blue-500', 'bg-purple-500'][i % 4]}`} style={{ width: `${pod.utilization || Math.floor(Math.random() * 40) + 60}%` }}></div>
+                                        <div className={`h-full ${['bg-green-500', 'bg-orange-500', 'bg-blue-500', 'bg-purple-500'][i % 4]}`} style={{ width: `${pod.utilization || 0}%` }}></div>
                                     </div>
-                                    <p className="text-[10px] text-gray-500 mt-2">Lead: {pod.leader ? `${pod.leader.firstName} ${pod.leader.lastName}` : 'Unassigned'}</p>
+                                    <p className="text-[10px] text-gray-500 mt-2">Lead: {pod.firstName} {pod.lastName}</p>
                                 </div>
                             )) : (
                                 <p className="text-xs text-gray-400 italic">No pods active.</p>

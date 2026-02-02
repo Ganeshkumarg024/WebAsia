@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
 import DashboardLayout from '../../components/layout/DashboardLayout';
 import Modal from '../../components/shared/Modal';
 import useAdminStore from '../../store/adminStore';
@@ -10,6 +11,7 @@ import {
     ExclamationTriangleIcon,
     ClockIcon,
     CheckCircleIcon,
+    DocumentTextIcon,
     EllipsisVerticalIcon,
     UserPlusIcon
 } from '@heroicons/react/24/outline';
@@ -41,7 +43,7 @@ const GlobalRequests = () => {
 
     const handleSelectAll = (e) => {
         if (e.target.checked) {
-            setSelectedRequests(requests.map(r => r.id));
+            setSelectedRequests((requests || []).map(r => r.id));
         } else {
             setSelectedRequests([]);
         }
@@ -82,9 +84,9 @@ const GlobalRequests = () => {
     const getPriorityStyles = (priority) => {
         switch (priority) {
             case 'urgent':
-                return 'bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-400';
+                return 'bg-red-100 text-red-700';
             default:
-                return 'bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-400';
+                return 'bg-blue-100 text-blue-700';
         }
     };
 
@@ -129,13 +131,13 @@ const GlobalRequests = () => {
     return (
         <DashboardLayout breadcrumbs={['Admin', 'Global Requests']}>
             <div className="flex items-center justify-between mb-8">
-                <h1 className="text-2xl font-bold text-gray-900 dark:text-white">Global Request Management</h1>
+                <h1 className="text-2xl font-bold text-gray-900">Global Request Management</h1>
                 <div className="flex items-center gap-3">
-                    <button className="flex items-center gap-2 px-4 py-2 rounded-xl border border-gray-100 dark:border-slate-800 bg-white dark:bg-slate-900 text-gray-700 dark:text-gray-300 text-sm font-bold hover:bg-gray-50 dark:hover:bg-slate-800 transition-all">
+                    <button className="flex items-center gap-2 px-4 py-2 rounded-xl border border-gray-100 bg-white text-gray-700 text-sm font-bold hover:bg-gray-50 transition-all">
                         <ArrowDownTrayIcon className="w-5 h-5" />
                         Export
                     </button>
-                    <div className="w-px h-8 bg-gray-100 dark:bg-slate-800 mx-1"></div>
+                    <div className="w-px h-8 bg-gray-100 mx-1"></div>
                     <button className="flex items-center gap-2 px-4 py-2 rounded-xl bg-blue-600 text-white text-sm font-bold hover:bg-blue-700 shadow-lg shadow-blue-500/20 transition-all">
                         <PlusIcon className="w-5 h-5" />
                         New Request
@@ -143,7 +145,7 @@ const GlobalRequests = () => {
                 </div>
             </div>
 
-            <div className="p-8 bg-white dark:bg-slate-900 rounded-2xl border border-gray-100 dark:border-slate-800 shadow-sm mb-6">
+            <div className="p-8 bg-white rounded-2xl border border-gray-100 shadow-sm mb-6">
                 <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
                     {Object.keys(filters).map((key) => (
                         <div key={key}>
@@ -151,13 +153,13 @@ const GlobalRequests = () => {
                                 {key.replace(/([A-Z])/g, ' $1').toUpperCase()}
                             </label>
                             <select
-                                className="w-full bg-gray-50 dark:bg-slate-800 border-none rounded-xl text-sm focus:ring-2 focus:ring-blue-500/50 text-gray-900 dark:text-gray-200 py-2 px-4"
+                                className="w-full bg-gray-50 border-none rounded-xl text-sm focus:ring-2 focus:ring-blue-500/50 text-gray-900 py-2 px-4"
                                 value={filters[key]}
                                 onChange={(e) => setFilters({ ...filters, [key]: e.target.value })}
                             >
                                 <option>All {key.charAt(0).toUpperCase() + key.slice(1).replace('Id', '')}s</option>
                                 {/* Populate designers filter */}
-                                {key === 'designerId' && designers.map(d => (
+                                {key === 'designerId' && (designers || []).map(d => (
                                     <option key={d.id} value={d.id}>{d.firstName} {d.lastName}</option>
                                 ))}
                             </select>
@@ -180,7 +182,7 @@ const GlobalRequests = () => {
                                 <UserPlusIcon className="w-5 h-5" />
                                 Bulk Assign
                             </button>
-                            <button className="px-4 py-2 rounded-xl bg-gray-50 dark:bg-slate-800 text-sm font-bold text-gray-900 dark:text-white border border-gray-100 dark:border-slate-700 flex items-center gap-2 hover:bg-gray-100 dark:hover:bg-slate-700 transition-all">
+                            <button className="px-4 py-2 rounded-xl bg-gray-50 text-sm font-bold text-gray-900 border border-gray-100 flex items-center gap-2 hover:bg-gray-100 transition-all">
                                 <ArrowPathRoundedSquareIcon className="w-5 h-5" />
                                 Update Status
                             </button>
@@ -192,23 +194,23 @@ const GlobalRequests = () => {
                     <input
                         type="text"
                         placeholder="Search requests..."
-                        className="w-full pl-10 pr-4 py-2 bg-white dark:bg-slate-900 border border-gray-100 dark:border-slate-800 rounded-xl text-sm focus:ring-2 focus:ring-blue-500/50 transition-all placeholder:text-gray-400 text-gray-900 dark:text-white"
+                        className="w-full pl-10 pr-4 py-2 bg-white border border-gray-100 rounded-xl text-sm focus:ring-2 focus:ring-blue-500/50 transition-all placeholder:text-gray-400 text-gray-900"
                         value={searchQuery}
                         onChange={(e) => setSearchQuery(e.target.value)}
                     />
                 </div>
             </div>
 
-            <div className="bg-white dark:bg-slate-900 rounded-2xl border border-gray-100 dark:border-slate-800 overflow-hidden shadow-sm">
+            <div className="bg-white rounded-2xl border border-gray-100 overflow-hidden shadow-sm">
                 <div className="overflow-x-auto">
                     <table className="w-full text-left border-collapse">
-                        <thead className="bg-gray-50 dark:bg-slate-800/50 border-b border-gray-100 dark:border-slate-800">
+                        <thead className="bg-gray-50 border-b border-gray-100">
                             <tr>
                                 <th className="px-6 py-4 w-10">
                                     <input
                                         type="checkbox"
                                         className="rounded text-blue-600 focus:ring-blue-500 bg-transparent"
-                                        checked={selectedRequests.length === requests.length && requests.length > 0}
+                                        checked={selectedRequests.length === (requests?.length || 0) && (requests?.length || 0) > 0}
                                         onChange={handleSelectAll}
                                     />
                                 </th>
@@ -221,18 +223,18 @@ const GlobalRequests = () => {
                                 <th className="px-6 py-4 text-xs font-bold uppercase tracking-wider text-gray-500 text-right">Actions</th>
                             </tr>
                         </thead>
-                        <tbody className="divide-y divide-gray-100 dark:divide-slate-800">
+                        <tbody className="divide-y divide-gray-100">
                             {loading ? (
                                 Array(5).fill(0).map((_, i) => (
                                     <tr key={i} className="animate-pulse">
-                                        <td colSpan="8" className="px-6 py-4 h-16 bg-gray-50/50 dark:bg-slate-800/20"></td>
+                                        <td colSpan="8" className="px-6 py-4 h-16 bg-gray-50/50"></td>
                                     </tr>
                                 ))
-                            ) : requests.length > 0 ? (
-                                requests.map((request) => {
+                            ) : (requests || []).length > 0 ? (
+                                (requests || []).map((request) => {
                                     const sla = getSLAStatus(request.deadline);
                                     return (
-                                        <tr key={request.id} className="hover:bg-gray-50/50 dark:hover:bg-slate-800/20 transition-colors">
+                                        <tr key={request.id} className="hover:bg-gray-50/50 transition-colors">
                                             <td className="px-6 py-4">
                                                 <input
                                                     type="checkbox"
@@ -242,12 +244,15 @@ const GlobalRequests = () => {
                                                 />
                                             </td>
                                             <td className="px-6 py-4">
-                                                <span className="text-xs font-mono font-bold text-blue-600">
+                                                <Link
+                                                    to={`/admin/requests/${request.id}`}
+                                                    className="text-xs font-mono font-bold text-blue-600 hover:text-blue-800 hover:underline transition-all"
+                                                >
                                                     #{request.id.slice(0, 8).toUpperCase()}
-                                                </span>
+                                                </Link>
                                             </td>
                                             <td className="px-6 py-4">
-                                                <p className="text-sm font-bold text-gray-900 dark:text-white">{request.client?.firstName} {request.client?.lastName}</p>
+                                                <p className="text-sm font-bold text-gray-900">{request.client?.firstName} {request.client?.lastName}</p>
                                                 <p className="text-[11px] text-gray-500">{request.client?.subscriptions?.[0]?.plan?.name || 'Standard'}</p>
                                             </td>
                                             <td className="px-6 py-4">
@@ -258,18 +263,18 @@ const GlobalRequests = () => {
                                                                 <img src={request.designer.photoUrl} alt="" className="w-full h-full object-cover" />
                                                             ) : (
                                                                 <span className="text-[10px] font-bold text-blue-600 flex items-center justify-center h-full">
-                                                                    {request.designer.firstName.charAt(0)}
+                                                                    {request.designer?.firstName?.charAt(0)}
                                                                 </span>
                                                             )}
                                                         </div>
-                                                        <span className="text-sm text-gray-900 dark:text-gray-300">{request.designer.firstName} {request.designer.lastName}</span>
+                                                        <span className="text-sm text-gray-900">{request.designer.firstName} {request.designer.lastName}</span>
                                                     </div>
                                                 ) : (
                                                     <span className="text-sm text-gray-400 italic">Unassigned</span>
                                                 )}
                                             </td>
                                             <td className="px-6 py-4">
-                                                <span className="text-sm text-gray-900 dark:text-gray-300">
+                                                <span className="text-sm text-gray-900">
                                                     {request.manager ? `${request.manager.firstName} ${request.manager.lastName}` : 'Unassigned'}
                                                 </span>
                                             </td>
@@ -292,12 +297,19 @@ const GlobalRequests = () => {
                                                 <div className="flex items-center justify-end gap-2">
                                                     <button
                                                         onClick={() => openAssignModal([request.id])}
-                                                        className="p-2 rounded-lg text-blue-600 hover:bg-blue-50 dark:hover:bg-blue-900/20 transition-all"
+                                                        className="p-2 rounded-lg text-blue-600 hover:bg-blue-50 transition-all"
                                                         title="Assign Designer"
                                                     >
                                                         <UserPlusIcon className="w-5 h-5" />
                                                     </button>
-                                                    <button className="p-2 rounded-lg text-gray-400 hover:bg-gray-100 dark:hover:bg-slate-800 transition-all">
+                                                    <button
+                                                        onClick={() => navigate(`/admin/requests/${request.id}`)}
+                                                        className="p-2 rounded-lg text-gray-400 hover:bg-gray-100 transition-all"
+                                                        title="Review Request"
+                                                    >
+                                                        <DocumentTextIcon className="w-5 h-5" />
+                                                    </button>
+                                                    <button className="p-2 rounded-lg text-gray-400 hover:bg-gray-100 transition-all">
                                                         <EllipsisVerticalIcon className="w-5 h-5" />
                                                     </button>
                                                 </div>
@@ -316,15 +328,15 @@ const GlobalRequests = () => {
                     </table>
                 </div>
 
-                <div className="px-6 py-4 bg-gray-50 dark:bg-slate-800/20 flex items-center justify-between border-t border-gray-100 dark:border-slate-800">
+                <div className="px-6 py-4 bg-gray-50 flex items-center justify-between border-t border-gray-100">
                     <p className="text-xs text-gray-500">
                         Showing <span className="font-bold">{requests.length}</span> requests
                     </p>
                     <div className="flex gap-2">
-                        <button className="px-4 py-1.5 rounded-xl border border-gray-100 dark:border-slate-700 text-xs font-bold text-gray-600 dark:text-gray-300 hover:bg-white dark:hover:bg-slate-800 transition-all disabled:opacity-50" disabled>Previous</button>
+                        <button className="px-4 py-1.5 rounded-xl border border-gray-100 text-xs font-bold text-gray-600 hover:bg-white transition-all disabled:opacity-50" disabled>Previous</button>
                         <button className="px-4 py-1.5 rounded-xl bg-blue-600 text-white text-xs font-bold shadow-md shadow-blue-500/10">1</button>
-                        <button className="px-4 py-1.5 rounded-xl border border-gray-100 dark:border-slate-700 text-xs font-bold text-gray-600 dark:text-gray-300 hover:bg-white dark:hover:bg-slate-800 transition-all">2</button>
-                        <button className="px-4 py-1.5 rounded-xl border border-gray-100 dark:border-slate-700 text-xs font-bold text-gray-600 dark:text-gray-300 hover:bg-white dark:hover:bg-slate-800 transition-all">Next</button>
+                        <button className="px-4 py-1.5 rounded-xl border border-gray-100 text-xs font-bold text-gray-600 hover:bg-white transition-all">2</button>
+                        <button className="px-4 py-1.5 rounded-xl border border-gray-100 text-xs font-bold text-gray-600 hover:bg-white transition-all">Next</button>
                     </div>
                 </div>
             </div>
@@ -337,7 +349,7 @@ const GlobalRequests = () => {
                 size="md"
             >
                 <div>
-                    <p className="text-sm text-gray-500 dark:text-gray-400 mb-6">
+                    <p className="text-sm text-gray-500 mb-6">
                         Select a designer to assign to the selected <strong>{assigningRequestIds.length}</strong> request(s).
                     </p>
 
@@ -346,7 +358,7 @@ const GlobalRequests = () => {
                             Choose Designer
                         </label>
                         <select
-                            className="w-full bg-gray-50 dark:bg-slate-800 border-none rounded-xl text-sm focus:ring-2 focus:ring-blue-500/50 text-gray-900 dark:text-gray-200 py-3 px-4"
+                            className="w-full bg-gray-50 border-none rounded-xl text-sm focus:ring-2 focus:ring-blue-500/50 text-gray-900 py-3 px-4"
                             value={selectedDesignerId}
                             onChange={(e) => setSelectedDesignerId(e.target.value)}
                         >
@@ -362,7 +374,7 @@ const GlobalRequests = () => {
                     <div className="mt-8 flex justify-end gap-3">
                         <button
                             onClick={() => setIsAssignModalOpen(false)}
-                            className="px-4 py-2 rounded-xl border border-gray-100 dark:border-slate-700 text-sm font-bold text-gray-600 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-slate-800 transition-all"
+                            className="px-4 py-2 rounded-xl border border-gray-100 text-sm font-bold text-gray-600 hover:bg-gray-50 transition-all"
                         >
                             Cancel
                         </button>
