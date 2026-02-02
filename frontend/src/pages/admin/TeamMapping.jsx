@@ -8,8 +8,7 @@ import {
     UserPlusIcon,
     XMarkIcon,
     MagnifyingGlassIcon,
-    ArrowPathIcon,
-    DeviceHubIcon
+    ArrowPathIcon
 } from '@heroicons/react/24/outline';
 import { StarIcon as StarIconSolid } from '@heroicons/react/24/solid';
 

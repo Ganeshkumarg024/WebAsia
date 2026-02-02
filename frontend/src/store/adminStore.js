@@ -7,6 +7,7 @@ const useAdminStore = create((set, get) => ({
     plans: [],
     pods: [],
     requests: [],
+    stats: {}, // Dashboard stats
     financialStats: null,
     transactions: [],
     commThreads: [],
@@ -294,7 +295,18 @@ const useAdminStore = create((set, get) => ({
         } catch (error) {
             set({ error: error.message, loading: false });
         }
+    },
+
+    fetchStats: async () => {
+        set({ loading: true, error: null });
+        try {
+            const { data } = await adminAPI.getDashboardStats();
+            set({ stats: data, loading: false });
+        } catch (error) {
+            set({ error: error.message, loading: false });
+        }
     }
 }));
+
 
 export default useAdminStore;

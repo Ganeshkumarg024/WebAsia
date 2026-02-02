@@ -6,7 +6,7 @@ import {
     FunnelIcon,
     UserPlusIcon,
     PencilSquareIcon,
-    HistoryIcon,
+    ClockIcon,
     LockClosedIcon,
     NoSymbolIcon,
     CheckCircleIcon,
@@ -95,15 +95,15 @@ const Users = () => {
                             key={tab.id}
                             onClick={() => setActiveTab(tab.id)}
                             className={`px-4 py-3 text-sm font-bold transition-all relative ${activeTab === tab.id
-                                    ? 'text-blue-600 border-b-2 border-blue-600'
-                                    : 'text-gray-500 hover:text-blue-600 border-b-2 border-transparent'
+                                ? 'text-blue-600 border-b-2 border-blue-600'
+                                : 'text-gray-500 hover:text-blue-600 border-b-2 border-transparent'
                                 }`}
                         >
                             <div className="flex items-center gap-2">
                                 {tab.label}
                                 <span className={`px-1.5 py-0.5 rounded text-[10px] ${activeTab === tab.id
-                                        ? 'bg-blue-100 text-blue-600'
-                                        : 'bg-gray-100 dark:bg-slate-800 text-gray-500'
+                                    ? 'bg-blue-100 text-blue-600'
+                                    : 'bg-gray-100 dark:bg-slate-800 text-gray-500'
                                     }`}>
                                     {tab.count}
                                 </span>
@@ -187,15 +187,15 @@ const Users = () => {
                                                     <PencilSquareIcon className="w-5 h-5" />
                                                 </button>
                                                 <button className="p-2 rounded-lg text-gray-400 hover:bg-gray-100 dark:hover:bg-slate-800 transition-all" title="History">
-                                                    <HistoryIcon className="w-5 h-5" />
+                                                    <ClockIcon className="w-5 h-5" />
                                                 </button>
                                                 <button className="p-2 rounded-lg text-blue-600 hover:bg-blue-50 dark:hover:bg-blue-900/20 transition-all" title="Reset Password">
                                                     <LockClosedIcon className="w-5 h-5" />
                                                 </button>
                                                 <button
                                                     className={`p-2 rounded-lg transition-all ${user.status === 'suspended'
-                                                            ? 'text-green-600 hover:bg-green-50 dark:hover:bg-green-900/20'
-                                                            : 'text-red-500 hover:bg-red-50 dark:hover:bg-red-900/20'
+                                                        ? 'text-green-600 hover:bg-green-50 dark:hover:bg-green-900/20'
+                                                        : 'text-red-500 hover:bg-red-50 dark:hover:bg-red-900/20'
                                                         }`}
                                                     onClick={() => updateUser(user.id, { status: user.status === 'suspended' ? 'active' : 'suspended' })}
                                                     title={user.status === 'suspended' ? 'Activate' : 'Suspend'}

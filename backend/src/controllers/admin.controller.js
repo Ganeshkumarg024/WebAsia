@@ -14,7 +14,7 @@ export const getAllAffiliates = async (req, res) => {
             include: [{ model: User, as: 'user', attributes: ['firstName', 'lastName', 'email'] }],
             limit: parseInt(limit),
             offset: parseInt(offset),
-            order: [['createdAt', 'DESC']]
+            order: [['created_at', 'DESC']]
         });
 
         res.json({ success: true, data: affiliates });
@@ -111,7 +111,7 @@ export const getAllUsers = async (req, res) => {
             ],
             limit: parseInt(limit),
             offset: parseInt(offset),
-            order: [['createdAt', 'DESC']]
+            order: [['created_at', 'DESC']]
         });
 
         const totalCount = await User.count({ where });
@@ -515,7 +515,7 @@ export const getCommThreads = async (req, res) => {
                 {
                     model: Message,
                     as: 'messages',
-                    order: [['createdAt', 'DESC']],
+                    order: [['created_at', 'DESC']],
                     limit: 1
                 }
             ],
@@ -550,7 +550,7 @@ export const getCommThreadDetails = async (req, res) => {
                     model: Message,
                     as: 'messages',
                     include: [{ model: User, as: 'sender', attributes: ['id', 'firstName', 'lastName', 'role'] }],
-                    order: [['createdAt', 'ASC']]
+                    order: [['created_at', 'ASC']]
                 }
             ]
         });
@@ -656,7 +656,7 @@ export const getTransactions = async (req, res) => {
             ],
             limit: parseInt(limit),
             offset: parseInt(offset),
-            order: [['createdAt', 'DESC']]
+            order: [['created_at', 'DESC']]
         });
 
         res.json({
@@ -701,7 +701,7 @@ export const getAdminRequests = async (req, res) => {
             ],
             limit: parseInt(limit),
             offset: parseInt(offset),
-            order: [['createdAt', 'DESC']]
+            order: [['created_at', 'DESC']]
         });
 
         const totalCount = await Request.count({ where });
@@ -817,7 +817,7 @@ export const getRefundRequests = async (req, res) => {
             include: [
                 { model: User, as: 'user', attributes: ['id', 'firstName', 'lastName', 'email'] }
             ],
-            order: [['createdAt', 'DESC']]
+            order: [['created_at', 'DESC']]
         });
 
         res.json({
@@ -880,7 +880,7 @@ export const getTestimonials = async (req, res) => {
             include: [
                 { model: User, as: 'user', attributes: ['id', 'firstName', 'lastName', 'email', 'role'] }
             ],
-            order: [['createdAt', 'DESC']]
+            order: [['created_at', 'DESC']]
         });
 
         res.json({

@@ -532,7 +532,7 @@ export const getRequestActivity = async (req, res) => {
             include: [
                 { model: User, as: 'user', attributes: ['id', 'firstName', 'lastName', 'role'] }
             ],
-            order: [['createdAt', 'DESC']]
+            order: [['created_at', 'DESC']]
         });
 
         res.json({

@@ -4,7 +4,7 @@ export const getPaymentHistory = async (req, res) => {
     try {
         const payments = await Payment.findAll({
             where: { userId: req.user.id },
-            order: [['createdAt', 'DESC']],
+            order: [['created_at', 'DESC']],
             include: [
                 {
                     model: Subscription,

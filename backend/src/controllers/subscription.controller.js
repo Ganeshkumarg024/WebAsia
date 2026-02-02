@@ -15,7 +15,7 @@ export const getUserSubscription = async (req, res) => {
                     as: 'plan'
                 }
             ],
-            order: [['createdAt', 'DESC']]
+            order: [['created_at', 'DESC']]
         });
 
         res.json({

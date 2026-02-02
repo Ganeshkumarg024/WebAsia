@@ -201,7 +201,7 @@ export const getMyTestimonials = async (req, res) => {
             include: [
                 { model: Request, as: 'request', attributes: ['id', 'title', 'serviceType'] }
             ],
-            order: [['createdAt', 'DESC']]
+            order: [['created_at', 'DESC']]
         });
 
         res.json({

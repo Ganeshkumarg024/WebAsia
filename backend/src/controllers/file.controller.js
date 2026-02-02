@@ -203,7 +203,7 @@ export const getRequestFiles = async (req, res) => {
             include: [
                 { model: User, as: 'uploader', attributes: ['id', 'firstName', 'lastName', 'role'] }
             ],
-            order: [['createdAt', 'DESC']]
+            order: [['created_at', 'DESC']]
         });
 
         res.json({

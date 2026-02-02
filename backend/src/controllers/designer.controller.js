@@ -277,7 +277,7 @@ export const getDashboardStats = async (req, res) => {
             include: [
                 { model: Request, as: 'request', attributes: ['id', 'title'] }
             ],
-            order: [['createdAt', 'DESC']],
+            order: [['created_at', 'DESC']],
             limit: 10
         });
 

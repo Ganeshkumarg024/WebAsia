@@ -68,6 +68,11 @@ export const adminAPI = {
         return response.data;
     },
 
+    getDashboardStats: async () => {
+        const response = await apiClient.get('/admin/dashboard/stats');
+        return response.data;
+    },
+
     // Subscription Plans Management
     getPlan: async (id) => {
         const response = await apiClient.get(`/admin/plans/${id}`);

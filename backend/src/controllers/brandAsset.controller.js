@@ -14,7 +14,7 @@ export const getBrandAssets = async (req, res) => {
         const assets = await BrandAsset.findAll({
             where,
             include: [{ model: File, as: 'file' }],
-            order: [['createdAt', 'DESC']]
+            order: [['created_at', 'DESC']]
         });
 
         res.json({
