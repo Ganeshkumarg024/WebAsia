@@ -127,6 +127,17 @@ const Pricing = () => {
                                     <CheckIcon />
                                     <span className="text-gray-700">{plan.turnaroundHours}h Turnaround</span>
                                 </li>
+                                {/* Dynamic Features */}
+                                {plan.features && Object.entries(plan.features).map(([key, value]) => (
+                                    value && (
+                                        <li key={key} className="flex items-start">
+                                            <CheckIcon />
+                                            <span className="text-gray-700">
+                                                {key.replace(/([A-Z])/g, ' $1').replace(/^./, str => str.toUpperCase())}
+                                            </span>
+                                        </li>
+                                    )
+                                ))}
                             </ul>
 
                             <button

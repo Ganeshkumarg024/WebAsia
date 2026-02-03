@@ -24,7 +24,7 @@ export const getProfile = async (req, res) => {
 
 export const updateProfile = async (req, res) => {
     try {
-        const { firstName, lastName, phone, timezone, language } = req.body;
+        const { firstName, lastName, phone, bio, timezone, language } = req.body;
 
         const user = await User.findByPk(req.user.id);
 
@@ -32,6 +32,7 @@ export const updateProfile = async (req, res) => {
             firstName: firstName || user.firstName,
             lastName: lastName || user.lastName,
             phone: phone !== undefined ? phone : user.phone,
+            bio: bio !== undefined ? bio : user.bio,
             timezone: timezone || user.timezone,
             language: language || user.language
         });
@@ -48,6 +49,43 @@ export const updateProfile = async (req, res) => {
             error: {
                 code: 'SERVER_ERROR',
                 message: 'Failed to update profile'
+            }
+        });
+    }
+};
+
+export const uploadAvatar = async (req, res) => {
+    try {
+        if (!req.file) {
+            return res.status(400).json({
+                success: false,
+                error: {
+                    code: 'VALIDATION_ERROR',
+                    message: 'No file uploaded'
+                }
+            });
+        }
+
+        const { uploadFile } = await import('../utils/storage.js');
+        const result = await uploadFile(req.file, 'avatars', true);
+
+        const user = await User.findByPk(req.user.id);
+        await user.update({
+            photoUrl: result.url
+        });
+
+        res.json({
+            success: true,
+            message: 'Avatar updated successfully',
+            data: user
+        });
+    } catch (error) {
+        console.error('Upload avatar error:', error);
+        res.status(500).json({
+            success: false,
+            error: {
+                code: 'SERVER_ERROR',
+                message: 'Failed to upload avatar'
             }
         });
     }

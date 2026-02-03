@@ -1,16 +1,18 @@
-import { useState } from 'react';
+import { useState, useRef } from 'react';
 import { UserIcon, ShieldCheckIcon, BellIcon, CameraIcon, LockClosedIcon } from '@heroicons/react/24/outline';
 import DashboardLayout from '../../components/layout/DashboardLayout';
 import useAuthStore from '../../store/authStore';
 import toast from 'react-hot-toast';
 
 const Settings = () => {
-    const { user, updateProfile, changePassword, isLoading } = useAuthStore();
+    const { user, updateProfile, uploadAvatar, changePassword, isLoading } = useAuthStore();
+    const fileInputRef = useRef(null);
     const [activeSection, setActiveSection] = useState('Profile');
     const [formData, setFormData] = useState({
-        firstName: user?.name?.split(' ')[0] || '',
-        lastName: user?.name?.split(' ')[1] || '',
+        firstName: user?.firstName || '',
+        lastName: user?.lastName || '',
         email: user?.email || '',
+        phone: user?.phone || '',
         bio: 'Tech enthusiast and creative director exploring new horizons in digital design.',
         currentPassword: '',
         newPassword: '',
@@ -32,6 +34,31 @@ const Settings = () => {
             ...prev,
             [name]: type === 'checkbox' ? checked : value
         }));
+    };
+
+    const handlePhotoUpload = async (e) => {
+        const file = e.target.files[0];
+        if (!file) return;
+
+        // Validation
+        if (file.size > 5 * 1024 * 1024) {
+            toast.error('File size must be less than 5MB');
+            return;
+        }
+
+        const formData = new FormData();
+        formData.append('avatar', file);
+
+        const result = await uploadAvatar(formData);
+        if (result.success) {
+            toast.success('Profile picture updated successfully');
+        } else {
+            toast.error(result.error || 'Failed to update profile picture');
+        }
+    };
+
+    const triggerFileInput = () => {
+        fileInputRef.current?.click();
     };
 
     const handleCommitState = async () => {
@@ -61,6 +88,7 @@ const Settings = () => {
             const result = await updateProfile({
                 firstName: formData.firstName,
                 lastName: formData.lastName,
+                phone: formData.phone,
                 bio: formData.bio,
                 // Add notification prefs if backend supports them
             });
@@ -114,21 +142,31 @@ const Settings = () => {
                                     <div className="flex items-center gap-8">
                                         <div className="relative group">
                                             <div className="w-28 h-28 rounded-[36px] bg-gray-50 border-4 border-white shadow-xl flex items-center justify-center overflow-hidden transition-transform group-hover:scale-[1.02] duration-500">
-                                                {user?.avatar ? (
-                                                    <img src={user.avatar} alt="Profile" className="w-full h-full object-cover" />
+                                                {user?.photoUrl || user?.avatar ? (
+                                                    <img src={user.photoUrl || user.avatar} alt="Profile" className="w-full h-full object-cover" />
                                                 ) : (
-                                                    <span className="text-3xl font-black text-blue-600">{user?.name?.charAt(0) || 'U'}</span>
+                                                    <span className="text-3xl font-black text-blue-600">{(user?.firstName || user?.name || 'U').charAt(0)}</span>
                                                 )}
                                             </div>
-                                            <button className="absolute -bottom-2 -right-2 p-3 bg-blue-600 text-white rounded-2xl shadow-xl hover:bg-blue-700 transition-all hover:rotate-12">
+                                            <button
+                                                onClick={triggerFileInput}
+                                                className="absolute -bottom-2 -right-2 p-3 bg-blue-600 text-white rounded-2xl shadow-xl hover:bg-blue-700 transition-all hover:rotate-12"
+                                            >
                                                 <CameraIcon className="w-4 h-4" />
                                             </button>
+                                            <input
+                                                type="file"
+                                                ref={fileInputRef}
+                                                className="hidden"
+                                                accept="image/*"
+                                                onChange={handlePhotoUpload}
+                                            />
                                         </div>
                                         <div>
                                             <h3 className="text-xl font-black text-gray-900 tracking-tight mb-1">Identity Snapshot</h3>
                                             <p className="text-xs text-gray-500 font-medium mb-4 leading-relaxed">Identity verification is active for high-volume accounts.</p>
                                             <div className="flex gap-4">
-                                                <button className="px-4 py-2 bg-blue-50 text-blue-600 text-[10px] font-black uppercase tracking-widest rounded-xl hover:bg-blue-100 transition-colors">Replace Asset</button>
+                                                <button onClick={triggerFileInput} className="px-4 py-2 bg-blue-50 text-blue-600 text-[10px] font-black uppercase tracking-widest rounded-xl hover:bg-blue-100 transition-colors">Replace Asset</button>
                                                 <button className="px-4 py-2 text-red-500 text-[10px] font-black uppercase tracking-widest hover:underline transition-colors">Wipe Data</button>
                                             </div>
                                         </div>
@@ -152,6 +190,17 @@ const Settings = () => {
                                                 name="lastName"
                                                 value={formData.lastName}
                                                 onChange={handleInputChange}
+                                                className="w-full bg-gray-50/50 border border-gray-100 rounded-2xl py-4 px-6 text-gray-900 font-black focus:bg-white focus:border-blue-600 focus:ring-4 focus:ring-blue-600/5 transition-all outline-none"
+                                            />
+                                        </div>
+                                        <div className="md:col-span-2 space-y-3">
+                                            <label className="text-[10px] font-black text-gray-400 uppercase tracking-widest px-1">Mobile Number (Optional)</label>
+                                            <input
+                                                type="tel"
+                                                name="phone"
+                                                value={formData.phone}
+                                                onChange={handleInputChange}
+                                                placeholder="+1 (555) 000-0000"
                                                 className="w-full bg-gray-50/50 border border-gray-100 rounded-2xl py-4 px-6 text-gray-900 font-black focus:bg-white focus:border-blue-600 focus:ring-4 focus:ring-blue-600/5 transition-all outline-none"
                                             />
                                         </div>

@@ -12,9 +12,9 @@ const useMessageStore = create((set, get) => ({
     fetchMessages: async (requestId) => {
         set({ isLoading: true, error: null });
         try {
-            const data = await messageAPI.getRequestMessages(requestId);
+            const response = await messageAPI.getRequestMessages(requestId);
             set({
-                messages: data.data,
+                messages: response.data.data,
                 isLoading: false,
             });
         } catch (error) {
@@ -28,11 +28,11 @@ const useMessageStore = create((set, get) => ({
     // Send a message
     sendMessage: async (messageData) => {
         try {
-            const data = await messageAPI.sendMessage(messageData);
+            const response = await messageAPI.sendMessage(messageData);
             set((state) => ({
-                messages: [data.data, ...state.messages]
+                messages: [response.data.data, ...state.messages]
             }));
-            return { success: true, data: data.data };
+            return { success: true, data: response.data.data };
         } catch (error) {
             console.error('Failed to send message:', error);
             return { success: false, error: error.message };

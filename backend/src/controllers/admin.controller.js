@@ -265,12 +265,28 @@ export const deleteUser = async (req, res) => {
     }
 };
 
+// Helper to calculate revenue
+const calculateActiveRevenue = async () => {
+    try {
+        // Safety check to ensure models are loaded
+        if (!Subscription || !SubscriptionPlan) return 0;
+
+        const activeSubscriptions = await Subscription.findAll({
+            where: { status: 'active' },
+            include: [{ model: SubscriptionPlan, as: 'plan', attributes: ['price'] }]
+        });
+
+        return activeSubscriptions.reduce((acc, sub) => acc + (parseFloat(sub.plan?.price) || 0), 0);
+    } catch (e) {
+        console.error('Error calculating revenue:', e);
+        return 0;
+    }
+};
+
 export const getDashboardStats = async (req, res) => {
     try {
         const today = new Date();
         today.setHours(0, 0, 0, 0);
-
-        const thisMonth = new Date(today.getFullYear(), today.getMonth(), 1);
 
         const [
             totalUsers,
@@ -278,16 +294,24 @@ export const getDashboardStats = async (req, res) => {
             totalRequests,
             activeRequests,
             completedRequests,
-            totalRevenue,
-            activeSubscriptions
+            activeRevenue,
+            activeSubscriptions,
+            clientCount,
+            designerCount,
+            managerCount,
+            affiliateCount
         ] = await Promise.all([
             User.count(),
             User.count({ where: { status: 'active' } }),
             Request.count(),
             Request.count({ where: { status: { [Op.in]: ['active', 'assigned', 'in_progress'] } } }),
             Request.count({ where: { status: 'completed' } }),
-            Subscription.sum('amount', { where: { status: 'active' } }),
-            Subscription.count({ where: { status: 'active' } })
+            calculateActiveRevenue(),
+            Subscription.count({ where: { status: 'active' } }),
+            User.count({ where: { role: 'client' } }),
+            User.count({ where: { role: 'designer' } }),
+            User.count({ where: { role: 'manager' } }),
+            User.count({ where: { role: 'affiliate' } })
         ]);
 
         res.json({
@@ -295,7 +319,13 @@ export const getDashboardStats = async (req, res) => {
             data: {
                 users: {
                     total: totalUsers,
-                    active: activeUsers
+                    active: activeUsers,
+                    roles: {
+                        client: clientCount || 0,
+                        designer: designerCount || 0,
+                        manager: managerCount || 0,
+                        affiliate: affiliateCount || 0
+                    }
                 },
                 requests: {
                     total: totalRequests,
@@ -303,7 +333,7 @@ export const getDashboardStats = async (req, res) => {
                     completed: completedRequests
                 },
                 revenue: {
-                    total: totalRevenue || 0,
+                    total: activeRevenue || 0,
                     activeSubscriptions
                 }
             }
@@ -345,6 +375,11 @@ export const getAnalytics = async (req, res) => {
                 startDate.setDate(startDate.getDate() - 30);
         }
 
+        // Validate startDate
+        if (isNaN(startDate.getTime())) {
+            startDate.setDate(new Date().getDate() - 30);
+        }
+
         const [
             newUsers,
             newRequests,
@@ -357,25 +392,25 @@ export const getAnalytics = async (req, res) => {
             Request.count({
                 where: {
                     status: 'completed',
-                    completedAt: { [Op.gte]: startDate }
+                    [Op.or]: [
+                        { completedAt: { [Op.gte]: startDate } },
+                        { updatedAt: { [Op.gte]: startDate } } // Fallback
+                    ]
                 }
             }),
             Subscription.count({ where: { createdAt: { [Op.gte]: startDate } } }),
-            Subscription.sum('amount', { where: { status: 'active' } }) // Total active revenue
+            calculateActiveRevenue() // Total active revenue (MRR)
         ]);
 
-        // Generate daily stats for the chart (simplified mock-like generation for now due to SQL complexity differences)
-        // In production, use sequelize.fn('date_trunc', ...)
+        // Generate daily stats for the chart
         const dailyStats = [];
         let currentDate = new Date(startDate);
         while (currentDate <= endDate) {
             const dayName = currentDate.toLocaleDateString('en-US', { weekday: 'short' });
-            // Mocking random variations for demo purposes since real aggregation requires complex grouping
-            // In a real app, perform aggregation query here
             dailyStats.push({
                 name: dayName,
-                users: Math.floor(Math.random() * 10),
-                revenue: Math.floor(Math.random() * 1000)
+                users: Math.floor(Math.random() * 5), // Mock data for trend
+                revenue: Math.floor(Math.random() * 500)
             });
             currentDate.setDate(currentDate.getDate() + 1);
         }
@@ -393,7 +428,7 @@ export const getAnalytics = async (req, res) => {
                     newSubscriptions,
                     totalRevenue: totalRevenue || 0
                 },
-                dailyStats: dailyStats // Added this field
+                dailyStats
             }
         });
     } catch (error) {
@@ -638,20 +673,18 @@ export const getFinancialStats = async (req, res) => {
     try {
         const { period = '30d' } = req.query;
 
-        // In a real app, this would involve complex aggregations.
-        // For now, returning basic stats.
-        const [mrr, churn, totalRevenue] = await Promise.all([
-            Subscription.sum('amount', { where: { status: 'active' } }),
-            Subscription.count({ where: { status: 'cancelled' } }), // Simplified churn
-            Payment.sum('amount', { where: { status: 'completed' } })
-        ]);
+        const mrr = await calculateActiveRevenue();
+        const churn = await Subscription.count({ where: { status: 'cancelled' } });
+        const paymentRevenue = await Payment.sum('amount', { where: { status: 'completed' } });
+
+        const totalSubs = await Subscription.count();
 
         res.json({
             success: true,
             data: {
                 mrr: mrr || 0,
-                churnRate: churn ? (churn / (await Subscription.count()) * 100).toFixed(2) : 0,
-                totalRevenue: totalRevenue || 0
+                churnRate: totalSubs > 0 ? (churn / totalSubs * 100).toFixed(2) : 0,
+                totalRevenue: paymentRevenue || 0
             }
         });
     } catch (error) {

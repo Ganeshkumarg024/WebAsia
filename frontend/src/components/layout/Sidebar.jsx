@@ -38,7 +38,7 @@ const Sidebar = ({ isOpen, onClose }) => {
         switch (user?.role) {
             case 'client':
                 return [
-                    { name: 'Dashboard', path: '/dashboard', icon: HomeIcon },
+                    { name: 'Dashboard', path: '/client/dashboard', icon: HomeIcon },
                     { name: 'Active Requests', path: '/client/requests', icon: DocumentTextIcon, end: true },
                     { name: 'Request History', path: '/client/requests/history', icon: InboxIcon },
                     { name: 'Deliveries', path: '/client/deliveries', icon: CloudArrowUpIcon },
@@ -50,10 +50,11 @@ const Sidebar = ({ isOpen, onClose }) => {
                 return [
                     { name: 'Workspace', path: '/designer/workspace', icon: Squares2X2Icon },
                     { name: 'Active Tasks', path: '/designer/tasks', icon: ListBulletIcon, badge: 3 },
-                    { name: 'Priority Queue', path: '/designer/priority', icon: FireIcon },
+                    { name: 'Priority Queue', path: '/designer/priority-queue', icon: FireIcon },
                     { name: 'Submissions', path: '/designer/submissions', icon: CloudArrowUpIcon },
                     { name: 'Analytics', path: '/designer/analytics', icon: ChartBarIcon },
                     { name: 'Archives', path: '/designer/archives', icon: ArchiveBoxIcon },
+                    { name: 'Settings', path: '/designer/settings', icon: Cog6ToothIcon },
                 ];
 
             case 'manager':

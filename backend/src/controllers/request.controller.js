@@ -2,9 +2,22 @@ import { Request, User, Subscription, SubscriptionPlan, File, RequestActivity } 
 import { deductCredits } from './subscription.controller.js';
 import { Op } from 'sequelize';
 import sequelize from '../config/database.js';
+import { validationResult } from 'express-validator';
 
 export const createRequest = async (req, res) => {
     try {
+        const errors = validationResult(req);
+        if (!errors.isEmpty()) {
+            return res.status(400).json({
+                success: false,
+                error: {
+                    code: 'VALIDATION_ERROR',
+                    message: 'Invalid input data',
+                    details: errors.array()
+                }
+            });
+        }
+
         const {
             serviceType,
             title,
@@ -45,6 +58,21 @@ export const createRequest = async (req, res) => {
                 error: {
                     code: 'INSUFFICIENT_CREDITS',
                     message: `No ${serviceType.replace('_', ' ')} credits remaining`
+                }
+            });
+        }
+
+
+
+        // Deduct credits immediately upon creation
+        try {
+            await deductCredits(subscription.id, serviceType, 1);
+        } catch (error) {
+            return res.status(403).json({
+                success: false,
+                error: {
+                    code: 'CREDIT_DEDUCTION_FAILED',
+                    message: 'Failed to deduct credits. Please try again.'
                 }
             });
         }
@@ -180,7 +208,7 @@ export const getRequestById = async (req, res) => {
         const request = await Request.findOne({
             where: { id },
             include: [
-                { model: User, as: 'client', attributes: ['id', 'firstName', 'lastName', 'email'] },
+                { model: User, as: 'client', attributes: ['id', 'firstName', 'lastName', 'email', 'phone'] },
                 { model: User, as: 'designer', attributes: ['id', 'firstName', 'lastName', 'email'] },
                 { model: User, as: 'manager', attributes: ['id', 'firstName', 'lastName', 'email'] },
                 { model: File, as: 'files' }
@@ -235,6 +263,18 @@ export const updateRequestStatus = async (req, res) => {
         const { id } = req.params;
         const { status, feedback } = req.body;
 
+        const errors = validationResult(req);
+        if (!errors.isEmpty()) {
+            return res.status(400).json({
+                success: false,
+                error: {
+                    code: 'VALIDATION_ERROR',
+                    message: 'Invalid input data',
+                    details: errors.array()
+                }
+            });
+        }
+
         const request = await Request.findByPk(id);
 
         if (!request) {
@@ -257,12 +297,7 @@ export const updateRequestStatus = async (req, res) => {
         if (status === 'completed') {
             updates.completedAt = new Date();
 
-            // Deduct credits
-            try {
-                await deductCredits(request.subscriptionId, request.serviceType, 1);
-            } catch (error) {
-                console.error('Credit deduction error:', error);
-            }
+            // Deduct credits logic moved to creation time
 
             // Activate next queued request
             await activateNextQueuedRequest(request.clientId);
@@ -301,6 +336,18 @@ export const cancelRequest = async (req, res) => {
     try {
         const { id } = req.params;
         const { reason } = req.body;
+
+        const errors = validationResult(req);
+        if (!errors.isEmpty()) {
+            return res.status(400).json({
+                success: false,
+                error: {
+                    code: 'VALIDATION_ERROR',
+                    message: 'Invalid input data',
+                    details: errors.array()
+                }
+            });
+        }
 
         const request = await Request.findOne({
             where: {
@@ -374,6 +421,18 @@ export const submitFeedback = async (req, res) => {
     try {
         const { id } = req.params;
         const { feedback, requestRevision = false } = req.body;
+
+        const errors = validationResult(req);
+        if (!errors.isEmpty()) {
+            return res.status(400).json({
+                success: false,
+                error: {
+                    code: 'VALIDATION_ERROR',
+                    message: 'Invalid input data',
+                    details: errors.array()
+                }
+            });
+        }
 
         const request = await Request.findOne({
             where: {
@@ -463,12 +522,7 @@ export const approveRequest = async (req, res) => {
             isSystemGenerated: false
         });
 
-        // Deduct credits
-        try {
-            await deductCredits(request.subscriptionId, request.serviceType, 1);
-        } catch (error) {
-            console.error('Credit deduction error:', error);
-        }
+        // Deduct credits logic moved to creation time
 
         // Activate next queued request
         await activateNextQueuedRequest(req.user.id);
@@ -559,6 +613,18 @@ export const changePriority = async (req, res) => {
     try {
         const { id } = req.params;
         const { priority } = req.body;
+
+        const errors = validationResult(req);
+        if (!errors.isEmpty()) {
+            return res.status(400).json({
+                success: false,
+                error: {
+                    code: 'VALIDATION_ERROR',
+                    message: 'Invalid input data',
+                    details: errors.array()
+                }
+            });
+        }
 
         const request = await Request.findOne({
             where: {

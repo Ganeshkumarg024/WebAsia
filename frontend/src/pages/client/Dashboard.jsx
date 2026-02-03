@@ -34,7 +34,7 @@ const Dashboard = () => {
     }, [fetchRequests, fetchCurrentSubscription]);
 
     // Format stats for display
-    const activeTasksCount = requests.filter(r => ['pending', 'in-progress'].includes(r.status)).length.toString().padStart(2, '0');
+    const activeTasksCount = requests.filter(r => !['completed', 'cancelled'].includes(r.status)).length.toString().padStart(2, '0');
 
     return (
         <DashboardLayout breadcrumbs={['Dashboard', 'Overview']}>
@@ -202,11 +202,11 @@ const Dashboard = () => {
                         </div>
 
                         <div className="grid grid-cols-1 gap-4">
-                            {requests.filter(r => ['pending', 'in-progress'].includes(r.status)).slice(0, 3).map((request, index) => (
-                                <div key={index} className="bg-white p-6 rounded-3xl border border-gray-100 shadow-[0_8px_30px_rgb(0,0,0,0.01)] hover:shadow-md transition-all group flex items-center justify-between">
+                            {requests.filter(r => !['completed', 'cancelled'].includes(r.status)).slice(0, 3).map((request) => (
+                                <div key={request.id} className="bg-white p-6 rounded-3xl border border-gray-100 shadow-[0_8px_30px_rgb(0,0,0,0.01)] hover:shadow-md transition-all group flex items-center justify-between">
                                     <div className="flex items-center gap-4">
                                         <div className="w-12 h-12 bg-blue-50 rounded-2xl flex items-center justify-center text-blue-600 font-black">
-                                            {index + 1}
+                                            {(requests.findIndex(r => r.id === request.id)) + 1}
                                         </div>
                                         <div>
                                             <h4 className="font-bold text-gray-900">{request.title}</h4>
@@ -228,7 +228,7 @@ const Dashboard = () => {
                                     </div>
                                 </div>
                             ))}
-                            {requests.filter(r => ['pending', 'in-progress'].includes(r.status)).length === 0 && (
+                            {requests.filter(r => !['completed', 'cancelled'].includes(r.status)).length === 0 && (
                                 <div className="bg-gray-50/50 border-2 border-dashed border-gray-200 rounded-3xl py-12 text-center">
                                     <p className="text-xs font-black text-gray-400 uppercase tracking-widest">
                                         No active requests. Create one now!

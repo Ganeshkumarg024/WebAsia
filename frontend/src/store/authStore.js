@@ -126,6 +126,23 @@ const useAuthStore = create((set, get) => ({
         }
     },
 
+    // Upload Avatar
+    uploadAvatar: async (formData) => {
+        set({ isLoading: true, error: null });
+        try {
+            const data = await authAPI.uploadAvatar(formData);
+            const user = data.data;
+
+            sessionStorage.setItem('user', JSON.stringify(user));
+            set({ user, isLoading: false });
+            return { success: true };
+        } catch (error) {
+            const errorMessage = error.response?.data?.error?.message || 'Failed to upload avatar';
+            set({ error: errorMessage, isLoading: false });
+            return { success: false, error: errorMessage };
+        }
+    },
+
     // Change Password
     changePassword: async (passwordData) => {
         set({ isLoading: true, error: null });

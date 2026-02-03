@@ -1,3 +1,20 @@
+import { useState, useEffect } from 'react';
+import { useParams, useNavigate } from 'react-router-dom';
+import { AnimatePresence } from 'framer-motion';
+import { format } from 'date-fns';
+import { toast as showToast } from 'react-hot-toast';
+import {
+    ArrowLeftIcon,
+    IdentificationIcon,
+    ClockIcon,
+    XCircleIcon,
+    CheckCircleIcon,
+    ChatBubbleLeftIcon,
+    PaperClipIcon
+} from '@heroicons/react/24/outline';
+import requestsAPI from '../../api/requests';
+import DashboardLayout from '../../components/layout/DashboardLayout';
+import StatusBadge from '../../components/shared/StatusBadge';
 import useMessageStore from '../../store/messageStore';
 import useTestimonialStore from '../../store/testimonialStore';
 import FeedbackForm from '../../components/client/FeedbackForm';
@@ -93,6 +110,16 @@ const RequestDetail = () => {
 
     const activeTyping = typingUsers[id]?.filter(uid => uid !== user?.id) || [];
 
+    const hasSubmittedFeedback = myTestimonials.some(t => t.requestId === id);
+    const canShowFeedback = request?.status === 'completed' && !hasSubmittedFeedback;
+
+    useEffect(() => {
+        if (canShowFeedback) {
+            const timer = setTimeout(() => setShowFeedbackModal(true), 1500);
+            return () => clearTimeout(timer);
+        }
+    }, [canShowFeedback]);
+
     if (loading) {
         return (
             <div className="min-h-screen bg-gray-50 p-6 flex items-center justify-center">
@@ -127,15 +154,7 @@ const RequestDetail = () => {
         );
     }
 
-    const hasSubmittedFeedback = myTestimonials.some(t => t.requestId === id);
-    const canShowFeedback = request?.status === 'completed' && !hasSubmittedFeedback;
 
-    useEffect(() => {
-        if (canShowFeedback) {
-            const timer = setTimeout(() => setShowFeedbackModal(true), 1500);
-            return () => clearTimeout(timer);
-        }
-    }, [canShowFeedback]);
 
     return (
         <DashboardLayout breadcrumbs={['Requests', request?.title || 'Detail']}>
@@ -184,7 +203,7 @@ const RequestDetail = () => {
                             <div className="w-1.5 h-1.5 bg-gray-200 rounded-full"></div>
                             <div className="flex items-center gap-2">
                                 <ClockIcon className="w-4 h-4" />
-                                <span className="uppercase tracking-widest">Initiated: {format(new Date(request.createdAt), 'MMM dd, yyyy')}</span>
+                                <span className="uppercase tracking-widest">Initiated: {format(new Date(request.createdAt || request.created_at || Date.now()), 'MMM dd, yyyy')}</span>
                             </div>
                         </div>
                     </div>
@@ -315,11 +334,13 @@ const RequestDetail = () => {
 
                             <div className="flex items-center gap-4 p-4 bg-gray-50/50 rounded-3xl border border-gray-50">
                                 <div className="w-16 h-16 rounded-2xl bg-white border border-gray-100 flex items-center justify-center text-blue-600 font-black text-xl shadow-sm">
-                                    {request.designer?.name?.split(' ').map(n => n[0]).join('') || '??'}
+                                    {request.designer ? `${request.designer.firstName[0]}${request.designer.lastName[0]}` : '??'}
                                 </div>
                                 <div>
                                     <p className="text-[10px] text-gray-400 font-black uppercase tracking-widest mb-1">Lead Architect</p>
-                                    <p className="text-gray-900 font-black text-lg tracking-tight uppercase">{request.designer?.name || 'In Allocation...'}</p>
+                                    <p className="text-gray-900 font-black text-lg tracking-tight uppercase">
+                                        {request.designer ? `${request.designer.firstName} ${request.designer.lastName}` : 'In Allocation...'}
+                                    </p>
                                 </div>
                             </div>
 
@@ -344,7 +365,7 @@ const RequestDetail = () => {
                                 <div className={`w-2.5 h-2.5 rounded-full ${activeTyping.length > 0 ? 'bg-green-500 animate-pulse' : 'bg-blue-600'} shadow-lg shadow-blue-600/20`}></div>
                             </div>
 
-                            <div className="flex-1 overflow-y-auto p-8 space-y-10 relative z-10 custom-scrollbar flex flex-col-reverse">
+                            <div className="flex-1 overflow-y-auto p-8 gap-4 relative z-10 custom-scrollbar flex flex-col-reverse">
                                 {activeTyping.length > 0 && (
                                     <div className="flex items-center gap-2 text-[10px] text-gray-400 font-bold italic py-2">
                                         <div className="flex gap-1">
@@ -364,7 +385,7 @@ const RequestDetail = () => {
                                             }`}>
                                             {message.message}
                                         </div>
-                                        <span className="text-[9px] font-black text-gray-400 mt-3 uppercase tracking-widest px-1">{format(new Date(message.createdAt), 'HH:mm')}</span>
+                                        <span className="text-[9px] font-black text-gray-400 mt-3 uppercase tracking-widest px-1">{format(new Date(message.createdAt || message.created_at || Date.now()), 'HH:mm')}</span>
                                     </div>
                                 ))}
                             </div>
@@ -375,14 +396,15 @@ const RequestDetail = () => {
                                         value={revisionNote}
                                         onChange={handleTyping}
                                         onKeyPress={(e) => e.key === 'Enter' && !e.shiftKey && (e.preventDefault(), handleSendMessage())}
-                                        placeholder="Transmit signal or revision requirements..."
+                                        placeholder={request.designer ? "Transmit signal or revision requirements..." : "Waiting for designer allocation..."}
                                         className="bg-transparent border-none focus:ring-0 text-sm text-gray-900 font-medium flex-1 outline-none resize-none py-3 px-4 min-h-[44px] max-h-[120px]"
                                         rows="1"
+                                        disabled={!request.designer}
                                     />
                                     <button
                                         onClick={handleSendMessage}
                                         className="w-10 h-10 bg-blue-600 text-white rounded-2xl flex items-center justify-center hover:bg-blue-700 transition-all hover:scale-110 active:scale-95 disabled:opacity-20 disabled:grayscale disabled:scale-100 disabled:cursor-not-allowed shadow-xl shadow-blue-600/10 mb-1"
-                                        disabled={!revisionNote.trim()}
+                                        disabled={!revisionNote.trim() || !request.designer}
                                     >
                                         <ArrowLeftIcon className="w-5 h-5 rotate-180" />
                                     </button>

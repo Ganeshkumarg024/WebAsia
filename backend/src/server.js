@@ -47,7 +47,17 @@ const io = new Server(httpServer, {
 });
 
 // Middleware
-app.use(helmet()); // Security headers
+// CORS configuration - Must be first to apply to static files too
+app.use(cors({
+    origin: config.cors.allowedOrigins,
+    credentials: true,
+    methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH'],
+    allowedHeaders: ['Content-Type', 'Authorization']
+}));
+
+app.use(helmet({
+    crossOriginResourcePolicy: { policy: "cross-origin" }
+})); // Security headers - Update for static resources
 app.use(compression()); // Gzip compression
 app.use(morgan('dev')); // HTTP request logger
 app.use(express.json({ limit: '10mb' }));
@@ -58,14 +68,6 @@ app.use(cookieParser());
 // Note: Core files are served via secure stream route /api/files/stream/:id
 const uploadsPath = path.resolve(process.cwd(), config.storage.localPath);
 app.use('/uploads', express.static(uploadsPath));
-
-// CORS configuration
-app.use(cors({
-    origin: config.cors.allowedOrigins,
-    credentials: true,
-    methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH'],
-    allowedHeaders: ['Content-Type', 'Authorization']
-}));
 
 // Health check endpoint
 app.get('/health', (req, res) => {

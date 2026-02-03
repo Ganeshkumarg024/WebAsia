@@ -29,6 +29,11 @@ import DesignerAnalytics from './pages/designer/Analytics';
 import DesignerDashboard from './pages/designer/Dashboard';
 import MyTasks from './pages/designer/MyTasks';
 import TaskDetails from './pages/designer/TaskDetails';
+import PriorityQueue from './pages/designer/PriorityQueue';
+import DesignerArchives from './pages/designer/Archives';
+import DesignerSubmissions from './pages/designer/Submissions';
+import DesignerSettings from './pages/designer/Settings';
+
 
 // Manager Pages
 import ManagerQueue from './pages/manager/Queue';
@@ -223,6 +228,38 @@ function App() {
                 }
             />
             <Route
+                path="/designer/priority-queue"
+                element={
+                    <ProtectedRoute roles={['designer']}>
+                        <PriorityQueue />
+                    </ProtectedRoute>
+                }
+            />
+            <Route
+                path="/designer/submissions"
+                element={
+                    <ProtectedRoute roles={['designer']}>
+                        <DesignerSubmissions />
+                    </ProtectedRoute>
+                }
+            />
+            <Route
+                path="/designer/archives"
+                element={
+                    <ProtectedRoute roles={['designer']}>
+                        <DesignerArchives />
+                    </ProtectedRoute>
+                }
+            />
+            <Route
+                path="/designer/settings"
+                element={
+                    <ProtectedRoute roles={['designer']}>
+                        <DesignerSettings />
+                    </ProtectedRoute>
+                }
+            />
+            <Route
                 path="/designer/tasks/:id/upload"
                 element={
                     <ProtectedRoute roles={['designer']}>
@@ -410,8 +447,6 @@ function App() {
                     </ProtectedRoute>
                 }
             />
-
-
             <Route
                 path="/admin/settings"
                 element={
@@ -420,9 +455,9 @@ function App() {
                     </ProtectedRoute>
                 }
             />
+
             <Route path="/" element={<LandingPage />} />
 
-            {/* Default redirect */}
             {/* Protected Routes - Affiliate */}
             <Route
                 path="/affiliate/dashboard"

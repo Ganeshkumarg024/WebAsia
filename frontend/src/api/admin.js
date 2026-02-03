@@ -75,27 +75,27 @@ export const adminAPI = {
 
     // Subscription Plans Management
     getPlans: async () => {
-        const response = await apiClient.get('/admin/plans');
+        const response = await apiClient.get('/subscription-plans');
         return response.data;
     },
 
     getPlan: async (id) => {
-        const response = await apiClient.get(`/admin/plans/${id}`);
+        const response = await apiClient.get(`/subscription-plans/${id}`);
         return response.data;
     },
 
     createPlan: async (planData) => {
-        const response = await apiClient.post('/admin/plans', planData);
+        const response = await apiClient.post('/subscription-plans', planData);
         return response.data;
     },
 
     updatePlan: async (id, planData) => {
-        const response = await apiClient.put(`/admin/plans/${id}`, planData);
+        const response = await apiClient.put(`/subscription-plans/${id}`, planData);
         return response.data;
     },
 
     deletePlan: async (id) => {
-        const response = await apiClient.delete(`/admin/plans/${id}`);
+        const response = await apiClient.delete(`/subscription-plans/${id}`);
         return response.data;
     },
 
