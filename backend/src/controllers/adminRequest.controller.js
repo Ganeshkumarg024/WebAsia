@@ -226,7 +226,23 @@ export const assignDesigner = async (req, res) => {
         }
 
         const previousDesignerId = request.assignedDesignerId;
-        await request.update({ assignedDesignerId: designerId });
+
+        const updates = {
+            assignedDesignerId: designerId,
+            assignedAt: new Date()
+        };
+
+        // Update status to assigned if currently active or queued
+        if (['active', 'queued'].includes(request.status)) {
+            updates.status = 'assigned';
+        }
+
+        // Calculate and set deadline if not already set
+        if (!request.deadline && request.slaHours) {
+            updates.deadline = new Date(Date.now() + (request.slaHours * 60 * 60 * 1000));
+        }
+
+        await request.update(updates);
 
         // Create activity
         await RequestActivity.create({

@@ -23,7 +23,7 @@ import DashboardLayout from '../../components/layout/DashboardLayout';
 import BrandKitModal from '../../components/client/BrandKitModal';
 import brandKitAPI from '../../api/brandKit';
 import showToast from '../../components/shared/Toast';
-import { format } from 'date-fns';
+import { format, isValid } from 'date-fns';
 
 const Dashboard = () => {
     const navigate = useNavigate();
@@ -74,6 +74,8 @@ const Dashboard = () => {
     const calculateDaysUntilReset = () => {
         if (!currentSubscription?.credits?.resetDate) return 'N/A';
         const resetDate = new Date(currentSubscription.credits.resetDate);
+        if (!isValid(resetDate)) return 'N/A';
+
         const today = new Date();
         const diffTime = resetDate - today;
         const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
@@ -328,7 +330,9 @@ const Dashboard = () => {
                                     </div>
                                     <div className="flex-1 min-w-0">
                                         <p className="text-sm font-black text-gray-900 truncate">{file.title}</p>
-                                        <p className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">{file.category} • {format(new Date(file.updatedAt), 'MMM dd')}</p>
+                                        <p className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">
+                                            {file.category} • {isValid(new Date(file.updatedAt)) ? format(new Date(file.updatedAt), 'MMM dd') : 'N/A'}
+                                        </p>
                                     </div>
                                     <button
                                         onClick={(e) => {

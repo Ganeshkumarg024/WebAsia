@@ -252,7 +252,7 @@ const GlobalRequestDetail = () => {
                             <div>
                                 <label className="text-[10px] font-bold text-gray-400 uppercase block mb-3">Status Control</label>
                                 <div className="grid grid-cols-1 gap-2">
-                                    {['active', 'assigned', 'in_progress', 'review', 'completed', 'cancelled'].map((s) => (
+                                    {['active', 'assigned', 'in_progress', 'client_review', 'completed', 'cancelled'].map((s) => (
                                         <button
                                             key={s}
                                             onClick={() => handleUpdateStatus(s)}

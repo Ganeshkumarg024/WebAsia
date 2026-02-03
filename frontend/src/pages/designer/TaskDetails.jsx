@@ -18,8 +18,10 @@ import useMessageStore from '../../store/messageStore';
 import useAuthStore from '../../store/authStore';
 import socketClient from '../../socket/client';
 import DashboardLayout from '../../components/layout/DashboardLayout';
-import { format, formatDistanceToNow } from 'date-fns';
-import { SwatchIcon, IdentificationIcon, BookOpenIcon } from '@heroicons/react/24/outline';
+import { format, formatDistanceToNow, isValid } from 'date-fns';
+import { SwatchIcon, IdentificationIcon, BookOpenIcon, ArrowDownTrayIcon } from '@heroicons/react/24/outline';
+import { requestFilesAPI } from '../../api/requestFiles';
+import showToast from '../../components/shared/Toast';
 
 const TaskDetails = () => {
     const { id } = useParams();
@@ -87,6 +89,24 @@ const TaskDetails = () => {
         }
     };
 
+    const handleFileDownload = async (fileId, fileName) => {
+        try {
+            const blob = await requestFilesAPI.downloadFile(fileId);
+            const url = window.URL.createObjectURL(blob);
+            const link = document.createElement('a');
+            link.href = url;
+            link.download = fileName;
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+            window.URL.revokeObjectURL(url);
+            showToast.success('File downloaded successfully');
+        } catch (error) {
+            console.error('Failed to download file:', error);
+            showToast.error('Failed to download file');
+        }
+    };
+
     const getStatusColor = (status) => {
         const colors = {
             'assigned': 'bg-blue-50 text-blue-700 border-blue-200',
@@ -148,7 +168,7 @@ const TaskDetails = () => {
                     )}
                     {currentTask.status === 'in_progress' && (
                         <button
-                            onClick={() => navigate(`/designer/upload/${id}`)}
+                            onClick={() => navigate(`/designer/tasks/${id}/upload`)}
                             className="flex items-center gap-2 px-6 py-3 bg-blue-600 text-white rounded-2xl font-bold hover:bg-blue-700 transition-all shadow-lg shadow-blue-600/20"
                         >
                             <PaperAirplaneIcon className="w-5 h-5" />
@@ -375,9 +395,18 @@ const TaskDetails = () => {
                                 {currentTask.files && currentTask.files.length > 0 ? (
                                     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                                         {currentTask.files.map((file) => (
-                                            <div key={file.id} className="bg-gray-50 rounded-2xl p-4 border border-gray-100">
-                                                <PhotoIcon className="w-12 h-12 text-gray-400 mb-3" />
-                                                <p className="font-bold text-gray-900 truncate">{file.originalName}</p>
+                                            <div key={file.id} className="bg-gray-50 rounded-2xl p-4 border border-gray-100 group">
+                                                <div className="flex items-start justify-between mb-3">
+                                                    <PhotoIcon className="w-12 h-12 text-gray-400" />
+                                                    <button
+                                                        onClick={() => handleFileDownload(file.id, file.originalName)}
+                                                        className="p-2 bg-white rounded-xl shadow-sm opacity-0 group-hover:opacity-100 transition-opacity hover:bg-blue-50 text-blue-600"
+                                                        title="Download"
+                                                    >
+                                                        <ArrowDownTrayIcon className="w-5 h-5" />
+                                                    </button>
+                                                </div>
+                                                <p className="font-bold text-gray-900 truncate" title={file.originalName}>{file.originalName}</p>
                                                 <p className="text-xs text-gray-500 mt-1">
                                                     {(file.fileSize / 1024).toFixed(2)} KB
                                                 </p>
@@ -456,7 +485,12 @@ const TaskDetails = () => {
                                             <div className="flex-1">
                                                 <p className="text-sm text-gray-900 font-medium">{activity.description}</p>
                                                 <p className="text-xs text-gray-500 mt-1">
-                                                    {formatDistanceToNow(new Date(activity.createdAt), { addSuffix: true })}
+                                                    {(() => {
+                                                        const date = activity.createdAt || activity.created_at;
+                                                        return date && isValid(new Date(date))
+                                                            ? formatDistanceToNow(new Date(date), { addSuffix: true })
+                                                            : 'Just now';
+                                                    })()}
                                                 </p>
                                             </div>
                                         </div>

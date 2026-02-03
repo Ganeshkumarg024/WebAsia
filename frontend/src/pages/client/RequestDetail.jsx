@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { AnimatePresence } from 'framer-motion';
-import { format } from 'date-fns';
+import { format, isValid } from 'date-fns';
 import { toast as showToast } from 'react-hot-toast';
 import {
     ArrowLeftIcon,
@@ -13,6 +13,7 @@ import {
     PaperClipIcon
 } from '@heroicons/react/24/outline';
 import requestsAPI from '../../api/requests';
+import { requestFilesAPI } from '../../api/requestFiles';
 import DashboardLayout from '../../components/layout/DashboardLayout';
 import StatusBadge from '../../components/shared/StatusBadge';
 import useMessageStore from '../../store/messageStore';
@@ -77,11 +78,34 @@ const RequestDetail = () => {
 
     const handleApprove = async () => {
         try {
-            await requestsAPI.approveDesign(id);
+            await requestsAPI.approveRequest(id);
             showToast.success('Design approved successfully!');
             navigate('/client/requests');
         } catch (error) {
+            console.error('Approve error:', error);
             showToast.error('Failed to approve design');
+        }
+    };
+
+    const handleRequestRevision = async () => {
+        if (!revisionNote.trim()) {
+            showToast.error('Please provide revision notes');
+            return;
+        }
+
+        try {
+            await requestsAPI.submitFeedback(id, {
+                feedback: revisionNote,
+                requestRevision: true
+            });
+            showToast.success('Revision requested successfully');
+            setRevisionNote('');
+            setIsTypingLocal(false);
+            socketClient.emit('typing:stop', { requestId: id });
+            fetchRequest(); // Refresh to see status change
+        } catch (error) {
+            console.error('Revision error:', error);
+            showToast.error('Failed to request revision');
         }
     };
 
@@ -203,15 +227,16 @@ const RequestDetail = () => {
                             <div className="w-1.5 h-1.5 bg-gray-200 rounded-full"></div>
                             <div className="flex items-center gap-2">
                                 <ClockIcon className="w-4 h-4" />
-                                <span className="uppercase tracking-widest">Initiated: {format(new Date(request.createdAt || request.created_at || Date.now()), 'MMM dd, yyyy')}</span>
+                                <span className="uppercase tracking-widest">Initiated: {isValid(new Date(request.createdAt || request.created_at)) ? format(new Date(request.createdAt || request.created_at), 'MMM dd, yyyy') : 'Recently'}</span>
                             </div>
                         </div>
                     </div>
 
                     <div className="flex gap-4">
                         <button
-                            onClick={() => {/* Open revision modal */ }}
-                            className="px-8 py-4 bg-white text-gray-900 text-xs font-black uppercase tracking-widest rounded-2xl hover:bg-gray-50 transition-all border border-gray-100 shadow-[0_4px_12px_rgba(0,0,0,0.02)] flex items-center gap-3"
+                            onClick={handleRequestRevision}
+                            disabled={!revisionNote.trim()}
+                            className="px-8 py-4 bg-white text-gray-900 text-xs font-black uppercase tracking-widest rounded-2xl hover:bg-gray-50 transition-all border border-gray-100 shadow-[0_4px_12px_rgba(0,0,0,0.02)] flex items-center gap-3 disabled:opacity-50 disabled:cursor-not-allowed"
                         >
                             <XCircleIcon className="w-5 h-5 text-orange-500" />
                             Request Revision
@@ -232,34 +257,67 @@ const RequestDetail = () => {
                         <div className="bg-white border border-gray-100 rounded-[40px] overflow-hidden shadow-[0_20px_60px_rgb(0,0,0,0.03)] group relative">
                             <div className="p-6 border-b border-gray-50 flex items-center justify-between bg-gray-50/30">
                                 <div className="flex items-center gap-3">
-                                    <div className="w-2.5 h-2.5 rounded-full bg-green-500 animate-pulse"></div>
+                                    <div className={`w-2.5 h-2.5 rounded-full ${request.status === 'client_review' || request.status === 'completed' ? 'bg-green-500' : 'bg-orange-500'} animate-pulse`}></div>
                                     <span className="text-[10px] font-black uppercase tracking-[0.2em] text-gray-500">Live Creative Stage</span>
                                 </div>
-                                <button className="text-blue-600 text-[10px] font-black uppercase tracking-widest flex items-center gap-2 hover:underline">
-                                    Full Resolution View
-                                    <ArrowLeftIcon className="w-3 h-3 rotate-90" />
-                                </button>
                             </div>
                             <div className="aspect-[16/10] bg-gray-50 relative flex items-center justify-center p-12 overflow-hidden">
                                 <div className="absolute inset-0 bg-blue-600/5 opacity-0 group-hover:opacity-100 transition-opacity duration-700"></div>
 
-                                {/* Inner Preview Box */}
-                                <div className="w-full h-full rounded-3xl border border-gray-100 bg-white flex items-center justify-center shadow-2xl shadow-gray-200/50 relative z-10 scale-100 group-hover:scale-[1.02] transition-transform duration-1000">
-                                    <div className="text-center space-y-6 p-10">
-                                        <div className="w-24 h-24 bg-blue-50 rounded-[32px] flex items-center justify-center mx-auto text-blue-600 shadow-inner">
-                                            <ChatBubbleLeftIcon className="w-12 h-12" />
-                                        </div>
-                                        <div className="space-y-2">
-                                            <h4 className="text-2xl font-black text-gray-900 tracking-tight">Vibrancy Review Pending</h4>
-                                            <p className="text-gray-400 font-medium max-w-xs mx-auto leading-relaxed">The creative artifact is currently being rendered by our neural engine.</p>
-                                        </div>
-                                        <div className="pt-4">
-                                            <button className="px-6 py-2 bg-gray-50 text-gray-500 text-[10px] font-black uppercase tracking-widest rounded-xl cursor-not-allowed">
-                                                Awaiting Upload...
-                                            </button>
+                                {/* Deliverables View - Only visible after Admin Approval (status is review or completed) */}
+                                {request.files && request.files.some(f => f.uploadedByRole !== 'client') && (request.status === 'client_review' || request.status === 'completed') ? (
+                                    <div className="w-full h-full rounded-3xl border border-gray-100 bg-white shadow-2xl shadow-gray-200/50 relative z-10 overflow-hidden">
+                                        <div className="absolute inset-0 overflow-y-auto p-6 space-y-4">
+                                            {request.files.filter(f => f.uploadedByRole !== 'client').map((file) => (
+                                                <div key={file.id} className="flex items-center justify-between p-4 bg-gray-50 rounded-2xl border border-gray-100">
+                                                    <div className="flex items-center gap-4">
+                                                        <PaperClipIcon className="w-8 h-8 text-blue-600" />
+                                                        <div>
+                                                            <p className="font-bold text-gray-900">{file.originalName}</p>
+                                                            <p className="text-xs text-gray-500">{(file.fileSize / 1024).toFixed(2)} KB • {isValid(new Date(file.createdAt)) ? format(new Date(file.createdAt), 'MMM dd, HH:mm') : 'N/A'}</p>
+                                                        </div>
+                                                    </div>
+                                                    <button
+                                                        onClick={async (e) => {
+                                                            e.preventDefault();
+                                                            try {
+                                                                const blob = await requestFilesAPI.downloadFile(file.id);
+                                                                const url = window.URL.createObjectURL(new Blob([blob]));
+                                                                const link = document.createElement('a');
+                                                                link.href = url;
+                                                                link.setAttribute('download', file.originalName);
+                                                                document.body.appendChild(link);
+                                                                link.click();
+                                                                link.parentNode.removeChild(link);
+                                                                window.URL.revokeObjectURL(url);
+                                                            } catch (error) {
+                                                                console.error('Download error:', error);
+                                                                showToast.error('Failed to download file');
+                                                            }
+                                                        }}
+                                                        className="px-4 py-2 bg-blue-600 text-white text-xs font-bold rounded-xl hover:bg-blue-700 transition-colors"
+                                                    >
+                                                        Download
+                                                    </button>
+                                                </div>
+                                            ))}
                                         </div>
                                     </div>
-                                </div>
+                                ) : (
+                                    <div className="w-full h-full rounded-3xl border border-gray-100 bg-white flex items-center justify-center shadow-2xl shadow-gray-200/50 relative z-10 scale-100 group-hover:scale-[1.02] transition-transform duration-1000">
+                                        <div className="text-center space-y-6 p-10">
+                                            <div className="w-24 h-24 bg-blue-50 rounded-[32px] flex items-center justify-center mx-auto text-blue-600 shadow-inner">
+                                                <ChatBubbleLeftIcon className="w-12 h-12" />
+                                            </div>
+                                            <div className="space-y-2">
+                                                <h4 className="text-2xl font-black text-gray-900 tracking-tight">Review Pending</h4>
+                                                <p className="text-gray-400 font-medium max-w-xs mx-auto leading-relaxed">
+                                                    {request.status === 'in_progress' ? 'Designer is working on your request.' : 'Waiting for deliverables.'}
+                                                </p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                )}
                             </div>
                         </div>
 
@@ -347,7 +405,7 @@ const RequestDetail = () => {
                             <div className="space-y-6 pt-2">
                                 <div className="flex justify-between items-center px-2">
                                     <p className="text-[10px] text-gray-400 font-black uppercase tracking-widest">Final Gateway</p>
-                                    <p className="text-sm text-gray-900 font-black">{request.deadline ? format(new Date(request.deadline), 'MMM dd, yyyy') : 'Calibrating...'}</p>
+                                    <p className="text-sm text-gray-900 font-black">{request.deadline && isValid(new Date(request.deadline)) ? format(new Date(request.deadline), 'MMM dd, yyyy') : 'Calibrating...'}</p>
                                 </div>
                                 <div className="flex justify-between items-center px-2">
                                     <p className="text-[10px] text-gray-400 font-black uppercase tracking-widest">Core Domain</p>
@@ -385,7 +443,7 @@ const RequestDetail = () => {
                                             }`}>
                                             {message.message}
                                         </div>
-                                        <span className="text-[9px] font-black text-gray-400 mt-3 uppercase tracking-widest px-1">{format(new Date(message.createdAt || message.created_at || Date.now()), 'HH:mm')}</span>
+                                        <span className="text-[9px] font-black text-gray-400 mt-3 uppercase tracking-widest px-1">{isValid(new Date(message.createdAt || message.created_at)) ? format(new Date(message.createdAt || message.created_at), 'HH:mm') : 'Now'}</span>
                                     </div>
                                 ))}
                             </div>

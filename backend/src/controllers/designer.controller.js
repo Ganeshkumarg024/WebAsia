@@ -12,7 +12,7 @@ export const getMyTasks = async (req, res) => {
         if (status) {
             where.status = status;
         } else {
-            where.status = { [Op.in]: ['assigned', 'in_progress', 'pending_review'] };
+            where.status = { [Op.in]: ['assigned', 'in_progress', 'pending_review', 'revision_requested'] };
         }
 
         const tasks = await Request.findAll({

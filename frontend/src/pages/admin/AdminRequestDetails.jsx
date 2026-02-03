@@ -178,7 +178,7 @@ const AdminRequestDetails = () => {
 
     const handleFileUpload = async (uploadedFiles) => {
         try {
-            await requestFilesAPI.uploadMultipleFiles(id, uploadedFiles, 'other', 'admin');
+            await requestFilesAPI.uploadMultipleFiles(id, uploadedFiles, 'other', 'final_deliverable');
             showToast.success('Files uploaded successfully');
             fetchRequestDetails();
         } catch (error) {
@@ -198,13 +198,32 @@ const AdminRequestDetails = () => {
         }
     };
 
+    const handleFileDownload = async (fileId, fileName) => {
+        try {
+            const blob = await requestFilesAPI.downloadFile(fileId);
+            const url = window.URL.createObjectURL(blob);
+            const link = document.createElement('a');
+            link.href = url;
+            link.download = fileName;
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+            window.URL.revokeObjectURL(url);
+            showToast.success('File downloaded successfully');
+        } catch (error) {
+            console.error('Failed to download file:', error);
+            showToast.error('Failed to download file');
+        }
+    };
+
     const getStatusColor = (status) => {
         const colors = {
             queued: 'bg-gray-100 text-gray-800',
             active: 'bg-blue-100 text-blue-800',
             assigned: 'bg-purple-100 text-purple-800',
             in_progress: 'bg-yellow-100 text-yellow-800',
-            review: 'bg-orange-100 text-orange-800',
+            pending_review: 'bg-orange-100 text-orange-800',
+            client_review: 'bg-orange-100 text-orange-800',
             completed: 'bg-green-100 text-green-800',
             cancelled: 'bg-red-100 text-red-800'
         };
@@ -272,14 +291,39 @@ const AdminRequestDetails = () => {
                             </div>
                         </div>
 
-                        <div className="flex gap-2">
-                            <button
-                                onClick={() => handleStatusChange('completed')}
-                                disabled={request.status === 'completed'}
-                                className="px-4 py-2 bg-green-600 text-white rounded-xl font-bold hover:bg-green-700 disabled:opacity-50 disabled:cursor-not-allowed"
+                        <div className="flex gap-2 items-center">
+                            {request.status === 'pending_review' && (
+                                <>
+                                    <button
+                                        onClick={() => handleStatusChange('client_review')}
+                                        className="px-4 py-2 bg-green-600 text-white rounded-xl font-bold hover:bg-green-700 shadow-lg shadow-green-600/20"
+                                    >
+                                        Approve for Client
+                                    </button>
+                                    <button
+                                        onClick={() => handleStatusChange('in_progress')}
+                                        className="px-4 py-2 bg-orange-500 text-white rounded-xl font-bold hover:bg-orange-600 shadow-lg shadow-orange-500/20"
+                                    >
+                                        Request Revision
+                                    </button>
+                                </>
+                            )}
+
+                            <select
+                                value={selectedStatus}
+                                onChange={(e) => handleStatusChange(e.target.value)}
+                                disabled={updating}
+                                className="px-4 py-2 bg-white border border-gray-200 rounded-xl font-bold focus:ring-2 focus:ring-blue-500 focus:border-transparent text-sm"
                             >
-                                Force Complete
-                            </button>
+                                <option value="queued">Queued</option>
+                                <option value="active">Active</option>
+                                <option value="assigned">Assigned</option>
+                                <option value="in_progress">In Progress</option>
+                                <option value="pending_review">Pending Review</option>
+                                <option value="client_review">Client Review</option>
+                                <option value="completed">Completed</option>
+                                <option value="cancelled">Cancelled</option>
+                            </select>
                         </div>
                     </div>
                 </div>
@@ -370,6 +414,7 @@ const AdminRequestDetails = () => {
                             {files.length > 0 ? (
                                 <FileList
                                     files={files}
+                                    onDownload={handleFileDownload}
                                     onDelete={handleFileDelete}
                                     canDelete={true}
                                 />
@@ -433,7 +478,7 @@ const AdminRequestDetails = () => {
                                 <option value="active">Active</option>
                                 <option value="assigned">Assigned</option>
                                 <option value="in_progress">In Progress</option>
-                                <option value="review">Review</option>
+                                <option value="client_review">Review</option>
                                 <option value="completed">Completed</option>
                                 <option value="cancelled">Cancelled</option>
                             </select>

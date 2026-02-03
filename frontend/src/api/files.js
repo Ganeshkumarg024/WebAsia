@@ -41,7 +41,7 @@ export const filesAPI = {
             formData.append(key, metadata[key]);
         });
 
-        const response = await apiClient.post('/files/upload-multiple', formData, {
+        const response = await apiClient.post('/files/bulk', formData, {
             headers: {
                 'Content-Type': 'multipart/form-data',
             },

@@ -157,7 +157,21 @@ const GlobalRequests = () => {
                                 value={filters[key]}
                                 onChange={(e) => setFilters({ ...filters, [key]: e.target.value })}
                             >
-                                <option>All {key.charAt(0).toUpperCase() + key.slice(1).replace('Id', '')}s</option>
+                                {key === 'status' ? (
+                                    <>
+                                        <option value="All Statuses">All Statuses</option>
+                                        <option value="queued">Queued</option>
+                                        <option value="active">Active</option>
+                                        <option value="assigned">Assigned</option>
+                                        <option value="in_progress">In Progress</option>
+                                        <option value="pending_review">Pending Review</option>
+                                        <option value="client_review">Client Review</option>
+                                        <option value="completed">Completed</option>
+                                        <option value="cancelled">Cancelled</option>
+                                    </>
+                                ) : (
+                                    <option>All {key.charAt(0).toUpperCase() + key.slice(1).replace('Id', '')}s</option>
+                                )}
                                 {/* Populate designers filter */}
                                 {key === 'designerId' && (designers || []).map(d => (
                                     <option key={d.id} value={d.id}>{d.firstName} {d.lastName}</option>
@@ -215,6 +229,8 @@ const GlobalRequests = () => {
                                     />
                                 </th>
                                 <th className="px-6 py-4 text-xs font-bold uppercase tracking-wider text-gray-500">Request ID</th>
+                                <th className="px-6 py-4 text-xs font-bold uppercase tracking-wider text-gray-500">Title</th>
+                                <th className="px-6 py-4 text-xs font-bold uppercase tracking-wider text-gray-500">Status</th>
                                 <th className="px-6 py-4 text-xs font-bold uppercase tracking-wider text-gray-500">Client</th>
                                 <th className="px-6 py-4 text-xs font-bold uppercase tracking-wider text-gray-500">Assigned Designer</th>
                                 <th className="px-6 py-4 text-xs font-bold uppercase tracking-wider text-gray-500">Current Manager</th>
@@ -227,7 +243,7 @@ const GlobalRequests = () => {
                             {loading ? (
                                 Array(5).fill(0).map((_, i) => (
                                     <tr key={i} className="animate-pulse">
-                                        <td colSpan="8" className="px-6 py-4 h-16 bg-gray-50/50"></td>
+                                        <td colSpan="10" className="px-6 py-4 h-16 bg-gray-50/50"></td>
                                     </tr>
                                 ))
                             ) : (requests || []).length > 0 ? (
@@ -250,6 +266,24 @@ const GlobalRequests = () => {
                                                 >
                                                     #{request.id.slice(0, 8).toUpperCase()}
                                                 </Link>
+                                            </td>
+                                            <td className="px-6 py-4">
+                                                <p className="text-sm font-bold text-gray-900 truncate max-w-[200px]" title={request.title}>
+                                                    {request.title}
+                                                </p>
+                                            </td>
+                                            <td className="px-6 py-4">
+                                                <span className={`px-3 py-1 text-[10px] font-bold rounded-full uppercase tracking-wider border ${request.status === 'pending_review' ? 'bg-orange-100 text-orange-800 border-orange-200' :
+                                                        request.status === 'client_review' ? 'bg-purple-100 text-purple-800 border-purple-200' :
+                                                            request.status === 'completed' ? 'bg-green-100 text-green-800 border-green-200' :
+                                                                request.status === 'in_progress' ? 'bg-yellow-100 text-yellow-800 border-yellow-200' :
+                                                                    request.status === 'active' ? 'bg-blue-100 text-blue-800 border-blue-200' :
+                                                                        request.status === 'assigned' ? 'bg-indigo-100 text-indigo-800 border-indigo-200' :
+                                                                            request.status === 'cancelled' ? 'bg-red-100 text-red-800 border-red-200' :
+                                                                                'bg-gray-100 text-gray-800 border-gray-200'
+                                                    }`}>
+                                                    {request.status?.replace('_', ' ')}
+                                                </span>
                                             </td>
                                             <td className="px-6 py-4">
                                                 <p className="text-sm font-bold text-gray-900">{request.client?.firstName} {request.client?.lastName}</p>
@@ -319,7 +353,7 @@ const GlobalRequests = () => {
                                 })
                             ) : (
                                 <tr>
-                                    <td colSpan="8" className="px-6 py-12 text-center text-gray-500 italic">
+                                    <td colSpan="10" className="px-6 py-12 text-center text-gray-500 italic">
                                         No requests found matching your filters.
                                     </td>
                                 </tr>

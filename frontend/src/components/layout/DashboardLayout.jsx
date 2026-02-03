@@ -3,7 +3,7 @@ import { BellIcon, MagnifyingGlassIcon, XMarkIcon, CheckIcon, Bars3Icon } from '
 import Sidebar from './Sidebar';
 import useAuthStore from '../../store/authStore';
 import useNotificationStore from '../../store/notificationStore';
-import { format } from 'date-fns';
+import { format, isValid } from 'date-fns';
 
 const DashboardLayout = ({ children, title, breadcrumbs }) => {
     const { user } = useAuthStore();
@@ -99,7 +99,14 @@ const DashboardLayout = ({ children, title, breadcrumbs }) => {
                                                         <div className="flex-1 min-w-0">
                                                             <p className="text-xs font-bold mb-1 truncate text-gray-900">{n.title}</p>
                                                             <p className="text-[11px] text-gray-500 leading-relaxed mb-2 line-clamp-2">{n.message}</p>
-                                                            <p className="text-[9px] text-gray-400 uppercase tracking-widest">{format(new Date(n.createdAt), 'MMM dd, HH:mm')}</p>
+                                                            <p className="text-[9px] text-gray-400 uppercase tracking-widest">
+                                                                {(() => {
+                                                                    const date = n.createdAt || n.created_at;
+                                                                    return date && isValid(new Date(date))
+                                                                        ? format(new Date(date), 'MMM dd, HH:mm')
+                                                                        : 'Just now';
+                                                                })()}
+                                                            </p>
                                                         </div>
                                                     </div>
                                                 </div>

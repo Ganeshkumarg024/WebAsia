@@ -74,9 +74,10 @@ export const uploadFile = async (req, res) => {
             s3Key: storageData.storageKey,
             s3Bucket: storageData.storageBucket || 'local',
             s3Url: storageData.url,
+            filePath: storageData.storageKey, // Map storageKey to filePath
+            uploadedByRole: req.user.role, // Move to top level
             thumbnailUrl: storageData.thumbnailUrl,
             metadata: {
-                uploadedByRole: req.user.role,
                 uploadedAt: new Date()
             }
         });
@@ -161,9 +162,10 @@ export const uploadMultipleFiles = async (req, res) => {
                 s3Key: storageData.storageKey,
                 s3Bucket: storageData.storageBucket || 'local',
                 s3Url: storageData.url,
+                filePath: storageData.storageKey, // Map storageKey to filePath
+                uploadedByRole: req.user.role, // Move to top level
                 thumbnailUrl: storageData.thumbnailUrl,
                 metadata: {
-                    uploadedByRole: req.user.role,
                     uploadedAt: new Date()
                 }
             });
