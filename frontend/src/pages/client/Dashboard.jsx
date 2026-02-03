@@ -1,4 +1,4 @@
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import {
     DocumentTextIcon,
@@ -20,6 +20,9 @@ import StatCard from '../../components/shared/StatCard';
 import StatusBadge from '../../components/shared/StatusBadge';
 import ProgressBar from '../../components/shared/ProgressBar';
 import DashboardLayout from '../../components/layout/DashboardLayout';
+import BrandKitModal from '../../components/client/BrandKitModal';
+import brandKitAPI from '../../api/brandKit';
+import showToast from '../../components/shared/Toast';
 import { format } from 'date-fns';
 
 const Dashboard = () => {
@@ -27,11 +30,55 @@ const Dashboard = () => {
     const { user } = useAuthStore();
     const { requests, fetchRequests } = useRequestStore();
     const { currentSubscription, fetchCurrentSubscription } = useSubscriptionStore();
+    const [brandKit, setBrandKit] = useState(null);
+    const [showBrandKitModal, setShowBrandKitModal] = useState(false);
+    const [downloading, setDownloading] = useState(false);
 
     useEffect(() => {
         fetchRequests();
         fetchCurrentSubscription();
+        fetchBrandKit();
     }, [fetchRequests, fetchCurrentSubscription]);
+
+    const fetchBrandKit = async () => {
+        try {
+            const result = await brandKitAPI.getBrandKit();
+            if (result.success) {
+                setBrandKit(result.data);
+            }
+        } catch (error) {
+            console.error('Failed to fetch brand kit:', error);
+        }
+    };
+
+    const handleDownloadAssets = async () => {
+        setDownloading(true);
+        try {
+            const blob = await brandKitAPI.downloadAssets();
+            const url = window.URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = 'brand-kit.zip';
+            document.body.appendChild(a);
+            a.click();
+            window.URL.revokeObjectURL(url);
+            document.body.removeChild(a);
+            showToast.success('Brand kit downloaded successfully');
+        } catch (error) {
+            showToast.error('Failed to download brand kit');
+        } finally {
+            setDownloading(false);
+        }
+    };
+
+    const calculateDaysUntilReset = () => {
+        if (!currentSubscription?.credits?.resetDate) return 'N/A';
+        const resetDate = new Date(currentSubscription.credits.resetDate);
+        const today = new Date();
+        const diffTime = resetDate - today;
+        const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+        return diffDays > 0 ? `${diffDays} days` : 'Soon';
+    };
 
     // Format stats for display
     const activeTasksCount = requests.filter(r => !['completed', 'cancelled'].includes(r.status)).length.toString().padStart(2, '0');
@@ -90,7 +137,7 @@ const Dashboard = () => {
                             <h3 className="text-sm font-black text-gray-900 uppercase tracking-widest">Credit Usage Tracking</h3>
                             <div className="text-right">
                                 <p className="text-lg font-black text-gray-900 tracking-tight">
-                                    {currentSubscription?.credits?.used || '0'} <span className="text-gray-300 mx-1">/</span> {currentSubscription?.credits?.total || '20'} Credits
+                                    {currentSubscription?.credits?.used || 0} <span className="text-gray-300 mx-1">/</span> {currentSubscription?.credits?.total || 20} Credits
                                 </p>
                             </div>
                         </div>
@@ -99,12 +146,14 @@ const Dashboard = () => {
                             <div className="h-4 bg-gray-50 rounded-full overflow-hidden border border-gray-100">
                                 <div
                                     className="h-full bg-blue-600 rounded-full shadow-[0_0_20px_rgba(37,99,235,0.3)] transition-all duration-1000"
-                                    style={{ width: `${(Math.min((currentSubscription?.credits?.used || 0) / (currentSubscription?.credits?.total || 1), 1)) * 100}%` }}
+                                    style={{ width: `${currentSubscription?.credits?.total ? Math.min((currentSubscription.credits.used / currentSubscription.credits.total) * 100, 100) : 0}%` }}
                                 ></div>
                             </div>
                             <div className="flex justify-between text-[11px] font-black uppercase tracking-widest">
-                                <span className="text-gray-400">{Math.round(((currentSubscription?.credits?.used || 0) / (currentSubscription?.credits?.total || 1)) * 100)}% of monthly allocation consumed</span>
-                                <span className="text-blue-600 underline">Next reset in 12 days</span>
+                                <span className="text-gray-400">
+                                    {currentSubscription?.credits?.total ? Math.round((currentSubscription.credits.used / currentSubscription.credits.total) * 100) : 0}% of monthly allocation consumed
+                                </span>
+                                <span className="text-blue-600 underline">Next reset in {calculateDaysUntilReset()}</span>
                             </div>
                         </div>
                     </div>
@@ -119,14 +168,29 @@ const Dashboard = () => {
                                 <SparklesIcon className="w-5 h-5 text-blue-600" />
                                 <h3 className="text-sm font-black text-gray-900 uppercase tracking-widest">Brand Kit Quick Access</h3>
                             </div>
-                            <button className="text-xs font-black text-blue-600 uppercase tracking-widest hover:underline">Edit Kit</button>
+                            <button
+                                onClick={() => setShowBrandKitModal(true)}
+                                className="text-xs font-black text-blue-600 uppercase tracking-widest hover:underline"
+                            >
+                                Edit Kit
+                            </button>
                         </div>
 
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
                             <div className="bg-gray-50/50 rounded-2xl border border-dashed border-gray-200 p-8 flex items-center justify-center group cursor-pointer hover:border-blue-300 transition-colors">
                                 <div className="text-center space-y-2">
-                                    <p className="text-2xl font-black text-gray-300 italic group-hover:text-blue-200 transition-colors">BRAND LOGO</p>
-                                    <p className="text-[10px] font-black text-gray-400 uppercase tracking-[0.2em]">Primary Logo</p>
+                                    {brandKit?.logoUrl ? (
+                                        <img
+                                            src={`${import.meta.env.VITE_API_URL}${brandKit.logoUrl}`}
+                                            alt="Brand Logo"
+                                            className="max-w-full max-h-24 mx-auto object-contain"
+                                        />
+                                    ) : (
+                                        <>
+                                            <p className="text-2xl font-black text-gray-300 italic group-hover:text-blue-200 transition-colors">BRAND LOGO</p>
+                                            <p className="text-[10px] font-black text-gray-400 uppercase tracking-[0.2em]">Primary Logo</p>
+                                        </>
+                                    )}
                                 </div>
                             </div>
 
@@ -134,8 +198,8 @@ const Dashboard = () => {
                                 <div className="space-y-3">
                                     <p className="text-[10px] font-black text-gray-400 uppercase tracking-widest px-1">Palette</p>
                                     <div className="flex flex-wrap gap-2">
-                                        {['#2563EB', '#10B981', '#1E293B'].map(color => (
-                                            <div key={color} className="group relative">
+                                        {(brandKit?.colors || ['#2563EB', '#10B981', '#1E293B']).map((color, index) => (
+                                            <div key={index} className="group relative">
                                                 <div
                                                     className="w-10 h-10 rounded-xl shadow-sm border border-gray-100 ring-2 ring-transparent group-hover:ring-blue-100 transition-all"
                                                     style={{ backgroundColor: color }}
@@ -145,9 +209,13 @@ const Dashboard = () => {
                                         ))}
                                     </div>
                                 </div>
-                                <button className="w-full flex items-center justify-center gap-3 py-4 bg-blue-600 text-white rounded-2xl font-bold text-sm hover:bg-blue-700 transition-all shadow-lg shadow-blue-600/20 group">
+                                <button
+                                    onClick={handleDownloadAssets}
+                                    disabled={downloading}
+                                    className="w-full flex items-center justify-center gap-3 py-4 bg-blue-600 text-white rounded-2xl font-bold text-sm hover:bg-blue-700 transition-all shadow-lg shadow-blue-600/20 group disabled:opacity-50"
+                                >
                                     <ArrowDownTrayIcon className="w-4 h-4" />
-                                    <span>Download Assets</span>
+                                    <span>{downloading ? 'Downloading...' : 'Download Assets'}</span>
                                 </button>
                             </div>
                         </div>
@@ -284,6 +352,16 @@ const Dashboard = () => {
                     </div>
                 </div>
             </div>
+
+            {/* Brand Kit Modal */}
+            <BrandKitModal
+                isOpen={showBrandKitModal}
+                onClose={() => setShowBrandKitModal(false)}
+                brandKit={brandKit}
+                onUpdate={(updatedBrandKit) => {
+                    setBrandKit(updatedBrandKit);
+                }}
+            />
         </DashboardLayout>
     );
 };

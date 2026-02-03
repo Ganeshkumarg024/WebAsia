@@ -39,6 +39,21 @@ const useAdminStore = create((set, get) => ({
         }
     },
 
+    createUser: async (userData) => {
+        set({ loading: true, error: null });
+        try {
+            const response = await adminAPI.createUser(userData);
+            set((state) => ({
+                users: [response.data, ...state.users],
+                loading: false
+            }));
+            return { success: true, data: response.data };
+        } catch (error) {
+            set({ error: error.message, loading: false });
+            return { success: false, error: error.message };
+        }
+    },
+
     updateUser: async (id, userData) => {
         set({ loading: true, error: null });
         try {
@@ -47,8 +62,25 @@ const useAdminStore = create((set, get) => ({
                 users: state.users.map((u) => (u.id === id ? { ...u, ...userData } : u)),
                 loading: false
             }));
+            return { success: true };
         } catch (error) {
             set({ error: error.message, loading: false });
+            return { success: false, error: error.message };
+        }
+    },
+
+    deleteUser: async (id) => {
+        set({ loading: true, error: null });
+        try {
+            await adminAPI.deleteUser(id);
+            set((state) => ({
+                users: state.users.filter((u) => u.id !== id),
+                loading: false
+            }));
+            return { success: true };
+        } catch (error) {
+            set({ error: error.message, loading: false });
+            return { success: false, error: error.message };
         }
     },
 
@@ -175,7 +207,7 @@ const useAdminStore = create((set, get) => ({
     fetchAdminRequests: async (params) => {
         set({ loading: true, error: null });
         try {
-            const response = await adminAPI.getAdminRequests(params);
+            const response = await adminAPI.getAllRequests(params);
             set({ requests: response.data.requests, loading: false });
         } catch (error) {
             set({ error: error.message, loading: false });
@@ -187,7 +219,7 @@ const useAdminStore = create((set, get) => ({
         try {
             await adminAPI.bulkUpdateRequests(updateData);
             // Refresh requests
-            const response = await adminAPI.getAdminRequests();
+            const response = await adminAPI.getAllRequests();
             set({ requests: response.data.requests, loading: false });
         } catch (error) {
             set({ error: error.message, loading: false });

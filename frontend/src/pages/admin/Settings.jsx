@@ -1,15 +1,16 @@
 import { useState } from 'react';
-import { UserIcon, ShieldCheckIcon, BellIcon, CameraIcon, LockClosedIcon } from '@heroicons/react/24/outline';
+import { UserIcon, ShieldCheckIcon, BellIcon, CameraIcon } from '@heroicons/react/24/outline';
 import DashboardLayout from '../../components/layout/DashboardLayout';
+import FileUpload from '../../components/shared/FileUpload';
 import useAuthStore from '../../store/authStore';
-import toast from 'react-hot-toast';
+import showToast from '../../components/shared/Toast';
 
 const Settings = () => {
-    const { user, updateProfile, changePassword, isLoading } = useAuthStore();
+    const { user, updateProfile, changePassword, uploadAvatar, isLoading } = useAuthStore();
     const [activeSection, setActiveSection] = useState('Profile');
     const [formData, setFormData] = useState({
-        firstName: user?.name?.split(' ')[0] || '',
-        lastName: user?.name?.split(' ')[1] || '',
+        firstName: user?.firstName || '',
+        lastName: user?.lastName || '',
         email: user?.email || '',
         bio: user?.bio || '',
         currentPassword: '',
@@ -34,41 +35,56 @@ const Settings = () => {
         }));
     };
 
-    const handleCommitState = async () => {
-        if (activeSection === 'Security') {
-            if (!formData.currentPassword || !formData.newPassword || !formData.confirmPassword) {
-                toast.error('Please fill in all password fields');
-                return;
-            }
-            if (formData.newPassword !== formData.confirmPassword) {
-                toast.error('New passwords do not match');
-                return;
-            }
+    const handleAvatarUpload = async (file) => {
+        if (!file) return;
 
-            const result = await changePassword({
-                currentPassword: formData.currentPassword,
-                newPassword: formData.newPassword
-            });
-
-            if (result.success) {
-                toast.success('Password updated successfully');
-                setFormData(prev => ({ ...prev, currentPassword: '', newPassword: '', confirmPassword: '' }));
-            } else {
-                toast.error(result.error || 'Failed to update password');
-            }
+        const result = await uploadAvatar(file);
+        if (result.success) {
+            showToast.success('Avatar updated successfully');
         } else {
-            const result = await updateProfile({
-                firstName: formData.firstName,
-                lastName: formData.lastName,
-                bio: formData.bio,
-            });
-
-            if (result.success) {
-                toast.success('Profile updated successfully');
-            } else {
-                toast.error(result.error || 'Failed to update profile');
-            }
+            showToast.error(result.error || 'Failed to upload avatar');
         }
+    };
+
+    const handleSaveProfile = async () => {
+        const result = await updateProfile({
+            firstName: formData.firstName,
+            lastName: formData.lastName,
+            bio: formData.bio,
+        });
+
+        if (result.success) {
+            showToast.success('Profile updated successfully');
+        } else {
+            showToast.error(result.error || 'Failed to update profile');
+        }
+    };
+
+    const handleChangePassword = async () => {
+        if (!formData.currentPassword || !formData.newPassword || !formData.confirmPassword) {
+            showToast.error('Please fill in all password fields');
+            return;
+        }
+        if (formData.newPassword !== formData.confirmPassword) {
+            showToast.error('New passwords do not match');
+            return;
+        }
+
+        const result = await changePassword({
+            currentPassword: formData.currentPassword,
+            newPassword: formData.newPassword
+        });
+
+        if (result.success) {
+            showToast.success('Password updated successfully');
+            setFormData(prev => ({ ...prev, currentPassword: '', newPassword: '', confirmPassword: '' }));
+        } else {
+            showToast.error(result.error || 'Failed to update password');
+        }
+    };
+
+    const handleSaveNotifications = () => {
+        showToast.success('Notification preferences saved');
     };
 
     return (
@@ -76,10 +92,10 @@ const Settings = () => {
             <div className="max-w-5xl mx-auto w-full space-y-8">
                 {/* Header */}
                 <div className="space-y-2">
-                    <h1 className="text-3xl font-bold text-gray-900">
+                    <h1 className="text-3xl font-black text-gray-900 tracking-tight">
                         Admin <span className="text-blue-600">Settings</span>
                     </h1>
-                    <p className="text-gray-500">Manage your profile and security preferences.</p>
+                    <p className="text-gray-500 font-medium">Manage your profile and security preferences.</p>
                 </div>
 
                 <div className="flex flex-col md:flex-row gap-8">
@@ -90,7 +106,7 @@ const Settings = () => {
                                 <button
                                     key={section.id}
                                     onClick={() => setActiveSection(section.id)}
-                                    className={`flex-1 md:flex-none flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-bold transition-all ${activeSection === section.id
+                                    className={`flex-1 md:flex-none flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-black uppercase tracking-wider transition-all ${activeSection === section.id
                                         ? 'bg-blue-600 text-white shadow-lg shadow-blue-600/20'
                                         : 'bg-white text-gray-500 hover:text-gray-900 hover:bg-gray-50 border border-gray-100'
                                         }`}
@@ -102,148 +118,238 @@ const Settings = () => {
                         </nav>
                     </aside>
 
-                    {/* Content Area */}
-                    <div className="flex-1 bg-white border border-gray-100 rounded-2xl overflow-hidden shadow-sm relative">
-                        <div className="p-8">
+                    {/* Main Content */}
+                    <div className="flex-1">
+                        <div className="bg-white rounded-[32px] border border-gray-100 shadow-[0_8px_30px_rgb(0,0,0,0.02)] overflow-hidden">
+                            {/* Profile Section */}
                             {activeSection === 'Profile' && (
-                                <div className="space-y-8">
-                                    <div className="flex items-center gap-6">
-                                        <div className="relative group">
-                                            <div className="w-24 h-24 rounded-full bg-gray-50 border-4 border-white shadow-sm flex items-center justify-center overflow-hidden">
-                                                {user?.avatar ? (
-                                                    <img src={user.avatar} alt="Profile" className="w-full h-full object-cover" />
+                                <div className="p-8 space-y-8">
+                                    <div>
+                                        <h2 className="text-xl font-black text-gray-900 mb-1">Profile Information</h2>
+                                        <p className="text-sm text-gray-500 font-medium">Update your account profile information and avatar.</p>
+                                    </div>
+
+                                    {/* Avatar Upload */}
+                                    <div>
+                                        <label className="block text-xs font-bold text-gray-500 uppercase tracking-wide mb-4">Profile Picture</label>
+                                        <div className="flex items-center gap-6">
+                                            <div className="w-24 h-24 rounded-2xl bg-gray-100 border-2 border-white shadow-lg flex items-center justify-center text-gray-500 font-black text-3xl overflow-hidden shrink-0">
+                                                {user?.photoUrl ? (
+                                                    <img src={user.photoUrl} alt="" className="w-full h-full object-cover" />
                                                 ) : (
-                                                    <span className="text-3xl font-bold text-blue-600">{user?.name?.charAt(0) || 'A'}</span>
+                                                    user?.firstName?.charAt(0) || 'A'
                                                 )}
                                             </div>
-                                        </div>
-                                        <div>
-                                            <h3 className="text-xl font-bold text-gray-900 mb-1">Admin Profile</h3>
-                                            <p className="text-sm text-gray-500">Update your personal information.</p>
+                                            <div className="flex-1">
+                                                <FileUpload
+                                                    onFileSelect={handleAvatarUpload}
+                                                    accept="image/*"
+                                                    maxSize={2 * 1024 * 1024}
+                                                    preview={false}
+                                                    label="Upload New Avatar"
+                                                    className="w-full"
+                                                />
+                                                <p className="text-xs text-gray-400 mt-2">JPG, PNG or GIF. Max size 2MB.</p>
+                                            </div>
                                         </div>
                                     </div>
 
-                                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                                        <div className="space-y-2">
-                                            <label className="text-xs font-bold text-gray-500 uppercase tracking-wide">First Name</label>
+                                    <div className="grid grid-cols-2 gap-6">
+                                        <div>
+                                            <label className="block text-xs font-bold text-gray-500 uppercase tracking-wide mb-2">First Name</label>
                                             <input
                                                 type="text"
                                                 name="firstName"
                                                 value={formData.firstName}
                                                 onChange={handleInputChange}
-                                                className="w-full bg-gray-50 border border-gray-200 rounded-xl py-3 px-4 text-gray-900 font-medium focus:bg-white focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 outline-none transition-all"
+                                                className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl text-gray-900 font-medium focus:bg-white focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 outline-none transition-all"
                                             />
                                         </div>
-                                        <div className="space-y-2">
-                                            <label className="text-xs font-bold text-gray-500 uppercase tracking-wide">Last Name</label>
+                                        <div>
+                                            <label className="block text-xs font-bold text-gray-500 uppercase tracking-wide mb-2">Last Name</label>
                                             <input
                                                 type="text"
                                                 name="lastName"
                                                 value={formData.lastName}
                                                 onChange={handleInputChange}
-                                                className="w-full bg-gray-50 border border-gray-200 rounded-xl py-3 px-4 text-gray-900 font-medium focus:bg-white focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 outline-none transition-all"
+                                                className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl text-gray-900 font-medium focus:bg-white focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 outline-none transition-all"
                                             />
                                         </div>
-                                        <div className="md:col-span-2 space-y-2">
-                                            <label className="text-xs font-bold text-gray-500 uppercase tracking-wide">Email Address</label>
-                                            <input
-                                                type="email"
-                                                name="email"
-                                                value={formData.email}
-                                                disabled
-                                                className="w-full bg-gray-50 border border-gray-200 rounded-xl py-3 px-4 text-gray-400 font-medium cursor-not-allowed"
-                                            />
-                                        </div>
+                                    </div>
+
+                                    <div>
+                                        <label className="block text-xs font-bold text-gray-500 uppercase tracking-wide mb-2">Email Address</label>
+                                        <input
+                                            type="email"
+                                            name="email"
+                                            value={formData.email}
+                                            disabled
+                                            className="w-full px-4 py-3 bg-gray-100 border border-gray-200 rounded-xl text-gray-500 font-medium cursor-not-allowed"
+                                        />
+                                        <p className="text-xs text-gray-400 mt-1">Email cannot be changed</p>
+                                    </div>
+
+                                    <div>
+                                        <label className="block text-xs font-bold text-gray-500 uppercase tracking-wide mb-2">Bio</label>
+                                        <textarea
+                                            name="bio"
+                                            value={formData.bio}
+                                            onChange={handleInputChange}
+                                            className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl text-gray-900 font-medium focus:bg-white focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 outline-none transition-all resize-none"
+                                            rows={4}
+                                            placeholder="Tell us about yourself..."
+                                        />
+                                    </div>
+
+                                    <div className="flex justify-end pt-4">
+                                        <button
+                                            onClick={handleSaveProfile}
+                                            disabled={isLoading}
+                                            className="px-6 py-3 bg-blue-600 hover:bg-blue-700 text-white rounded-xl text-sm font-black uppercase tracking-widest shadow-lg shadow-blue-600/20 transition-all disabled:opacity-50"
+                                        >
+                                            {isLoading ? 'Saving...' : 'Save Changes'}
+                                        </button>
                                     </div>
                                 </div>
                             )}
 
+                            {/* Security Section */}
                             {activeSection === 'Security' && (
-                                <div className="space-y-8">
-                                    <div className="bg-blue-50 rounded-2xl p-6 flex items-start gap-4 border border-blue-100">
-                                        <div className="w-10 h-10 bg-blue-100 rounded-xl flex items-center justify-center shrink-0">
-                                            <LockClosedIcon className="w-5 h-5 text-blue-600" />
+                                <div className="p-8 space-y-8">
+                                    <div>
+                                        <h2 className="text-xl font-black text-gray-900 mb-1">Security Settings</h2>
+                                        <p className="text-sm text-gray-500 font-medium">Update your password and security preferences.</p>
+                                    </div>
+
+                                    <div>
+                                        <label className="block text-xs font-bold text-gray-500 uppercase tracking-wide mb-2">Current Password</label>
+                                        <input
+                                            type="password"
+                                            name="currentPassword"
+                                            value={formData.currentPassword}
+                                            onChange={handleInputChange}
+                                            className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl text-gray-900 font-medium focus:bg-white focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 outline-none transition-all"
+                                            placeholder="••••••••"
+                                        />
+                                    </div>
+
+                                    <div className="grid grid-cols-2 gap-6">
+                                        <div>
+                                            <label className="block text-xs font-bold text-gray-500 uppercase tracking-wide mb-2">New Password</label>
+                                            <input
+                                                type="password"
+                                                name="newPassword"
+                                                value={formData.newPassword}
+                                                onChange={handleInputChange}
+                                                className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl text-gray-900 font-medium focus:bg-white focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 outline-none transition-all"
+                                                placeholder="••••••••"
+                                            />
                                         </div>
                                         <div>
-                                            <h4 className="text-blue-900 font-bold mb-1">Password Security</h4>
-                                            <p className="text-blue-700 text-sm">Ensure your account uses a strong, unique password.</p>
+                                            <label className="block text-xs font-bold text-gray-500 uppercase tracking-wide mb-2">Confirm New Password</label>
+                                            <input
+                                                type="password"
+                                                name="confirmPassword"
+                                                value={formData.confirmPassword}
+                                                onChange={handleInputChange}
+                                                className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl text-gray-900 font-medium focus:bg-white focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 outline-none transition-all"
+                                                placeholder="••••••••"
+                                            />
                                         </div>
+                                    </div>
+
+                                    <div className="bg-blue-50 border border-blue-100 rounded-xl p-4">
+                                        <p className="text-xs text-blue-700 font-bold">Password Requirements:</p>
+                                        <ul className="text-xs text-blue-600 mt-2 space-y-1 ml-4 list-disc">
+                                            <li>At least 8 characters long</li>
+                                            <li>Contains uppercase and lowercase letters</li>
+                                            <li>Contains at least one number</li>
+                                        </ul>
+                                    </div>
+
+                                    <div className="flex justify-end pt-4">
+                                        <button
+                                            onClick={handleChangePassword}
+                                            disabled={isLoading}
+                                            className="px-6 py-3 bg-blue-600 hover:bg-blue-700 text-white rounded-xl text-sm font-black uppercase tracking-widest shadow-lg shadow-blue-600/20 transition-all disabled:opacity-50"
+                                        >
+                                            {isLoading ? 'Updating...' : 'Update Password'}
+                                        </button>
+                                    </div>
+                                </div>
+                            )}
+
+                            {/* Notifications Section */}
+                            {activeSection === 'Notifications' && (
+                                <div className="p-8 space-y-8">
+                                    <div>
+                                        <h2 className="text-xl font-black text-gray-900 mb-1">Notification Preferences</h2>
+                                        <p className="text-sm text-gray-500 font-medium">Manage how you receive notifications.</p>
                                     </div>
 
                                     <div className="space-y-6">
-                                        <div className="space-y-2">
-                                            <label className="text-xs font-bold text-gray-500 uppercase tracking-wide">Current Password</label>
-                                            <input
-                                                type="password"
-                                                name="currentPassword"
-                                                value={formData.currentPassword}
-                                                onChange={handleInputChange}
-                                                className="w-full bg-gray-50 border border-gray-200 rounded-xl py-3 px-4 text-gray-900 font-medium focus:bg-white focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 outline-none transition-all"
-                                            />
-                                        </div>
-                                        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                                            <div className="space-y-2">
-                                                <label className="text-xs font-bold text-gray-500 uppercase tracking-wide">New Password</label>
-                                                <input
-                                                    type="password"
-                                                    name="newPassword"
-                                                    value={formData.newPassword}
-                                                    onChange={handleInputChange}
-                                                    className="w-full bg-gray-50 border border-gray-200 rounded-xl py-3 px-4 text-gray-900 font-medium focus:bg-white focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 outline-none transition-all"
-                                                />
+                                        <div className="flex items-center justify-between p-4 bg-gray-50 rounded-xl border border-gray-100">
+                                            <div>
+                                                <p className="text-sm font-bold text-gray-900">System Notifications</p>
+                                                <p className="text-xs text-gray-500 mt-0.5">Receive in-app notifications for important updates</p>
                                             </div>
-                                            <div className="space-y-2">
-                                                <label className="text-xs font-bold text-gray-500 uppercase tracking-wide">Confirm Password</label>
+                                            <label className="relative inline-flex items-center cursor-pointer">
                                                 <input
-                                                    type="password"
-                                                    name="confirmPassword"
-                                                    value={formData.confirmPassword}
+                                                    type="checkbox"
+                                                    name="notifSystem"
+                                                    checked={formData.notifSystem}
                                                     onChange={handleInputChange}
-                                                    className="w-full bg-gray-50 border border-gray-200 rounded-xl py-3 px-4 text-gray-900 font-medium focus:bg-white focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 outline-none transition-all"
+                                                    className="sr-only peer"
                                                 />
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            )}
-
-                            {activeSection === 'Notifications' && (
-                                <div className="space-y-8">
-                                    <div className="space-y-4">
-                                        {[
-                                            { id: 'notifSystem', label: 'System Notifications', desc: 'Receive important updates about platform activity' },
-                                            { id: 'notifEmail', label: 'Email Alerts', desc: 'Get daily summaries sent to your inbox' }
-                                        ].map(item => (
-                                            <label key={item.id} className="flex items-start justify-between p-4 bg-gray-50 rounded-xl border border-gray-200 cursor-pointer hover:border-blue-500/30 hover:bg-white transition-all">
-                                                <div>
-                                                    <p className="font-bold text-gray-900 mb-1">{item.label}</p>
-                                                    <p className="text-sm text-gray-500">{item.desc}</p>
-                                                </div>
-                                                <div className="relative inline-flex items-center cursor-pointer mt-1">
-                                                    <input
-                                                        type="checkbox"
-                                                        name={item.id}
-                                                        checked={formData[item.id]}
-                                                        onChange={handleInputChange}
-                                                        className="sr-only peer"
-                                                    />
-                                                    <div className="w-11 h-6 bg-gray-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-blue-600"></div>
-                                                </div>
+                                                <div className="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-blue-600"></div>
                                             </label>
-                                        ))}
+                                        </div>
+
+                                        <div className="flex items-center justify-between p-4 bg-gray-50 rounded-xl border border-gray-100">
+                                            <div>
+                                                <p className="text-sm font-bold text-gray-900">Email Notifications</p>
+                                                <p className="text-xs text-gray-500 mt-0.5">Receive email updates for requests and messages</p>
+                                            </div>
+                                            <label className="relative inline-flex items-center cursor-pointer">
+                                                <input
+                                                    type="checkbox"
+                                                    name="notifEmail"
+                                                    checked={formData.notifEmail}
+                                                    onChange={handleInputChange}
+                                                    className="sr-only peer"
+                                                />
+                                                <div className="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-blue-600"></div>
+                                            </label>
+                                        </div>
+
+                                        <div className="flex items-center justify-between p-4 bg-gray-50 rounded-xl border border-gray-100">
+                                            <div>
+                                                <p className="text-sm font-bold text-gray-900">Mobile Push Notifications</p>
+                                                <p className="text-xs text-gray-500 mt-0.5">Get push notifications on your mobile device</p>
+                                            </div>
+                                            <label className="relative inline-flex items-center cursor-pointer">
+                                                <input
+                                                    type="checkbox"
+                                                    name="notifMobile"
+                                                    checked={formData.notifMobile}
+                                                    onChange={handleInputChange}
+                                                    className="sr-only peer"
+                                                />
+                                                <div className="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-blue-600"></div>
+                                            </label>
+                                        </div>
+                                    </div>
+
+                                    <div className="flex justify-end pt-4">
+                                        <button
+                                            onClick={handleSaveNotifications}
+                                            className="px-6 py-3 bg-blue-600 hover:bg-blue-700 text-white rounded-xl text-sm font-black uppercase tracking-widest shadow-lg shadow-blue-600/20 transition-all"
+                                        >
+                                            Save Preferences
+                                        </button>
                                     </div>
                                 </div>
                             )}
-                        </div>
-
-                        <div className="px-8 py-6 bg-gray-50 border-t border-gray-100 flex justify-end">
-                            <button
-                                onClick={handleCommitState}
-                                disabled={isLoading}
-                                className="px-8 py-3 bg-blue-600 text-white font-bold rounded-xl hover:bg-blue-700 transition-all shadow-lg shadow-blue-600/20 hover:-translate-y-0.5 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:translate-y-0"
-                            >
-                                {isLoading ? 'Saving...' : 'Save Changes'}
-                            </button>
                         </div>
                     </div>
                 </div>

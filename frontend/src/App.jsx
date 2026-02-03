@@ -57,7 +57,7 @@ import TeamMapping from './pages/admin/TeamMapping';
 import Financials from './pages/admin/Financials';
 import CommHub from './pages/admin/CommHub';
 import Testimonials from './pages/admin/Testimonials';
-import GlobalRequestDetail from './pages/admin/GlobalRequestDetail';
+import AdminRequestDetails from './pages/admin/AdminRequestDetails';
 import AdminSettings from './pages/admin/Settings';
 
 // Affiliate Pages
@@ -419,7 +419,7 @@ function App() {
                 path="/admin/requests/:id"
                 element={
                     <ProtectedRoute roles={['admin']}>
-                        <GlobalRequestDetail />
+                        <AdminRequestDetails />
                     </ProtectedRoute>
                 }
             />

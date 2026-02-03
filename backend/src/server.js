@@ -30,6 +30,8 @@ import notificationRoutes from './routes/notification.routes.js';
 import adminRoutes from './routes/admin.routes.js';
 import clientRoutes from './routes/client.routes.js';
 import brandAssetRoutes from './routes/brandAsset.routes.js';
+import brandKitRoutes from './routes/brandKit.routes.js';
+import requestFileRoutes from './routes/requestFile.routes.js';
 import { streamFile } from './controllers/file.controller.js'; // For public thumbnails if needed
 
 // Import socket handlers
@@ -104,6 +106,8 @@ app.use('/api/notifications', notificationRoutes);
 app.use('/api/admin', adminRoutes);
 app.use('/api/client', clientRoutes);
 app.use('/api/brand-assets', brandAssetRoutes);
+app.use('/api/brand-kit', brandKitRoutes);
+app.use('/api/request-files', requestFileRoutes);
 
 // 404 handler
 app.use((req, res) => {

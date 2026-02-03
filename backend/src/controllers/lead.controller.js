@@ -63,6 +63,47 @@ export const createLead = async (req, res) => {
     }
 };
 
+export const updateLead = async (req, res) => {
+    try {
+        const { id } = req.params;
+        const { company, contactName, email, phone, projectType, budget, notes } = req.body;
+
+        const lead = await Lead.findByPk(id);
+        if (!lead) return res.status(404).json({ success: false, error: { message: 'Lead not found' } });
+
+        await lead.update({
+            company,
+            contactName,
+            email,
+            phone,
+            projectType,
+            budget,
+            notes
+        });
+
+        res.json({ success: true, message: 'Lead updated successfully', data: lead });
+    } catch (error) {
+        console.error('Update lead error:', error);
+        res.status(500).json({ success: false, error: { message: 'Failed to update lead' } });
+    }
+};
+
+export const deleteLead = async (req, res) => {
+    try {
+        const { id } = req.params;
+
+        const lead = await Lead.findByPk(id);
+        if (!lead) return res.status(404).json({ success: false, error: { message: 'Lead not found' } });
+
+        await lead.destroy();
+
+        res.json({ success: true, message: 'Lead deleted successfully' });
+    } catch (error) {
+        console.error('Delete lead error:', error);
+        res.status(500).json({ success: false, error: { message: 'Failed to delete lead' } });
+    }
+};
+
 export const updateLeadStatus = async (req, res) => {
     try {
         const { id } = req.params;

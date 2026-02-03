@@ -27,6 +27,17 @@ import {
     updateAffiliateCommission,
     approvePayout
 } from '../controllers/admin.controller.js';
+import {
+    getAllRequests,
+    getRequestDetails,
+    updateRequestStatus,
+    assignDesigner,
+    assignManager,
+    addRequestNote,
+    getAvailableDesigners,
+    getAvailableManagers,
+    getRequestTimeline
+} from '../controllers/adminRequest.controller.js';
 import { getAllPlans } from '../controllers/subscriptionPlan.controller.js';
 import { authenticate } from '../middleware/auth.middleware.js';
 import { isAdmin } from '../middleware/rbac.middleware.js';
@@ -91,7 +102,29 @@ router.post('/financials/refunds/:id', [
 ], handleRefund);
 
 // Global Request Management
-router.get('/requests', getAdminRequests);
+router.get('/requests', getAllRequests);
+router.get('/requests/:id', getRequestDetails);
+router.put('/requests/:id/status', [
+    body('status').isIn(['queued', 'active', 'assigned', 'in_progress', 'review', 'completed', 'cancelled']).withMessage('Invalid status'),
+    body('note').optional().isString()
+], updateRequestStatus);
+router.put('/requests/:id/assign-designer', [
+    body('designerId').isUUID().withMessage('Valid designer ID required')
+], assignDesigner);
+router.put('/requests/:id/assign-manager', [
+    body('managerId').isUUID().withMessage('Valid manager ID required')
+], assignManager);
+router.post('/requests/:id/notes', [
+    body('note').notEmpty().withMessage('Note cannot be empty'),
+    body('isInternal').optional().isBoolean()
+], addRequestNote);
+router.get('/requests/:id/timeline', getRequestTimeline);
+
+// Get available designers and managers
+router.get('/designers/available', getAvailableDesigners);
+router.get('/managers/available', getAvailableManagers);
+
+// Legacy bulk update route (keeping for backwards compatibility)
 router.patch('/requests/bulk', [
     body('requestIds').isArray().withMessage('Request IDs must be an array'),
 ], bulkUpdateRequests);
@@ -118,6 +151,8 @@ router.get('/plans', getAllPlans);
 import {
     getAllLeads,
     createLead,
+    updateLead,
+    deleteLead,
     updateLeadStatus,
     createQuote
 } from '../controllers/lead.controller.js';
@@ -128,6 +163,8 @@ router.post('/leads', [
     body('contactName').notEmpty().withMessage('Contact name required'),
     body('email').isEmail().withMessage('Valid email required')
 ], createLead);
+router.put('/leads/:id', updateLead);
+router.delete('/leads/:id', deleteLead);
 router.patch('/leads/:id/status', updateLeadStatus);
 router.post('/leads/:id/quote', [
     body('amount').isNumeric().withMessage('Valid amount required'),

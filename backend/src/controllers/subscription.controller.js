@@ -18,9 +18,57 @@ export const getUserSubscription = async (req, res) => {
             order: [['created_at', 'DESC']]
         });
 
+        if (!subscription) {
+            return res.json({
+                success: true,
+                data: null
+            });
+        }
+
+        // Calculate credits with accurate breakdown
+        const plan = subscription.plan;
+
+        const totalCredits =
+            (plan.monthlyGraphicsCredits || 0) +
+            (plan.monthlyVideoCredits || 0) +
+            (plan.monthlyWebCredits || 0);
+
+        const graphicsUsed = (plan.monthlyGraphicsCredits || 0) - (subscription.graphicsCreditsRemaining || 0);
+        const videoUsed = (plan.monthlyVideoCredits || 0) - (subscription.videoCreditsRemaining || 0);
+        const webUsed = (plan.monthlyWebCredits || 0) - (subscription.webCreditsRemaining || 0);
+
+        const usedCredits = graphicsUsed + videoUsed + webUsed;
+        const remainingCredits = totalCredits - usedCredits;
+
+        // Add credits object to response
+        const subscriptionData = subscription.toJSON();
+        subscriptionData.credits = {
+            total: totalCredits,
+            used: usedCredits,
+            remaining: remainingCredits,
+            breakdown: {
+                graphics: {
+                    total: plan.monthlyGraphicsCredits || 0,
+                    used: graphicsUsed,
+                    remaining: subscription.graphicsCreditsRemaining || 0
+                },
+                video: {
+                    total: plan.monthlyVideoCredits || 0,
+                    used: videoUsed,
+                    remaining: subscription.videoCreditsRemaining || 0
+                },
+                web: {
+                    total: plan.monthlyWebCredits || 0,
+                    used: webUsed,
+                    remaining: subscription.webCreditsRemaining || 0
+                }
+            },
+            resetDate: subscription.creditsResetDate
+        };
+
         res.json({
             success: true,
-            data: subscription
+            data: subscriptionData
         });
     } catch (error) {
         console.error('Get subscription error:', error);

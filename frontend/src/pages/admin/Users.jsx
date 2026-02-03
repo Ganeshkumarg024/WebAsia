@@ -1,33 +1,52 @@
 import React, { useEffect, useState } from 'react';
 import DashboardLayout from '../../components/layout/DashboardLayout';
 import useAdminStore from '../../store/adminStore';
+import Modal from '../../components/shared/Modal';
+import ConfirmDialog from '../../components/shared/ConfirmDialog';
+import showToast from '../../components/shared/Toast';
 import {
     MagnifyingGlassIcon,
     FunnelIcon,
     UserPlusIcon,
     PencilSquareIcon,
     ClockIcon,
-    LockClosedIcon,
     NoSymbolIcon,
     CheckCircleIcon,
-    EllipsisVerticalIcon
+    TrashIcon
 } from '@heroicons/react/24/outline';
 
 const Users = () => {
-    const { users, loading, fetchUsers, updateUser } = useAdminStore();
+    const { users, loading, fetchUsers, createUser, updateUser, deleteUser } = useAdminStore();
     const [activeTab, setActiveTab] = useState('client');
     const [searchQuery, setSearchQuery] = useState('');
     const [statusFilter, setStatusFilter] = useState('all');
+
+    // Modal states
+    const [showCreateModal, setShowCreateModal] = useState(false);
+    const [showEditModal, setShowEditModal] = useState(false);
+    const [showDeleteDialog, setShowDeleteDialog] = useState(false);
+    const [selectedUser, setSelectedUser] = useState(null);
+    const [submitting, setSubmitting] = useState(false);
+
+    // Form state
+    const [formData, setFormData] = useState({
+        firstName: '',
+        lastName: '',
+        email: '',
+        password: '',
+        role: 'client',
+        status: 'active'
+    });
 
     useEffect(() => {
         fetchUsers({ role: activeTab, search: searchQuery, status: statusFilter === 'all' ? undefined : statusFilter });
     }, [activeTab, searchQuery, statusFilter]);
 
     const tabs = [
-        { id: 'client', label: 'Clients', count: 124 },
-        { id: 'designer', label: 'Designers', count: 48 },
-        { id: 'manager', label: 'Managers', count: 12 },
-        { id: 'affiliate', label: 'Affiliates', count: 8, pulse: true },
+        { id: 'client', label: 'Clients', count: users.filter(u => u.role === 'client').length },
+        { id: 'designer', label: 'Designers', count: users.filter(u => u.role === 'designer').length },
+        { id: 'manager', label: 'Managers', count: users.filter(u => u.role === 'manager').length },
+        { id: 'affiliate', label: 'Affiliates', count: users.filter(u => u.role === 'affiliate').length },
     ];
 
     const getStatusStyles = (status) => {
@@ -43,6 +62,93 @@ const Users = () => {
         }
     };
 
+    const handleCreateUser = async () => {
+        if (!formData.firstName || !formData.lastName || !formData.email || !formData.password) {
+            showToast.error('Please fill in all required fields');
+            return;
+        }
+
+        setSubmitting(true);
+        const result = await createUser(formData);
+        setSubmitting(false);
+
+        if (result.success) {
+            showToast.success('User created successfully');
+            setShowCreateModal(false);
+            resetForm();
+            fetchUsers({ role: activeTab });
+        } else {
+            showToast.error(result.error || 'Failed to create user');
+        }
+    };
+
+    const handleEditUser = async () => {
+        if (!selectedUser) return;
+
+        setSubmitting(true);
+        const result = await updateUser(selectedUser.id, formData);
+        setSubmitting(false);
+
+        if (result.success) {
+            showToast.success('User updated successfully');
+            setShowEditModal(false);
+            setSelectedUser(null);
+            resetForm();
+        } else {
+            showToast.error(result.error || 'Failed to update user');
+        }
+    };
+
+    const handleDeleteUser = async () => {
+        if (!selectedUser) return;
+
+        setSubmitting(true);
+        const result = await deleteUser(selectedUser.id);
+        setSubmitting(false);
+
+        if (result.success) {
+            showToast.success('User deleted successfully');
+            setShowDeleteDialog(false);
+            setSelectedUser(null);
+        } else {
+            showToast.error(result.error || 'Failed to delete user');
+        }
+    };
+
+    const openEditModal = (user) => {
+        setSelectedUser(user);
+        setFormData({
+            firstName: user.firstName || '',
+            lastName: user.lastName || '',
+            email: user.email || '',
+            role: user.role || 'client',
+            status: user.status || 'active',
+            password: '' // Don't populate password
+        });
+        setShowEditModal(true);
+    };
+
+    const openDeleteDialog = (user) => {
+        setSelectedUser(user);
+        setShowDeleteDialog(true);
+    };
+
+    const resetForm = () => {
+        setFormData({
+            firstName: '',
+            lastName: '',
+            email: '',
+            password: '',
+            role: 'client',
+            status: 'active'
+        });
+    };
+
+    const handleInputChange = (e) => {
+        const { name, value } = e.target;
+        setFormData(prev => ({ ...prev, [name]: value }));
+    };
+
     return (
         <DashboardLayout breadcrumbs={['Admin', 'User Management']}>
             <div className="flex items-center justify-between mb-8">
@@ -50,7 +156,10 @@ const Users = () => {
                     <h1 className="text-3xl font-black text-gray-900 tracking-tight">Universal User Management</h1>
                     <p className="text-gray-500 font-medium mt-1">Manage platform-wide user roles and permissions</p>
                 </div>
-                <button className="flex items-center gap-2 px-6 py-3 bg-blue-600 hover:bg-blue-700 text-white rounded-2xl text-sm font-bold shadow-lg shadow-blue-600/20 transition-all hover:-translate-y-1">
+                <button
+                    onClick={() => setShowCreateModal(true)}
+                    className="flex items-center gap-2 px-6 py-3 bg-blue-600 hover:bg-blue-700 text-white rounded-2xl text-sm font-bold shadow-lg shadow-blue-600/20 transition-all hover:-translate-y-1"
+                >
                     <UserPlusIcon className="w-5 h-5" />
                     Add New User
                 </button>
@@ -76,7 +185,7 @@ const Users = () => {
                                 value={statusFilter}
                                 onChange={(e) => setStatusFilter(e.target.value)}
                             >
-                                <option value="all">Check Status</option>
+                                <option value="all">All Status</option>
                                 <option value="active">Active</option>
                                 <option value="suspended">Suspended</option>
                                 <option value="pending">Pending</option>
@@ -106,9 +215,6 @@ const Users = () => {
                                 }`}>
                                 {tab.count}
                             </span>
-                            {tab.pulse && (
-                                <span className="absolute -top-1 -right-1 w-2.5 h-2.5 bg-red-500 border-2 border-white rounded-full"></span>
-                            )}
                         </button>
                     ))}
                 </div>
@@ -124,7 +230,7 @@ const Users = () => {
                                 <th className="px-8 py-5 text-[11px] font-black uppercase tracking-widest text-gray-400">Role / Plan</th>
                                 <th className="px-8 py-5 text-[11px] font-black uppercase tracking-widest text-gray-400">Join Date</th>
                                 <th className="px-8 py-5 text-[11px] font-black uppercase tracking-widest text-gray-400">Status</th>
-                                <th className="px-8 py-5 text-[11px] font-black uppercase tracking-widest text-gray-400 text-right">Start</th>
+                                <th className="px-8 py-5 text-[11px] font-black uppercase tracking-widest text-gray-400 text-right">Actions</th>
                             </tr>
                         </thead>
                         <tbody className="divide-y divide-gray-50">
@@ -186,7 +292,11 @@ const Users = () => {
                                         </td>
                                         <td className="px-8 py-5 text-right">
                                             <div className="flex justify-end gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
-                                                <button className="p-2 rounded-xl text-gray-400 hover:bg-white hover:text-blue-600 hover:shadow-md transition-all">
+                                                <button
+                                                    onClick={() => openEditModal(user)}
+                                                    className="p-2 rounded-xl text-gray-400 hover:bg-white hover:text-blue-600 hover:shadow-md transition-all"
+                                                    title="Edit user"
+                                                >
                                                     <PencilSquareIcon className="w-4 h-4" />
                                                 </button>
                                                 <button
@@ -195,8 +305,16 @@ const Users = () => {
                                                         : 'text-red-400 hover:bg-white hover:text-red-600'
                                                         }`}
                                                     onClick={() => updateUser(user.id, { status: user.status === 'suspended' ? 'active' : 'suspended' })}
+                                                    title={user.status === 'suspended' ? 'Activate user' : 'Suspend user'}
                                                 >
                                                     {user.status === 'suspended' ? <CheckCircleIcon className="w-4 h-4" /> : <NoSymbolIcon className="w-4 h-4" />}
+                                                </button>
+                                                <button
+                                                    onClick={() => openDeleteDialog(user)}
+                                                    className="p-2 rounded-xl text-gray-400 hover:bg-white hover:text-red-600 hover:shadow-md transition-all"
+                                                    title="Delete user"
+                                                >
+                                                    <TrashIcon className="w-4 h-4" />
                                                 </button>
                                             </div>
                                         </td>
@@ -230,6 +348,236 @@ const Users = () => {
                     </div>
                 </div>
             </div>
+
+            {/* Create User Modal */}
+            <Modal
+                isOpen={showCreateModal}
+                onClose={() => {
+                    setShowCreateModal(false);
+                    resetForm();
+                }}
+                title="Create New User"
+                size="lg"
+            >
+                <div className="space-y-6">
+                    <div className="grid grid-cols-2 gap-4">
+                        <div>
+                            <label className="block text-xs font-bold text-gray-500 uppercase tracking-wide mb-2">First Name *</label>
+                            <input
+                                type="text"
+                                name="firstName"
+                                value={formData.firstName}
+                                onChange={handleInputChange}
+                                className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl text-gray-900 font-medium focus:bg-white focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 outline-none transition-all"
+                                placeholder="John"
+                            />
+                        </div>
+                        <div>
+                            <label className="block text-xs font-bold text-gray-500 uppercase tracking-wide mb-2">Last Name *</label>
+                            <input
+                                type="text"
+                                name="lastName"
+                                value={formData.lastName}
+                                onChange={handleInputChange}
+                                className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl text-gray-900 font-medium focus:bg-white focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 outline-none transition-all"
+                                placeholder="Doe"
+                            />
+                        </div>
+                    </div>
+
+                    <div>
+                        <label className="block text-xs font-bold text-gray-500 uppercase tracking-wide mb-2">Email *</label>
+                        <input
+                            type="email"
+                            name="email"
+                            value={formData.email}
+                            onChange={handleInputChange}
+                            className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl text-gray-900 font-medium focus:bg-white focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 outline-none transition-all"
+                            placeholder="john.doe@example.com"
+                        />
+                    </div>
+
+                    <div>
+                        <label className="block text-xs font-bold text-gray-500 uppercase tracking-wide mb-2">Password *</label>
+                        <input
+                            type="password"
+                            name="password"
+                            value={formData.password}
+                            onChange={handleInputChange}
+                            className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl text-gray-900 font-medium focus:bg-white focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 outline-none transition-all"
+                            placeholder="••••••••"
+                        />
+                    </div>
+
+                    <div className="grid grid-cols-2 gap-4">
+                        <div>
+                            <label className="block text-xs font-bold text-gray-500 uppercase tracking-wide mb-2">Role *</label>
+                            <select
+                                name="role"
+                                value={formData.role}
+                                onChange={handleInputChange}
+                                className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl text-gray-900 font-medium focus:bg-white focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 outline-none transition-all cursor-pointer"
+                            >
+                                <option value="client">Client</option>
+                                <option value="designer">Designer</option>
+                                <option value="manager">Manager</option>
+                                <option value="affiliate">Affiliate</option>
+                                <option value="admin">Admin</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label className="block text-xs font-bold text-gray-500 uppercase tracking-wide mb-2">Status *</label>
+                            <select
+                                name="status"
+                                value={formData.status}
+                                onChange={handleInputChange}
+                                className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl text-gray-900 font-medium focus:bg-white focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 outline-none transition-all cursor-pointer"
+                            >
+                                <option value="active">Active</option>
+                                <option value="inactive">Inactive</option>
+                                <option value="suspended">Suspended</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div className="flex items-center gap-3 pt-4">
+                        <button
+                            onClick={() => {
+                                setShowCreateModal(false);
+                                resetForm();
+                            }}
+                            disabled={submitting}
+                            className="flex-1 px-4 py-3 bg-gray-100 hover:bg-gray-200 text-gray-700 rounded-xl text-sm font-black uppercase tracking-widest transition-all disabled:opacity-50"
+                        >
+                            Cancel
+                        </button>
+                        <button
+                            onClick={handleCreateUser}
+                            disabled={submitting}
+                            className="flex-1 px-4 py-3 bg-blue-600 hover:bg-blue-700 text-white rounded-xl text-sm font-black uppercase tracking-widest shadow-lg shadow-blue-600/20 transition-all disabled:opacity-50"
+                        >
+                            {submitting ? 'Creating...' : 'Create User'}
+                        </button>
+                    </div>
+                </div>
+            </Modal>
+
+            {/* Edit User Modal */}
+            <Modal
+                isOpen={showEditModal}
+                onClose={() => {
+                    setShowEditModal(false);
+                    setSelectedUser(null);
+                    resetForm();
+                }}
+                title="Edit User"
+                size="lg"
+            >
+                <div className="space-y-6">
+                    <div className="grid grid-cols-2 gap-4">
+                        <div>
+                            <label className="block text-xs font-bold text-gray-500 uppercase tracking-wide mb-2">First Name</label>
+                            <input
+                                type="text"
+                                name="firstName"
+                                value={formData.firstName}
+                                onChange={handleInputChange}
+                                className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl text-gray-900 font-medium focus:bg-white focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 outline-none transition-all"
+                            />
+                        </div>
+                        <div>
+                            <label className="block text-xs font-bold text-gray-500 uppercase tracking-wide mb-2">Last Name</label>
+                            <input
+                                type="text"
+                                name="lastName"
+                                value={formData.lastName}
+                                onChange={handleInputChange}
+                                className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl text-gray-900 font-medium focus:bg-white focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 outline-none transition-all"
+                            />
+                        </div>
+                    </div>
+
+                    <div>
+                        <label className="block text-xs font-bold text-gray-500 uppercase tracking-wide mb-2">Email</label>
+                        <input
+                            type="email"
+                            name="email"
+                            value={formData.email}
+                            disabled
+                            className="w-full px-4 py-3 bg-gray-100 border border-gray-200 rounded-xl text-gray-500 font-medium cursor-not-allowed"
+                        />
+                        <p className="text-xs text-gray-400 mt-1">Email cannot be changed</p>
+                    </div>
+
+                    <div className="grid grid-cols-2 gap-4">
+                        <div>
+                            <label className="block text-xs font-bold text-gray-500 uppercase tracking-wide mb-2">Role</label>
+                            <select
+                                name="role"
+                                value={formData.role}
+                                onChange={handleInputChange}
+                                className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl text-gray-900 font-medium focus:bg-white focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 outline-none transition-all cursor-pointer"
+                            >
+                                <option value="client">Client</option>
+                                <option value="designer">Designer</option>
+                                <option value="manager">Manager</option>
+                                <option value="affiliate">Affiliate</option>
+                                <option value="admin">Admin</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label className="block text-xs font-bold text-gray-500 uppercase tracking-wide mb-2">Status</label>
+                            <select
+                                name="status"
+                                value={formData.status}
+                                onChange={handleInputChange}
+                                className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl text-gray-900 font-medium focus:bg-white focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 outline-none transition-all cursor-pointer"
+                            >
+                                <option value="active">Active</option>
+                                <option value="inactive">Inactive</option>
+                                <option value="suspended">Suspended</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div className="flex items-center gap-3 pt-4">
+                        <button
+                            onClick={() => {
+                                setShowEditModal(false);
+                                setSelectedUser(null);
+                                resetForm();
+                            }}
+                            disabled={submitting}
+                            className="flex-1 px-4 py-3 bg-gray-100 hover:bg-gray-200 text-gray-700 rounded-xl text-sm font-black uppercase tracking-widest transition-all disabled:opacity-50"
+                        >
+                            Cancel
+                        </button>
+                        <button
+                            onClick={handleEditUser}
+                            disabled={submitting}
+                            className="flex-1 px-4 py-3 bg-blue-600 hover:bg-blue-700 text-white rounded-xl text-sm font-black uppercase tracking-widest shadow-lg shadow-blue-600/20 transition-all disabled:opacity-50"
+                        >
+                            {submitting ? 'Saving...' : 'Save Changes'}
+                        </button>
+                    </div>
+                </div>
+            </Modal>
+
+            {/* Delete Confirmation Dialog */}
+            <ConfirmDialog
+                isOpen={showDeleteDialog}
+                onClose={() => {
+                    setShowDeleteDialog(false);
+                    setSelectedUser(null);
+                }}
+                onConfirm={handleDeleteUser}
+                title="Delete User"
+                message={`Are you sure you want to delete ${selectedUser?.firstName} ${selectedUser?.lastName}? This action cannot be undone.`}
+                confirmText="Delete"
+                cancelText="Cancel"
+                variant="danger"
+                loading={submitting}
+            />
         </DashboardLayout>
     );
 };
