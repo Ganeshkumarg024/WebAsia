@@ -65,8 +65,12 @@ const Benefits = () => {
     ];
 
     return (
-        <section id="benefits" className="py-20 bg-white">
-            <div className="container mx-auto px-4 sm:px-6 lg:px-8">
+        <section id="benefits" className="py-20 bg-gradient-to-b from-white via-blue-50/30 to-white relative overflow-hidden">
+            {/* Decorative Background Elements */}
+            <div className="absolute top-20 right-10 w-72 h-72 bg-primary-200 rounded-full mix-blend-multiply filter blur-3xl opacity-30 animate-blob"></div>
+            <div className="absolute bottom-20 left-10 w-72 h-72 bg-secondary-200 rounded-full mix-blend-multiply filter blur-3xl opacity-30 animate-blob animation-delay-2000"></div>
+
+            <div className="container mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
                 <motion.div
                     ref={ref}
                     initial={{ opacity: 0, y: 30 }}
@@ -76,7 +80,7 @@ const Benefits = () => {
                 >
                     <h2 className="text-4xl sm:text-5xl font-bold mb-4">
                         Discover WebAsia's{' '}
-                        <span className="bg-gradient-to-r from-primary-500 to-secondary-500 bg-clip-text text-transparent">
+                        <span className="bg-gradient-to-r from-primary-500 via-purple-500 to-secondary-500 bg-clip-text text-transparent">
                             Key Benefits
                         </span>
                     </h2>
@@ -92,12 +96,16 @@ const Benefits = () => {
                             initial={{ opacity: 0, y: 30 }}
                             animate={inView ? { opacity: 1, y: 0 } : {}}
                             transition={{ duration: 0.6, delay: index * 0.1 }}
-                            className="glass-card p-8 card-3d group"
+                            className="glass-card-3d p-8 group cursor-pointer"
                         >
-                            <div className="w-16 h-16 bg-gradient-primary rounded-2xl flex items-center justify-center text-white mb-6 group-hover:scale-110 transition-transform">
+                            <motion.div
+                                className="w-16 h-16 bg-gradient-to-br from-primary-500 to-primary-600 rounded-2xl flex items-center justify-center text-white mb-6 shadow-lg"
+                                whileHover={{ rotate: 360, scale: 1.1 }}
+                                transition={{ duration: 0.6 }}
+                            >
                                 {benefit.icon}
-                            </div>
-                            <h3 className="text-2xl font-bold mb-3 text-gray-800">
+                            </motion.div>
+                            <h3 className="text-2xl font-bold mb-3 text-gray-800 group-hover:text-primary-600 transition-colors">
                                 {benefit.title}
                             </h3>
                             <p className="text-gray-600 leading-relaxed">
