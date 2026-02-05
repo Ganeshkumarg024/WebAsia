@@ -76,13 +76,13 @@ const LandingNavbar = () => {
                     <div className="hidden md:flex items-center space-x-4">
                         <Link
                             to="/login"
-                            className="text-gray-700 hover:text-primary-500 transition-colors font-medium"
+                            className="text-gray-700 hover:text-primary-600 transition-colors font-medium focus:outline-none focus:ring-2 focus:ring-primary-300 rounded px-3 py-2"
                         >
                             Login
                         </Link>
                         <Link
                             to="/register"
-                            className="btn-primary px-6 py-2.5 rounded-full shadow-3d hover:shadow-3d-lg transform hover:scale-105 transition-all"
+                            className="bg-primary-600 text-white px-6 py-2.5 rounded-full shadow-lg hover:shadow-xl hover:bg-primary-700 transform hover:scale-105 transition-all focus:outline-none focus:ring-4 focus:ring-primary-300 font-semibold"
                         >
                             Get Started
                         </Link>
