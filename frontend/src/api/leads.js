@@ -19,9 +19,21 @@ export const leadsAPI = {
         return response.data;
     },
 
+    // Update lead
+    updateLead: async (id, leadData) => {
+        const response = await apiClient.put(`/admin/leads/${id}`, leadData);
+        return response.data;
+    },
+
     // Update lead status
     updateStatus: async (id, status, notes) => {
-        const response = await apiClient.put(`/admin/leads/${id}/status`, { status, notes });
+        const response = await apiClient.patch(`/admin/leads/${id}/status`, { status, notes });
+        return response.data;
+    },
+
+    // Delete lead
+    deleteLead: async (id) => {
+        const response = await apiClient.delete(`/admin/leads/${id}`);
         return response.data;
     },
 

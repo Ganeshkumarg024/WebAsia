@@ -13,6 +13,9 @@ import Payment from './Payment.js';
 import RequestActivity from './RequestActivity.js';
 import BrandAsset from './BrandAsset.js';
 import FinancialLog from './FinancialLog.js';
+import Lead from './Lead.js';
+import BrandKit from './BrandKit.js';
+import SupportMessage from './SupportMessage.js';
 
 // User associations
 User.hasMany(Subscription, { foreignKey: 'userId', as: 'subscriptions' });
@@ -30,6 +33,9 @@ User.hasMany(BrandAsset, { foreignKey: 'userId', as: 'brandAssets' });
 User.hasMany(FinancialLog, { foreignKey: 'userId', as: 'financialLogs' });
 User.belongsTo(User, { foreignKey: 'managerId', as: 'manager' });
 User.hasMany(User, { foreignKey: 'managerId', as: 'designers' });
+User.hasOne(BrandKit, { foreignKey: 'userId', as: 'brandKit' });
+User.hasMany(SupportMessage, { foreignKey: 'clientId', as: 'supportMessagesAsClient' });
+User.hasMany(SupportMessage, { foreignKey: 'adminId', as: 'supportMessagesAsAdmin' });
 
 // SubscriptionPlan associations
 SubscriptionPlan.hasMany(Subscription, { foreignKey: 'planId', as: 'subscriptions' });
@@ -97,6 +103,13 @@ BrandAsset.belongsTo(File, { foreignKey: 'fileId', as: 'file' });
 FinancialLog.belongsTo(User, { foreignKey: 'userId', as: 'user' });
 FinancialLog.belongsTo(Payment, { foreignKey: 'paymentId', as: 'payment' });
 
+// BrandKit associations
+BrandKit.belongsTo(User, { foreignKey: 'userId', as: 'user' });
+
+// SupportMessage associations
+SupportMessage.belongsTo(User, { foreignKey: 'clientId', as: 'client' });
+SupportMessage.belongsTo(User, { foreignKey: 'adminId', as: 'admin' });
+
 // Sync database (development only)
 export const syncDatabase = async (options = {}) => {
     try {
@@ -123,5 +136,8 @@ export {
     Payment,
     RequestActivity,
     BrandAsset,
-    FinancialLog
+    FinancialLog,
+    Lead,
+    BrandKit,
+    SupportMessage
 };

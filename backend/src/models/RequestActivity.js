@@ -28,6 +28,7 @@ const RequestActivity = sequelize.define('RequestActivity', {
     activityType: {
         type: DataTypes.ENUM(
             'created',
+            'status_changed',
             'assigned',
             'reassigned',
             'started',

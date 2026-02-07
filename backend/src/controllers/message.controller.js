@@ -82,7 +82,7 @@ export const getRequestMessages = async (req, res) => {
                 { model: User, as: 'sender', attributes: ['id', 'firstName', 'lastName', 'role', 'photoUrl'] },
                 { model: File, as: 'file', attributes: ['id', 'fileName', 'originalName', 'mimeType', 'fileSize'] }
             ],
-            order: [['createdAt', 'DESC']],
+            order: [['created_at', 'DESC']],
             limit: parseInt(limit),
             offset: parseInt(offset)
         });

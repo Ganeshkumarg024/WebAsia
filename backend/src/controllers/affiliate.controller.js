@@ -41,7 +41,7 @@ export const getReferrals = async (req, res) => {
         const affiliate = await affiliateService.getAffiliateStats(req.user.id);
         const referrals = await Referral.findAll({
             where: { affiliateId: affiliate.id },
-            order: [['createdAt', 'DESC']]
+            order: [['created_at', 'DESC']]
         });
 
         res.json({

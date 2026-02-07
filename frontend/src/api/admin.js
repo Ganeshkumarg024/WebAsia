@@ -68,24 +68,34 @@ export const adminAPI = {
         return response.data;
     },
 
+    getDashboardStats: async () => {
+        const response = await apiClient.get('/admin/dashboard/stats');
+        return response.data;
+    },
+
     // Subscription Plans Management
+    getPlans: async () => {
+        const response = await apiClient.get('/subscription-plans');
+        return response.data;
+    },
+
     getPlan: async (id) => {
-        const response = await apiClient.get(`/admin/plans/${id}`);
+        const response = await apiClient.get(`/subscription-plans/${id}`);
         return response.data;
     },
 
     createPlan: async (planData) => {
-        const response = await apiClient.post('/admin/plans', planData);
+        const response = await apiClient.post('/subscription-plans', planData);
         return response.data;
     },
 
     updatePlan: async (id, planData) => {
-        const response = await apiClient.put(`/admin/plans/${id}`, planData);
+        const response = await apiClient.put(`/subscription-plans/${id}`, planData);
         return response.data;
     },
 
     deletePlan: async (id) => {
-        const response = await apiClient.delete(`/admin/plans/${id}`);
+        const response = await apiClient.delete(`/subscription-plans/${id}`);
         return response.data;
     },
 
@@ -194,6 +204,62 @@ export const adminAPI = {
         const response = await apiClient.put('/admin/settings', settings);
         return response.data;
     },
+
+    // Request Management
+    getAllRequests: async (params = {}) => {
+        const response = await apiClient.get('/admin/requests', { params });
+        return response.data;
+    },
+
+    getRequestDetails: async (requestId) => {
+        const response = await apiClient.get(`/admin/requests/${requestId}`);
+        return response.data;
+    },
+
+    updateRequestStatus: async (requestId, status, note = null) => {
+        const response = await apiClient.put(`/admin/requests/${requestId}/status`, {
+            status,
+            note
+        });
+        return response.data;
+    },
+
+    assignDesigner: async (requestId, designerId) => {
+        const response = await apiClient.put(`/admin/requests/${requestId}/assign-designer`, {
+            designerId
+        });
+        return response.data;
+    },
+
+    assignManager: async (requestId, managerId) => {
+        const response = await apiClient.put(`/admin/requests/${requestId}/assign-manager`, {
+            managerId
+        });
+        return response.data;
+    },
+
+    addRequestNote: async (requestId, note, isInternal = true) => {
+        const response = await apiClient.post(`/admin/requests/${requestId}/notes`, {
+            note,
+            isInternal
+        });
+        return response.data;
+    },
+
+    getRequestTimeline: async (requestId) => {
+        const response = await apiClient.get(`/admin/requests/${requestId}/timeline`);
+        return response.data;
+    },
+
+    getAvailableDesigners: async () => {
+        const response = await apiClient.get('/admin/designers/available');
+        return response.data;
+    },
+
+    getAvailableManagers: async () => {
+        const response = await apiClient.get('/admin/managers/available');
+        return response.data;
+    }
 };
 
 export default adminAPI;

@@ -30,6 +30,9 @@ import notificationRoutes from './routes/notification.routes.js';
 import adminRoutes from './routes/admin.routes.js';
 import clientRoutes from './routes/client.routes.js';
 import brandAssetRoutes from './routes/brandAsset.routes.js';
+import brandKitRoutes from './routes/brandKit.routes.js';
+import requestFileRoutes from './routes/requestFile.routes.js';
+import supportChatRoutes from './routes/supportChat.routes.js';
 import { streamFile } from './controllers/file.controller.js'; // For public thumbnails if needed
 
 // Import socket handlers
@@ -47,7 +50,17 @@ const io = new Server(httpServer, {
 });
 
 // Middleware
-app.use(helmet()); // Security headers
+// CORS configuration - Must be first to apply to static files too
+app.use(cors({
+    origin: config.cors.allowedOrigins,
+    credentials: true,
+    methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH'],
+    allowedHeaders: ['Content-Type', 'Authorization']
+}));
+
+app.use(helmet({
+    crossOriginResourcePolicy: { policy: "cross-origin" }
+})); // Security headers - Update for static resources
 app.use(compression()); // Gzip compression
 app.use(morgan('dev')); // HTTP request logger
 app.use(express.json({ limit: '10mb' }));
@@ -58,14 +71,6 @@ app.use(cookieParser());
 // Note: Core files are served via secure stream route /api/files/stream/:id
 const uploadsPath = path.resolve(process.cwd(), config.storage.localPath);
 app.use('/uploads', express.static(uploadsPath));
-
-// CORS configuration
-app.use(cors({
-    origin: config.cors.allowedOrigins,
-    credentials: true,
-    methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH'],
-    allowedHeaders: ['Content-Type', 'Authorization']
-}));
 
 // Health check endpoint
 app.get('/health', (req, res) => {
@@ -102,6 +107,9 @@ app.use('/api/notifications', notificationRoutes);
 app.use('/api/admin', adminRoutes);
 app.use('/api/client', clientRoutes);
 app.use('/api/brand-assets', brandAssetRoutes);
+app.use('/api/brand-kit', brandKitRoutes);
+app.use('/api/request-files', requestFileRoutes);
+app.use('/api/support', supportChatRoutes);
 
 // 404 handler
 app.use((req, res) => {
@@ -201,4 +209,6 @@ process.on('SIGTERM', () => {
 
 startServer();
 
+
 export default app;
+

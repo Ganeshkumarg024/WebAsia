@@ -58,20 +58,21 @@ const File = sequelize.define('File', {
         allowNull: false,
         field: 'file_size'
     },
-    s3Key: {
+    filePath: {
         type: DataTypes.STRING(500),
         allowNull: false,
-        field: 's3_key'
+        field: 'file_path'
     },
-    s3Bucket: {
-        type: DataTypes.STRING(100),
+    uploadedByRole: {
+        type: DataTypes.ENUM('client', 'designer', 'admin'),
         allowNull: false,
-        field: 's3_bucket'
+        field: 'uploaded_by_role'
     },
-    s3Url: {
-        type: DataTypes.STRING(1000),
+    fileCategory: {
+        type: DataTypes.ENUM('reference', 'deliverable', 'revision', 'brief', 'other'),
         allowNull: false,
-        field: 's3_url'
+        defaultValue: 'other',
+        field: 'file_category'
     },
     thumbnailUrl: {
         type: DataTypes.STRING(1000),
@@ -91,6 +92,11 @@ const File = sequelize.define('File', {
             model: 'files',
             key: 'id'
         }
+    },
+    isVisible: {
+        type: DataTypes.BOOLEAN,
+        defaultValue: true,
+        field: 'is_visible'
     },
     metadata: {
         type: DataTypes.JSONB,

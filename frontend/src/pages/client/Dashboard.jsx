@@ -1,6 +1,18 @@
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
-import { DocumentTextIcon, ClockIcon, CheckCircleIcon, ArrowDownTrayIcon } from '@heroicons/react/24/outline';
+import {
+    DocumentTextIcon,
+    ClockIcon,
+    CheckCircleIcon,
+    ArrowDownTrayIcon,
+    SparklesIcon,
+    FolderArrowDownIcon,
+    PencilSquareIcon,
+    ArrowRightIcon,
+    ChatBubbleLeftIcon,
+    PlusIcon,
+    CheckBadgeIcon
+} from '@heroicons/react/24/outline';
 import useRequestStore from '../../store/requestStore';
 import useSubscriptionStore from '../../store/subscriptionStore';
 import useAuthStore from '../../store/authStore';
@@ -8,37 +20,70 @@ import StatCard from '../../components/shared/StatCard';
 import StatusBadge from '../../components/shared/StatusBadge';
 import ProgressBar from '../../components/shared/ProgressBar';
 import DashboardLayout from '../../components/layout/DashboardLayout';
-import { format } from 'date-fns';
-import { SparklesIcon, FolderArrowDownIcon, PencilSquareIcon, ArrowRightIcon, ChatBubbleLeftIcon, PlusIcon } from '@heroicons/react/24/outline';
+import BrandKitModal from '../../components/client/BrandKitModal';
+import brandKitAPI from '../../api/brandKit';
+import showToast from '../../components/shared/Toast';
+import { format, isValid } from 'date-fns';
 
 const Dashboard = () => {
     const navigate = useNavigate();
     const { user } = useAuthStore();
     const { requests, fetchRequests } = useRequestStore();
     const { currentSubscription, fetchCurrentSubscription } = useSubscriptionStore();
+    const [brandKit, setBrandKit] = useState(null);
+    const [showBrandKitModal, setShowBrandKitModal] = useState(false);
+    const [downloading, setDownloading] = useState(false);
 
     useEffect(() => {
         fetchRequests();
         fetchCurrentSubscription();
+        fetchBrandKit();
     }, [fetchRequests, fetchCurrentSubscription]);
 
-    // Format stats for display
-    const statCards = [
-        {
-            title: 'Active Requests',
-            value: requests.filter(r => ['pending', 'in-progress'].includes(r.status)).length.toString().padStart(2, '0'),
-            change: '+2', // Mockup placeholder
-            icon: SparklesIcon,
-            color: 'blue'
-        },
-        {
-            title: 'Available Credits',
-            value: currentSubscription?.credits?.remaining?.toString() || '00',
-            change: 'of ' + (currentSubscription?.credits?.total || '20'),
-            icon: FolderArrowDownIcon,
-            color: 'blue'
+    const fetchBrandKit = async () => {
+        try {
+            const result = await brandKitAPI.getBrandKit();
+            if (result.success) {
+                setBrandKit(result.data);
+            }
+        } catch (error) {
+            console.error('Failed to fetch brand kit:', error);
         }
-    ];
+    };
+
+    const handleDownloadAssets = async () => {
+        setDownloading(true);
+        try {
+            const blob = await brandKitAPI.downloadAssets();
+            const url = window.URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = 'brand-kit.zip';
+            document.body.appendChild(a);
+            a.click();
+            window.URL.revokeObjectURL(url);
+            document.body.removeChild(a);
+            showToast.success('Brand kit downloaded successfully');
+        } catch (error) {
+            showToast.error('Failed to download brand kit');
+        } finally {
+            setDownloading(false);
+        }
+    };
+
+    const calculateDaysUntilReset = () => {
+        if (!currentSubscription?.credits?.resetDate) return 'N/A';
+        const resetDate = new Date(currentSubscription.credits.resetDate);
+        if (!isValid(resetDate)) return 'N/A';
+
+        const today = new Date();
+        const diffTime = resetDate - today;
+        const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+        return diffDays > 0 ? `${diffDays} days` : 'Soon';
+    };
+
+    // Format stats for display
+    const activeTasksCount = requests.filter(r => !['completed', 'cancelled'].includes(r.status)).length.toString().padStart(2, '0');
 
     return (
         <DashboardLayout breadcrumbs={['Dashboard', 'Overview']}>
@@ -69,36 +114,32 @@ const Dashboard = () => {
                     </div>
                 </div>
 
-                {/* Stats & Usage Row */}
-                <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
-                    {/* Stat Cards */}
-                    <div className="lg:col-span-4 grid grid-cols-1 gap-6">
-                        {statCards.map((stat, index) => (
-                            <div key={index} className="bg-white p-8 rounded-3xl border border-gray-100 shadow-[0_8px_30px_rgb(0,0,0,0.02)] relative overflow-hidden group">
-                                <div className="absolute top-0 right-0 w-32 h-32 bg-blue-50 rounded-full -mr-16 -mt-16 group-hover:scale-110 transition-transform duration-500"></div>
-                                <div className="relative z-10 flex flex-col justify-between h-full space-y-4">
-                                    <div className="p-3 bg-blue-50 w-fit rounded-2xl">
-                                        <stat.icon className="w-6 h-6 text-blue-600" />
-                                    </div>
-                                    <div className="space-y-1">
-                                        <p className="text-[10px] font-black text-gray-400 uppercase tracking-widest">{stat.title}</p>
-                                        <div className="flex items-baseline gap-3">
-                                            <h2 className="text-5xl font-black text-gray-900 tracking-tighter">{stat.value}</h2>
-                                            <span className="text-xs font-bold text-blue-600 bg-blue-50 px-2 py-0.5 rounded-full">{stat.change}</span>
-                                        </div>
-                                    </div>
+                {/* Row 1: Active Tasks & Credit Usage */}
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    {/* Active Tasks Card */}
+                    <div className="bg-white p-8 rounded-3xl border border-gray-100 shadow-[0_8px_30px_rgb(0,0,0,0.02)] relative overflow-hidden group">
+                        <div className="absolute top-0 right-0 w-32 h-32 bg-blue-50 rounded-full -mr-16 -mt-16 group-hover:scale-110 transition-transform duration-500"></div>
+                        <div className="relative z-10 flex flex-col justify-between h-full space-y-4">
+                            <div className="flex items-center justify-between">
+                                <div className="p-3 bg-blue-50 w-fit rounded-2xl">
+                                    <DocumentTextIcon className="w-6 h-6 text-blue-600" />
                                 </div>
+                                <span className="px-3 py-1 bg-green-50 text-green-600 text-xs font-black rounded-full uppercase tracking-wider">+2 New</span>
                             </div>
-                        ))}
+                            <div className="space-y-1">
+                                <p className="text-[10px] font-black text-gray-400 uppercase tracking-widest">Active Tasks</p>
+                                <h2 className="text-5xl font-black text-gray-900 tracking-tighter">{activeTasksCount}</h2>
+                            </div>
+                        </div>
                     </div>
 
                     {/* Usage Tracking Card */}
-                    <div className="lg:col-span-8 bg-white p-8 rounded-3xl border border-gray-100 shadow-[0_8px_30px_rgb(0,0,0,0.02)]">
-                        <div className="flex items-center justify-between mb-10">
+                    <div className="bg-white p-8 rounded-3xl border border-gray-100 shadow-[0_8px_30px_rgb(0,0,0,0.02)] flex flex-col justify-center">
+                        <div className="flex items-center justify-between mb-8">
                             <h3 className="text-sm font-black text-gray-900 uppercase tracking-widest">Credit Usage Tracking</h3>
                             <div className="text-right">
                                 <p className="text-lg font-black text-gray-900 tracking-tight">
-                                    {currentSubscription?.credits?.used || '0'}<span className="text-gray-300 mx-1">/</span>{currentSubscription?.credits?.total || '20'} Credits
+                                    {currentSubscription?.credits?.used || 0} <span className="text-gray-300 mx-1">/</span> {currentSubscription?.credits?.total || 20} Credits
                                 </p>
                             </div>
                         </div>
@@ -107,63 +148,118 @@ const Dashboard = () => {
                             <div className="h-4 bg-gray-50 rounded-full overflow-hidden border border-gray-100">
                                 <div
                                     className="h-full bg-blue-600 rounded-full shadow-[0_0_20px_rgba(37,99,235,0.3)] transition-all duration-1000"
-                                    style={{ width: `${(currentSubscription?.credits?.used / currentSubscription?.credits?.total) * 100 || 0}%` }}
+                                    style={{ width: `${currentSubscription?.credits?.total ? Math.min((currentSubscription.credits.used / currentSubscription.credits.total) * 100, 100) : 0}%` }}
                                 ></div>
                             </div>
                             <div className="flex justify-between text-[11px] font-black uppercase tracking-widest">
-                                <span className="text-gray-400">{Math.round((currentSubscription?.credits?.used / currentSubscription?.credits?.total) * 100) || 0}% of monthly allocation consumed</span>
-                                <span className="text-blue-600 underline">Next reset in 12 days</span>
+                                <span className="text-gray-400">
+                                    {currentSubscription?.credits?.total ? Math.round((currentSubscription.credits.used / currentSubscription.credits.total) * 100) : 0}% of monthly allocation consumed
+                                </span>
+                                <span className="text-blue-600 underline">Next reset in {calculateDaysUntilReset()}</span>
                             </div>
                         </div>
                     </div>
                 </div>
 
-                {/* Brand Kit Card */}
-                <div className="bg-white p-8 rounded-3xl border border-gray-100 shadow-[0_8px_30px_rgb(0,0,0,0.02)]">
-                    <div className="flex items-center justify-between mb-8">
-                        <div className="flex items-center gap-3">
-                            <div className="w-10 h-10 bg-blue-50 rounded-xl flex items-center justify-center">
+                {/* Row 2: Brand Kit & Subscription Plan */}
+                <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                    {/* Brand Kit Card */}
+                    <div className="lg:col-span-2 bg-white p-8 rounded-3xl border border-gray-100 shadow-[0_8px_30px_rgb(0,0,0,0.02)]">
+                        <div className="flex items-center justify-between mb-8">
+                            <div className="flex items-center gap-3">
                                 <SparklesIcon className="w-5 h-5 text-blue-600" />
+                                <h3 className="text-sm font-black text-gray-900 uppercase tracking-widest">Brand Kit Quick Access</h3>
                             </div>
-                            <h3 className="text-sm font-black text-gray-900 uppercase tracking-widest">Brand Kit Quick Access</h3>
-                        </div>
-                        <button className="text-xs font-black text-blue-600 uppercase tracking-widest hover:underline">Edit Kit</button>
-                    </div>
-
-                    <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-                        <div className="md:col-span-2 bg-gray-50/50 rounded-2xl border border-dashed border-gray-200 p-12 flex items-center justify-center group cursor-pointer hover:border-blue-300 transition-colors">
-                            <div className="text-center space-y-2">
-                                <p className="text-2xl font-black text-gray-300 italic group-hover:text-blue-200 transition-colors">BRAND LOGO</p>
-                                <p className="text-[10px] font-black text-gray-400 uppercase tracking-[0.2em]">Primary Logo</p>
-                            </div>
-                        </div>
-
-                        <div className="space-y-6">
-                            <div className="space-y-3">
-                                <p className="text-[10px] font-black text-gray-400 uppercase tracking-widest px-1">Palette</p>
-                                <div className="flex flex-wrap gap-2">
-                                    {['#2563EB', '#10B981', '#1E293B'].map(color => (
-                                        <div key={color} className="group relative">
-                                            <div
-                                                className="w-10 h-10 rounded-xl shadow-sm border border-gray-100 ring-2 ring-transparent group-hover:ring-blue-100 transition-all"
-                                                style={{ backgroundColor: color }}
-                                            ></div>
-                                            <span className="absolute -bottom-6 left-1/2 -translate-x-1/2 text-[9px] font-black text-gray-400 opacity-0 group-hover:opacity-100 transition-opacity">{color}</span>
-                                        </div>
-                                    ))}
-                                </div>
-                            </div>
-                            <button className="w-full flex items-center justify-center gap-3 py-4 bg-blue-50 text-blue-600 rounded-2xl font-bold text-sm hover:bg-blue-100 transition-all group">
-                                <div className="p-1.5 bg-white rounded-lg shadow-sm">
-                                    <ArrowDownTrayIcon className="w-4 h-4" />
-                                </div>
-                                <span>Download Assets</span>
+                            <button
+                                onClick={() => setShowBrandKitModal(true)}
+                                className="text-xs font-black text-blue-600 uppercase tracking-widest hover:underline"
+                            >
+                                Edit Kit
                             </button>
                         </div>
+
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+                            <div className="bg-gray-50/50 rounded-2xl border border-dashed border-gray-200 p-8 flex items-center justify-center group cursor-pointer hover:border-blue-300 transition-colors">
+                                <div className="text-center space-y-2">
+                                    {brandKit?.logoUrl ? (
+                                        <img
+                                            src={`${import.meta.env.VITE_API_URL}${brandKit.logoUrl}`}
+                                            alt="Brand Logo"
+                                            className="max-w-full max-h-24 mx-auto object-contain"
+                                        />
+                                    ) : (
+                                        <>
+                                            <p className="text-2xl font-black text-gray-300 italic group-hover:text-blue-200 transition-colors">BRAND LOGO</p>
+                                            <p className="text-[10px] font-black text-gray-400 uppercase tracking-[0.2em]">Primary Logo</p>
+                                        </>
+                                    )}
+                                </div>
+                            </div>
+
+                            <div className="space-y-6">
+                                <div className="space-y-3">
+                                    <p className="text-[10px] font-black text-gray-400 uppercase tracking-widest px-1">Palette</p>
+                                    <div className="flex flex-wrap gap-2">
+                                        {(brandKit?.colors || ['#2563EB', '#10B981', '#1E293B']).map((color, index) => (
+                                            <div key={index} className="group relative">
+                                                <div
+                                                    className="w-10 h-10 rounded-xl shadow-sm border border-gray-100 ring-2 ring-transparent group-hover:ring-blue-100 transition-all"
+                                                    style={{ backgroundColor: color }}
+                                                ></div>
+                                                <span className="absolute -bottom-6 left-1/2 -translate-x-1/2 text-[9px] font-black text-gray-400 opacity-0 group-hover:opacity-100 transition-opacity">{color}</span>
+                                            </div>
+                                        ))}
+                                    </div>
+                                </div>
+                                <button
+                                    onClick={handleDownloadAssets}
+                                    disabled={downloading}
+                                    className="w-full flex items-center justify-center gap-3 py-4 bg-blue-600 text-white rounded-2xl font-bold text-sm hover:bg-blue-700 transition-all shadow-lg shadow-blue-600/20 group disabled:opacity-50"
+                                >
+                                    <ArrowDownTrayIcon className="w-4 h-4" />
+                                    <span>{downloading ? 'Downloading...' : 'Download Assets'}</span>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    {/* Subscription Plan Card */}
+                    <div className="bg-[#0A0E1A] p-8 rounded-3xl border border-[#1E2638] shadow-2xl shadow-black/20 text-white relative overflow-hidden">
+                        <div className="absolute top-0 right-0 w-64 h-64 bg-blue-600/10 rounded-full -mr-32 -mt-32 blur-3xl pointer-events-none"></div>
+
+                        <div className="relative z-10 h-full flex flex-col justify-between">
+                            <div className="space-y-6">
+                                <h3 className="text-sm font-black text-white uppercase tracking-widest">Subscription Plan</h3>
+
+                                <div className="space-y-1">
+                                    <p className="text-[10px] font-black text-gray-400 uppercase tracking-widest">Active Tier</p>
+                                    <div className="flex items-center justify-between">
+                                        <h2 className="text-2xl font-black text-white tracking-tight leading-none">
+                                            {currentSubscription?.plan?.name || 'Professional'} <br />
+                                            <span className="text-gray-400">Monthly</span>
+                                        </h2>
+                                        <div className="w-10 h-10 bg-blue-600 rounded-xl flex items-center justify-center shadow-lg shadow-blue-600/30">
+                                            <CheckBadgeIcon className="w-6 h-6 text-white" />
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div className="mt-8 space-y-4 pt-8 border-t border-white/10">
+                                <div className="flex items-center justify-between text-xs">
+                                    <span className="text-gray-400 font-medium">Next billing date</span>
+                                    <span className="text-white font-bold">Oct 24, 2023</span>
+                                </div>
+                                <div className="flex items-center justify-between text-xs">
+                                    <span className="text-gray-400 font-medium">Concurrent Tasks</span>
+                                    <span className="text-white font-bold">{currentSubscription?.plan?.concurrentTasks || '2'} Active</span>
+                                </div>
+                            </div>
+                        </div>
                     </div>
                 </div>
 
-                {/* Bottom Row: Requests & Deliveries */}
+                {/* Row 3: Requests & Deliveries */}
                 <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
                     {/* Active Requests */}
                     <div className="lg:col-span-8 space-y-6">
@@ -176,11 +272,11 @@ const Dashboard = () => {
                         </div>
 
                         <div className="grid grid-cols-1 gap-4">
-                            {requests.filter(r => ['pending', 'in-progress'].includes(r.status)).slice(0, 3).map((request, index) => (
-                                <div key={index} className="bg-white p-6 rounded-3xl border border-gray-100 shadow-[0_8px_30px_rgb(0,0,0,0.01)] hover:shadow-md transition-all group flex items-center justify-between">
+                            {requests.filter(r => !['completed', 'cancelled'].includes(r.status)).slice(0, 3).map((request) => (
+                                <div key={request.id} className="bg-white p-6 rounded-3xl border border-gray-100 shadow-[0_8px_30px_rgb(0,0,0,0.01)] hover:shadow-md transition-all group flex items-center justify-between">
                                     <div className="flex items-center gap-4">
                                         <div className="w-12 h-12 bg-blue-50 rounded-2xl flex items-center justify-center text-blue-600 font-black">
-                                            {index + 1}
+                                            {(requests.findIndex(r => r.id === request.id)) + 1}
                                         </div>
                                         <div>
                                             <h4 className="font-bold text-gray-900">{request.title}</h4>
@@ -202,6 +298,13 @@ const Dashboard = () => {
                                     </div>
                                 </div>
                             ))}
+                            {requests.filter(r => !['completed', 'cancelled'].includes(r.status)).length === 0 && (
+                                <div className="bg-gray-50/50 border-2 border-dashed border-gray-200 rounded-3xl py-12 text-center">
+                                    <p className="text-xs font-black text-gray-400 uppercase tracking-widest">
+                                        No active requests. Create one now!
+                                    </p>
+                                </div>
+                            )}
                         </div>
                     </div>
 
@@ -227,7 +330,9 @@ const Dashboard = () => {
                                     </div>
                                     <div className="flex-1 min-w-0">
                                         <p className="text-sm font-black text-gray-900 truncate">{file.title}</p>
-                                        <p className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">{file.category} • {format(new Date(file.updatedAt), 'MMM dd')}</p>
+                                        <p className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">
+                                            {file.category} • {isValid(new Date(file.updatedAt)) ? format(new Date(file.updatedAt), 'MMM dd') : 'N/A'}
+                                        </p>
                                     </div>
                                     <button
                                         onClick={(e) => {
@@ -251,6 +356,16 @@ const Dashboard = () => {
                     </div>
                 </div>
             </div>
+
+            {/* Brand Kit Modal */}
+            <BrandKitModal
+                isOpen={showBrandKitModal}
+                onClose={() => setShowBrandKitModal(false)}
+                brandKit={brandKit}
+                onUpdate={(updatedBrandKit) => {
+                    setBrandKit(updatedBrandKit);
+                }}
+            />
         </DashboardLayout>
     );
 };

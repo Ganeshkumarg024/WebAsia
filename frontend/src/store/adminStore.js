@@ -3,15 +3,18 @@ import adminAPI from '../api/admin';
 
 const useAdminStore = create((set, get) => ({
     users: [],
+    designers: [], // Dedicated list for assignment dropdowns
     selectedUser: null,
     plans: [],
     pods: [],
     requests: [],
+    stats: {}, // Dashboard stats
     financialStats: null,
     transactions: [],
     commThreads: [],
     selectedThread: null,
     analytics: null,
+    testimonials: [],
     loading: false,
     error: null,
 
@@ -19,10 +22,35 @@ const useAdminStore = create((set, get) => ({
     fetchUsers: async (params) => {
         set({ loading: true, error: null });
         try {
-            const { data } = await adminAPI.getUsers(params);
-            set({ users: data, loading: false });
+            const response = await adminAPI.getUsers(params);
+            set({ users: response.data.users, loading: false });
         } catch (error) {
             set({ error: error.message, loading: false });
+        }
+    },
+
+    fetchDesigners: async () => {
+        set({ loading: true, error: null });
+        try {
+            const response = await adminAPI.getUsers({ role: 'designer', status: 'active' });
+            set({ designers: response.data.users, loading: false });
+        } catch (error) {
+            set({ error: error.message, loading: false });
+        }
+    },
+
+    createUser: async (userData) => {
+        set({ loading: true, error: null });
+        try {
+            const response = await adminAPI.createUser(userData);
+            set((state) => ({
+                users: [response.data, ...state.users],
+                loading: false
+            }));
+            return { success: true, data: response.data };
+        } catch (error) {
+            set({ error: error.message, loading: false });
+            return { success: false, error: error.message };
         }
     },
 
@@ -34,8 +62,25 @@ const useAdminStore = create((set, get) => ({
                 users: state.users.map((u) => (u.id === id ? { ...u, ...userData } : u)),
                 loading: false
             }));
+            return { success: true };
         } catch (error) {
             set({ error: error.message, loading: false });
+            return { success: false, error: error.message };
+        }
+    },
+
+    deleteUser: async (id) => {
+        set({ loading: true, error: null });
+        try {
+            await adminAPI.deleteUser(id);
+            set((state) => ({
+                users: state.users.filter((u) => u.id !== id),
+                loading: false
+            }));
+            return { success: true };
+        } catch (error) {
+            set({ error: error.message, loading: false });
+            return { success: false, error: error.message };
         }
     },
 
@@ -44,11 +89,9 @@ const useAdminStore = create((set, get) => ({
         set({ loading: true, error: null });
         try {
             // Assuming a generic getPlans exists in common or within admin context
-            const { data } = await adminAPI.getUsers({ role: 'admin' }); // Placeholder logic if needed
-            // Actually plans are often separate. Looking at API:
-            // adminAPI.createPlan, updatePlan, deletePlan exist. 
-            // Need a fetchPlans. Let's assume we use regular subscription API or add it here.
-            // For now, placeholders based on adminAPI structure.
+            const response = await adminAPI.getPlans();
+            set({ plans: response.data, loading: false });
+
         } catch (error) {
             set({ error: error.message, loading: false });
         }
@@ -58,8 +101,8 @@ const useAdminStore = create((set, get) => ({
     fetchPods: async () => {
         set({ loading: true, error: null });
         try {
-            const { data } = await adminAPI.getPods();
-            set({ pods: data, loading: false });
+            const response = await adminAPI.getPods();
+            set({ pods: response.data.pods, loading: false });
         } catch (error) {
             set({ error: error.message, loading: false });
         }
@@ -70,8 +113,8 @@ const useAdminStore = create((set, get) => ({
         try {
             await adminAPI.assignToPod({ podId, designerId });
             // Refresh pods
-            const { data } = await adminAPI.getPods();
-            set({ pods: data, loading: false });
+            const response = await adminAPI.getPods();
+            set({ pods: response.data.pods, loading: false });
         } catch (error) {
             set({ error: error.message, loading: false });
         }
@@ -81,8 +124,8 @@ const useAdminStore = create((set, get) => ({
     fetchFinancials: async (period) => {
         set({ loading: true, error: null });
         try {
-            const { data } = await adminAPI.getFinancialStats(period);
-            set({ financialStats: data, loading: false });
+            const response = await adminAPI.getFinancialStats(period);
+            set({ financialStats: response.data, loading: false });
         } catch (error) {
             set({ error: error.message, loading: false });
         }
@@ -91,8 +134,8 @@ const useAdminStore = create((set, get) => ({
     fetchTransactions: async (params) => {
         set({ loading: true, error: null });
         try {
-            const { data } = await adminAPI.getTransactions(params);
-            set({ transactions: data, loading: false });
+            const response = await adminAPI.getTransactions(params);
+            set({ transactions: response.data, loading: false });
         } catch (error) {
             set({ error: error.message, loading: false });
         }
@@ -102,8 +145,8 @@ const useAdminStore = create((set, get) => ({
     fetchCommThreads: async (params) => {
         set({ loading: true, error: null });
         try {
-            const { data } = await adminAPI.getCommThreads(params);
-            set({ commThreads: data, loading: false });
+            const response = await adminAPI.getCommThreads(params);
+            set({ commThreads: response.data, loading: false });
         } catch (error) {
             set({ error: error.message, loading: false });
         }
@@ -112,8 +155,8 @@ const useAdminStore = create((set, get) => ({
     fetchThreadDetails: async (id) => {
         set({ loading: true, error: null });
         try {
-            const { data } = await adminAPI.getCommThreadDetails(id);
-            set({ selectedThread: data, loading: false });
+            const response = await adminAPI.getCommThreadDetails(id);
+            set({ selectedThread: response.data, loading: false });
         } catch (error) {
             set({ error: error.message, loading: false });
         }
@@ -122,8 +165,8 @@ const useAdminStore = create((set, get) => ({
     fetchTransactions: async (params) => {
         set({ loading: true, error: null });
         try {
-            const { data } = await adminAPI.getTransactions(params);
-            set({ transactions: data, loading: false });
+            const response = await adminAPI.getTransactions(params);
+            set({ transactions: response.data, loading: false });
         } catch (error) {
             set({ error: error.message, loading: false });
         }
@@ -132,8 +175,8 @@ const useAdminStore = create((set, get) => ({
     fetchRefundRequests: async () => {
         set({ loading: true, error: null });
         try {
-            const { data } = await adminAPI.getRefundRequests();
-            set({ refundQueue: data, loading: false });
+            const response = await adminAPI.getRefundRequests();
+            set({ refundQueue: response.data, loading: false });
         } catch (error) {
             set({ error: error.message, loading: false });
         }
@@ -144,7 +187,7 @@ const useAdminStore = create((set, get) => ({
         try {
             await adminAPI.handleRefund(id, actionData);
             // Refresh
-            const [transData, refundData] = await Promise.all([
+            const [transData, refundData, finData] = await Promise.all([
                 adminAPI.getTransactions(),
                 adminAPI.getRefundRequests(),
                 adminAPI.getFinancialStats()
@@ -152,7 +195,7 @@ const useAdminStore = create((set, get) => ({
             set({
                 transactions: transData.data,
                 refundQueue: refundData.data,
-                financialStats: (await adminAPI.getFinancialStats()).data,
+                financialStats: finData.data,
                 loading: false
             });
         } catch (error) {
@@ -164,8 +207,8 @@ const useAdminStore = create((set, get) => ({
     fetchAdminRequests: async (params) => {
         set({ loading: true, error: null });
         try {
-            const { data } = await adminAPI.getAdminRequests(params);
-            set({ requests: data.requests, loading: false });
+            const response = await adminAPI.getAllRequests(params);
+            set({ requests: response.data.requests, loading: false });
         } catch (error) {
             set({ error: error.message, loading: false });
         }
@@ -176,28 +219,54 @@ const useAdminStore = create((set, get) => ({
         try {
             await adminAPI.bulkUpdateRequests(updateData);
             // Refresh requests
-            const { data } = await adminAPI.getAdminRequests();
-            set({ requests: data.requests, loading: false });
+            const response = await adminAPI.getAllRequests();
+            set({ requests: response.data.requests, loading: false });
         } catch (error) {
             set({ error: error.message, loading: false });
         }
     },
 
-    fetchCommThreads: async (params) => {
+    approveRequest: async (requestId, checklist) => {
         set({ loading: true, error: null });
         try {
-            const { data } = await adminAPI.getCommThreads(params);
-            set({ commThreads: data, loading: false });
+            await adminAPI.bulkUpdateRequests({
+                requestIds: [requestId],
+                status: 'completed',
+                checklist // Optional: if backend supports saving checklist
+            });
+            // Refresh selected request
+            const { data } = await adminAPI.getCommThreadDetails(requestId);
+            set({ selectedThread: data, loading: false });
         } catch (error) {
             set({ error: error.message, loading: false });
+            throw error;
         }
     },
+
+    rejectRequest: async (requestId, feedback) => {
+        set({ loading: true, error: null });
+        try {
+            await adminAPI.bulkUpdateRequests({
+                requestIds: [requestId],
+                status: 'in_progress', // Move back to designer
+                feedback
+            });
+            // Refresh selected request
+            const { data } = await adminAPI.getCommThreadDetails(requestId);
+            set({ selectedThread: data, loading: false });
+        } catch (error) {
+            set({ error: error.message, loading: false });
+            throw error;
+        }
+    },
+
+
 
     fetchCommThreadDetails: async (id) => {
         set({ loading: true, error: null });
         try {
-            const { data } = await adminAPI.getCommThreadDetails(id);
-            set({ selectedThread: data, loading: false });
+            const response = await adminAPI.getCommThreadDetails(id);
+            set({ selectedThread: response.data, loading: false });
         } catch (error) {
             set({ error: error.message, loading: false });
         }
@@ -208,8 +277,8 @@ const useAdminStore = create((set, get) => ({
         try {
             await adminAPI.flagCommThread(id, reason);
             // Refresh list
-            const { data } = await adminAPI.getCommThreads();
-            set({ commThreads: data, loading: false });
+            const response = await adminAPI.getCommThreads();
+            set({ commThreads: response.data, loading: false });
         } catch (error) {
             set({ error: error.message, loading: false });
         }
@@ -218,8 +287,8 @@ const useAdminStore = create((set, get) => ({
     fetchTestimonials: async (status) => {
         set({ loading: true, error: null });
         try {
-            const { data } = await adminAPI.getTestimonials(status);
-            set({ testimonials: data, loading: false });
+            const response = await adminAPI.getTestimonials(status);
+            set({ testimonials: response.data, loading: false });
         } catch (error) {
             set({ error: error.message, loading: false });
         }
@@ -230,8 +299,8 @@ const useAdminStore = create((set, get) => ({
         try {
             await adminAPI.approveTestimonial(id);
             // Refresh
-            const { data } = await adminAPI.getTestimonials('pending');
-            set({ testimonials: data, loading: false });
+            const response = await adminAPI.getTestimonials('pending');
+            set({ testimonials: response.data, loading: false });
         } catch (error) {
             set({ error: error.message, loading: false });
         }
@@ -242,59 +311,49 @@ const useAdminStore = create((set, get) => ({
         try {
             await adminAPI.rejectTestimonial(id);
             // Refresh
-            const { data } = await adminAPI.getTestimonials('pending');
-            set({ testimonials: data, loading: false });
+            const response = await adminAPI.getTestimonials('pending');
+            set({ testimonials: response.data, loading: false });
         } catch (error) {
             set({ error: error.message, loading: false });
         }
     },
 
     // Pod Management Actions
-    fetchPods: async () => {
-        set({ loading: true, error: null });
-        try {
-            const { data } = await adminAPI.getPods();
-            set({ pods: data, loading: false });
-        } catch (error) {
-            set({ error: error.message, loading: false });
-        }
-    },
+
 
     fetchUnassignedDesigners: async () => {
         set({ loading: true, error: null });
         try {
-            const { data } = await adminAPI.getUnassignedDesigners();
-            set({ unassignedDesigners: data, loading: false });
+            const response = await adminAPI.getUnassignedDesigners();
+            set({ unassignedDesigners: response.data, loading: false });
         } catch (error) {
             set({ error: error.message, loading: false });
         }
     },
 
-    assignToPod: async (podId, designerId) => {
-        set({ loading: true, error: null });
-        try {
-            await adminAPI.assignToPod({ podId, designerId });
-            // Refresh both
-            const [podsData, unassignedData] = await Promise.all([
-                adminAPI.getPods(),
-                adminAPI.getUnassignedDesigners()
-            ]);
-            set({ pods: podsData.data, unassignedDesigners: unassignedData.data, loading: false });
-        } catch (error) {
-            set({ error: error.message, loading: false });
-        }
-    },
+
 
     // Analytics
     fetchAdminAnalytics: async (period) => {
         set({ loading: true, error: null });
         try {
-            const { data } = await adminAPI.getAnalytics(period);
-            set({ analytics: data, loading: false });
+            const response = await adminAPI.getAnalytics(period);
+            set({ analytics: response.data, loading: false });
+        } catch (error) {
+            set({ error: error.message, loading: false });
+        }
+    },
+
+    fetchStats: async () => {
+        set({ loading: true, error: null });
+        try {
+            const response = await adminAPI.getDashboardStats();
+            set({ stats: response.data, loading: false });
         } catch (error) {
             set({ error: error.message, loading: false });
         }
     }
 }));
+
 
 export default useAdminStore;

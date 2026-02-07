@@ -74,9 +74,10 @@ export const uploadFile = async (req, res) => {
             s3Key: storageData.storageKey,
             s3Bucket: storageData.storageBucket || 'local',
             s3Url: storageData.url,
+            filePath: storageData.storageKey, // Map storageKey to filePath
+            uploadedByRole: req.user.role, // Move to top level
             thumbnailUrl: storageData.thumbnailUrl,
             metadata: {
-                uploadedByRole: req.user.role,
                 uploadedAt: new Date()
             }
         });
@@ -161,9 +162,10 @@ export const uploadMultipleFiles = async (req, res) => {
                 s3Key: storageData.storageKey,
                 s3Bucket: storageData.storageBucket || 'local',
                 s3Url: storageData.url,
+                filePath: storageData.storageKey, // Map storageKey to filePath
+                uploadedByRole: req.user.role, // Move to top level
                 thumbnailUrl: storageData.thumbnailUrl,
                 metadata: {
-                    uploadedByRole: req.user.role,
                     uploadedAt: new Date()
                 }
             });
@@ -203,7 +205,7 @@ export const getRequestFiles = async (req, res) => {
             include: [
                 { model: User, as: 'uploader', attributes: ['id', 'firstName', 'lastName', 'role'] }
             ],
-            order: [['createdAt', 'DESC']]
+            order: [['created_at', 'DESC']]
         });
 
         res.json({
@@ -353,6 +355,42 @@ export const streamFile = async (req, res) => {
         res.status(500).json({
             success: false,
             error: { code: 'SERVER_ERROR', message: 'Streaming failed' }
+        });
+    }
+};
+
+export const getFiles = async (req, res) => {
+    try {
+        const { fileType, category } = req.query;
+        const where = {};
+
+        // If not admin, only show files related to user
+        if (req.user.role !== 'admin') {
+            where.uploadedBy = req.user.id;
+        }
+
+        if (fileType) where.fileType = fileType;
+
+        const files = await File.findAll({
+            where,
+            include: [
+                { model: User, as: 'uploader', attributes: ['id', 'firstName', 'lastName'] }
+            ],
+            order: [['created_at', 'DESC']]
+        });
+
+        res.json({
+            success: true,
+            data: files
+        });
+    } catch (error) {
+        console.error('Get files error:', error);
+        res.status(500).json({
+            success: false,
+            error: {
+                code: 'SERVER_ERROR',
+                message: 'Failed to fetch files'
+            }
         });
     }
 };

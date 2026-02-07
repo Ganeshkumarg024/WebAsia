@@ -16,11 +16,13 @@ import ClientDashboard from './pages/client/Dashboard';
 import CreateRequest from './pages/client/CreateRequest';
 import RequestDetail from './pages/client/RequestDetail';
 import MyRequests from './pages/client/MyRequests';
+import RequestHistory from './pages/client/RequestHistory';
 import ClientDeliveries from './pages/client/Deliveries';
 import ClientBilling from './pages/client/Billing';
 import ClientSettings from './pages/client/Settings';
 import ClientAffiliateDashboard from './pages/client/AffiliateDashboard';
 import AffiliateRegistration from './pages/client/AffiliateRegistration';
+import SupportChat from './pages/client/SupportChat';
 
 // Designer Pages
 import DesignerWorkspace from './pages/designer/Workspace';
@@ -29,6 +31,11 @@ import DesignerAnalytics from './pages/designer/Analytics';
 import DesignerDashboard from './pages/designer/Dashboard';
 import MyTasks from './pages/designer/MyTasks';
 import TaskDetails from './pages/designer/TaskDetails';
+import PriorityQueue from './pages/designer/PriorityQueue';
+import DesignerArchives from './pages/designer/Archives';
+import DesignerSubmissions from './pages/designer/Submissions';
+import DesignerSettings from './pages/designer/Settings';
+
 
 // Manager Pages
 import ManagerQueue from './pages/manager/Queue';
@@ -52,7 +59,9 @@ import TeamMapping from './pages/admin/TeamMapping';
 import Financials from './pages/admin/Financials';
 import CommHub from './pages/admin/CommHub';
 import Testimonials from './pages/admin/Testimonials';
-import GlobalRequestDetail from './pages/admin/GlobalRequestDetail';
+import AdminRequestDetails from './pages/admin/AdminRequestDetails';
+import AdminSettings from './pages/admin/Settings';
+import AdminSupportChat from './pages/admin/SupportChat';
 
 // Affiliate Pages
 import PartnerAffiliateDashboard from './pages/affiliate/Dashboard';
@@ -70,11 +79,12 @@ const DashboardRedirect = () => {
     if (!user) return <Navigate to="/login" />;
 
     switch (user.role) {
-        case 'admin': return <Navigate to="/admin/dashboard" />;
-        case 'manager': return <Navigate to="/manager/dashboard" />;
-        case 'designer': return <Navigate to="/designer/dashboard" />;
-        case 'affiliate': return <Navigate to="/affiliate/dashboard" />;
-        default: return <Navigate to="/client/requests" />;
+        case 'admin': return <Navigate to="/admin/dashboard" replace />;
+        case 'manager': return <Navigate to="/manager/dashboard" replace />;
+        case 'designer': return <Navigate to="/designer/dashboard" replace />;
+        case 'affiliate': return <Navigate to="/affiliate/dashboard" replace />;
+        case 'client': return <Navigate to="/client/dashboard" replace />;
+        default: return <Navigate to="/client/dashboard" replace />;
     }
 };
 
@@ -116,6 +126,14 @@ function App() {
 
             {/* Protected Routes - Client */}
             <Route
+                path="/client/dashboard"
+                element={
+                    <ProtectedRoute roles={['client']}>
+                        <ClientDashboard />
+                    </ProtectedRoute>
+                }
+            />
+            <Route
                 path="/client/requests"
                 element={
                     <ProtectedRoute roles={['client']}>
@@ -127,7 +145,7 @@ function App() {
                 path="/client/requests/history"
                 element={
                     <ProtectedRoute roles={['client']}>
-                        <MyRequests />
+                        <RequestHistory />
                     </ProtectedRoute>
                 }
             />
@@ -187,6 +205,14 @@ function App() {
                     </ProtectedRoute>
                 }
             />
+            <Route
+                path="/client/support-chat"
+                element={
+                    <ProtectedRoute roles={['client']}>
+                        <SupportChat />
+                    </ProtectedRoute>
+                }
+            />
 
             {/* Protected Routes - Designer */}
             <Route
@@ -210,6 +236,38 @@ function App() {
                 element={
                     <ProtectedRoute roles={['designer']}>
                         <MyTasks />
+                    </ProtectedRoute>
+                }
+            />
+            <Route
+                path="/designer/priority-queue"
+                element={
+                    <ProtectedRoute roles={['designer']}>
+                        <PriorityQueue />
+                    </ProtectedRoute>
+                }
+            />
+            <Route
+                path="/designer/submissions"
+                element={
+                    <ProtectedRoute roles={['designer']}>
+                        <DesignerSubmissions />
+                    </ProtectedRoute>
+                }
+            />
+            <Route
+                path="/designer/archives"
+                element={
+                    <ProtectedRoute roles={['designer']}>
+                        <DesignerArchives />
+                    </ProtectedRoute>
+                }
+            />
+            <Route
+                path="/designer/settings"
+                element={
+                    <ProtectedRoute roles={['designer']}>
+                        <DesignerSettings />
                     </ProtectedRoute>
                 }
             />
@@ -373,7 +431,7 @@ function App() {
                 path="/admin/requests/:id"
                 element={
                     <ProtectedRoute roles={['admin']}>
-                        <GlobalRequestDetail />
+                        <AdminRequestDetails />
                     </ProtectedRoute>
                 }
             />
@@ -385,11 +443,41 @@ function App() {
                     </ProtectedRoute>
                 }
             />
+            <Route
+                path="/admin/leads"
+                element={
+                    <ProtectedRoute roles={['admin']}>
+                        <LeadManager />
+                    </ProtectedRoute>
+                }
+            />
+            <Route
+                path="/admin/payouts"
+                element={
+                    <ProtectedRoute roles={['admin']}>
+                        <AffiliatePayouts />
+                    </ProtectedRoute>
+                }
+            />
+            <Route
+                path="/admin/settings"
+                element={
+                    <ProtectedRoute roles={['admin']}>
+                        <AdminSettings />
+                    </ProtectedRoute>
+                }
+            />
+            <Route
+                path="/admin/support-chat"
+                element={
+                    <ProtectedRoute roles={['admin']}>
+                        <AdminSupportChat />
+                    </ProtectedRoute>
+                }
+            />
 
-            {/* Landing Page */}
             <Route path="/" element={<LandingPage />} />
 
-            {/* Default redirect */}
             {/* Protected Routes - Affiliate */}
             <Route
                 path="/affiliate/dashboard"

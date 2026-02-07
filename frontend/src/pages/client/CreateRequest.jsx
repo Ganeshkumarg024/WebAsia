@@ -1,9 +1,10 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { ChevronLeftIcon, ChevronRightIcon, SparklesIcon, ClockIcon } from '@heroicons/react/24/outline';
-import FileUploader from '../../components/shared/FileUploader';
+import FileUploadZone from '../../components/shared/FileUploadZone';
 import DashboardLayout from '../../components/layout/DashboardLayout';
 import useRequestStore from '../../store/requestStore';
+import requestFilesAPI from '../../api/requestFiles';
 import showToast from '../../components/shared/Toast';
 
 const CreateRequest = () => {
@@ -14,7 +15,7 @@ const CreateRequest = () => {
         category: '',
         title: '',
         description: '',
-        priority: 'medium',
+        priority: 'normal',
         deadline: '',
         files: [],
     });
@@ -69,9 +70,31 @@ const CreateRequest = () => {
             return;
         }
 
-        const result = await createRequest(formData);
+        const payload = {
+            ...formData,
+            serviceType: formData.category.replace(/-/g, '_'), // Match backend enum format
+        };
+
+        const result = await createRequest(payload);
         if (result.success) {
-            showToast.success('Request created successfully!');
+            // Upload files if any
+            if (formData.files && formData.files.length > 0) {
+                try {
+                    showToast.success('Request created! Uploading files...');
+                    await requestFilesAPI.uploadMultipleFiles(
+                        result.data.id,
+                        formData.files,
+                        'reference',
+                        'reference'
+                    );
+                    showToast.success('Files uploaded successfully!');
+                } catch (error) {
+                    console.error('File upload error:', error);
+                    showToast.error('Request created but file upload failed');
+                }
+            } else {
+                showToast.success('Request created successfully!');
+            }
             navigate('/client/requests');
         } else {
             showToast.error(result.error || 'Failed to create request');
@@ -191,7 +214,7 @@ const CreateRequest = () => {
                                     <div className="space-y-3">
                                         <label className="text-[10px] font-black text-gray-400 uppercase tracking-[0.2em] px-1">Priority Level</label>
                                         <div className="grid grid-cols-2 gap-3">
-                                            {['low', 'medium', 'high', 'urgent'].map((prio) => (
+                                            {['normal', 'urgent'].map((prio) => (
                                                 <button
                                                     key={prio}
                                                     type="button"
@@ -230,16 +253,11 @@ const CreateRequest = () => {
                             </div>
 
                             <div className="bg-gray-50/50 border-4 border-dashed border-gray-100 rounded-[40px] p-12 text-center hover:border-blue-600/30 transition-all group">
-                                <FileUploader
-                                    onFilesSelected={(files) => setFormData({ ...formData, files: [...formData.files, ...files] })}
-                                    files={formData.files}
-                                    onRemove={(index) => {
-                                        const newFiles = [...formData.files];
-                                        newFiles.splice(index, 1);
-                                        setFormData({ ...formData, files: newFiles });
-                                    }}
+                                <FileUploadZone
+                                    onFilesSelected={(files) => setFormData({ ...formData, files })}
                                     maxFiles={10}
-                                    multiple
+                                    multiple={true}
+                                    className=""
                                 />
                             </div>
                         </div>
@@ -343,7 +361,7 @@ const CreateRequest = () => {
                     </div>
                 </div>
             </div>
-        </DashboardLayout>
+        </DashboardLayout >
     );
 };
 

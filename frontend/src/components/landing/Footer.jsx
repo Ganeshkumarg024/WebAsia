@@ -10,10 +10,11 @@ const Footer = () => {
                     {/* Brand */}
                     <div>
                         <div className="flex items-center space-x-2 mb-4">
-                            <img src="/assets/mascot.png" alt="WebAsia" className="h-10 w-10" />
-                            <span className="text-2xl font-bold bg-gradient-to-r from-primary-400 to-secondary-400 bg-clip-text text-transparent">
-                                WebAsia
-                            </span>
+                            <img
+                                src="/assets/webasia-logo.png"
+                                alt="WebAsia"
+                                className="h-14 w-auto"
+                            />
                         </div>
                         <p className="text-gray-400 leading-relaxed">
                             Unlimited graphic design and video editing services for a flat monthly fee.

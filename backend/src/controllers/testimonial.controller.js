@@ -49,7 +49,7 @@ export const getPublicTestimonials = async (req, res) => {
                 as: 'user',
                 attributes: ['firstName', 'lastName', 'photoUrl']
             }],
-            order: [['featured', 'DESC'], ['displayOrder', 'ASC'], ['createdAt', 'DESC']],
+            order: [['featured', 'DESC'], ['displayOrder', 'ASC'], ['created_at', 'DESC']],
             limit: 20
         });
 
@@ -67,7 +67,7 @@ export const getMyTestimonials = async (req, res) => {
     try {
         const testimonials = await Testimonial.findAll({
             where: { userId: req.user.id },
-            order: [['createdAt', 'DESC']]
+            order: [['created_at', 'DESC']]
         });
 
         res.json({

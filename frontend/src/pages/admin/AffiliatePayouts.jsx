@@ -124,53 +124,77 @@ const AffiliatePayouts = () => {
     return (
         <DashboardLayout breadcrumbs={['Admin', 'Payouts']}>
             <div className="mb-8">
-                <h1 className="text-3xl font-bold text-white mb-2">Affiliate Payout Management</h1>
-                <p className="text-gray-400">Review and process affiliate commission payouts</p>
+                <h1 className="text-3xl font-bold text-gray-900 mb-2">Affiliate Payout Management</h1>
+                <p className="text-gray-500">Review and process affiliate commission payouts</p>
             </div>
 
             {/* Stats */}
             <div className="grid grid-cols-3 gap-6 mb-8">
-                <div className="bg-[#151B2E] rounded-lg p-6 border border-[#1E2638]">
+                <div className="bg-white rounded-2xl p-6 border border-gray-100 shadow-sm">
                     <div className="flex items-center justify-between mb-2">
-                        <p className="text-sm text-gray-400">Pending Payouts</p>
+                        <p className="text-sm text-gray-400 font-medium uppercase tracking-wider">Pending Payouts</p>
                         <CurrencyDollarIcon className="w-6 h-6 text-yellow-500" />
                     </div>
-                    <p className="text-3xl font-bold text-yellow-500">${stats.pending.toFixed(2)}</p>
-                    <p className="text-xs text-gray-400 mt-1">
-                        {payouts.filter(p => p.status === 'pending').length} requests
+                    <p className="text-3xl font-black text-gray-900">${stats.pending.toFixed(2)}</p>
+                    <p className="text-xs text-yellow-600 font-bold bg-yellow-50 px-2 py-1 rounded w-fit mt-2">
+                        {payouts.filter(p => p.status === 'pending').length} requests pending
                     </p>
                 </div>
 
-                <div className="bg-[#151B2E] rounded-lg p-6 border border-[#1E2638]">
+                <div className="bg-white rounded-2xl p-6 border border-gray-100 shadow-sm">
                     <div className="flex items-center justify-between mb-2">
-                        <p className="text-sm text-gray-400">Approved</p>
+                        <p className="text-sm text-gray-400 font-medium uppercase tracking-wider">Approved</p>
                         <CheckCircleIcon className="w-6 h-6 text-green-500" />
                     </div>
-                    <p className="text-3xl font-bold text-green-500">${stats.approved.toFixed(2)}</p>
-                    <p className="text-xs text-gray-400 mt-1">
+                    <p className="text-3xl font-black text-gray-900">${stats.approved.toFixed(2)}</p>
+                    <p className="text-xs text-green-600 font-bold bg-green-50 px-2 py-1 rounded w-fit mt-2">
                         {payouts.filter(p => p.status === 'approved').length} ready to pay
                     </p>
                 </div>
 
-                <div className="bg-[#151B2E] rounded-lg p-6 border border-[#1E2638]">
+                <div className="bg-white rounded-2xl p-6 border border-gray-100 shadow-sm">
                     <div className="flex items-center justify-between mb-2">
-                        <p className="text-sm text-gray-400">Paid This Month</p>
+                        <p className="text-sm text-gray-400 font-medium uppercase tracking-wider">Paid This Month</p>
                         <CurrencyDollarIcon className="w-6 h-6 text-blue-500" />
                     </div>
-                    <p className="text-3xl font-bold text-blue-500">${stats.paid.toFixed(2)}</p>
-                    <p className="text-xs text-gray-400 mt-1">
+                    <p className="text-3xl font-black text-gray-900">${stats.paid.toFixed(2)}</p>
+                    <p className="text-xs text-blue-600 font-bold bg-blue-50 px-2 py-1 rounded w-fit mt-2">
                         {payouts.filter(p => p.status === 'paid').length} completed
                     </p>
                 </div>
             </div>
 
             {/* Payouts Table */}
-            <DataTable
-                columns={columns}
-                data={payouts}
-                loading={loading}
-                emptyMessage="No payout requests"
-            />
+            <div className="bg-white rounded-2xl border border-gray-100 overflow-hidden shadow-sm">
+                <DataTable
+                    columns={columns.map(col => ({
+                        ...col,
+                        render: (val, row) => {
+                            if (col.key === 'affiliate') {
+                                return (
+                                    <div>
+                                        <p className="text-gray-900 font-bold">{row.affiliateName}</p>
+                                        <p className="text-xs text-gray-500">{row.affiliateEmail}</p>
+                                    </div>
+                                );
+                            }
+                            if (col.key === 'amount') {
+                                return <span className="text-gray-900 font-bold text-lg">${val?.toFixed(2) || '0.00'}</span>;
+                            }
+                            if (col.key === 'referrals') {
+                                return <span className="text-gray-700 font-medium">{val || 0}</span>;
+                            }
+                            if (col.key === 'requestDate') {
+                                return <span className="text-sm text-gray-500">{val ? format(new Date(val), 'MMM dd, yyyy') : 'N/A'}</span>;
+                            }
+                            return col.render ? col.render(val, row) : val;
+                        }
+                    }))}
+                    data={payouts}
+                    loading={loading}
+                    emptyMessage="No payout requests found"
+                />
+            </div>
         </DashboardLayout>
     );
 };

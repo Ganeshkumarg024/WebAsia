@@ -14,9 +14,14 @@ import {
 import useDesignerStore from '../../store/designerStore';
 import useRequestStore from '../../store/requestStore';
 import useBrandAssetStore from '../../store/brandAssetStore';
+import useMessageStore from '../../store/messageStore';
+import useAuthStore from '../../store/authStore';
+import socketClient from '../../socket/client';
 import DashboardLayout from '../../components/layout/DashboardLayout';
-import { format, formatDistanceToNow } from 'date-fns';
-import { SwatchIcon, IdentificationIcon, BookOpenIcon } from '@heroicons/react/24/outline';
+import { format, formatDistanceToNow, isValid } from 'date-fns';
+import { SwatchIcon, IdentificationIcon, BookOpenIcon, ArrowDownTrayIcon } from '@heroicons/react/24/outline';
+import { requestFilesAPI } from '../../api/requestFiles';
+import showToast from '../../components/shared/Toast';
 
 const TaskDetails = () => {
     const { id } = useParams();
@@ -24,7 +29,11 @@ const TaskDetails = () => {
     const { currentTask, fetchTaskById, startTask, isLoading } = useDesignerStore();
     const { requestActivity, fetchRequestActivity } = useRequestStore();
     const { brandAssets, fetchBrandAssets } = useBrandAssetStore();
+    const { user } = useAuthStore();
+    const { messages, fetchMessages, sendMessage, addMessage, clearMessages, typingUsers } = useMessageStore();
     const [activeTab, setActiveTab] = useState('overview');
+    const [messageInput, setMessageInput] = useState('');
+    const [isTyping, setIsTyping] = useState(false);
 
     useEffect(() => {
         if (id) {
@@ -34,13 +43,67 @@ const TaskDetails = () => {
                 }
             });
             fetchRequestActivity(id);
+            fetchMessages(id);
+            socketClient.emit('join_request', id);
         }
-    }, [id, fetchTaskById, fetchRequestActivity, fetchBrandAssets]);
+
+        return () => {
+            if (id) {
+                socketClient.emit('leave_request', id);
+                clearMessages();
+            }
+        };
+    }, [id, fetchTaskById, fetchRequestActivity, fetchBrandAssets, fetchMessages, clearMessages]);
+
+    const handleSendMessage = async () => {
+        if (!messageInput.trim()) return;
+
+        const result = await sendMessage({
+            requestId: id,
+            message: messageInput,
+            messageType: 'text'
+        });
+
+        if (result.success) {
+            setMessageInput('');
+            socketClient.emit('typing:stop', { requestId: id });
+        }
+    };
+
+    const handleTyping = (e) => {
+        setMessageInput(e.target.value);
+        if (!isTyping) {
+            setIsTyping(true);
+            socketClient.emit('typing:start', { requestId: id });
+            setTimeout(() => {
+                setIsTyping(false);
+                socketClient.emit('typing:stop', { requestId: id });
+            }, 3000);
+        }
+    };
 
     const handleStartTask = async () => {
         const result = await startTask(id);
         if (result.success) {
             navigate(`/designer/workspace?task=${id}`);
+        }
+    };
+
+    const handleFileDownload = async (fileId, fileName) => {
+        try {
+            const blob = await requestFilesAPI.downloadFile(fileId);
+            const url = window.URL.createObjectURL(blob);
+            const link = document.createElement('a');
+            link.href = url;
+            link.download = fileName;
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+            window.URL.revokeObjectURL(url);
+            showToast.success('File downloaded successfully');
+        } catch (error) {
+            console.error('Failed to download file:', error);
+            showToast.error('Failed to download file');
         }
     };
 
@@ -105,7 +168,7 @@ const TaskDetails = () => {
                     )}
                     {currentTask.status === 'in_progress' && (
                         <button
-                            onClick={() => navigate(`/designer/upload/${id}`)}
+                            onClick={() => navigate(`/designer/tasks/${id}/upload`)}
                             className="flex items-center gap-2 px-6 py-3 bg-blue-600 text-white rounded-2xl font-bold hover:bg-blue-700 transition-all shadow-lg shadow-blue-600/20"
                         >
                             <PaperAirplaneIcon className="w-5 h-5" />
@@ -332,9 +395,18 @@ const TaskDetails = () => {
                                 {currentTask.files && currentTask.files.length > 0 ? (
                                     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                                         {currentTask.files.map((file) => (
-                                            <div key={file.id} className="bg-gray-50 rounded-2xl p-4 border border-gray-100">
-                                                <PhotoIcon className="w-12 h-12 text-gray-400 mb-3" />
-                                                <p className="font-bold text-gray-900 truncate">{file.originalName}</p>
+                                            <div key={file.id} className="bg-gray-50 rounded-2xl p-4 border border-gray-100 group">
+                                                <div className="flex items-start justify-between mb-3">
+                                                    <PhotoIcon className="w-12 h-12 text-gray-400" />
+                                                    <button
+                                                        onClick={() => handleFileDownload(file.id, file.originalName)}
+                                                        className="p-2 bg-white rounded-xl shadow-sm opacity-0 group-hover:opacity-100 transition-opacity hover:bg-blue-50 text-blue-600"
+                                                        title="Download"
+                                                    >
+                                                        <ArrowDownTrayIcon className="w-5 h-5" />
+                                                    </button>
+                                                </div>
+                                                <p className="font-bold text-gray-900 truncate" title={file.originalName}>{file.originalName}</p>
                                                 <p className="text-xs text-gray-500 mt-1">
                                                     {(file.fileSize / 1024).toFixed(2)} KB
                                                 </p>
@@ -352,9 +424,54 @@ const TaskDetails = () => {
 
                         {/* Messages Tab */}
                         {activeTab === 'messages' && (
-                            <div className="text-center py-12">
-                                <ChatBubbleLeftIcon className="w-16 h-16 text-gray-300 mx-auto mb-3" />
-                                <p className="text-gray-500">Messages coming soon</p>
+                            <div className="bg-gray-50 rounded-2xl border border-gray-100 p-4 h-[600px] flex flex-col">
+                                <div className="flex-1 overflow-y-auto gap-4 pr-2 custom-scrollbar flex flex-col-reverse">
+                                    {/* Typing Indicator */}
+                                    {typingUsers[id] && typingUsers[id].some(uid => uid !== user?.id) && (
+                                        <div className="flex items-center gap-2 text-xs text-gray-500 font-medium bg-white px-4 py-2 rounded-full w-fit shadow-sm animate-pulse">
+                                            <div className="flex gap-1">
+                                                <span className="w-1 h-1 bg-gray-400 rounded-full animate-bounce"></span>
+                                                <span className="w-1 h-1 bg-gray-400 rounded-full animate-bounce [animation-delay:0.2s]"></span>
+                                                <span className="w-1 h-1 bg-gray-400 rounded-full animate-bounce [animation-delay:0.4s]"></span>
+                                            </div>
+                                            Client is typing...
+                                        </div>
+                                    )}
+
+                                    {messages.map((message) => (
+                                        <div key={message.id} className={`flex flex-col ${message.senderId === user?.id ? 'items-end' : 'items-start'}`}>
+                                            <div className={`px-6 py-4 rounded-[28px] max-w-[80%] text-sm font-medium leading-relaxed shadow-sm ${message.senderId === user?.id
+                                                ? 'bg-blue-600 text-white rounded-tr-none shadow-blue-600/10'
+                                                : 'bg-white text-gray-700 rounded-tl-none border border-gray-100'
+                                                }`}>
+                                                {message.message}
+                                            </div>
+                                            <span className="text-[9px] font-black text-gray-400 mt-2 uppercase tracking-widest px-1">
+                                                {format(new Date(message.createdAt || message.created_at || Date.now()), 'HH:mm')}
+                                            </span>
+                                        </div>
+                                    ))}
+                                </div>
+
+                                <div className="mt-4 relative">
+                                    <div className="flex items-end gap-3 bg-white border border-gray-200 rounded-[28px] p-2 pr-4 focus-within:border-blue-600 focus-within:ring-4 focus-within:ring-blue-600/10 transition-all shadow-sm">
+                                        <textarea
+                                            value={messageInput}
+                                            onChange={handleTyping}
+                                            onKeyPress={(e) => e.key === 'Enter' && !e.shiftKey && (e.preventDefault(), handleSendMessage())}
+                                            placeholder="Type your message..."
+                                            className="bg-transparent border-none focus:ring-0 text-sm text-gray-900 font-medium flex-1 outline-none resize-none py-3 px-4 min-h-[44px] max-h-[120px]"
+                                            rows="1"
+                                        />
+                                        <button
+                                            onClick={handleSendMessage}
+                                            disabled={!messageInput.trim()}
+                                            className="p-3 bg-blue-600 text-white rounded-xl hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed transition-all shadow-lg shadow-blue-600/20 mb-1"
+                                        >
+                                            <PaperAirplaneIcon className="w-5 h-5" />
+                                        </button>
+                                    </div>
+                                </div>
                             </div>
                         )}
 
@@ -368,7 +485,12 @@ const TaskDetails = () => {
                                             <div className="flex-1">
                                                 <p className="text-sm text-gray-900 font-medium">{activity.description}</p>
                                                 <p className="text-xs text-gray-500 mt-1">
-                                                    {formatDistanceToNow(new Date(activity.createdAt), { addSuffix: true })}
+                                                    {(() => {
+                                                        const date = activity.createdAt || activity.created_at;
+                                                        return date && isValid(new Date(date))
+                                                            ? formatDistanceToNow(new Date(date), { addSuffix: true })
+                                                            : 'Just now';
+                                                    })()}
                                                 </p>
                                             </div>
                                         </div>

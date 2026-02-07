@@ -30,7 +30,11 @@ const MyRequests = () => {
         try {
             setIsLoading(true);
             const response = await requestsAPI.getMyRequests();
-            setRequests(response.data || []);
+            // Filter for active requests only (exclude completed and cancelled)
+            const activeRequests = (response.data || []).filter(
+                r => r.status !== 'completed' && r.status !== 'cancelled'
+            );
+            setRequests(activeRequests);
         } catch (error) {
             console.error('Failed to fetch requests:', error);
         } finally {
@@ -39,10 +43,10 @@ const MyRequests = () => {
     };
 
     const categories = [
-        { name: 'All Ecosystem', status: 'all', icon: Squares2X2Icon, count: requests.length },
-        { name: 'Live Processing', status: 'in-progress', icon: FireIcon, count: requests.filter(r => r.status === 'in-progress').length },
-        { name: 'Quality Review', status: 'in-review', icon: ClockIcon, count: requests.filter(r => r.status === 'in-review').length },
-        { name: 'Finalized', status: 'completed', icon: CheckCircleIcon, count: requests.filter(r => r.status === 'completed').length },
+        { name: 'All Active', status: 'all', icon: Squares2X2Icon, count: requests.length },
+        { name: 'Live Processing', status: 'in_progress', icon: FireIcon, count: requests.filter(r => r.status === 'in_progress' || r.status === 'in-progress').length },
+        { name: 'Quality Review', status: 'in-review', icon: ClockIcon, count: requests.filter(r => r.status === 'in-review' || r.status === 'pending_review' || r.status === 'client_review').length },
+        { name: 'Queued', status: 'queued', icon: ArrowPathIcon, count: requests.filter(r => r.status === 'queued').length },
     ];
 
     const filteredRequests = requests.filter(request => {
@@ -53,7 +57,7 @@ const MyRequests = () => {
     });
 
     return (
-        <DashboardLayout breadcrumbs={['Dashboard', 'My Requests']}>
+        <DashboardLayout breadcrumbs={['Dashboard', 'Active Requests']}>
             <div className="max-w-7xl mx-auto flex flex-col xl:flex-row gap-10 animate-in fade-in slide-in-from-bottom-4 duration-700">
                 {/* Sidebar Filter */}
                 <aside className="w-full xl:w-80 space-y-10">
@@ -80,8 +84,8 @@ const MyRequests = () => {
                                         key={cat.status}
                                         onClick={() => setFilterStatus(cat.status)}
                                         className={`w-full flex items-center justify-between px-4 py-3.5 rounded-2xl transition-all group ${filterStatus === cat.status
-                                                ? 'bg-blue-600 text-white shadow-lg shadow-blue-600/20'
-                                                : 'text-gray-500 hover:bg-gray-50 hover:text-gray-900'
+                                            ? 'bg-blue-600 text-white shadow-lg shadow-blue-600/20'
+                                            : 'text-gray-500 hover:bg-gray-50 hover:text-gray-900'
                                             }`}
                                     >
                                         <div className="flex items-center gap-3">
@@ -114,8 +118,8 @@ const MyRequests = () => {
                 <main className="flex-1 space-y-8">
                     <div className="flex items-center justify-between">
                         <div className="space-y-1">
-                            <h2 className="text-3xl font-black text-gray-900 tracking-tight">My Requests</h2>
-                            <p className="text-gray-500 font-medium">Managing {filteredRequests.length} creative projects</p>
+                            <h2 className="text-3xl font-black text-gray-900 tracking-tight">Active Requests</h2>
+                            <p className="text-gray-500 font-medium">Managing {filteredRequests.length} active projects</p>
                         </div>
                         <div className="flex items-center gap-3">
                             <div className="flex bg-white border border-gray-100 p-1 rounded-2xl shadow-sm">
@@ -126,10 +130,10 @@ const MyRequests = () => {
                                     <ListBulletIcon className="w-5 h-5" />
                                 </button>
                             </div>
-                            <Link to="/client/requests/create" className="flex items-center gap-2 px-6 py-3.5 bg-blue-600 text-white rounded-2xl font-black uppercase tracking-widest hover:bg-blue-700 transition-all shadow-lg shadow-blue-600/20">
+                            {/* <Link to="/client/requests/create" className="flex items-center gap-2 px-6 py-3.5 bg-blue-600 text-white rounded-2xl font-black uppercase tracking-widest hover:bg-blue-700 transition-all shadow-lg shadow-blue-600/20">
                                 <PlusIcon className="w-5 h-5" />
                                 <span>New Project</span>
-                            </Link>
+                            </Link> */}
                         </div>
                     </div>
 
@@ -145,17 +149,17 @@ const MyRequests = () => {
                         ) : filteredRequests.length > 0 ? (
                             filteredRequests.map((request) => (
                                 <Link
-                                    key={request._id}
-                                    to={`/client/requests/${request._id}`}
+                                    key={request.id}
+                                    to={`/client/requests/${request.id}`}
                                     className="group bg-white p-8 rounded-3xl border border-gray-100 shadow-[0_8px_30px_rgb(0,0,0,0.02)] hover:shadow-xl hover:shadow-blue-600/5 hover:-translate-y-1 transition-all duration-300 flex flex-col justify-between min-h-[280px]"
                                 >
                                     <div className="space-y-6">
                                         <div className="flex items-center justify-between">
                                             <span className={`px-4 py-1.5 rounded-full text-[10px] font-black uppercase tracking-widest ${request.status === 'completed'
-                                                    ? 'bg-green-50 text-green-600'
-                                                    : request.status === 'in-progress'
-                                                        ? 'bg-blue-50 text-blue-600'
-                                                        : 'bg-yellow-50 text-yellow-600'
+                                                ? 'bg-green-50 text-green-600'
+                                                : request.status === 'in-progress'
+                                                    ? 'bg-blue-50 text-blue-600'
+                                                    : 'bg-yellow-50 text-yellow-600'
                                                 }`}>
                                                 {request.status.replace('-', ' ')}
                                             </span>
@@ -182,7 +186,7 @@ const MyRequests = () => {
                                                 <CalendarIcon className="w-4 h-4 text-gray-400" />
                                             </div>
                                             <span className="text-xs text-gray-400 font-bold uppercase tracking-widest">
-                                                {new Date(request.createdAt).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}
+                                                {new Date(request.createdAt || request.created_at || new Date()).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}
                                             </span>
                                         </div>
                                         <div className="flex items-center gap-2">

@@ -50,7 +50,7 @@ export const designerAPI = {
     },
 
     // Upload design files
-    uploadDesignFiles: async (requestId, files, fileType = 'design_version') => {
+    uploadDesignFiles: async (requestId, files, fileType = 'draft') => {
         const formData = new FormData();
         formData.append('requestId', requestId);
         formData.append('fileType', fileType);
@@ -59,7 +59,7 @@ export const designerAPI = {
             formData.append('files', files[i]);
         }
 
-        const response = await apiClient.post('/files/upload-multiple', formData, {
+        const response = await apiClient.post('/files/bulk', formData, {
             headers: {
                 'Content-Type': 'multipart/form-data',
             },
