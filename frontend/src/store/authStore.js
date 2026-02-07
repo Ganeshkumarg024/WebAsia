@@ -46,25 +46,17 @@ const useAuthStore = create((set, get) => ({
         set({ isLoading: true, error: null });
         try {
             const data = await authAPI.register(userData);
-            const { user, accessToken, refreshToken } = data.data;
-
-            // Store in sessionStorage
-            sessionStorage.setItem('user', JSON.stringify(user));
-            sessionStorage.setItem('accessToken', accessToken);
-            sessionStorage.setItem('refreshToken', refreshToken);
+            const { user } = data.data;
 
             set({
                 user,
-                accessToken,
-                refreshToken,
-                isAuthenticated: true,
+                accessToken: null,
+                refreshToken: null,
+                isAuthenticated: false,
                 isLoading: false,
             });
 
-            // Initialize socket connection
-            initializeSocket(accessToken);
-
-            return { success: true };
+            return { success: true, user };
         } catch (error) {
             const errorMessage = error.response?.data?.error?.message || 'Registration failed';
             set({ error: errorMessage, isLoading: false });
@@ -152,6 +144,51 @@ const useAuthStore = create((set, get) => ({
             return { success: true };
         } catch (error) {
             const errorMessage = error.response?.data?.error?.message || 'Failed to change password';
+            set({ error: errorMessage, isLoading: false });
+            return { success: false, error: errorMessage };
+        }
+    },
+
+    // Verify OTP
+    verifyOtp: async (email, otp) => {
+        set({ isLoading: true, error: null });
+        try {
+            const data = await authAPI.verifyOtp(email, otp);
+            const { user, accessToken, refreshToken } = data.data;
+
+            // Store in sessionStorage
+            sessionStorage.setItem('user', JSON.stringify(user));
+            sessionStorage.setItem('accessToken', accessToken);
+            sessionStorage.setItem('refreshToken', refreshToken);
+
+            set({
+                user,
+                accessToken,
+                refreshToken,
+                isAuthenticated: true,
+                isLoading: false,
+            });
+
+            // Initialize socket connection
+            initializeSocket(accessToken);
+
+            return { success: true };
+        } catch (error) {
+            const errorMessage = error.response?.data?.error?.message || 'Verification failed';
+            set({ error: errorMessage, isLoading: false });
+            return { success: false, error: errorMessage };
+        }
+    },
+
+    // Resend OTP
+    resendOtp: async (email) => {
+        set({ isLoading: true, error: null });
+        try {
+            await authAPI.resendOtp(email);
+            set({ isLoading: false });
+            return { success: true };
+        } catch (error) {
+            const errorMessage = error.response?.data?.error?.message || 'Failed to resend code';
             set({ error: errorMessage, isLoading: false });
             return { success: false, error: errorMessage };
         }

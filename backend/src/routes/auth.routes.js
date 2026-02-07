@@ -5,7 +5,9 @@ import {
     login,
     logout,
     refreshToken,
-    getCurrentUser
+    getCurrentUser,
+    verifyOtp,
+    resendOtp
 } from '../controllers/auth.controller.js';
 import {
     requestPasswordReset,
@@ -37,6 +39,15 @@ router.post('/logout', authenticate, logout);
 router.post('/refresh', [
     body('refreshToken').notEmpty().withMessage('Refresh token required')
 ], refreshToken);
+
+router.post('/verify-otp', [
+    body('email').isEmail().withMessage('Valid email required'),
+    body('otp').isLength({ min: 6, max: 6 }).withMessage('OTP must be 6 digits')
+], verifyOtp);
+
+router.post('/resend-otp', [
+    body('email').isEmail().withMessage('Valid email required')
+], resendOtp);
 
 router.get('/me', authenticate, getCurrentUser);
 

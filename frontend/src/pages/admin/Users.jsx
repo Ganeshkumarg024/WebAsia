@@ -35,12 +35,18 @@ const Users = () => {
         lastName: '',
         email: '',
         password: '',
+        phone: '',
         role: 'client',
         status: 'active'
     });
 
     useEffect(() => {
-        fetchUsers({ role: activeTab, search: searchQuery, status: statusFilter === 'all' ? undefined : statusFilter });
+        const fetchParams = {
+            role: activeTab,
+            search: searchQuery,
+            status: statusFilter === 'all' || statusFilter === 'needs_attention' ? undefined : statusFilter
+        };
+        fetchUsers(fetchParams);
     }, [activeTab, searchQuery, statusFilter]);
 
     const tabs = [
@@ -122,6 +128,7 @@ const Users = () => {
             firstName: user.firstName || '',
             lastName: user.lastName || '',
             email: user.email || '',
+            phone: user.phone || '',
             role: user.role || 'client',
             status: user.status || 'active',
             password: '' // Don't populate password
@@ -140,6 +147,7 @@ const Users = () => {
             lastName: '',
             email: '',
             password: '',
+            phone: '',
             role: 'client',
             status: 'active'
         });
@@ -190,6 +198,7 @@ const Users = () => {
                                 <option value="active">Active</option>
                                 <option value="suspended">Suspended</option>
                                 <option value="pending">Pending</option>
+                                <option value="needs_attention">Needs Attention</option>
                             </select>
                             <FunnelIcon className="w-4 h-4 text-gray-400 absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none" />
                         </div>
@@ -228,6 +237,7 @@ const Users = () => {
                         <thead>
                             <tr className="border-b border-gray-100">
                                 <th className="px-8 py-5 text-[11px] font-black uppercase tracking-widest text-gray-400">User Profile</th>
+                                <th className="px-8 py-5 text-[11px] font-black uppercase tracking-widest text-gray-400">Contact</th>
                                 <th className="px-8 py-5 text-[11px] font-black uppercase tracking-widest text-gray-400">Role / Plan</th>
                                 <th className="px-8 py-5 text-[11px] font-black uppercase tracking-widest text-gray-400">Join Date</th>
                                 <th className="px-8 py-5 text-[11px] font-black uppercase tracking-widest text-gray-400">Status</th>
@@ -242,85 +252,106 @@ const Users = () => {
                                     </tr>
                                 ))
                             ) : users.length > 0 ? (
-                                users.map((user) => (
-                                    <tr key={user.id} className="hover:bg-blue-50/30 transition-colors group">
-                                        <td className="px-8 py-5">
-                                            <div className="flex items-center gap-4">
-                                                <div className="w-12 h-12 rounded-2xl bg-gray-100 border-2 border-white shadow-sm flex items-center justify-center text-gray-500 font-black text-lg overflow-hidden shrink-0">
-                                                    {getAvatarUrl(user) ? (
-                                                        <img src={getAvatarUrl(user)} alt="" className="w-full h-full object-cover" />
-                                                    ) : (
-                                                        user.firstName?.charAt(0)
-                                                    )}
+                                users
+                                    .filter(user => {
+                                        if (statusFilter === 'needs_attention') {
+                                            return user.role === 'client' && (!user.subscriptions || !user.subscriptions.some(s => s.status === 'active'));
+                                        }
+                                        return true;
+                                    })
+                                    .map((user) => (
+                                        <tr key={user.id} className="hover:bg-blue-50/30 transition-colors group">
+                                            <td className="px-8 py-5">
+                                                <div className="flex items-center gap-4">
+                                                    <div className="w-12 h-12 rounded-2xl bg-gray-100 border-2 border-white shadow-sm flex items-center justify-center text-gray-500 font-black text-lg overflow-hidden shrink-0">
+                                                        {getAvatarUrl(user) ? (
+                                                            <img src={getAvatarUrl(user)} alt="" className="w-full h-full object-cover" />
+                                                        ) : (
+                                                            user.firstName?.charAt(0)
+                                                        )}
+                                                    </div>
+                                                    <div>
+                                                        <p className="text-sm font-bold text-gray-900 group-hover:text-blue-600 transition-colors">
+                                                            {user.firstName} {user.lastName}
+                                                        </p>
+                                                        <p className="text-xs font-medium text-gray-400">{user.email}</p>
+                                                    </div>
                                                 </div>
-                                                <div>
-                                                    <p className="text-sm font-bold text-gray-900 group-hover:text-blue-600 transition-colors">
-                                                        {user.firstName} {user.lastName}
-                                                    </p>
-                                                    <p className="text-xs font-medium text-gray-400">{user.email}</p>
+                                            </td>
+                                            <td className="px-8 py-5">
+                                                <div className="flex flex-col">
+                                                    <span className="text-sm font-bold text-gray-900">{user.phone || 'N/A'}</span>
+                                                    <span className="text-[10px] font-medium text-gray-400 uppercase">Mobile</span>
                                                 </div>
-                                            </div>
-                                        </td>
-                                        <td className="px-8 py-5">
-                                            {user.role === 'client' ? (
-                                                <span className="inline-flex items-center gap-1.5 px-3 py-1 text-[10px] font-black bg-blue-50 text-blue-600 rounded-lg uppercase tracking-wider border border-blue-100">
-                                                    <span className="w-1.5 h-1.5 rounded-full bg-blue-600"></span>
-                                                    {user.subscriptions?.[0]?.plan?.name || 'Standard'}
+                                            </td>
+                                            <td className="px-8 py-5">
+                                                {user.role === 'client' ? (
+                                                    <div className="flex flex-col gap-1">
+                                                        <span className="inline-flex items-center gap-1.5 px-3 py-1 text-[10px] font-black bg-blue-50 text-blue-600 rounded-lg uppercase tracking-wider border border-blue-100 w-fit">
+                                                            <span className="w-1.5 h-1.5 rounded-full bg-blue-600"></span>
+                                                            {user.subscriptions?.find(s => s.status === 'active')?.plan?.name || 'No Plan'}
+                                                        </span>
+                                                        {(!user.subscriptions || !user.subscriptions.some(s => s.status === 'active')) && (
+                                                            <span className="text-[9px] font-bold text-red-500 uppercase tracking-tight px-1 flex items-center gap-1">
+                                                                <div className="w-1 h-1 rounded-full bg-red-500 animate-pulse"></div>
+                                                                Attention Required
+                                                            </span>
+                                                        )}
+                                                    </div>
+                                                ) : (
+                                                    <span className="inline-flex items-center gap-1.5 px-3 py-1 text-[10px] font-black bg-purple-50 text-purple-600 rounded-lg uppercase tracking-wider border border-purple-100">
+                                                        <span className="w-1.5 h-1.5 rounded-full bg-purple-600"></span>
+                                                        {user.role}
+                                                    </span>
+                                                )}
+                                            </td>
+                                            <td className="px-8 py-5">
+                                                <div className="flex items-center gap-2 text-sm font-bold text-gray-500">
+                                                    <ClockIcon className="w-4 h-4 text-gray-300" />
+                                                    {user.createdAt || user.created_at ? new Date(user.createdAt || user.created_at).toLocaleDateString('en-US', {
+                                                        month: 'short',
+                                                        day: 'numeric',
+                                                        year: 'numeric'
+                                                    }) : 'N/A'}
+                                                </div>
+                                            </td>
+                                            <td className="px-8 py-5">
+                                                <span className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-wider ${getStatusStyles(user.status)}`}>
+                                                    <span className={`w-1.5 h-1.5 rounded-full ${user.status === 'active' ? 'bg-green-600' : 'bg-red-600'
+                                                        }`}></span>
+                                                    {user.status}
                                                 </span>
-                                            ) : (
-                                                <span className="inline-flex items-center gap-1.5 px-3 py-1 text-[10px] font-black bg-purple-50 text-purple-600 rounded-lg uppercase tracking-wider border border-purple-100">
-                                                    <span className="w-1.5 h-1.5 rounded-full bg-purple-600"></span>
-                                                    {user.role}
-                                                </span>
-                                            )}
-                                        </td>
-                                        <td className="px-8 py-5">
-                                            <div className="flex items-center gap-2 text-sm font-bold text-gray-500">
-                                                <ClockIcon className="w-4 h-4 text-gray-300" />
-                                                {new Date(user.createdAt).toLocaleDateString('en-US', {
-                                                    month: 'short',
-                                                    day: 'numeric',
-                                                    year: 'numeric'
-                                                })}
-                                            </div>
-                                        </td>
-                                        <td className="px-8 py-5">
-                                            <span className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-wider ${getStatusStyles(user.status)}`}>
-                                                <span className={`w-1.5 h-1.5 rounded-full ${user.status === 'active' ? 'bg-green-600' : 'bg-red-600'
-                                                    }`}></span>
-                                                {user.status}
-                                            </span>
-                                        </td>
-                                        <td className="px-8 py-5 text-right">
-                                            <div className="flex justify-end gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
-                                                <button
-                                                    onClick={() => openEditModal(user)}
-                                                    className="p-2 rounded-xl text-gray-400 hover:bg-white hover:text-blue-600 hover:shadow-md transition-all"
-                                                    title="Edit user"
-                                                >
-                                                    <PencilSquareIcon className="w-4 h-4" />
-                                                </button>
-                                                <button
-                                                    className={`p-2 rounded-xl hover:shadow-md transition-all ${user.status === 'suspended'
-                                                        ? 'text-green-600 hover:bg-white'
-                                                        : 'text-red-400 hover:bg-white hover:text-red-600'
-                                                        }`}
-                                                    onClick={() => updateUser(user.id, { status: user.status === 'suspended' ? 'active' : 'suspended' })}
-                                                    title={user.status === 'suspended' ? 'Activate user' : 'Suspend user'}
-                                                >
-                                                    {user.status === 'suspended' ? <CheckCircleIcon className="w-4 h-4" /> : <NoSymbolIcon className="w-4 h-4" />}
-                                                </button>
-                                                <button
-                                                    onClick={() => openDeleteDialog(user)}
-                                                    className="p-2 rounded-xl text-gray-400 hover:bg-white hover:text-red-600 hover:shadow-md transition-all"
-                                                    title="Delete user"
-                                                >
-                                                    <TrashIcon className="w-4 h-4" />
-                                                </button>
-                                            </div>
-                                        </td>
-                                    </tr>
-                                ))
+                                            </td>
+                                            <td className="px-8 py-5 text-right">
+                                                <div className="flex justify-end gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
+                                                    <button
+                                                        onClick={() => openEditModal(user)}
+                                                        className="p-2 rounded-xl text-gray-400 hover:bg-white hover:text-blue-600 hover:shadow-md transition-all"
+                                                        title="Edit user"
+                                                    >
+                                                        <PencilSquareIcon className="w-4 h-4" />
+                                                    </button>
+                                                    <button
+                                                        className={`p-2 rounded-xl hover:shadow-md transition-all ${user.status === 'suspended'
+                                                            ? 'text-green-600 hover:bg-white'
+                                                            : 'text-red-400 hover:bg-white hover:text-red-600'
+                                                            }`}
+                                                        onClick={() => updateUser(user.id, { status: user.status === 'suspended' ? 'active' : 'suspended' })}
+                                                        title={user.status === 'suspended' ? 'Activate user' : 'Suspend user'}
+                                                    >
+                                                        {user.status === 'suspended' ? <CheckCircleIcon className="w-4 h-4" /> : <NoSymbolIcon className="w-4 h-4" />}
+                                                    </button>
+                                                    <button
+                                                        onClick={() => openDeleteDialog(user)}
+                                                        className="p-2 rounded-xl text-gray-400 hover:bg-white hover:text-red-600 hover:shadow-md transition-all"
+                                                        title="Delete user"
+                                                    >
+                                                        <TrashIcon className="w-4 h-4" />
+                                                    </button>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                    ))
                             ) : (
                                 <tr>
                                     <td colSpan="5" className="px-8 py-20 text-center text-gray-500">
@@ -386,28 +417,40 @@ const Users = () => {
                         </div>
                     </div>
 
-                    <div>
-                        <label className="block text-xs font-bold text-gray-500 uppercase tracking-wide mb-2">Email *</label>
-                        <input
-                            type="email"
-                            name="email"
-                            value={formData.email}
-                            onChange={handleInputChange}
-                            className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl text-gray-900 font-medium focus:bg-white focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 outline-none transition-all"
-                            placeholder="john.doe@example.com"
-                        />
-                    </div>
-
-                    <div>
-                        <label className="block text-xs font-bold text-gray-500 uppercase tracking-wide mb-2">Password *</label>
-                        <input
-                            type="password"
-                            name="password"
-                            value={formData.password}
-                            onChange={handleInputChange}
-                            className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl text-gray-900 font-medium focus:bg-white focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 outline-none transition-all"
-                            placeholder="••••••••"
-                        />
+                    <div className="space-y-4">
+                        <div>
+                            <label className="block text-xs font-bold text-gray-500 uppercase tracking-wide mb-2">Phone Number (Optional)</label>
+                            <input
+                                type="tel"
+                                name="phone"
+                                value={formData.phone}
+                                onChange={handleInputChange}
+                                className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl text-gray-900 font-medium focus:bg-white focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 outline-none transition-all"
+                                placeholder="+1 (555) 000-0000"
+                            />
+                        </div>
+                        <div>
+                            <label className="block text-xs font-bold text-gray-500 uppercase tracking-wide mb-2">Email *</label>
+                            <input
+                                type="email"
+                                name="email"
+                                value={formData.email}
+                                onChange={handleInputChange}
+                                className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl text-gray-900 font-medium focus:bg-white focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 outline-none transition-all"
+                                placeholder="john.doe@example.com"
+                            />
+                        </div>
+                        <div>
+                            <label className="block text-xs font-bold text-gray-500 uppercase tracking-wide mb-2">Password *</label>
+                            <input
+                                type="password"
+                                name="password"
+                                value={formData.password}
+                                onChange={handleInputChange}
+                                className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl text-gray-900 font-medium focus:bg-white focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 outline-none transition-all"
+                                placeholder="••••••••"
+                            />
+                        </div>
                     </div>
 
                     <div className="grid grid-cols-2 gap-4">
@@ -498,16 +541,29 @@ const Users = () => {
                         </div>
                     </div>
 
-                    <div>
-                        <label className="block text-xs font-bold text-gray-500 uppercase tracking-wide mb-2">Email</label>
-                        <input
-                            type="email"
-                            name="email"
-                            value={formData.email}
-                            disabled
-                            className="w-full px-4 py-3 bg-gray-100 border border-gray-200 rounded-xl text-gray-500 font-medium cursor-not-allowed"
-                        />
-                        <p className="text-xs text-gray-400 mt-1">Email cannot be changed</p>
+                    <div className="space-y-4">
+                        <div>
+                            <label className="block text-xs font-bold text-gray-500 uppercase tracking-wide mb-2">Phone Number (Optional)</label>
+                            <input
+                                type="tel"
+                                name="phone"
+                                value={formData.phone}
+                                onChange={handleInputChange}
+                                className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl text-gray-900 font-medium focus:bg-white focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 outline-none transition-all"
+                                placeholder="+1 (555) 000-0000"
+                            />
+                        </div>
+                        <div>
+                            <label className="block text-xs font-bold text-gray-500 uppercase tracking-wide mb-2">Email</label>
+                            <input
+                                type="email"
+                                name="email"
+                                value={formData.email}
+                                disabled
+                                className="w-full px-4 py-3 bg-gray-100 border border-gray-200 rounded-xl text-gray-500 font-medium cursor-not-allowed"
+                            />
+                            <p className="text-xs text-gray-400 mt-1">Email cannot be changed</p>
+                        </div>
                     </div>
 
                     <div className="grid grid-cols-2 gap-4">

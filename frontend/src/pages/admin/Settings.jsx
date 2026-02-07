@@ -13,6 +13,7 @@ const Settings = () => {
     const [formData, setFormData] = useState({
         firstName: user?.firstName || '',
         lastName: user?.lastName || '',
+        phone: user?.phone || '',
         email: user?.email || '',
         bio: user?.bio || '',
         currentPassword: '',
@@ -66,6 +67,7 @@ const Settings = () => {
         const result = await updateProfile({
             firstName: formData.firstName,
             lastName: formData.lastName,
+            phone: formData.phone,
             bio: formData.bio,
         });
 
@@ -182,7 +184,7 @@ const Settings = () => {
                                         </div>
                                     </div>
 
-                                    <div className="grid grid-cols-2 gap-6">
+                                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                                         <div>
                                             <label className="block text-xs font-bold text-gray-500 uppercase tracking-wide mb-2">First Name</label>
                                             <input
@@ -200,6 +202,17 @@ const Settings = () => {
                                                 name="lastName"
                                                 value={formData.lastName}
                                                 onChange={handleInputChange}
+                                                className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl text-gray-900 font-medium focus:bg-white focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 outline-none transition-all"
+                                            />
+                                        </div>
+                                        <div className="md:col-span-2">
+                                            <label className="block text-xs font-bold text-gray-500 uppercase tracking-wide mb-2">Phone Number (Optional)</label>
+                                            <input
+                                                type="tel"
+                                                name="phone"
+                                                value={formData.phone}
+                                                onChange={handleInputChange}
+                                                placeholder="+1 (555) 000-0000"
                                                 className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl text-gray-900 font-medium focus:bg-white focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 outline-none transition-all"
                                             />
                                         </div>

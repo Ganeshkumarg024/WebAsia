@@ -37,15 +37,15 @@ export const authAPI = {
         return response.data;
     },
 
-    // Verify email
-    verifyEmail: async (token) => {
-        const response = await apiClient.post('/auth/verify-email', { token });
+    // Verify OTP
+    verifyOtp: async (email, otp) => {
+        const response = await apiClient.post('/auth/verify-otp', { email, otp });
         return response.data;
     },
 
-    // Resend verification email
-    resendVerification: async (email) => {
-        const response = await apiClient.post('/auth/resend-verification', { email });
+    // Resend OTP
+    resendOtp: async (email) => {
+        const response = await apiClient.post('/auth/resend-otp', { email });
         return response.data;
     },
 

@@ -1,4 +1,5 @@
 import { File, Request, User } from '../models/index.js';
+import config from '../config/index.js';
 import multer from 'multer';
 import path from 'path';
 import fs from 'fs';
@@ -312,6 +313,7 @@ export const downloadFile = async (req, res) => {
         });
 
         if (!file || !file.isActive) {
+            console.log('❌ File not found or inactive in database:', fileId);
             return res.status(404).json({
                 success: false,
                 error: {
@@ -340,9 +342,22 @@ export const downloadFile = async (req, res) => {
             });
         }
 
-        const filePath = path.join(process.cwd(), file.filePath);
+        // Resolve absolute file path correctly
+        let storagePath = file.filePath;
+        const localPath = config.storage.localPath || 'uploads';
+
+        // Check if the path already starts with the uploads folder
+        const normalizedPath = storagePath.replace(/\\/g, '/');
+        const normalizedLocal = localPath.replace(/\\/g, '/');
+
+        if (!normalizedPath.startsWith(normalizedLocal + '/')) {
+            storagePath = path.join(localPath, storagePath);
+        }
+
+        const filePath = path.join(process.cwd(), storagePath);
 
         if (!fs.existsSync(filePath)) {
+            console.error('❌ File not found on disk at:', filePath);
             return res.status(404).json({
                 success: false,
                 error: {

@@ -21,8 +21,11 @@ const registerSchema = z.object({
 
 const Register = () => {
     const navigate = useNavigate();
-    const { register: registerUser, isLoading } = useAuthStore();
+    const { register: registerUser, verifyOtp, resendOtp, isLoading, error: authError, clearError } = useAuthStore();
     const [showPassword, setShowPassword] = useState(false);
+    const [step, setStep] = useState('register'); // 'register' or 'verify'
+    const [email, setEmail] = useState('');
+    const [otp, setOtp] = useState(['', '', '', '', '', '']);
 
     const {
         register,
@@ -32,8 +35,18 @@ const Register = () => {
         resolver: zodResolver(registerSchema),
     });
 
+    const handleOtpChange = (element, index) => {
+        if (isNaN(element.value)) return false;
+        setOtp([...otp.map((d, idx) => (idx === index ? element.value : d))]);
+
+        // Focus next input
+        if (element.nextSibling && element.value !== '') {
+            element.nextSibling.focus();
+        }
+    };
+
     const onSubmit = async (data) => {
-        // Retrieve referral code if exists
+        clearError();
         let referralCode = null;
         const storedReferral = localStorage.getItem('wa_referral');
         if (storedReferral) {
@@ -52,14 +65,41 @@ const Register = () => {
         const result = await registerUser({ ...data, role: 'client', referralCode });
 
         if (result.success) {
-            toast.success('Registration successful!');
+            setEmail(data.email);
+            setStep('verify');
+            toast.success('Code sent to your email!');
             if (referralCode) {
                 localStorage.removeItem('wa_referral');
             }
-            // New clients need to purchase a plan
-            navigate('/client/billing');
         } else {
             toast.error(result.error || 'Registration failed');
+        }
+    };
+
+    const onVerifyOtp = async (e) => {
+        e.preventDefault();
+        const otpString = otp.join('');
+        if (otpString.length !== 6) {
+            toast.error('Please enter all 6 digits');
+            return;
+        }
+
+        const result = await verifyOtp(email, otpString);
+
+        if (result.success) {
+            toast.success('Email verified successfully!');
+            navigate('/client/billing');
+        } else {
+            toast.error(result.error || 'Verification failed');
+        }
+    };
+
+    const onResendOtp = async () => {
+        const result = await resendOtp(email);
+        if (result.success) {
+            toast.success('Verification code resent!');
+        } else {
+            toast.error(result.error || 'Failed to resend code');
         }
     };
 
@@ -72,7 +112,7 @@ const Register = () => {
 
             {/* Content Container */}
             <div className="relative z-10 flex flex-col lg:flex-row w-full min-h-screen">
-                {/* Left Side: Brand Experience - Hidden on mobile */}
+                {/* Left Side: Brand Experience */}
                 <div className="hidden lg:flex lg:w-1/2 relative bg-white/40 backdrop-blur-sm items-center justify-center p-12 overflow-hidden border-r border-white/50">
                     <div className="absolute inset-0 z-0">
                         <div className="absolute top-20 left-20 w-64 h-64 bg-blue-500/10 rounded-full blur-3xl animate-pulse"></div>
@@ -117,131 +157,188 @@ const Register = () => {
                     </div>
                 </div>
 
-                {/* Right Side: Register Form */}
+                {/* Right Side: Forms */}
                 <div className="flex-1 lg:w-1/2 flex flex-col items-center justify-center p-6 sm:p-8 lg:px-20 lg:py-8 bg-white/50 backdrop-blur-md overflow-y-auto">
                     <div className="w-full max-w-md space-y-6 lg:space-y-8 my-auto">
-                        {/* Mobile Logo - Only visible on mobile */}
-                        <div className="lg:hidden flex flex-col items-center space-y-4 mb-4">
-                            <img
-                                src="/assets/mascot.png"
-                                alt="WebAsia Mascot"
-                                className="w-28 h-28 drop-shadow-[0_10px_30px_rgba(59,130,246,0.2)] animate-float"
-                            />
-                        </div>
-
-                        <div className="space-y-2 text-center lg:text-left">
-                            <div className="flex items-center justify-center lg:justify-start gap-3 mb-4">
-                                <img
-                                    src="/assets/webasia-logo-wide.png"
-                                    alt="WebAsia"
-                                    className="h-20 w-auto"
-                                />
-                            </div>
-                            <h1 className="text-4xl lg:text-5xl font-black text-gray-900 tracking-tight">Create Account</h1>
-                            <p className="text-gray-600 font-medium text-base">Start your creative journey in seconds.</p>
-                        </div>
-
-                        <form className="space-y-5" onSubmit={handleSubmit(onSubmit)}>
-                            <div className="space-y-4">
-                                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                                    <div className="space-y-2">
-                                        <label className="text-[10px] font-black text-gray-500 uppercase tracking-[0.2em] px-1">First Name</label>
-                                        <input
-                                            {...register('firstName')}
-                                            type="text"
-                                            placeholder="John"
-                                            className="w-full bg-white/80 backdrop-blur-sm border border-gray-200 rounded-2xl px-5 py-3.5 text-gray-900 placeholder-gray-400 focus:bg-white focus:border-blue-600 focus:ring-4 focus:ring-blue-600/10 transition-all outline-none text-sm font-medium shadow-sm"
+                        {step === 'register' ? (
+                            <>
+                                <div className="space-y-2 text-center lg:text-left">
+                                    <div className="flex items-center justify-center lg:justify-start gap-3 mb-4">
+                                        <img
+                                            src="/assets/webasia-logo-wide.png"
+                                            alt="WebAsia"
+                                            className="h-20 w-auto"
                                         />
-                                        {errors.firstName && <p className="text-[9px] text-red-500 font-black px-1 uppercase tracking-widest">{errors.firstName.message}</p>}
                                     </div>
-                                    <div className="space-y-2">
-                                        <label className="text-[10px] font-black text-gray-500 uppercase tracking-[0.2em] px-1">Last Name</label>
-                                        <input
-                                            {...register('lastName')}
-                                            type="text"
-                                            placeholder="Doe"
-                                            className="w-full bg-white/80 backdrop-blur-sm border border-gray-200 rounded-2xl px-5 py-3.5 text-gray-900 placeholder-gray-400 focus:bg-white focus:border-blue-600 focus:ring-4 focus:ring-blue-600/10 transition-all outline-none text-sm font-medium shadow-sm"
-                                        />
-                                        {errors.lastName && <p className="text-[9px] text-red-500 font-black px-1 uppercase tracking-widest">{errors.lastName.message}</p>}
+                                    <h1 className="text-4xl lg:text-5xl font-black text-gray-900 tracking-tight">Create Account</h1>
+                                    <p className="text-gray-600 font-medium text-base">Start your creative journey in seconds.</p>
+                                </div>
+
+                                <form className="space-y-5" onSubmit={handleSubmit(onSubmit)}>
+                                    <div className="space-y-4">
+                                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                                            <div className="space-y-2">
+                                                <label className="text-[10px] font-black text-gray-500 uppercase tracking-[0.2em] px-1">First Name</label>
+                                                <input
+                                                    {...register('firstName')}
+                                                    type="text"
+                                                    placeholder="John"
+                                                    className="w-full bg-white/80 backdrop-blur-sm border border-gray-200 rounded-2xl px-5 py-3.5 text-gray-900 placeholder-gray-400 focus:bg-white focus:border-blue-600 focus:ring-4 focus:ring-blue-600/10 transition-all outline-none text-sm font-medium shadow-sm"
+                                                />
+                                                {errors.firstName && <p className="text-[9px] text-red-500 font-black px-1 uppercase tracking-widest">{errors.firstName.message}</p>}
+                                            </div>
+                                            <div className="space-y-2">
+                                                <label className="text-[10px] font-black text-gray-500 uppercase tracking-[0.2em] px-1">Last Name</label>
+                                                <input
+                                                    {...register('lastName')}
+                                                    type="text"
+                                                    placeholder="Doe"
+                                                    className="w-full bg-white/80 backdrop-blur-sm border border-gray-200 rounded-2xl px-5 py-3.5 text-gray-900 placeholder-gray-400 focus:bg-white focus:border-blue-600 focus:ring-4 focus:ring-blue-600/10 transition-all outline-none text-sm font-medium shadow-sm"
+                                                />
+                                                {errors.lastName && <p className="text-[9px] text-red-500 font-black px-1 uppercase tracking-widest">{errors.lastName.message}</p>}
+                                            </div>
+                                        </div>
+
+                                        <div className="space-y-2">
+                                            <label className="text-[10px] font-black text-gray-500 uppercase tracking-[0.2em] px-1">Work Email</label>
+                                            <input
+                                                {...register('email')}
+                                                type="email"
+                                                placeholder="john@company.com"
+                                                className="w-full bg-white/80 backdrop-blur-sm border border-gray-200 rounded-2xl px-5 py-3.5 text-gray-900 placeholder-gray-400 focus:bg-white focus:border-blue-600 focus:ring-4 focus:ring-blue-600/10 transition-all outline-none text-sm font-medium shadow-sm"
+                                            />
+                                            {errors.email && <p className="text-[9px] text-red-500 font-black px-1 uppercase tracking-widest">{errors.email.message}</p>}
+                                        </div>
+
+                                        <div className="space-y-2">
+                                            <label className="text-[10px] font-black text-gray-500 uppercase tracking-[0.2em] px-1">Phone Number (Optional)</label>
+                                            <input
+                                                {...register('phone')}
+                                                type="tel"
+                                                placeholder="+1 (555) 000-0000"
+                                                className="w-full bg-white/80 backdrop-blur-sm border border-gray-200 rounded-2xl px-5 py-3.5 text-gray-900 placeholder-gray-400 focus:bg-white focus:border-blue-600 focus:ring-4 focus:ring-blue-600/10 transition-all outline-none text-sm font-medium shadow-sm"
+                                            />
+                                        </div>
+
+                                        <div className="space-y-2">
+                                            <label className="text-[10px] font-black text-gray-500 uppercase tracking-[0.2em] px-1">Password</label>
+                                            <div className="relative">
+                                                <input
+                                                    {...register('password')}
+                                                    type={showPassword ? 'text' : 'password'}
+                                                    placeholder="••••••••••••"
+                                                    className="w-full bg-white/80 backdrop-blur-sm border border-gray-200 rounded-2xl px-5 py-3.5 text-gray-900 placeholder-gray-400 focus:bg-white focus:border-blue-600 focus:ring-4 focus:ring-blue-600/10 transition-all outline-none text-sm font-medium shadow-sm"
+                                                />
+                                                <button
+                                                    type="button"
+                                                    onClick={() => setShowPassword(!showPassword)}
+                                                    className="absolute right-4 top-1/2 -translate-y-1/2 p-2 text-gray-400 hover:text-blue-600 transition-colors"
+                                                >
+                                                    {showPassword ? (
+                                                        <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+                                                        </svg>
+                                                    ) : (
+                                                        <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.543-7a9.97 9.97 0 011.563-3.029m5.858.908a3 3 0 114.243 4.243M9.878 9.878l4.242 4.242M9.88 9.88l-3.29-3.29m7.532 7.532l3.29 3.29M3 3l3.59 3.59m0 0A9.953 9.953 0 0112 5c4.478 0 8.268 2.943 9.543 7a10.025 10.025 0 01-4.132 5.411m0 0L21 21" />
+                                                        </svg>
+                                                    )}
+                                                </button>
+                                            </div>
+                                            {errors.password && <p className="text-[9px] text-red-500 font-black px-1 uppercase tracking-widest">{errors.password.message}</p>}
+                                            <p className="text-[9px] text-gray-500 px-1 font-bold uppercase tracking-wider">Must include uppercase, lowercase, and a number.</p>
+                                        </div>
                                     </div>
-                                </div>
 
-                                <div className="space-y-2">
-                                    <label className="text-[10px] font-black text-gray-500 uppercase tracking-[0.2em] px-1">Work Email</label>
-                                    <input
-                                        {...register('email')}
-                                        type="email"
-                                        placeholder="john@company.com"
-                                        className="w-full bg-white/80 backdrop-blur-sm border border-gray-200 rounded-2xl px-5 py-3.5 text-gray-900 placeholder-gray-400 focus:bg-white focus:border-blue-600 focus:ring-4 focus:ring-blue-600/10 transition-all outline-none text-sm font-medium shadow-sm"
-                                    />
-                                    {errors.email && <p className="text-[9px] text-red-500 font-black px-1 uppercase tracking-widest">{errors.email.message}</p>}
-                                </div>
-
-                                <div className="space-y-2">
-                                    <label className="text-[10px] font-black text-gray-500 uppercase tracking-[0.2em] px-1">Phone Number (Optional)</label>
-                                    <input
-                                        {...register('phone')}
-                                        type="tel"
-                                        placeholder="+1 (555) 000-0000"
-                                        className="w-full bg-white/80 backdrop-blur-sm border border-gray-200 rounded-2xl px-5 py-3.5 text-gray-900 placeholder-gray-400 focus:bg-white focus:border-blue-600 focus:ring-4 focus:ring-blue-600/10 transition-all outline-none text-sm font-medium shadow-sm"
-                                    />
-                                </div>
-
-                                <div className="space-y-2">
-                                    <label className="text-[10px] font-black text-gray-500 uppercase tracking-[0.2em] px-1">Password</label>
-                                    <div className="relative">
-                                        <input
-                                            {...register('password')}
-                                            type={showPassword ? 'text' : 'password'}
-                                            placeholder="••••••••••••"
-                                            className="w-full bg-white/80 backdrop-blur-sm border border-gray-200 rounded-2xl px-5 py-3.5 text-gray-900 placeholder-gray-400 focus:bg-white focus:border-blue-600 focus:ring-4 focus:ring-blue-600/10 transition-all outline-none text-sm font-medium shadow-sm"
-                                        />
+                                    <div className="space-y-4 pt-2">
                                         <button
-                                            type="button"
-                                            onClick={() => setShowPassword(!showPassword)}
-                                            className="absolute right-4 top-1/2 -translate-y-1/2 p-2 text-gray-400 hover:text-blue-600 transition-colors"
+                                            type="submit"
+                                            disabled={isLoading}
+                                            className="w-full bg-gradient-to-r from-blue-600 to-blue-700 text-white h-14 rounded-2xl font-black uppercase tracking-widest shadow-xl shadow-blue-600/30 hover:shadow-2xl hover:shadow-blue-600/40 hover:scale-[1.02] active:scale-[0.98] transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-3 group"
                                         >
-                                            {showPassword ? (
-                                                <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
-                                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
-                                                </svg>
+                                            {isLoading ? (
+                                                <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin"></div>
                                             ) : (
-                                                <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.543-7a9.97 9.97 0 011.563-3.029m5.858.908a3 3 0 114.243 4.243M9.878 9.878l4.242 4.242M9.88 9.88l-3.29-3.29m7.532 7.532l3.29 3.29M3 3l3.59 3.59m0 0A9.953 9.953 0 0112 5c4.478 0 8.268 2.943 9.543 7a10.025 10.025 0 01-4.132 5.411m0 0L21 21" />
-                                                </svg>
+                                                <>
+                                                    <span>Create Account</span>
+                                                    <svg className="w-5 h-5 group-hover:translate-x-1 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M13 7l5 5m0 0l-5 5m5-5H6" />
+                                                    </svg>
+                                                </>
                                             )}
                                         </button>
+
+                                        <p className="text-center text-[11px] font-black text-gray-500 uppercase tracking-widest">
+                                            Already have an account?{' '}
+                                            <Link to="/login" className="text-blue-600 hover:underline ml-1">Sign in instead</Link>
+                                        </p>
                                     </div>
-                                    {errors.password && <p className="text-[9px] text-red-500 font-black px-1 uppercase tracking-widest">{errors.password.message}</p>}
-                                    <p className="text-[9px] text-gray-500 px-1 font-bold uppercase tracking-wider">Must include uppercase, lowercase, and a number.</p>
+                                </form>
+                            </>
+                        ) : (
+                            <div className="space-y-8">
+                                <div className="space-y-2 text-center">
+                                    <div className="w-20 h-20 bg-blue-50 rounded-full flex items-center justify-center mx-auto mb-6 text-3xl">
+                                        ✉️
+                                    </div>
+                                    <h1 className="text-4xl font-black text-gray-900 tracking-tight text-center">Verify Email</h1>
+                                    <p className="text-gray-600 font-medium text-base text-center">
+                                        We've sent a 6-digit code to <br />
+                                        <span className="text-blue-600 font-bold">{email}</span>
+                                    </p>
                                 </div>
-                            </div>
 
-                            <div className="space-y-4 pt-2">
-                                <button
-                                    type="submit"
-                                    disabled={isLoading}
-                                    className="w-full bg-gradient-to-r from-blue-600 to-blue-700 text-white h-14 rounded-2xl font-black uppercase tracking-widest shadow-xl shadow-blue-600/30 hover:shadow-2xl hover:shadow-blue-600/40 hover:scale-[1.02] active:scale-[0.98] transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-3 group"
-                                >
-                                    {isLoading ? (
-                                        <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin"></div>
-                                    ) : (
-                                        <>
-                                            <span>Create Account</span>
-                                            <svg className="w-5 h-5 group-hover:translate-x-1 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M13 7l5 5m0 0l-5 5m5-5H6" />
-                                            </svg>
-                                        </>
-                                    )}
-                                </button>
+                                <form className="space-y-8" onSubmit={onVerifyOtp}>
+                                    <div className="flex justify-between gap-2 max-w-sm mx-auto">
+                                        {otp.map((data, index) => (
+                                            <input
+                                                key={index}
+                                                type="text"
+                                                maxLength="1"
+                                                value={data}
+                                                onChange={e => handleOtpChange(e.target, index)}
+                                                onFocus={e => e.target.select()}
+                                                className="w-12 h-16 sm:w-14 sm:h-20 text-center text-3xl font-black bg-white/80 backdrop-blur-sm border-2 border-gray-200 rounded-2xl focus:border-blue-600 focus:ring-4 focus:ring-blue-600/10 transition-all outline-none"
+                                            />
+                                        ))}
+                                    </div>
 
-                                <p className="text-center text-[11px] font-black text-gray-500 uppercase tracking-widest">
-                                    Already have an account?{' '}
-                                    <Link to="/login" className="text-blue-600 hover:underline ml-1">Sign in instead</Link>
-                                </p>
+                                    <div className="space-y-4">
+                                        <button
+                                            type="submit"
+                                            disabled={isLoading}
+                                            className="w-full bg-gradient-to-r from-blue-600 to-blue-700 text-white h-14 rounded-2xl font-black uppercase tracking-widest shadow-xl shadow-blue-600/30 hover:shadow-2xl hover:shadow-blue-600/40 hover:scale-[1.02] active:scale-[0.98] transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-3 group"
+                                        >
+                                            {isLoading ? (
+                                                <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin"></div>
+                                            ) : (
+                                                <span>Verify OTP</span>
+                                            )}
+                                        </button>
+
+                                        <p className="text-center text-[11px] font-black text-gray-500 uppercase tracking-widest">
+                                            Didn't receive code?{' '}
+                                            <button
+                                                type="button"
+                                                onClick={onResendOtp}
+                                                className="text-blue-600 hover:underline ml-1 uppercase"
+                                            >
+                                                Resend
+                                            </button>
+                                        </p>
+
+                                        <button
+                                            type="button"
+                                            onClick={() => setStep('register')}
+                                            className="w-full text-[10px] font-black text-gray-400 uppercase tracking-widest hover:text-gray-600 transition-colors"
+                                        >
+                                            ← Change Email
+                                        </button>
+                                    </div>
+                                </form>
                             </div>
-                        </form>
+                        )}
                     </div>
 
                     <div className="mt-8 text-[9px] font-black text-gray-400 uppercase tracking-[0.3em] text-center">

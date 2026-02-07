@@ -92,7 +92,7 @@ export const getAllUsers = async (req, res) => {
             where.role = role;
         }
 
-        if (status) {
+        if (status && status !== 'needs_attention') {
             where.status = status;
         }
 
@@ -104,12 +104,25 @@ export const getAllUsers = async (req, res) => {
             ];
         }
 
+        let include = [
+            { model: Subscription, as: 'subscriptions', include: [{ model: SubscriptionPlan, as: 'plan' }] }
+        ];
+
+        // Specific handling for "Needs Attention" (Non-Subscribed Clients)
+        if (status === 'needs_attention') {
+            where.role = 'client';
+            // Find users who DON'T have any subscription with status = 'active'
+            where.id = {
+                [Op.notIn]: User.sequelize.literal(`(
+                    SELECT user_id FROM subscriptions WHERE status = 'active'
+                )`)
+            };
+        }
+
         const users = await User.findAll({
             where,
             attributes: { exclude: ['password', 'refreshToken'] },
-            include: [
-                { model: Subscription, as: 'subscriptions', include: [{ model: SubscriptionPlan, as: 'plan' }] }
-            ],
+            include,
             limit: parseInt(limit),
             offset: parseInt(offset),
             order: [['created_at', 'DESC']]
@@ -387,18 +400,18 @@ export const getAnalytics = async (req, res) => {
             newSubscriptions,
             totalRevenue
         ] = await Promise.all([
-            User.count({ where: { createdAt: { [Op.gte]: startDate } } }),
-            Request.count({ where: { createdAt: { [Op.gte]: startDate } } }),
+            User.count({ where: { created_at: { [Op.gte]: startDate } } }),
+            Request.count({ where: { created_at: { [Op.gte]: startDate } } }),
             Request.count({
                 where: {
                     status: 'completed',
                     [Op.or]: [
-                        { completedAt: { [Op.gte]: startDate } },
-                        { updatedAt: { [Op.gte]: startDate } } // Fallback
+                        { completed_at: { [Op.gte]: startDate } },
+                        { updated_at: { [Op.gte]: startDate } } // Fallback
                     ]
                 }
             }),
-            Subscription.count({ where: { createdAt: { [Op.gte]: startDate } } }),
+            Subscription.count({ where: { created_at: { [Op.gte]: startDate } } }),
             calculateActiveRevenue() // Total active revenue (MRR)
         ]);
 

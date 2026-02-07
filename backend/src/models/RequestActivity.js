@@ -31,6 +31,8 @@ const RequestActivity = sequelize.define('RequestActivity', {
             'status_changed',
             'assigned',
             'reassigned',
+            'designer_assigned',
+            'manager_assigned',
             'started',
             'file_uploaded',
             'submitted_for_review',
@@ -43,7 +45,9 @@ const RequestActivity = sequelize.define('RequestActivity', {
             'completed',
             'cancelled',
             'priority_changed',
-            'deadline_extended'
+            'deadline_extended',
+            'internal_note',
+            'note_added'
         ),
         allowNull: false,
         field: 'activity_type'

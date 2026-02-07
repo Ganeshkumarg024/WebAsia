@@ -1,7 +1,13 @@
 import nodemailer from 'nodemailer';
+import sgMail from '@sendgrid/mail';
 import config from '../config/index.js';
 
-// Create transporter
+// Setup SendGrid if API key exists
+if (config.sendgrid.apiKey) {
+  sgMail.setApiKey(config.sendgrid.apiKey);
+}
+
+// Create Nodemailer transporter
 const transporter = nodemailer.createTransport({
   host: config.email.host,
   port: config.email.port,
@@ -12,31 +18,58 @@ const transporter = nodemailer.createTransport({
   }
 });
 
-// Verify transporter
+// Verify transporter connection only in non-test environments
 if (process.env.NODE_ENV !== 'test') {
   transporter.verify()
-    .then(() => console.log('✅ Email server is ready'))
+    .then(() => console.log('✅ SMTP Email server is ready'))
     .catch(error => {
-      console.error('❌ Email transporter error (likely auth or connection):', error.message);
-      console.log('⚠️ Emails will not be sent, but server will continue to run.');
+      console.error('❌ SMTP/Email error (transporter verification failed):', error.message);
+      console.log('⚠️ SMTP Emails will not be sent, but server will continue to run.');
     });
 }
 
+/**
+ * Universal send email function that prioritizes SendGrid if configured,
+ * otherwise falls back to SMTP (Nodemailer).
+ */
 export const sendEmail = async (to, subject, html, text = null) => {
+  const from = `${config.email.fromName} <${config.email.fromEmail}>`;
+
+  // Try SendGrid first if API key is present
+  if (config.sendgrid.apiKey && process.env.EMAIL_SERVICE_PROVIDER === 'sendgrid') {
+    try {
+      const msg = {
+        to,
+        from: config.email.fromEmail, // SendGrid requires verified sender email
+        subject,
+        text: text || html.replace(/<[^>]*>/g, ''),
+        html,
+      };
+      const result = await sgMail.send(msg);
+      console.log('✅ Email sent via SendGrid');
+      return result;
+    } catch (error) {
+      console.error('❌ SendGrid error:', error.response ? error.response.body : error.message);
+      // Fallback to SMTP if SendGrid fails? For now, we just throw or log.
+      // throw error; 
+    }
+  }
+
+  // Fallback to Nodemailer/SMTP
   try {
     const mailOptions = {
-      from: `${config.email.fromName} <${config.email.fromEmail}>`,
+      from,
       to,
       subject,
       html,
-      text: text || html.replace(/<[^>]*>/g, '') // Strip HTML for text version
+      text: text || html.replace(/<[^>]*>/g, '')
     };
 
     const info = await transporter.sendMail(mailOptions);
-    console.log('✅ Email sent:', info.messageId);
+    console.log('✅ Email sent via SMTP:', info.messageId);
     return info;
   } catch (error) {
-    console.error('❌ Email send error:', error);
+    console.error('❌ SMTP Email send error:', error.message);
     throw error;
   }
 };
@@ -163,6 +196,41 @@ export const sendEmailVerification = async (user, verificationToken) => {
   return sendEmail(user.email, subject, html);
 };
 
+export const sendOtpEmail = async (user, otp) => {
+  const subject = 'Your WebAsia Verification Code';
+  const html = `
+    <!DOCTYPE html>
+    <html>
+    <head>
+      <style>
+        body { font-family: Arial, sans-serif; line-height: 1.6; color: #333; }
+        .container { max-width: 600px; margin: 0 auto; padding: 20px; }
+        .header { background: #667eea; color: white; padding: 30px; text-align: center; border-radius: 10px 10px 0 0; }
+        .content { background: #f9f9f9; padding: 30px; border-radius: 0 0 10px 10px; text-align: center; }
+        .otp-box { font-size: 32px; font-weight: bold; letter-spacing: 5px; color: #667eea; background: white; padding: 20px; border-radius: 10px; margin: 20px auto; width: fit-content; border: 2px dashed #667eea; }
+      </style>
+    </head>
+    <body>
+      <div class="container">
+        <div class="header">
+          <h1>Verification Code ✉️</h1>
+        </div>
+        <div class="content">
+          <h2>Hi ${user.firstName},</h2>
+          <p>Thank you for signing up with WebAsia! Use the code below to verify your email address and activate your account.</p>
+          <div class="otp-box">${otp}</div>
+          <p>This code will expire in 10 minutes.</p>
+          <p>If you didn't request this, please ignore this email.</p>
+          <p>Best regards,<br>The WebAsia Team</p>
+        </div>
+      </div>
+    </body>
+    </html>
+  `;
+
+  return sendEmail(user.email, subject, html);
+};
+
 export const sendRequestAssignedEmail = async (designer, request, client) => {
   const subject = 'New Request Assigned to You';
   const html = `
@@ -243,6 +311,7 @@ export default {
   sendWelcomeEmail,
   sendPasswordResetEmail,
   sendEmailVerification,
+  sendOtpEmail,
   sendRequestAssignedEmail,
   sendRequestCompletedEmail
 };
