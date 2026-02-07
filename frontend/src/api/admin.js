@@ -259,6 +259,11 @@ export const adminAPI = {
     getAvailableManagers: async () => {
         const response = await apiClient.get('/admin/managers/available');
         return response.data;
+    },
+
+    resetUserPassword: async (userId, newPassword, sendEmail = false) => {
+        const response = await apiClient.post('/admin/users/reset-password', { userId, newPassword, sendEmail });
+        return response.data;
     }
 };
 

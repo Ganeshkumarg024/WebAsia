@@ -1,5 +1,6 @@
+import { deductCredits, refundCredits } from './subscription.controller.js';
 import { Request, User, Subscription, SubscriptionPlan, File, RequestActivity } from '../models/index.js';
-import { deductCredits } from './subscription.controller.js';
+import { subscriptionService } from '../services/subscription.service.js';
 import { Op } from 'sequelize';
 import sequelize from '../config/database.js';
 import { validationResult } from 'express-validator';
@@ -25,6 +26,9 @@ export const createRequest = async (req, res) => {
             specifications,
             priority = 'normal'
         } = req.body;
+
+        // Run expiry check
+        await subscriptionService.checkSubscriptionStatus(req.user.id);
 
         // Get user's active subscription
         const subscription = await Subscription.findOne({
@@ -383,6 +387,14 @@ export const cancelRequest = async (req, res) => {
                 cancellationReason: reason
             }
         });
+
+        // Refund credits
+        try {
+            await refundCredits(request.subscriptionId, request.serviceType, 1);
+        } catch (refundError) {
+            console.error('Failed to refund credits for cancelled request:', refundError);
+            // We don't fail the request cancellation if refund fails, but we log it
+        }
 
         // Create activity
         await RequestActivity.create({

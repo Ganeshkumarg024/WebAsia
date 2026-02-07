@@ -16,6 +16,7 @@ import FinancialLog from './FinancialLog.js';
 import Lead from './Lead.js';
 import BrandKit from './BrandKit.js';
 import SupportMessage from './SupportMessage.js';
+import SystemLog from './SystemLog.js';
 
 // User associations
 User.hasMany(Subscription, { foreignKey: 'userId', as: 'subscriptions' });
@@ -36,6 +37,7 @@ User.hasMany(User, { foreignKey: 'managerId', as: 'designers' });
 User.hasOne(BrandKit, { foreignKey: 'userId', as: 'brandKit' });
 User.hasMany(SupportMessage, { foreignKey: 'clientId', as: 'supportMessagesAsClient' });
 User.hasMany(SupportMessage, { foreignKey: 'adminId', as: 'supportMessagesAsAdmin' });
+User.hasMany(SystemLog, { foreignKey: 'adminId', as: 'auditLogs' });
 
 // SubscriptionPlan associations
 SubscriptionPlan.hasMany(Subscription, { foreignKey: 'planId', as: 'subscriptions' });
@@ -109,6 +111,7 @@ BrandKit.belongsTo(User, { foreignKey: 'userId', as: 'user' });
 // SupportMessage associations
 SupportMessage.belongsTo(User, { foreignKey: 'clientId', as: 'client' });
 SupportMessage.belongsTo(User, { foreignKey: 'adminId', as: 'admin' });
+SystemLog.belongsTo(User, { foreignKey: 'adminId', as: 'admin' });
 
 // Sync database (development only)
 export const syncDatabase = async (options = {}) => {
@@ -139,5 +142,6 @@ export {
     FinancialLog,
     Lead,
     BrandKit,
-    SupportMessage
+    SupportMessage,
+    SystemLog
 };

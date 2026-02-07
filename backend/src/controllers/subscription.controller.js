@@ -1,9 +1,13 @@
 import { Subscription, SubscriptionPlan, User } from '../models/index.js';
 import { Op } from 'sequelize';
 import { paymentService } from '../services/payment.service.js';
+import { subscriptionService } from '../services/subscription.service.js';
 
 export const getUserSubscription = async (req, res) => {
     try {
+        // Run expiry check
+        await subscriptionService.checkSubscriptionStatus(req.user.id);
+
         const subscription = await Subscription.findOne({
             where: {
                 userId: req.user.id,
@@ -184,6 +188,10 @@ export const deductCredits = async (subscriptionId, serviceType, amount = 1) => 
             throw new Error('Subscription not found');
         }
 
+        if (subscription.status !== 'active') {
+            throw new Error('Subscription is not active');
+        }
+
         const creditField = {
             'graphic_design': 'graphicsCreditsRemaining',
             'video_production': 'videoCreditsRemaining',
@@ -205,6 +213,49 @@ export const deductCredits = async (subscriptionId, serviceType, amount = 1) => 
 
         return subscription;
     } catch (error) {
+        throw error;
+    }
+};
+
+export const refundCredits = async (subscriptionId, serviceType, amount = 1) => {
+    try {
+        const subscription = await Subscription.findByPk(subscriptionId, {
+            include: [{ model: SubscriptionPlan, as: 'plan' }]
+        });
+
+        if (!subscription) {
+            throw new Error('Subscription not found');
+        }
+
+        const creditField = {
+            'graphic_design': 'graphicsCreditsRemaining',
+            'video_production': 'videoCreditsRemaining',
+            'web_development': 'webCreditsRemaining'
+        }[serviceType];
+
+        const planField = {
+            'graphic_design': 'monthlyGraphicsCredits',
+            'video_production': 'monthlyVideoCredits',
+            'web_development': 'monthlyWebCredits'
+        }[serviceType];
+
+        if (!creditField || !planField) {
+            throw new Error('Invalid service type for refund');
+        }
+
+        const currentCredits = subscription[creditField];
+        const maxCredits = subscription.plan[planField] || 0;
+
+        // Ensure we don't exceed the plan's monthly limit
+        const newCredits = Math.min(currentCredits + amount, maxCredits);
+
+        await subscription.update({
+            [creditField]: newCredits
+        });
+
+        return subscription;
+    } catch (error) {
+        console.error('Refund credits error:', error);
         throw error;
     }
 };

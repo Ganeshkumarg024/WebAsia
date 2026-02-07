@@ -25,7 +25,8 @@ import {
     rejectTestimonial,
     getAllAffiliates,
     updateAffiliateCommission,
-    approvePayout
+    approvePayout,
+    adminResetUserPassword
 } from '../controllers/admin.controller.js';
 import {
     getAllRequests,
@@ -134,15 +135,11 @@ router.get('/testimonials', getTestimonials);
 router.post('/testimonials/:id/approve', approveTestimonial);
 router.post('/testimonials/:id/reject', rejectTestimonial);
 
-// Affiliate Management
-router.get('/affiliates', getAllAffiliates);
-router.patch('/affiliates/:id/commission', updateAffiliateCommission);
-router.post('/affiliates/payouts/:id/approve', approvePayout);
-
-// Affiliate Management
-router.get('/affiliates', getAllAffiliates);
-router.patch('/affiliates/:id/commission', updateAffiliateCommission);
-router.post('/affiliates/payouts/:id/approve', approvePayout);
+// User password reset (Admin only)
+router.post('/users/reset-password', [
+    body('userId').isUUID().withMessage('Valid user ID required'),
+    body('newPassword').isLength({ min: 8 }).withMessage('Password must be at least 8 characters')
+], adminResetUserPassword);
 
 // Plans Management
 router.get('/plans', getAllPlans);

@@ -28,6 +28,11 @@ const Users = () => {
     const [showDeleteDialog, setShowDeleteDialog] = useState(false);
     const [selectedUser, setSelectedUser] = useState(null);
     const [submitting, setSubmitting] = useState(false);
+    const [showResetPassword, setShowResetPassword] = useState(false);
+    const [newPassword, setNewPassword] = useState('');
+    const [confirmPassword, setConfirmPassword] = useState('');
+    const [sendEmail, setSendEmail] = useState(true);
+    const [resettingPassword, setResettingPassword] = useState(false);
 
     // Form state
     const [formData, setFormData] = useState({
@@ -106,6 +111,37 @@ const Users = () => {
         }
     };
 
+    const handleResetPassword = async () => {
+        if (!newPassword || !confirmPassword) {
+            showToast.error('Please fill in both password fields');
+            return;
+        }
+
+        if (newPassword !== confirmPassword) {
+            showToast.error('Passwords do not match');
+            return;
+        }
+
+        if (newPassword.length < 8) {
+            showToast.error('Password must be at least 8 characters');
+            return;
+        }
+
+        setResettingPassword(true);
+        const { resetUserPassword } = useAdminStore.getState();
+        const result = await resetUserPassword(selectedUser.id, newPassword, sendEmail);
+        setResettingPassword(false);
+
+        if (result.success) {
+            showToast.success('Password reset successfully');
+            setShowResetPassword(false);
+            setNewPassword('');
+            setConfirmPassword('');
+        } else {
+            showToast.error(result.error || 'Failed to reset password');
+        }
+    };
+
     const handleDeleteUser = async () => {
         if (!selectedUser) return;
 
@@ -133,6 +169,10 @@ const Users = () => {
             status: user.status || 'active',
             password: '' // Don't populate password
         });
+        setShowResetPassword(false);
+        setNewPassword('');
+        setConfirmPassword('');
+        setSendEmail(true);
         setShowEditModal(true);
     };
 
@@ -595,6 +635,63 @@ const Users = () => {
                                 <option value="suspended">Suspended</option>
                             </select>
                         </div>
+                    </div>
+
+                    {/* Reset Password Section */}
+                    <div className="pt-4 border-t border-gray-100">
+                        <button
+                            type="button"
+                            onClick={() => setShowResetPassword(!showResetPassword)}
+                            className="text-xs font-black text-blue-600 uppercase tracking-widest hover:text-blue-700 transition-colors flex items-center gap-2"
+                        >
+                            <ClockIcon className="w-4 h-4" />
+                            {showResetPassword ? 'Cancel Password Reset' : 'Reset User Password'}
+                        </button>
+
+                        {showResetPassword && (
+                            <div className="mt-4 p-5 bg-blue-50/50 rounded-2xl border border-blue-100 space-y-4 animate-in fade-in slide-in-from-top-2 duration-300">
+                                <div>
+                                    <label className="block text-[10px] font-black text-blue-600 uppercase tracking-widest mb-2">New Password</label>
+                                    <input
+                                        type="password"
+                                        value={newPassword}
+                                        onChange={(e) => setNewPassword(e.target.value)}
+                                        className="w-full px-4 py-3 bg-white border border-blue-100 rounded-xl text-gray-900 font-medium focus:ring-2 focus:ring-blue-500/20 outline-none transition-all"
+                                        placeholder="••••••••"
+                                    />
+                                </div>
+                                <div>
+                                    <label className="block text-[10px] font-black text-blue-600 uppercase tracking-widest mb-2">Confirm New Password</label>
+                                    <input
+                                        type="password"
+                                        value={confirmPassword}
+                                        onChange={(e) => setConfirmPassword(e.target.value)}
+                                        className="w-full px-4 py-3 bg-white border border-blue-100 rounded-xl text-gray-900 font-medium focus:ring-2 focus:ring-blue-500/20 outline-none transition-all"
+                                        placeholder="••••••••"
+                                    />
+                                </div>
+                                <div className="flex items-center gap-3">
+                                    <input
+                                        type="checkbox"
+                                        id="sendEmail"
+                                        checked={sendEmail}
+                                        onChange={(e) => setSendEmail(e.target.checked)}
+                                        className="w-4 h-4 text-blue-600 border-blue-200 rounded focus:ring-blue-500/20"
+                                    />
+                                    <label htmlFor="sendEmail" className="text-xs font-bold text-blue-600 uppercase tracking-widest cursor-pointer select-none">
+                                        Send email with new password to user
+                                    </label>
+                                </div>
+                                <button
+                                    type="button"
+                                    onClick={handleResetPassword}
+                                    disabled={resettingPassword}
+                                    className="w-full py-3 bg-blue-600 hover:bg-blue-700 text-white rounded-xl text-xs font-black uppercase tracking-widest shadow-lg shadow-blue-600/20 transition-all disabled:opacity-50"
+                                >
+                                    {resettingPassword ? 'Resetting...' : 'Confirm Reset Password'}
+                                </button>
+                            </div>
+                        )}
                     </div>
 
                     <div className="flex items-center gap-3 pt-4">

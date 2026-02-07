@@ -1,6 +1,7 @@
 import { Op, DataTypes } from 'sequelize';
 import bcrypt from 'bcryptjs';
-import { User, Subscription, Request, SubscriptionPlan, Message, Payment, Testimonial, Affiliate, FinancialLog, Referral } from '../models/index.js';
+import { User, Subscription, Request, SubscriptionPlan, Message, Payment, Testimonial, Affiliate, FinancialLog, Referral, SystemLog } from '../models/index.js';
+import { sendAdminPasswordResetEmail } from '../utils/email.js';
 
 // ... (existing code)
 
@@ -791,6 +792,67 @@ export const getAdminRequests = async (req, res) => {
             error: {
                 code: 'SERVER_ERROR',
                 message: 'Failed to fetch global requests'
+            }
+        });
+    }
+};
+
+export const adminResetUserPassword = async (req, res) => {
+    try {
+        const { userId, newPassword, sendEmail = false } = req.body;
+
+        if (!userId || !newPassword) {
+            return res.status(400).json({
+                success: false,
+                error: { message: 'User ID and new password are required' }
+            });
+        }
+
+        const user = await User.findByPk(userId);
+        if (!user) {
+            return res.status(404).json({
+                success: false,
+                error: { message: 'User not found' }
+            });
+        }
+
+        // Update password
+        await user.update({ password: newPassword }); // Will be hashed by model hook
+
+        // Create System Log for audit trail
+        await SystemLog.create({
+            adminId: req.user.id,
+            action: 'ADMIN_PASSWORD_RESET',
+            targetType: 'user',
+            targetId: userId,
+            details: {
+                targetEmail: user.email,
+                resetBy: req.user.email
+            },
+            ipAddress: req.ip,
+            userAgent: req.headers['user-agent']
+        });
+
+        // Send email if requested
+        if (sendEmail) {
+            try {
+                await sendAdminPasswordResetEmail(user, newPassword);
+            } catch (emailError) {
+                console.error('Failed to send admin password reset email:', emailError);
+            }
+        }
+
+        res.json({
+            success: true,
+            message: `Password for user ${user.email} has been reset successfully${sendEmail ? ' and notification email sent' : ''}`
+        });
+    } catch (error) {
+        console.error('Admin password reset error:', error);
+        res.status(500).json({
+            success: false,
+            error: {
+                code: 'SERVER_ERROR',
+                message: 'Failed to reset user password'
             }
         });
     }

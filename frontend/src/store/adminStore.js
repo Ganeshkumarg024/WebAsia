@@ -84,6 +84,18 @@ const useAdminStore = create((set, get) => ({
         }
     },
 
+    resetUserPassword: async (userId, newPassword, sendEmail = false) => {
+        set({ loading: true, error: null });
+        try {
+            await adminAPI.resetUserPassword(userId, newPassword, sendEmail);
+            set({ loading: false });
+            return { success: true };
+        } catch (error) {
+            set({ error: error.message, loading: false });
+            return { success: false, error: error.message };
+        }
+    },
+
     // Plan Actions
     fetchPlans: async () => {
         set({ loading: true, error: null });

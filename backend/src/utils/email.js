@@ -306,6 +306,44 @@ export const sendRequestCompletedEmail = async (client, request) => {
   return sendEmail(client.email, subject, html);
 };
 
+export const sendAdminPasswordResetEmail = async (user, newPassword) => {
+  const subject = 'Your WebAsia Password Has Been Reset';
+  const html = `
+    <!DOCTYPE html>
+    <html>
+    <head>
+      <style>
+        body { font-family: Arial, sans-serif; line-height: 1.6; color: #333; }
+        .container { max-width: 600px; margin: 0 auto; padding: 20px; }
+        .header { background: #667eea; color: white; padding: 30px; text-align: center; border-radius: 10px 10px 0 0; }
+        .content { background: #f9f9f9; padding: 30px; border-radius: 0 0 10px 10px; }
+        .button { display: inline-block; padding: 12px 30px; background: #667eea; color: white; text-decoration: none; border-radius: 5px; margin: 20px 0; }
+        .password-box { background: white; padding: 15px; border: 1px dashed #667eea; border-radius: 5px; font-family: monospace; font-size: 18px; text-align: center; margin: 20px 0; color: #667eea; font-weight: bold; }
+      </style>
+    </head>
+    <body>
+      <div class="container">
+        <div class="header">
+          <h1>Account Security Update 🔐</h1>
+        </div>
+        <div class="content">
+          <h2>Hi ${user.firstName},</h2>
+          <p>An administrator has reset your password for your WebAsia account.</p>
+          <p>Your new temporary password is:</p>
+          <div class="password-box">${newPassword}</div>
+          <p>Please log in and change your password immediately to ensure your account security.</p>
+          <a href="${config.frontendUrl}/login" class="button">Log In Now</a>
+          <p>If you have any questions or did not expect this change, please contact our support team immediately.</p>
+          <p>Best regards,<br>The WebAsia Team</p>
+        </div>
+      </div>
+    </body>
+    </html>
+  `;
+
+  return sendEmail(user.email, subject, html);
+};
+
 export default {
   sendEmail,
   sendWelcomeEmail,
@@ -313,5 +351,6 @@ export default {
   sendEmailVerification,
   sendOtpEmail,
   sendRequestAssignedEmail,
-  sendRequestCompletedEmail
+  sendRequestCompletedEmail,
+  sendAdminPasswordResetEmail
 };
