@@ -1,8 +1,21 @@
 import multer from 'multer';
 import { getAllowedMimeTypes } from '../utils/storage.js';
+import path from 'path';
 
-// Configure multer for memory storage
-const storage = multer.memoryStorage();
+import config from '../config/index.js';
+
+// Configure multer based on storage driver
+const storage = config.storage.driver === 'local'
+    ? multer.diskStorage({
+        destination: (req, file, cb) => {
+            cb(null, config.storage.localPath);
+        },
+        filename: (req, file, cb) => {
+            const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9);
+            cb(null, file.fieldname + '-' + uniqueSuffix + path.extname(file.originalname));
+        }
+    })
+    : multer.memoryStorage();
 
 // File filter
 const fileFilter = (req, file, cb) => {

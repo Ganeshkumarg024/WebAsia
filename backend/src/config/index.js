@@ -41,9 +41,16 @@ export default {
     s3Bucket: process.env.AWS_S3_BUCKET || 'webasia-files'
   },
 
+  // Cloudinary Configuration
+  cloudinary: {
+    cloudName: process.env.CLOUDINARY_CLOUD_NAME || '',
+    apiKey: process.env.CLOUDINARY_API_KEY || '',
+    apiSecret: process.env.CLOUDINARY_API_SECRET || ''
+  },
+
   // Storage Configuration
   storage: {
-    driver: process.env.STORAGE_DRIVER || 'local', // 'local' or 's3'
+    driver: process.env.STORAGE_DRIVER || 'local', // 'local', 's3', or 'cloudinary'
     localPath: process.env.STORAGE_LOCAL_PATH || 'uploads',
     baseUrl: process.env.STORAGE_BASE_URL || 'http://localhost:3000/uploads'
   },

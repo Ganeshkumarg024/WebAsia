@@ -220,7 +220,7 @@ const Dashboard = () => {
                                     <div className="text-center space-y-2">
                                         {brandKit?.logoUrl ? (
                                             <img
-                                                src={`${import.meta.env.VITE_API_URL}${brandKit.logoUrl}`}
+                                                src={brandKit.logoUrl.startsWith('http') ? brandKit.logoUrl : `${import.meta.env.VITE_API_URL}${brandKit.logoUrl}`}
                                                 alt="Brand Logo"
                                                 className="max-w-full max-h-24 mx-auto object-contain"
                                             />

@@ -66,18 +66,18 @@ export const uploadFile = async (req, res) => {
         const file = await File.create({
             requestId,
             uploadedBy: req.user.id,
+            uploadedByRole: req.user.role,
             fileName: storageData.fileName,
             originalName: storageData.originalName,
             fileType,
             mimeType: storageData.mimeType,
             fileSize: storageData.fileSize,
-            s3Key: storageData.storageKey,
-            s3Bucket: storageData.storageBucket || 'local',
-            s3Url: storageData.url,
-            filePath: storageData.storageKey, // Map storageKey to filePath
-            uploadedByRole: req.user.role, // Move to top level
+            filePath: storageData.url, // Store the URL directly in filePath for easier frontend access
             thumbnailUrl: storageData.thumbnailUrl,
             metadata: {
+                ...storageData.metadata,
+                storageKey: storageData.storageKey,
+                storageBucket: storageData.storageBucket,
                 uploadedAt: new Date()
             }
         });
@@ -154,18 +154,18 @@ export const uploadMultipleFiles = async (req, res) => {
             return File.create({
                 requestId,
                 uploadedBy: req.user.id,
+                uploadedByRole: req.user.role,
                 fileName: storageData.fileName,
                 originalName: storageData.originalName,
                 fileType,
                 mimeType: storageData.mimeType,
                 fileSize: storageData.fileSize,
-                s3Key: storageData.storageKey,
-                s3Bucket: storageData.storageBucket || 'local',
-                s3Url: storageData.url,
-                filePath: storageData.storageKey, // Map storageKey to filePath
-                uploadedByRole: req.user.role, // Move to top level
+                filePath: storageData.url,
                 thumbnailUrl: storageData.thumbnailUrl,
                 metadata: {
+                    ...storageData.metadata,
+                    storageKey: storageData.storageKey,
+                    storageBucket: storageData.storageBucket,
                     uploadedAt: new Date()
                 }
             });
@@ -240,7 +240,13 @@ export const getFileDownloadUrl = async (req, res) => {
         }
 
         // Generate signed URL (valid for 1 hour) or return secure streaming URL
-        const downloadUrl = await getDownloadUrl(file.id, file.s3Key, 3600);
+        const storageKey = file.metadata?.storageKey || file.filePath;
+
+        // If it's a remote URL, we might want to return a direct URL for 
+        // non-AJAX downloads, but to be consistent and avoid 401s in AJAX,
+        // we'll encourage using the stream route if headers are an issue.
+        // For now, return the direct URL but log a warning.
+        const downloadUrl = await getDownloadUrl(file.id, storageKey, 3600);
 
         // Increment download count
         await file.increment('downloadCount');
@@ -343,13 +349,24 @@ export const streamFile = async (req, res) => {
             });
         }
 
-        const filePath = await getFileStream(file.s3Key);
+        const { getFileStream } = await import('../utils/storage.js');
+        const storageKey = file.metadata?.storageKey || file.filePath;
+        const streamResult = await getFileStream(storageKey, {
+            resource_type: file.metadata?.resource_type
+        });
 
-        // Use Content-Disposition to force download and preserve filename
         res.setHeader('Content-Disposition', `attachment; filename="${file.originalName}"`);
-        res.setHeader('Content-Type', file.mimeType);
+        res.setHeader('Content-Type', file.mimeType || streamResult.contentType || 'application/octet-stream');
+        if (streamResult.contentLength) {
+            res.setHeader('Content-Length', streamResult.contentLength);
+        }
 
-        res.sendFile(filePath);
+        if (streamResult.type === 'local') {
+            return res.sendFile(streamResult.path);
+        } else {
+            streamResult.stream.pipe(res);
+            return;
+        }
     } catch (error) {
         console.error('Stream file error:', error);
         res.status(500).json({

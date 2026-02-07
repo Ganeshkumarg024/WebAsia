@@ -3,6 +3,8 @@ import path from 'path';
 import crypto from 'crypto';
 import { S3Client, PutObjectCommand, GetObjectCommand, DeleteObjectCommand } from '@aws-sdk/client-s3';
 import { getSignedUrl } from '@aws-sdk/s3-request-presigner';
+import { v2 as cloudinary } from 'cloudinary';
+import { Readable } from 'stream';
 import sharp from 'sharp';
 import config from '../config/index.js';
 
@@ -15,6 +17,15 @@ if (config.storage.driver === 's3') {
             accessKeyId: config.aws.accessKeyId,
             secretAccessKey: config.aws.secretAccessKey
         }
+    });
+}
+
+// Initialize Cloudinary (only if needed)
+if (config.storage.driver === 'cloudinary') {
+    cloudinary.config({
+        cloud_name: config.cloudinary.cloudName,
+        api_key: config.cloudinary.apiKey,
+        api_secret: config.cloudinary.apiSecret
     });
 }
 
@@ -48,7 +59,7 @@ export const generateThumbnail = async (buffer, width = 300, height = 300) => {
 };
 
 /**
- * Upload file to storage (S3 or Local)
+ * Upload file to storage (S3, Cloudinary or Local)
  */
 export const uploadFile = async (file, folder = 'uploads', generateThumb = false) => {
     const fileExtension = path.extname(file.originalname);
@@ -57,8 +68,56 @@ export const uploadFile = async (file, folder = 'uploads', generateThumb = false
 
     if (config.storage.driver === 's3') {
         return uploadToS3(file, fileName, storageKey, generateThumb);
+    } else if (config.storage.driver === 'cloudinary') {
+        return uploadToCloudinary(file, folder);
     } else {
         return uploadToLocal(file, fileName, storageKey, generateThumb);
+    }
+};
+
+const uploadToCloudinary = async (file, folder) => {
+    try {
+        if (!file.buffer) {
+            throw new Error('File buffer is missing. Ensure multer is using memoryStorage.');
+        }
+
+        return new Promise((resolve, reject) => {
+            const uploadStream = cloudinary.uploader.upload_stream(
+                {
+                    folder: folder,
+                    resource_type: 'auto',
+                },
+                (error, result) => {
+                    if (error) {
+                        console.error('Cloudinary upload stream callback error:', error);
+                        return reject(new Error(`Cloudinary upload failed: ${error.message}`));
+                    }
+                    resolve({
+                        storageKey: result.public_id,
+                        storageBucket: 'cloudinary',
+                        url: result.secure_url,
+                        thumbnailUrl: result.resource_type === 'image' ?
+                            cloudinary.url(result.public_id, { width: 300, height: 300, crop: 'fill' }) : null,
+                        fileName: `${result.public_id}.${result.format}`,
+                        originalName: file.originalname,
+                        mimeType: file.mimetype,
+                        fileSize: result.bytes,
+                        metadata: result
+                    });
+                }
+            );
+
+            // Use end() with buffer instead of pipe for better reliability with memory storage
+            try {
+                uploadStream.end(file.buffer);
+            } catch (err) {
+                console.error('Error ending Cloudinary upload stream:', err);
+                reject(err);
+            }
+        });
+    } catch (error) {
+        console.error('Cloudinary upload wrapper error:', error);
+        throw error;
     }
 };
 
@@ -167,6 +226,14 @@ export const getDownloadUrl = async (fileId, storageKey, expiresIn = 3600) => {
             console.error('S3 signed URL error:', error);
             throw new Error('Failed to generate download URL');
         }
+    } else if (config.storage.driver === 'cloudinary') {
+        // For Cloudinary, we can return the storageKey if it's already a secure_url,
+        // but usually we store the public_id as storageKey.
+        // If we want a download URL that forces content-disposition, we use:
+        return cloudinary.url(storageKey, {
+            flags: 'attachment',
+            secure: true
+        });
     } else {
         // Return a proxied API endpoint for local storage to ensure permission checks
         // We pass the fileId to make it easier for the proxy to check permissions
@@ -189,6 +256,14 @@ export const deleteFile = async (storageKey) => {
         } catch (error) {
             console.error('S3 delete error:', error);
             throw new Error('File deletion from S3 failed');
+        }
+    } else if (config.storage.driver === 'cloudinary') {
+        try {
+            const result = await cloudinary.uploader.destroy(storageKey);
+            return result.result === 'ok';
+        } catch (error) {
+            console.error('Cloudinary delete error:', error);
+            throw new Error('File deletion from Cloudinary failed');
         }
     } else {
         try {
@@ -221,19 +296,74 @@ export const scanForViruses = async (buffer) => {
 };
 
 /**
- * Get a ReadStream for a local file
+ * Get a ReadStream for a local file or generic stream for remote
  */
-export const getFileStream = async (storageKey) => {
-    if (config.storage.driver !== 'local') {
-        throw new Error('getFileStream only supported for local storage');
-    }
+export const getFileStream = async (storageKey, options = {}) => {
+    if (config.storage.driver === 'local') {
+        const fullPath = path.join(process.cwd(), config.storage.localPath, storageKey);
+        try {
+            await fs.access(fullPath);
+            return { type: 'local', path: path.resolve(fullPath) };
+        } catch (error) {
+            throw new Error('File not found');
+        }
+    } else if (config.storage.driver === 's3') {
+        try {
+            const command = new GetObjectCommand({
+                Bucket: config.aws.s3Bucket,
+                Key: storageKey
+            });
+            const response = await s3Client.send(command);
+            return {
+                type: 'stream',
+                stream: response.Body,
+                contentType: response.ContentType,
+                contentLength: response.ContentLength
+            };
+        } catch (error) {
+            console.error('S3 stream error:', error);
+            throw new Error('Failed to get stream from S3');
+        }
+    } else if (config.storage.driver === 'cloudinary') {
+        try {
+            const axios = (await import('axios')).default;
 
-    const fullPath = path.join(process.cwd(), config.storage.localPath, storageKey);
-    try {
-        await fs.access(fullPath);
-        return path.resolve(fullPath); // Return path for createReadStream in controller
-    } catch (error) {
-        throw new Error('File not found');
+            // Determine resource_type. Default to 'image' which handles images and PDFs.
+            // Using 'auto' in the URL is not supported for signed delivery.
+            const resourceType = options.resource_type || options.resourceType || 'image';
+
+            // Generate a SIGNED URL to bypass any ACL restrictions
+            // We use storageKey which is the public_id
+            const signedUrl = cloudinary.url(storageKey, {
+                sign_url: true,
+                secure: true,
+                resource_type: resourceType
+            });
+
+            const response = await axios({
+                method: 'get',
+                url: signedUrl,
+                responseType: 'stream',
+                headers: {
+                    'Accept': '*/*',
+                    'User-Agent': 'WebAsia-Backend/1.0.0'
+                }
+            });
+
+            return {
+                type: 'stream',
+                stream: response.data,
+                contentType: response.headers['content-type'],
+                contentLength: response.headers['content-length']
+            };
+        } catch (error) {
+            console.error('Cloudinary stream error:', error.message);
+            // If it's a 400/404 with the assumed resourceType, try 'raw' as a fallback
+            if (options.retryWithRaw !== false && (error.response?.status === 400 || error.response?.status === 404)) {
+                return getFileStream(storageKey, { ...options, resource_type: 'raw', retryWithRaw: false });
+            }
+            throw new Error(`Failed to get stream from Cloudinary: ${error.message}`);
+        }
     }
 };
 

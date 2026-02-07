@@ -96,7 +96,7 @@ const BrandKitModal = ({ isOpen, onClose, brandKit, onUpdate }) => {
                         {brandKit?.logoUrl && !logoFile && (
                             <div className="w-24 h-24 rounded-2xl bg-gray-100 border-2 border-gray-200 flex items-center justify-center overflow-hidden shrink-0">
                                 <img
-                                    src={`${import.meta.env.VITE_API_URL}${brandKit.logoUrl}`}
+                                    src={brandKit.logoUrl.startsWith('http') ? brandKit.logoUrl : `${import.meta.env.VITE_API_URL}${brandKit.logoUrl}`}
                                     alt="Brand Logo"
                                     className="w-full h-full object-contain"
                                 />

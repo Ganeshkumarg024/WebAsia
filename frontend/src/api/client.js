@@ -10,7 +10,11 @@ const apiClient = axios.create({
 apiClient.interceptors.request.use(
     (config) => {
         const token = sessionStorage.getItem('accessToken');
-        if (token) {
+        // Only add token if it's our API and a token exists
+        // This prevents forwarding tokens to external URLs like Cloudinary on redirects
+        const isApiUrl = !config.url.startsWith('http') || config.url.startsWith(import.meta.env.VITE_API_URL || 'http://localhost:8080/api');
+
+        if (token && isApiUrl) {
             config.headers.Authorization = `Bearer ${token}`;
         }
         return config;
@@ -29,7 +33,10 @@ apiClient.interceptors.response.use(
         const originalRequest = error.config;
 
         // If error is 401 and we haven't tried to refresh yet
-        if (error.response?.status === 401 && !originalRequest._retry) {
+        // Only attempt refresh if the request was to our own API
+        const isApiUrl = !originalRequest.url.startsWith('http') || originalRequest.url.startsWith(import.meta.env.VITE_API_URL || 'http://localhost:8080/api');
+
+        if (error.response?.status === 401 && !originalRequest._retry && isApiUrl) {
             originalRequest._retry = true;
 
             try {
@@ -48,7 +55,7 @@ apiClient.interceptors.response.use(
                 // Try to refresh the token
                 console.log('Attempting to refresh token...');
                 const response = await axios.post(
-                    `${import.meta.env.VITE_API_URL || 'http://localhost:8080/api'}/auth/refresh-token`,
+                    `${import.meta.env.VITE_API_URL || 'http://localhost:8080/api'}/auth/refresh`,
                     { refreshToken }
                 );
 

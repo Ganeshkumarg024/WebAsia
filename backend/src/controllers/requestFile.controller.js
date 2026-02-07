@@ -11,6 +11,7 @@ import {
     deleteFile as deleteFileUtil,
     getRelativePath
 } from '../utils/fileUtils.js';
+import { uploadFile, deleteFile as deleteFromStorage } from '../utils/storage.js';
 
 /**
  * Upload file to request
@@ -50,8 +51,6 @@ export const uploadRequestFile = async (req, res) => {
             req.user.role === 'admin';
 
         if (!isAuthorized) {
-            // Delete uploaded file
-            fs.unlinkSync(req.file.path);
             return res.status(403).json({
                 success: false,
                 error: {
@@ -62,21 +61,29 @@ export const uploadRequestFile = async (req, res) => {
         }
 
         // Log file type for debugging
-        console.log('💾 Saving file:', req.file.originalname, 'MIME type:', req.file.mimetype);
+        console.log('💾 Uploading file:', req.file.originalname, 'MIME type:', req.file.mimetype);
+
+        // Upload using storage utility
+        const folder = `requests/client-${request.clientId}/request-${requestId}`;
+        const uploadResult = await uploadFile(req.file, folder, true);
 
         // Create file record
         const file = await File.create({
             requestId,
             uploadedBy: req.user.id,
             uploadedByRole: req.user.role,
-            fileName: req.file.filename,
-            originalName: req.file.originalname,
+            fileName: uploadResult.fileName,
+            originalName: uploadResult.originalName,
             fileType: req.body.fileType || 'other',
             fileCategory,
-            mimeType: req.file.mimetype,
-            fileSize: req.file.size,
-            filePath: getRelativePath(req.file.path),
+            mimeType: uploadResult.mimeType,
+            fileSize: uploadResult.fileSize,
+            filePath: uploadResult.url, // Store the URL directly
+            thumbnailUrl: uploadResult.thumbnailUrl,
             metadata: {
+                ...uploadResult.metadata,
+                storageKey: uploadResult.storageKey,
+                storageBucket: uploadResult.storageBucket,
                 uploadedAt: new Date(),
                 uploadedFrom: req.ip
             }
@@ -96,19 +103,11 @@ export const uploadRequestFile = async (req, res) => {
         });
     } catch (error) {
         console.error('Upload file error:', error);
-        // Clean up file if it was uploaded
-        if (req.file && req.file.path) {
-            try {
-                fs.unlinkSync(req.file.path);
-            } catch (e) {
-                console.error('Error deleting file:', e);
-            }
-        }
         res.status(500).json({
             success: false,
             error: {
                 code: 'SERVER_ERROR',
-                message: 'File upload failed'
+                message: error.message || 'File upload failed'
             }
         });
     }
@@ -135,8 +134,6 @@ export const uploadMultipleRequestFiles = async (req, res) => {
         // Verify request
         const request = await Request.findByPk(requestId);
         if (!request) {
-            // Delete all uploaded files
-            req.files.forEach(file => fs.unlinkSync(file.path));
             return res.status(404).json({
                 success: false,
                 error: {
@@ -154,7 +151,6 @@ export const uploadMultipleRequestFiles = async (req, res) => {
             req.user.role === 'admin';
 
         if (!isAuthorized) {
-            req.files.forEach(file => fs.unlinkSync(file.path));
             return res.status(403).json({
                 success: false,
                 error: {
@@ -165,22 +161,30 @@ export const uploadMultipleRequestFiles = async (req, res) => {
         }
 
         // Create file records
+        const folder = `requests/client-${request.clientId}/request-${requestId}`;
+
         const filePromises = req.files.map(async (uploadedFile) => {
             // Log file type for debugging
-            console.log('💾 Saving file:', uploadedFile.originalname, 'MIME type:', uploadedFile.mimetype);
+            console.log('💾 Uploading file:', uploadedFile.originalname, 'MIME type:', uploadedFile.mimetype);
+
+            const uploadResult = await uploadFile(uploadedFile, folder, true);
 
             return File.create({
                 requestId,
                 uploadedBy: req.user.id,
                 uploadedByRole: req.user.role,
-                fileName: uploadedFile.filename,
-                originalName: uploadedFile.originalname,
+                fileName: uploadResult.fileName,
+                originalName: uploadResult.originalName,
                 fileType: req.body.fileType || 'other',
                 fileCategory,
-                mimeType: uploadedFile.mimetype,
-                fileSize: uploadedFile.size,
-                filePath: getRelativePath(uploadedFile.path),
+                mimeType: uploadResult.mimeType,
+                fileSize: uploadResult.fileSize,
+                filePath: uploadResult.url,
+                thumbnailUrl: uploadResult.thumbnailUrl,
                 metadata: {
+                    ...uploadResult.metadata,
+                    storageKey: uploadResult.storageKey,
+                    storageBucket: uploadResult.storageBucket,
                     uploadedAt: new Date(),
                     uploadedFrom: req.ip
                 }
@@ -204,15 +208,15 @@ export const uploadMultipleRequestFiles = async (req, res) => {
         });
     } catch (error) {
         console.error('Upload multiple files error:', error);
-        // Clean up uploaded files
-        if (req.files) {
+        // Clean up uploaded files (only if using local storage and files exist)
+        if (config.storage.driver === 'local' && req.files) {
             req.files.forEach(file => {
                 try {
-                    if (fs.existsSync(file.path)) {
+                    if (file.path && fs.existsSync(file.path)) {
                         fs.unlinkSync(file.path);
                     }
                 } catch (e) {
-                    console.error('Error deleting file:', e);
+                    console.error('Error deleting temporary file:', e);
                 }
             });
         }
@@ -342,41 +346,37 @@ export const downloadFile = async (req, res) => {
             });
         }
 
-        // Resolve absolute file path correctly
-        let storagePath = file.filePath;
-        const localPath = config.storage.localPath || 'uploads';
-
-        // Check if the path already starts with the uploads folder
-        const normalizedPath = storagePath.replace(/\\/g, '/');
-        const normalizedLocal = localPath.replace(/\\/g, '/');
-
-        if (!normalizedPath.startsWith(normalizedLocal + '/')) {
-            storagePath = path.join(localPath, storagePath);
-        }
-
-        const filePath = path.join(process.cwd(), storagePath);
-
-        if (!fs.existsSync(filePath)) {
-            console.error('❌ File not found on disk at:', filePath);
-            return res.status(404).json({
-                success: false,
-                error: {
-                    code: 'FILE_NOT_FOUND',
-                    message: 'File not found on server'
-                }
-            });
-        }
-
         // Increment download count
         await file.increment('downloadCount');
 
-        // Set headers for download
-        res.setHeader('Content-Disposition', `attachment; filename="${file.originalName}"`);
-        res.setHeader('Content-Type', file.mimeType);
+        // Use the unified getFileStream utility which handles local and remote (Cloudinary/S3)
+        // By streaming from the backend, we avoid browser header forwarding issues (401s)
+        try {
+            const { getFileStream } = await import('../utils/storage.js');
+            const storageKey = file.metadata?.storageKey || file.filePath;
+            const streamResult = await getFileStream(storageKey, {
+                resource_type: file.metadata?.resource_type
+            });
 
-        // Stream file
-        const fileStream = fs.createReadStream(filePath);
-        fileStream.pipe(res);
+            res.setHeader('Content-Type', file.mimeType || streamResult.contentType || 'application/octet-stream');
+            res.setHeader('Content-Disposition', `attachment; filename="${file.originalName}"`);
+            if (streamResult.contentLength) {
+                res.setHeader('Content-Length', streamResult.contentLength);
+            }
+
+            if (streamResult.type === 'local') {
+                return res.sendFile(streamResult.path);
+            } else {
+                streamResult.stream.pipe(res);
+                return;
+            }
+        } catch (err) {
+            console.error('Error fetching file stream:', err);
+            return res.status(500).json({
+                success: false,
+                error: { code: 'STREAM_ERROR', message: 'Failed to access file for download' }
+            });
+        }
     } catch (error) {
         console.error('Download file error:', error);
         res.status(500).json({
@@ -424,9 +424,14 @@ export const deleteFile = async (req, res) => {
         // Soft delete (mark as inactive)
         await file.update({ isActive: false });
 
-        // Optionally delete physical file
-        // const filePath = path.join(process.cwd(), file.filePath);
-        // deleteFileUtil(filePath);
+        // Delete from storage if storageKey exists
+        if (file.metadata && file.metadata.storageKey) {
+            try {
+                await deleteFromStorage(file.metadata.storageKey);
+            } catch (err) {
+                console.error('Error deleting from storage:', err);
+            }
+        }
 
         res.json({
             success: true,
@@ -448,22 +453,24 @@ export const deleteFile = async (req, res) => {
  * Configure multer for request file uploads
  */
 export const configureRequestFileUpload = () => {
-    const storage = multer.diskStorage({
-        destination: (req, file, cb) => {
-            const { requestId } = req.params;
-            const userId = req.user.id;
-            const userRole = req.user.role;
+    const storage = config.storage.driver === 'local'
+        ? multer.diskStorage({
+            destination: (req, file, cb) => {
+                const { requestId } = req.params;
+                const userId = req.user.id;
+                const userRole = req.user.role;
 
-            const uploadPath = getRequestFilePath(userId, requestId, userRole);
-            ensureDirectoryExists(uploadPath);
+                const uploadPath = getRequestFilePath(userId, requestId, userRole);
+                ensureDirectoryExists(uploadPath);
 
-            cb(null, uploadPath);
-        },
-        filename: (req, file, cb) => {
-            const uniqueFilename = generateUniqueFilename(file.originalname);
-            cb(null, uniqueFilename);
-        }
-    });
+                cb(null, uploadPath);
+            },
+            filename: (req, file, cb) => {
+                const uniqueFilename = generateUniqueFilename(file.originalname);
+                cb(null, uniqueFilename);
+            }
+        })
+        : multer.memoryStorage();
 
     const fileFilter = (req, file, cb) => {
         // Log the file type for debugging
@@ -471,14 +478,6 @@ export const configureRequestFileUpload = () => {
 
         // Temporarily allow all file types for testing
         cb(null, true);
-
-        /* Uncomment this when you want to re-enable file type validation
-        if (isAllowedFileType(file.mimetype)) {
-            cb(null, true);
-        } else {
-            cb(new Error('File type not allowed'), false);
-        }
-        */
     };
 
     return multer({
@@ -489,3 +488,6 @@ export const configureRequestFileUpload = () => {
         }
     });
 };
+
+
+
