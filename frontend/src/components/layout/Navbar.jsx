@@ -16,9 +16,11 @@ const Navbar = () => {
                 <div className="flex justify-between h-16">
                     <div className="flex items-center">
                         <Link to="/dashboard" className="flex items-center">
-                            <span className="text-2xl font-bold bg-gradient-to-r from-primary-500 to-secondary-500 bg-clip-text text-transparent">
-                                WebAsia
-                            </span>
+                            <img
+                                src="/assets/webasia-logo.png"
+                                alt="WebAsia"
+                                className="h-12 w-auto"
+                            />
                         </Link>
                     </div>
 

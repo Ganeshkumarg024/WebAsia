@@ -2,21 +2,19 @@ import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import {
     MagnifyingGlassIcon,
-    PlusIcon,
     Squares2X2Icon,
     ListBulletIcon,
     CalendarIcon,
     ChatBubbleLeftIcon,
     InboxIcon,
-    ClockIcon,
     CheckCircleIcon,
-    ArrowPathIcon,
-    FireIcon
+    XCircleIcon,
+    ArchiveBoxIcon
 } from '@heroicons/react/24/outline';
 import DashboardLayout from '../../components/layout/DashboardLayout';
 import requestsAPI from '../../api/requests';
 
-const MyRequests = () => {
+const RequestHistory = () => {
     const [requests, setRequests] = useState([]);
     const [isLoading, setIsLoading] = useState(true);
     const [filterStatus, setFilterStatus] = useState('all');
@@ -29,24 +27,24 @@ const MyRequests = () => {
     const fetchRequests = async () => {
         try {
             setIsLoading(true);
+            // Fetch only completed and cancelled requests
             const response = await requestsAPI.getMyRequests();
-            // Filter for active requests only (exclude completed and cancelled)
-            const activeRequests = (response.data || []).filter(
-                r => r.status !== 'completed' && r.status !== 'cancelled'
+            // Filter for completed and cancelled requests only
+            const historyRequests = (response.data || []).filter(
+                r => r.status === 'completed' || r.status === 'cancelled'
             );
-            setRequests(activeRequests);
+            setRequests(historyRequests);
         } catch (error) {
-            console.error('Failed to fetch requests:', error);
+            console.error('Failed to fetch request history:', error);
         } finally {
             setIsLoading(false);
         }
     };
 
     const categories = [
-        { name: 'All Active', status: 'all', icon: Squares2X2Icon, count: requests.length },
-        { name: 'Live Processing', status: 'in_progress', icon: FireIcon, count: requests.filter(r => r.status === 'in_progress' || r.status === 'in-progress').length },
-        { name: 'Quality Review', status: 'in-review', icon: ClockIcon, count: requests.filter(r => r.status === 'in-review' || r.status === 'pending_review' || r.status === 'client_review').length },
-        { name: 'Queued', status: 'queued', icon: ArrowPathIcon, count: requests.filter(r => r.status === 'queued').length },
+        { name: 'All History', status: 'all', icon: ArchiveBoxIcon, count: requests.length },
+        { name: 'Completed', status: 'completed', icon: CheckCircleIcon, count: requests.filter(r => r.status === 'completed').length },
+        { name: 'Cancelled', status: 'cancelled', icon: XCircleIcon, count: requests.filter(r => r.status === 'cancelled').length },
     ];
 
     const filteredRequests = requests.filter(request => {
@@ -57,7 +55,7 @@ const MyRequests = () => {
     });
 
     return (
-        <DashboardLayout breadcrumbs={['Dashboard', 'Active Requests']}>
+        <DashboardLayout breadcrumbs={['Dashboard', 'Request History']}>
             <div className="max-w-7xl mx-auto flex flex-col xl:flex-row gap-10 animate-in fade-in slide-in-from-bottom-4 duration-700">
                 {/* Sidebar Filter */}
                 <aside className="w-full xl:w-80 space-y-10">
@@ -102,14 +100,11 @@ const MyRequests = () => {
                         </div>
                     </div>
 
-                    <div className="bg-blue-600 rounded-3xl p-8 relative overflow-hidden group">
+                    <div className="bg-gradient-to-br from-gray-700 to-gray-900 rounded-3xl p-8 relative overflow-hidden group">
                         <div className="absolute top-0 right-0 w-32 h-32 bg-white/10 rounded-full -mr-16 -mt-16 group-hover:scale-110 transition-transform"></div>
                         <div className="relative z-10 space-y-4">
-                            <h4 className="text-white font-black text-xl tracking-tight leading-tight">Need Express <br />Delivery?</h4>
-                            <p className="text-blue-100 text-xs font-medium">Upgrade to Pro for 12h turnaround on all tasks.</p>
-                            <button className="w-full py-3 bg-white text-blue-600 rounded-2xl text-sm font-black uppercase tracking-widest hover:bg-blue-50 transition-colors shadow-lg">
-                                Upgrade Now
-                            </button>
+                            <h4 className="text-white font-black text-xl tracking-tight leading-tight">Archive<br />Complete</h4>
+                            <p className="text-gray-300 text-xs font-medium">All your completed and cancelled projects are stored here.</p>
                         </div>
                     </div>
                 </aside>
@@ -118,8 +113,8 @@ const MyRequests = () => {
                 <main className="flex-1 space-y-8">
                     <div className="flex items-center justify-between">
                         <div className="space-y-1">
-                            <h2 className="text-3xl font-black text-gray-900 tracking-tight">Active Requests</h2>
-                            <p className="text-gray-500 font-medium">Managing {filteredRequests.length} active projects</p>
+                            <h2 className="text-3xl font-black text-gray-900 tracking-tight">Request History</h2>
+                            <p className="text-gray-500 font-medium">Viewing {filteredRequests.length} archived projects</p>
                         </div>
                         <div className="flex items-center gap-3">
                             <div className="flex bg-white border border-gray-100 p-1 rounded-2xl shadow-sm">
@@ -130,10 +125,6 @@ const MyRequests = () => {
                                     <ListBulletIcon className="w-5 h-5" />
                                 </button>
                             </div>
-                            {/* <Link to="/client/requests/create" className="flex items-center gap-2 px-6 py-3.5 bg-blue-600 text-white rounded-2xl font-black uppercase tracking-widest hover:bg-blue-700 transition-all shadow-lg shadow-blue-600/20">
-                                <PlusIcon className="w-5 h-5" />
-                                <span>New Project</span>
-                            </Link> */}
                         </div>
                     </div>
 
@@ -157,11 +148,9 @@ const MyRequests = () => {
                                         <div className="flex items-center justify-between">
                                             <span className={`px-4 py-1.5 rounded-full text-[10px] font-black uppercase tracking-widest ${request.status === 'completed'
                                                 ? 'bg-green-50 text-green-600'
-                                                : request.status === 'in-progress'
-                                                    ? 'bg-blue-50 text-blue-600'
-                                                    : 'bg-yellow-50 text-yellow-600'
+                                                : 'bg-red-50 text-red-600'
                                                 }`}>
-                                                {request.status.replace('-', ' ')}
+                                                {request.status}
                                             </span>
                                             <div className="flex -space-x-2">
                                                 {[1, 2, 3].map(i => (
@@ -186,7 +175,7 @@ const MyRequests = () => {
                                                 <CalendarIcon className="w-4 h-4 text-gray-400" />
                                             </div>
                                             <span className="text-xs text-gray-400 font-bold uppercase tracking-widest">
-                                                {new Date(request.createdAt || request.created_at || new Date()).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}
+                                                {new Date(request.completedAt || request.updatedAt || request.created_at || new Date()).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}
                                             </span>
                                         </div>
                                         <div className="flex items-center gap-2">
@@ -202,8 +191,8 @@ const MyRequests = () => {
                                 <div className="w-20 h-20 bg-white rounded-3xl shadow-sm border border-gray-100 flex items-center justify-center mx-auto mb-6 transform -rotate-6 transition-transform hover:rotate-0">
                                     <InboxIcon className="w-10 h-10 text-gray-200" />
                                 </div>
-                                <h3 className="text-xl font-black text-gray-900 uppercase tracking-tight mb-2">Workspace Empty</h3>
-                                <p className="text-gray-400 font-medium max-w-xs mx-auto text-sm">You haven't created any design requests yet. Let's start something amazing!</p>
+                                <h3 className="text-xl font-black text-gray-900 uppercase tracking-tight mb-2">No History Yet</h3>
+                                <p className="text-gray-400 font-medium max-w-xs mx-auto text-sm">You don't have any completed or cancelled requests yet.</p>
                             </div>
                         )}
                     </div>
@@ -213,4 +202,4 @@ const MyRequests = () => {
     );
 };
 
-export default MyRequests;
+export default RequestHistory;

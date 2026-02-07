@@ -16,6 +16,7 @@ import ClientDashboard from './pages/client/Dashboard';
 import CreateRequest from './pages/client/CreateRequest';
 import RequestDetail from './pages/client/RequestDetail';
 import MyRequests from './pages/client/MyRequests';
+import RequestHistory from './pages/client/RequestHistory';
 import ClientDeliveries from './pages/client/Deliveries';
 import ClientBilling from './pages/client/Billing';
 import ClientSettings from './pages/client/Settings';
@@ -141,7 +142,7 @@ function App() {
                 path="/client/requests/history"
                 element={
                     <ProtectedRoute roles={['client']}>
-                        <MyRequests />
+                        <RequestHistory />
                     </ProtectedRoute>
                 }
             />

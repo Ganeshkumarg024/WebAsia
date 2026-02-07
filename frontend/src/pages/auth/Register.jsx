@@ -130,10 +130,11 @@ const Register = () => {
 
                         <div className="space-y-2 text-center lg:text-left">
                             <div className="flex items-center justify-center lg:justify-start gap-3 mb-4">
-                                <div className="w-12 h-12 bg-blue-600 rounded-xl flex items-center justify-center shadow-lg shadow-blue-600/30">
-                                    <span className="text-white font-black text-2xl">W</span>
-                                </div>
-                                <span className="text-3xl font-black text-gray-900 tracking-tight">WebAsia</span>
+                                <img
+                                    src="/assets/webasia-logo-wide.png"
+                                    alt="WebAsia"
+                                    className="h-20 w-auto"
+                                />
                             </div>
                             <h1 className="text-4xl lg:text-5xl font-black text-gray-900 tracking-tight">Create Account</h1>
                             <p className="text-gray-600 font-medium text-base">Start your creative journey in seconds.</p>

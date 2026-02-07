@@ -107,28 +107,20 @@ const Sidebar = ({ isOpen, onClose }) => {
 
             <div className={`fixed left-0 top-0 h-screen w-64 bg-white border-r border-gray-100 shadow-[4px_0_24px_rgba(0,0,0,0.02)] flex flex-col z-50 transition-all duration-300 transform ${isOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0'}`}>
                 {/* Logo */}
-                <div className="p-8 border-b border-gray-50 flex justify-between items-center">
-                    <div className="flex items-center gap-3">
-                        <div className="w-10 h-10 bg-blue-600 rounded-xl flex items-center justify-center shadow-lg shadow-blue-600/20">
-                            <span className="text-white font-black text-xl">W</span>
-                        </div>
-                        <div>
-                            <span className="text-xl font-black tracking-tight text-gray-900">
-                                WebAsia
-                            </span>
-                            {user?.role && (
-                                <p className="text-[10px] font-black text-blue-600 uppercase tracking-widest leading-none mt-1">{user.role} Portal</p>
-                            )}
-                        </div>
-                    </div>
-                    {/* Mobile Close Button */}
-                    <button
-                        onClick={onClose}
-                        className="lg:hidden p-2 text-gray-400 hover:text-gray-600"
-                    >
-                        <XMarkIcon className="w-6 h-6" />
-                    </button>
+                <div className="p-8 border-b border-gray-100 flex flex-col items-center">
+                    <img
+                        src="/assets/webasia-logo-wide.png"
+                        alt="WebAsia"
+                        className="h-12 w-auto mb-2"
+                    />
+
+                    {user?.role && (
+                        <p className="text-[11px] font-semibold text-blue-600 uppercase tracking-widest text-center">
+                            {user.role} Portal
+                        </p>
+                    )}
                 </div>
+
 
                 {/* Navigation */}
                 <nav className="flex-1 overflow-y-auto py-6 px-4">
