@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { BellIcon, MagnifyingGlassIcon, XMarkIcon, CheckIcon, Bars3Icon } from '@heroicons/react/24/outline';
 import Sidebar from './Sidebar';
 import useAuthStore from '../../store/authStore';
@@ -10,10 +11,30 @@ const DashboardLayout = ({ children, title, breadcrumbs }) => {
     const { notifications, unreadCount, markAsRead, markAllAsRead, fetchUnreadCount } = useNotificationStore();
     const [showNotifications, setShowNotifications] = useState(false);
     const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+    const navigate = useNavigate();
 
     useEffect(() => {
         fetchUnreadCount();
     }, []);
+
+    const handleNotificationClick = (notification) => {
+        // Mark as read
+        if (!notification.read) {
+            markAsRead(notification.id);
+        }
+
+        // Navigate based on notification type or link
+        if (notification.link) {
+            navigate(notification.link);
+            setShowNotifications(false);
+        } else if (notification.type === 'request') {
+            navigate('/client/requests');
+            setShowNotifications(false);
+        } else if (notification.type === 'delivery') {
+            navigate('/client/deliveries');
+            setShowNotifications(false);
+        }
+    };
 
     return (
         <div className="min-h-screen bg-[#F8FAFC]">
@@ -91,7 +112,7 @@ const DashboardLayout = ({ children, title, breadcrumbs }) => {
                                             notifications.map((n) => (
                                                 <div
                                                     key={n.id}
-                                                    onClick={() => !n.read && markAsRead(n.id)}
+                                                    onClick={() => handleNotificationClick(n)}
                                                     className={`p-4 border-b last:border-0 transition-colors cursor-pointer border-gray-50 hover:bg-gray-50 ${!n.read ? 'bg-blue-50/30' : ''}`}
                                                 >
                                                     <div className="flex items-start gap-3">
@@ -121,8 +142,28 @@ const DashboardLayout = ({ children, title, breadcrumbs }) => {
                             )}
 
                             {/* User Avatar */}
-                            <div className="w-10 h-10 bg-blue-500 rounded-full flex items-center justify-center text-white font-medium cursor-pointer">
-                                {user?.name?.charAt(0) || 'U'}
+                            <div
+                                className="w-10 h-10 bg-blue-500 rounded-full flex items-center justify-center text-white font-medium cursor-pointer group relative overflow-hidden"
+                                title={user?.name || user?.email || 'User'}
+                            >
+                                {user?.photoUrl || user?.avatar ? (
+                                    <img
+                                        src={user.photoUrl || user.avatar}
+                                        alt={user?.name || 'User'}
+                                        className="w-full h-full object-cover"
+                                        onError={(e) => {
+                                            e.target.style.display = 'none';
+                                            e.target.nextElementSibling.style.display = 'flex';
+                                        }}
+                                    />
+                                ) : null}
+                                <div className={`w-full h-full flex items-center justify-center ${user?.photoUrl || user?.avatar ? 'hidden' : ''}`}>
+                                    {user?.firstName?.charAt(0) || user?.name?.charAt(0) || 'U'}
+                                </div>
+                                {/* Tooltip */}
+                                <div className="absolute top-12 right-0 bg-gray-900 text-white text-xs px-3 py-2 rounded-lg opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap pointer-events-none z-50">
+                                    {user?.name || user?.email || 'User'}
+                                </div>
                             </div>
                         </div>
                     </div>

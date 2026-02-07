@@ -24,13 +24,25 @@ const CommHub = () => {
     const [searchQuery, setSearchQuery] = useState('');
     const [activeTab, setActiveTab] = useState('ALL FILES');
 
+    // Fallback to empty arrays if data not available
+    const threads = commThreads || [];
+    const msgs = messages || [];
+
     useEffect(() => {
-        fetchCommThreads();
+        const loadData = async () => {
+            try {
+                await fetchCommThreads?.().catch(() => console.log('CommThreads API not available'));
+            } catch (err) {
+                console.error('Error loading comm threads:', err);
+            }
+        };
+        loadData();
+
         return () => {
             if (selectedThread?.id) {
                 socketClient.emit('leave_request', selectedThread.id);
             }
-            clearMessages();
+            clearMessages?.();
         };
     }, []);
 
@@ -70,8 +82,8 @@ const CommHub = () => {
                         </div>
                     </div>
                     <div className="flex-1 overflow-y-auto custom-scrollbar p-2 space-y-1">
-                        {commThreads.length > 0 ? (
-                            commThreads.map((thread) => (
+                        {threads.length > 0 ? (
+                            threads.map((thread) => (
                                 <div
                                     key={thread.id}
                                     onClick={() => handleSelectThread(thread.id)}
@@ -137,7 +149,7 @@ const CommHub = () => {
                                         Someone is typing...
                                     </div>
                                 )}
-                                {messages.map((msg) => (
+                                {msgs.map((msg) => (
                                     <div key={msg.id} className={`flex items-start gap-4 ${msg.senderId === selectedThread.clientId ? 'flex-row-reverse' : ''}`}>
                                         <div className="w-10 h-10 rounded-2xl bg-white border border-gray-100 shadow-sm flex items-center justify-center text-blue-600 shrink-0 overflow-hidden">
                                             {msg.sender?.photoUrl ? (

@@ -1,4 +1,5 @@
 import { NavLink, useNavigate } from 'react-router-dom';
+import { useState } from 'react';
 import {
     HomeIcon,
     DocumentTextIcon,
@@ -18,14 +19,19 @@ import {
     BriefcaseIcon,
     CurrencyDollarIcon,
     ArrowRightOnRectangleIcon,
+    ChatBubbleLeftRightIcon,
     XMarkIcon
 } from '@heroicons/react/24/outline';
 import useAuthStore from '../../store/authStore';
 import useNotificationStore from '../../store/notificationStore';
+import SupportChatPopup from '../chat/SupportChatPopup';
+import AdminSupportChatPopup from '../chat/AdminSupportChatPopup';
 
 const Sidebar = ({ isOpen, onClose }) => {
     const navigate = useNavigate();
     const { user, logout } = useAuthStore();
+    const [isChatPopupOpen, setIsChatPopupOpen] = useState(false);
+    const [isAdminChatPopupOpen, setIsAdminChatPopupOpen] = useState(false);
     const { unreadCount } = useNotificationStore();
 
     const handleLogout = () => {
@@ -107,15 +113,15 @@ const Sidebar = ({ isOpen, onClose }) => {
 
             <div className={`fixed left-0 top-0 h-screen w-64 bg-white border-r border-gray-100 shadow-[4px_0_24px_rgba(0,0,0,0.02)] flex flex-col z-50 transition-all duration-300 transform ${isOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0'}`}>
                 {/* Logo */}
-                <div className="p-8 border-b border-gray-100 flex flex-col items-center">
+                <div className="p-2 border-b border-gray-100 flex flex-col items-center">
                     <img
                         src="/assets/webasia-logo-wide.png"
                         alt="WebAsia"
-                        className="h-12 w-auto mb-2"
+                        className="h-14 w-auto mb-2"
                     />
 
                     {user?.role && (
-                        <p className="text-[11px] font-semibold text-blue-600 uppercase tracking-widest text-center">
+                        <p className="text-xs font-semibold text-blue-600 uppercase tracking-widest text-center">
                             {user.role} Portal
                         </p>
                     )}
@@ -161,13 +167,15 @@ const Sidebar = ({ isOpen, onClose }) => {
 
                 {/* Support Section (Client only) */}
                 {user?.role === 'client' && (
-                    <div className="p-6 border-t border-gray-50">
-                        <div className="bg-gradient-to-br from-blue-600 to-blue-700 rounded-3xl p-6 relative overflow-hidden group">
-                            <div className="absolute top-0 right-0 w-24 h-24 bg-white/10 rounded-full -mr-12 -mt-12 group-hover:scale-110 transition-transform"></div>
-                            <div className="relative z-10 space-y-4">
-                                <h3 className="text-white font-black text-base tracking-tight leading-tight">Priority <br />Support</h3>
-                                <p className="text-blue-100 text-[10px] font-medium leading-relaxed">Active 24/7 for our enterprise partners.</p>
-                                <button className="w-full py-2.5 bg-white text-blue-600 rounded-xl text-xs font-black uppercase tracking-widest hover:bg-blue-50 transition-colors shadow-lg">
+                    <div className="p-4 border-t border-gray-50">
+                        <div className="bg-gradient-to-br from-blue-600 to-blue-700 rounded-2xl p-4 relative overflow-hidden group">
+                            <div className="absolute top-0 right-0 w-20 h-20 bg-white/10 rounded-full -mr-10 -mt-10 group-hover:scale-110 transition-transform"></div>
+                            <div className="relative z-10 space-y-3">
+                                <h3 className="text-white font-black text-sm tracking-tight leading-tight">Priority Support</h3>
+                                <p className="text-blue-100 text-[9px] font-medium leading-relaxed">Active 24/7 for partners.</p>
+                                <button
+                                    onClick={() => setIsChatPopupOpen(true)}
+                                    className="w-full py-2 bg-white text-blue-600 rounded-xl text-xs font-black uppercase tracking-widest hover:bg-blue-50 transition-colors shadow-lg">
                                     Chat Now
                                 </button>
                             </div>
@@ -175,11 +183,43 @@ const Sidebar = ({ isOpen, onClose }) => {
                     </div>
                 )}
 
+                {/* Support Section (Admin only) */}
+                {user?.role === 'admin' && (
+                    <div className="p-4 border-t border-gray-50">
+                        <button
+                            onClick={() => setIsAdminChatPopupOpen(true)}
+                            className="w-full bg-gradient-to-br from-blue-600 to-blue-700 rounded-2xl p-4 relative overflow-hidden group hover:from-blue-700 hover:to-blue-800 transition-all"
+                        >
+                            <div className="absolute top-0 right-0 w-20 h-20 bg-white/10 rounded-full -mr-10 -mt-10 group-hover:scale-110 transition-transform"></div>
+                            <div className="relative z-10 flex items-center justify-between">
+                                <div className="text-left">
+                                    <h3 className="text-white font-black text-sm tracking-tight leading-tight">Support Messages</h3>
+                                    <p className="text-blue-100 text-[9px] font-medium leading-relaxed">View client conversations</p>
+                                </div>
+                                <ChatBubbleLeftRightIcon className="w-6 h-6 text-white" />
+                            </div>
+                        </button>
+                    </div>
+                )}
+
                 {/* User Profile */}
                 <div className="p-6 border-t border-gray-50">
                     <div className="flex items-center gap-4 mb-6">
-                        <div className="w-12 h-12 bg-gray-50 border border-gray-100 rounded-2xl flex items-center justify-center text-blue-600 font-black text-lg shadow-sm">
-                            {user?.name?.charAt(0) || 'U'}
+                        <div className="w-12 h-12 bg-gray-50 border border-gray-100 rounded-2xl flex items-center justify-center text-blue-600 font-black text-lg shadow-sm overflow-hidden">
+                            {user?.photoUrl || user?.avatar ? (
+                                <img
+                                    src={user.photoUrl || user.avatar}
+                                    alt={user?.name || 'User'}
+                                    className="w-full h-full object-cover"
+                                    onError={(e) => {
+                                        e.target.style.display = 'none';
+                                        e.target.nextElementSibling.style.display = 'flex';
+                                    }}
+                                />
+                            ) : null}
+                            <div className={`w-full h-full flex items-center justify-center ${user?.photoUrl || user?.avatar ? 'hidden' : ''}`}>
+                                {user?.name?.charAt(0) || 'U'}
+                            </div>
                         </div>
                         <div className="flex-1 min-w-0">
                             <p className="text-sm font-black truncate text-gray-900">
@@ -197,6 +237,18 @@ const Sidebar = ({ isOpen, onClose }) => {
                     </button>
                 </div>
             </div>
+
+            {/* Support Chat Popup */}
+            <SupportChatPopup
+                isOpen={isChatPopupOpen}
+                onClose={() => setIsChatPopupOpen(false)}
+            />
+
+            {/* Admin Support Chat Popup */}
+            <AdminSupportChatPopup
+                isOpen={isAdminChatPopupOpen}
+                onClose={() => setIsAdminChatPopupOpen(false)}
+            />
         </>
     );
 };

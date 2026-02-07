@@ -2,7 +2,7 @@ import axios from 'axios';
 
 // Create axios instance with base configuration
 const apiClient = axios.create({
-    baseURL: import.meta.env.VITE_API_URL || 'http://localhost:5000/api',
+    baseURL: import.meta.env.VITE_API_URL || 'http://localhost:8080/api',
     timeout: 30000,
     headers: {
         'Content-Type': 'application/json'
@@ -40,6 +40,7 @@ apiClient.interceptors.response.use(
 
                 if (!refreshToken) {
                     // No refresh token, redirect to login
+                    console.warn('No refresh token available, redirecting to login');
                     sessionStorage.removeItem('accessToken');
                     sessionStorage.removeItem('refreshToken');
                     sessionStorage.removeItem('user');
@@ -48,8 +49,9 @@ apiClient.interceptors.response.use(
                 }
 
                 // Try to refresh the token
+                console.log('Attempting to refresh token...');
                 const response = await axios.post(
-                    `${import.meta.env.VITE_API_URL || 'http://localhost:5000/api'}/auth/refresh-token`,
+                    `${import.meta.env.VITE_API_URL || 'http://localhost:8080/api'}/auth/refresh-token`,
                     { refreshToken }
                 );
 
@@ -61,11 +63,14 @@ apiClient.interceptors.response.use(
                     sessionStorage.setItem('refreshToken', newRefreshToken);
                 }
 
+                console.log('Token refreshed successfully');
+
                 // Retry original request with new token
                 originalRequest.headers.Authorization = `Bearer ${accessToken}`;
                 return apiClient(originalRequest);
             } catch (refreshError) {
                 // Refresh failed, redirect to login
+                console.error('Token refresh failed:', refreshError);
                 sessionStorage.removeItem('accessToken');
                 sessionStorage.removeItem('refreshToken');
                 sessionStorage.removeItem('user');

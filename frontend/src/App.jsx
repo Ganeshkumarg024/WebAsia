@@ -22,6 +22,7 @@ import ClientBilling from './pages/client/Billing';
 import ClientSettings from './pages/client/Settings';
 import ClientAffiliateDashboard from './pages/client/AffiliateDashboard';
 import AffiliateRegistration from './pages/client/AffiliateRegistration';
+import SupportChat from './pages/client/SupportChat';
 
 // Designer Pages
 import DesignerWorkspace from './pages/designer/Workspace';
@@ -60,6 +61,7 @@ import CommHub from './pages/admin/CommHub';
 import Testimonials from './pages/admin/Testimonials';
 import AdminRequestDetails from './pages/admin/AdminRequestDetails';
 import AdminSettings from './pages/admin/Settings';
+import AdminSupportChat from './pages/admin/SupportChat';
 
 // Affiliate Pages
 import PartnerAffiliateDashboard from './pages/affiliate/Dashboard';
@@ -199,6 +201,14 @@ function App() {
                 element={
                     <ProtectedRoute roles={['client']}>
                         <ClientSettings />
+                    </ProtectedRoute>
+                }
+            />
+            <Route
+                path="/client/support-chat"
+                element={
+                    <ProtectedRoute roles={['client']}>
+                        <SupportChat />
                     </ProtectedRoute>
                 }
             />
@@ -453,6 +463,14 @@ function App() {
                 element={
                     <ProtectedRoute roles={['admin']}>
                         <AdminSettings />
+                    </ProtectedRoute>
+                }
+            />
+            <Route
+                path="/admin/support-chat"
+                element={
+                    <ProtectedRoute roles={['admin']}>
+                        <AdminSupportChat />
                     </ProtectedRoute>
                 }
             />

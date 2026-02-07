@@ -227,7 +227,7 @@ const AdminDashboard = () => {
                                 <CurrencyDollarIcon className="w-6 h-6 mx-auto mb-2 text-gray-400 group-hover:text-green-600 transition-colors" />
                                 <span className="text-[10px] font-black text-gray-600 group-hover:text-green-700 uppercase tracking-wide">Revenue</span>
                             </Link>
-                            <Link to="/admin/comm-hub" className="p-4 bg-gray-50 rounded-2xl hover:bg-purple-50 transition-all text-center border border-gray-100 hover:border-purple-100 group">
+                            <Link to="/admin/communication" className="p-4 bg-gray-50 rounded-2xl hover:bg-purple-50 transition-all text-center border border-gray-100 hover:border-purple-100 group">
                                 <ChatBubbleLeftRightIcon className="w-6 h-6 mx-auto mb-2 text-gray-400 group-hover:text-purple-600 transition-colors" />
                                 <span className="text-[10px] font-black text-gray-600 group-hover:text-purple-700 uppercase tracking-wide">Comm Hub</span>
                             </Link>
