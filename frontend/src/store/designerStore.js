@@ -90,10 +90,10 @@ const useDesignerStore = create((set, get) => ({
     },
 
     // Submit for review
-    submitForReview: async (id, notes) => {
+    submitForReview: async (id, notes, workLink) => {
         set({ isLoading: true, error: null });
         try {
-            const data = await designerAPI.submitForReview(id, notes);
+            const data = await designerAPI.submitForReview(id, notes, workLink);
             set((state) => ({
                 tasks: state.tasks.map((task) =>
                     task.id === id ? data.data : task

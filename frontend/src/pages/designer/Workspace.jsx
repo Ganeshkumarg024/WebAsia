@@ -113,7 +113,7 @@ const Workspace = () => {
                             <p className="text-gray-500 mb-8">Upload your design work when ready</p>
 
                             <button
-                                onClick={() => navigate(`/designer/upload/${currentTask.id}`)}
+                                onClick={() => navigate(`/designer/tasks/${currentTask.id}/upload`)}
                                 className="inline-flex items-center gap-2 px-8 py-4 bg-blue-600 text-white rounded-2xl font-bold hover:bg-blue-700 transition-all shadow-lg shadow-blue-600/20"
                             >
                                 <CloudArrowUpIcon className="w-6 h-6" />

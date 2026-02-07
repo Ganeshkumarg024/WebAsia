@@ -68,6 +68,12 @@ export const requestsAPI = {
     changePriority: async (id, priority) => {
         const response = await apiClient.patch(`/requests/${id}/priority`, { priority });
         return response.data;
+    },
+
+    // Update work link
+    updateWorkLink: async (id, workLink) => {
+        const response = await apiClient.patch(`/requests/${id}/work-link`, { workLink });
+        return response.data;
     }
 };
 

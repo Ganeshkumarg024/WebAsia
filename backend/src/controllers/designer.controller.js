@@ -99,7 +99,7 @@ export const startTask = async (req, res) => {
 export const submitForReview = async (req, res) => {
     try {
         const { id } = req.params;
-        const { notes } = req.body;
+        const { notes, workLink } = req.body;
 
         const request = await Request.findOne({
             where: {
@@ -118,14 +118,20 @@ export const submitForReview = async (req, res) => {
             });
         }
 
-        await request.update({
+        const updateData = {
             status: 'pending_review',
             specifications: {
                 ...request.specifications,
                 designerNotes: notes,
                 submittedAt: new Date()
             }
-        });
+        };
+
+        if (workLink) {
+            updateData.workLink = workLink;
+        }
+
+        await request.update(updateData);
 
         // TODO: Notify manager
 

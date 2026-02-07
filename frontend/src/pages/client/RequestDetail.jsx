@@ -10,7 +10,10 @@ import {
     XCircleIcon,
     CheckCircleIcon,
     ChatBubbleLeftIcon,
-    PaperClipIcon
+
+    PaperClipIcon,
+    LinkIcon, // Add LinkIcon
+    PencilSquareIcon // Add PencilSquareIcon
 } from '@heroicons/react/24/outline';
 import requestsAPI from '../../api/requests';
 import { requestFilesAPI } from '../../api/requestFiles';
@@ -33,6 +36,8 @@ const RequestDetail = () => {
     const [revisionNote, setRevisionNote] = useState('');
     const [isTypingLocal, setIsTypingLocal] = useState(false);
     const [showFeedbackModal, setShowFeedbackModal] = useState(false);
+    const [isEditingLink, setIsEditingLink] = useState(false); // Add state for link editing
+    const [workLink, setWorkLink] = useState(''); // Add state for work link input
 
     useEffect(() => {
         const init = async () => {
@@ -68,6 +73,7 @@ const RequestDetail = () => {
             setLoading(true);
             const response = await requestsAPI.getRequestById(id);
             setRequest(response.data);
+            setWorkLink(response.data.workLink || ''); // Initialize work link state
         } catch (error) {
             console.error('Failed to fetch request:', error);
             showToast.error('Failed to load request details');
@@ -129,6 +135,18 @@ const RequestDetail = () => {
             }
         } catch (error) {
             showToast.error('Failed to send message');
+        }
+    };
+
+    const handleUpdateWorkLink = async () => {
+        try {
+            await requestsAPI.updateWorkLink(id, workLink);
+            showToast.success('Work link updated successfully');
+            setIsEditingLink(false);
+            fetchRequest();
+        } catch (error) {
+            console.error('Update link error:', error);
+            showToast.error('Failed to update work link');
         }
     };
 
@@ -268,6 +286,24 @@ const RequestDetail = () => {
                                 {request.files && request.files.some(f => f.uploadedByRole !== 'client') && (request.status === 'client_review' || request.status === 'completed') ? (
                                     <div className="w-full h-full rounded-3xl border border-gray-100 bg-white shadow-2xl shadow-gray-200/50 relative z-10 overflow-hidden">
                                         <div className="absolute inset-0 overflow-y-auto p-6 space-y-4">
+                                            {/* Work Link Deliverable */}
+                                            {request.workLink && (
+                                                <a href={request.workLink} target="_blank" rel="noopener noreferrer" className="flex items-center justify-between p-4 bg-blue-50/50 rounded-2xl border border-blue-100 group hover:border-blue-300 transition-all">
+                                                    <div className="flex items-center gap-4">
+                                                        <div className="w-10 h-10 bg-blue-100 rounded-xl flex items-center justify-center text-blue-600">
+                                                            <LinkIcon className="w-6 h-6" />
+                                                        </div>
+                                                        <div>
+                                                            <p className="font-bold text-gray-900 group-hover:text-blue-700 transition-colors">External Deliverable</p>
+                                                            <p className="text-xs text-blue-600 truncate max-w-[200px]">{request.workLink}</p>
+                                                        </div>
+                                                    </div>
+                                                    <div className="px-4 py-2 bg-blue-600 text-white text-xs font-bold rounded-xl group-hover:bg-blue-700 transition-colors">
+                                                        Open Link
+                                                    </div>
+                                                </a>
+                                            )}
+
                                             {request.files.filter(f => f.uploadedByRole !== 'client').map((file) => (
                                                 <div key={file.id} className="flex items-center justify-between p-4 bg-gray-50 rounded-2xl border border-gray-100">
                                                     <div className="flex items-center gap-4">
@@ -333,6 +369,62 @@ const RequestDetail = () => {
                                 <p className="text-gray-600 leading-loose font-medium text-lg">
                                     {request.description}
                                 </p>
+
+                                {/* Work Link Section */}
+                                <div className="mt-8 pt-8 border-t border-gray-50">
+                                    <div className="flex items-center justify-between mb-4">
+                                        <h4 className="text-[10px] font-black text-gray-400 uppercase tracking-[0.2em] flex items-center gap-2">
+                                            <LinkIcon className="w-4 h-4" />
+                                            Work Link / External Resource
+                                        </h4>
+                                        <button
+                                            onClick={() => setIsEditingLink(!isEditingLink)}
+                                            className="text-gray-400 hover:text-blue-600 transition-colors"
+                                        >
+                                            <PencilSquareIcon className="w-4 h-4" />
+                                        </button>
+                                    </div>
+
+                                    {isEditingLink ? (
+                                        <div className="flex items-center gap-2">
+                                            <input
+                                                type="url"
+                                                value={workLink}
+                                                onChange={(e) => setWorkLink(e.target.value)}
+                                                placeholder="https://..."
+                                                className="flex-1 bg-gray-50 border border-gray-200 rounded-xl px-4 py-2 text-sm font-medium focus:outline-none focus:ring-2 focus:ring-blue-600/10 focus:border-blue-600"
+                                            />
+                                            <button
+                                                onClick={handleUpdateWorkLink}
+                                                className="px-4 py-2 bg-blue-600 text-white text-xs font-bold uppercase tracking-widest rounded-xl hover:bg-blue-700 transition-colors"
+                                            >
+                                                Save
+                                            </button>
+                                        </div>
+                                    ) : (
+                                        request.workLink ? (
+                                            <a
+                                                href={request.workLink}
+                                                target="_blank"
+                                                rel="noopener noreferrer"
+                                                className="flex items-center gap-3 p-4 bg-blue-50/50 border border-blue-100 rounded-2xl group hover:bg-blue-50 transition-colors"
+                                            >
+                                                <div className="w-10 h-10 bg-blue-600/10 rounded-xl flex items-center justify-center text-blue-600 group-hover:scale-110 transition-transform">
+                                                    <LinkIcon className="w-5 h-5" />
+                                                </div>
+                                                <div className="overflow-hidden">
+                                                    <p className="text-sm font-bold text-gray-900 truncate">Open Resource</p>
+                                                    <p className="text-xs text-blue-600 truncate">{request.workLink}</p>
+                                                </div>
+                                            </a>
+                                        ) : (
+                                            <div className="p-4 bg-gray-50/50 border border-gray-100 rounded-2xl border-dashed flex items-center gap-3 text-gray-400">
+                                                <LinkIcon className="w-5 h-5" />
+                                                <p className="text-xs font-medium">No work link info added</p>
+                                            </div>
+                                        )
+                                    )}
+                                </div>
                             </div>
 
                             <div className="grid grid-cols-1 md:grid-cols-2 gap-12 pt-10 border-t border-gray-50 relative z-10">
@@ -472,7 +564,7 @@ const RequestDetail = () => {
                     </div>
                 </div>
             </div>
-        </DashboardLayout>
+        </DashboardLayout >
     );
 };
 

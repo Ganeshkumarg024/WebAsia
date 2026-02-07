@@ -5,7 +5,8 @@ import {
     CloudArrowUpIcon,
     XMarkIcon,
     DocumentIcon,
-    PaperAirplaneIcon
+    PaperAirplaneIcon,
+    LinkIcon // Add LinkIcon
 } from '@heroicons/react/24/outline';
 import useDesignerStore from '../../store/designerStore';
 import DashboardLayout from '../../components/layout/DashboardLayout';
@@ -17,6 +18,7 @@ const UploadDesign = () => {
 
     const [files, setFiles] = useState([]);
     const [notes, setNotes] = useState('');
+    const [workLink, setWorkLink] = useState(''); // Add workLink state
     const [isDragging, setIsDragging] = useState(false);
 
     const handleDragOver = (e) => {
@@ -46,21 +48,24 @@ const UploadDesign = () => {
     };
 
     const handleUploadAndSubmit = async () => {
-        if (files.length === 0) {
-            alert('Please select at least one file to upload');
+        if (files.length === 0 && !workLink) {
+            alert('Please select at least one file or provide a work link');
             return;
         }
 
-        // Upload files
-        const uploadResult = await uploadDesignFiles(id, files);
-
-        if (uploadResult.success) {
-            // Submit for review
-            const submitResult = await submitForReview(id, notes);
-
-            if (submitResult.success) {
-                navigate(`/designer/tasks/${id}`);
+        // Upload files if any
+        if (files.length > 0) {
+            const uploadResult = await uploadDesignFiles(id, files);
+            if (!uploadResult.success) {
+                return; // Stop if upload fails
             }
+        }
+
+        // Submit for review with notes and workLink
+        const submitResult = await submitForReview(id, notes, workLink);
+
+        if (submitResult.success) {
+            navigate(`/designer/tasks/${id}`);
         }
     };
 
@@ -94,8 +99,8 @@ const UploadDesign = () => {
                         onDragLeave={handleDragLeave}
                         onDrop={handleDrop}
                         className={`border-2 border-dashed rounded-3xl p-12 text-center transition-all ${isDragging
-                                ? 'border-blue-600 bg-blue-50'
-                                : 'border-gray-200 hover:border-blue-400 hover:bg-gray-50'
+                            ? 'border-blue-600 bg-blue-50'
+                            : 'border-gray-200 hover:border-blue-400 hover:bg-gray-50'
                             }`}
                     >
                         <CloudArrowUpIcon className={`w-16 h-16 mx-auto mb-4 ${isDragging ? 'text-blue-600' : 'text-gray-400'}`} />
@@ -140,6 +145,28 @@ const UploadDesign = () => {
                         </div>
                     )}
 
+                    {/* Work Link */}
+                    <div className="mt-6">
+                        <label className="block text-sm font-bold text-gray-900 mb-2">
+                            Work Link (Optional)
+                        </label>
+                        <div className="relative">
+                            <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
+                                <LinkIcon className="h-5 w-5 text-gray-400" />
+                            </div>
+                            <input
+                                type="url"
+                                value={workLink}
+                                onChange={(e) => setWorkLink(e.target.value)}
+                                placeholder="https://drive.google.com/..."
+                                className="w-full pl-11 pr-4 py-3 bg-gray-50 border border-gray-100 rounded-2xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                            />
+                        </div>
+                        <p className="text-xs text-gray-400 mt-2">
+                            Add a link to your work (e.g. Google Drive, Figma, Loom) if files are too large.
+                        </p>
+                    </div>
+
                     {/* Notes */}
                     <div className="mt-6">
                         <label className="block text-sm font-bold text-gray-900 mb-2">
@@ -164,7 +191,7 @@ const UploadDesign = () => {
                         </button>
                         <button
                             onClick={handleUploadAndSubmit}
-                            disabled={files.length === 0 || isLoading}
+                            disabled={(files.length === 0 && !workLink) || isLoading}
                             className="flex-1 flex items-center justify-center gap-2 px-6 py-3 bg-blue-600 text-white rounded-2xl font-bold hover:bg-blue-700 transition-all shadow-lg shadow-blue-600/20 disabled:opacity-50 disabled:cursor-not-allowed"
                         >
                             {isLoading ? (

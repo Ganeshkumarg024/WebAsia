@@ -17,6 +17,7 @@ const CreateRequest = () => {
         description: '',
         priority: 'normal',
         deadline: '',
+        workLink: '', // Add work link state
         files: [],
     });
 
@@ -240,6 +241,17 @@ const CreateRequest = () => {
                                         />
                                     </div>
                                 </div>
+
+                                <div className="space-y-3">
+                                    <label className="text-[10px] font-black text-gray-400 uppercase tracking-[0.2em] px-1">Work Link (Optional)</label>
+                                    <input
+                                        type="url"
+                                        value={formData.workLink}
+                                        onChange={(e) => setFormData({ ...formData, workLink: e.target.value })}
+                                        className="w-full bg-gray-50/50 border border-gray-100 rounded-2xl py-5 px-6 text-gray-900 font-bold focus:bg-white focus:border-blue-600 focus:ring-4 focus:ring-blue-600/5 transition-all outline-none placeholder-gray-300"
+                                        placeholder="e.g., Google Drive link, Dropbox, etc."
+                                    />
+                                </div>
                             </div>
                         </div>
                     )}
@@ -288,6 +300,14 @@ const CreateRequest = () => {
                                     <p className="text-[10px] font-black text-gray-400 uppercase tracking-[0.2em] mb-2">Brief Summary</p>
                                     <p className="text-gray-600 text-base font-medium leading-relaxed">{formData.description}</p>
                                 </div>
+                                {formData.workLink && (
+                                    <div className="md:col-span-2 p-8 bg-gray-50/50 rounded-[32px] border border-gray-100">
+                                        <p className="text-[10px] font-black text-gray-400 uppercase tracking-[0.2em] mb-2">Work Link</p>
+                                        <a href={formData.workLink} target="_blank" rel="noopener noreferrer" className="text-blue-600 font-bold text-lg tracking-tight underline truncate hover:text-blue-700 transition-colors block">
+                                            {formData.workLink}
+                                        </a>
+                                    </div>
+                                )}
                                 <div className="p-8 bg-gray-50/50 rounded-[32px] border border-gray-100">
                                     <p className="text-[10px] font-black text-gray-400 uppercase tracking-[0.2em] mb-2">Assets</p>
                                     <p className="text-gray-900 font-black text-xl tracking-tight">{formData.files.length} Files Attached</p>

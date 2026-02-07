@@ -42,6 +42,11 @@ const Request = sequelize.define('Request', {
         type: DataTypes.JSONB,
         allowNull: true
     },
+    workLink: {
+        type: DataTypes.TEXT,
+        allowNull: true,
+        field: 'work_link'
+    },
     status: {
         type: DataTypes.ENUM(
             'queued', 'active', 'assigned', 'in_progress',

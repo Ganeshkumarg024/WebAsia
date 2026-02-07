@@ -9,7 +9,9 @@ import {
     ChatBubbleLeftIcon,
     ClipboardDocumentListIcon,
     PlayIcon,
-    PaperAirplaneIcon
+    PaperAirplaneIcon,
+    LinkIcon, // Add LinkIcon
+    PencilSquareIcon // Add PencilSquareIcon
 } from '@heroicons/react/24/outline';
 import useDesignerStore from '../../store/designerStore';
 import useRequestStore from '../../store/requestStore';
@@ -21,6 +23,7 @@ import DashboardLayout from '../../components/layout/DashboardLayout';
 import { format, formatDistanceToNow, isValid } from 'date-fns';
 import { SwatchIcon, IdentificationIcon, BookOpenIcon, ArrowDownTrayIcon } from '@heroicons/react/24/outline';
 import { requestFilesAPI } from '../../api/requestFiles';
+import requestsAPI from '../../api/requests'; // Import requestsAPI
 import showToast from '../../components/shared/Toast';
 
 const TaskDetails = () => {
@@ -34,6 +37,8 @@ const TaskDetails = () => {
     const [activeTab, setActiveTab] = useState('overview');
     const [messageInput, setMessageInput] = useState('');
     const [isTyping, setIsTyping] = useState(false);
+    const [isEditingLink, setIsEditingLink] = useState(false); // Add state
+    const [workLink, setWorkLink] = useState(''); // Add state
 
     useEffect(() => {
         if (id) {
@@ -41,6 +46,7 @@ const TaskDetails = () => {
                 if (task?.clientId) {
                     fetchBrandAssets(task.clientId);
                 }
+                setWorkLink(task.workLink || ''); // Initialize work link
             });
             fetchRequestActivity(id);
             fetchMessages(id);
@@ -86,6 +92,18 @@ const TaskDetails = () => {
         const result = await startTask(id);
         if (result.success) {
             navigate(`/designer/workspace?task=${id}`);
+        }
+    };
+
+    const handleUpdateWorkLink = async () => {
+        try {
+            await requestsAPI.updateWorkLink(id, workLink);
+            showToast.success('Work link updated successfully');
+            setIsEditingLink(false);
+            fetchTaskById(id); // Refresh task
+        } catch (error) {
+            console.error('Update link error:', error);
+            showToast.error('Failed to update work link');
         }
     };
 
@@ -269,6 +287,113 @@ const TaskDetails = () => {
                                     <p className="text-gray-700 leading-relaxed">
                                         {currentTask.description || 'No description provided'}
                                     </p>
+                                </div>
+
+                                {/* Submission & Deliverables Section */}
+                                <div className="pt-6 border-t border-gray-100">
+                                    <h3 className="text-lg font-black text-gray-900 mb-4 flex items-center gap-2">
+                                        <PaperAirplaneIcon className="w-5 h-5 text-blue-600" />
+                                        <span>Submission & Deliverables</span>
+                                    </h3>
+
+                                    <div className="bg-gray-50 rounded-2xl p-6 border border-gray-100 space-y-6">
+                                        {/* Work Link */}
+                                        <div>
+                                            <div className="flex items-center justify-between mb-3">
+                                                <p className="text-sm font-bold text-gray-700 flex items-center gap-2">
+                                                    <LinkIcon className="w-4 h-4 text-gray-500" />
+                                                    Work Link
+                                                </p>
+                                                {['active', 'assigned', 'in_progress', 'pending_review', 'revision_requested'].includes(currentTask.status) && (
+                                                    <button
+                                                        onClick={() => setIsEditingLink(!isEditingLink)}
+                                                        className="text-xs font-bold text-blue-600 hover:text-blue-700 transition-colors flex items-center gap-1"
+                                                    >
+                                                        <PencilSquareIcon className="w-3 h-3" />
+                                                        {isEditingLink ? 'Cancel' : 'Edit'}
+                                                    </button>
+                                                )}
+                                            </div>
+
+                                            {isEditingLink ? (
+                                                <div className="flex items-center gap-2">
+                                                    <input
+                                                        type="url"
+                                                        value={workLink}
+                                                        onChange={(e) => setWorkLink(e.target.value)}
+                                                        placeholder="Enter Google Drive / Dropbox link..."
+                                                        className="flex-1 bg-white border border-gray-200 rounded-xl px-4 py-3 text-sm font-medium focus:outline-none focus:ring-2 focus:ring-blue-600/10 focus:border-blue-600"
+                                                    />
+                                                    <button
+                                                        onClick={handleUpdateWorkLink}
+                                                        className="px-4 py-2 bg-blue-600 text-white rounded-xl text-xs font-bold hover:bg-blue-700 transition-all shadow-lg shadow-blue-600/20"
+                                                    >
+                                                        Save
+                                                    </button>
+                                                </div>
+                                            ) : (
+                                                currentTask.workLink ? (
+                                                    <a
+                                                        href={currentTask.workLink}
+                                                        target="_blank"
+                                                        rel="noopener noreferrer"
+                                                        className="flex items-center gap-3 p-4 bg-white border border-blue-100 rounded-xl group hover:border-blue-300 transition-all shadow-sm"
+                                                    >
+                                                        <div className="w-10 h-10 bg-blue-50 rounded-lg flex items-center justify-center text-blue-600 group-hover:scale-110 transition-transform">
+                                                            <LinkIcon className="w-5 h-5" />
+                                                        </div>
+                                                        <div className="overflow-hidden min-w-0">
+                                                            <p className="text-sm font-bold text-gray-900 truncate">External Deliverable</p>
+                                                            <p className="text-xs text-blue-600 truncate">{currentTask.workLink}</p>
+                                                        </div>
+                                                        <div className="ml-auto px-3 py-1.5 bg-blue-50 text-blue-700 text-[10px] font-bold rounded-lg group-hover:bg-blue-600 group-hover:text-white transition-colors">
+                                                            OPEN
+                                                        </div>
+                                                    </a>
+                                                ) : (
+                                                    <div className="text-center p-4 border border-dashed border-gray-200 rounded-xl bg-gray-50/50">
+                                                        <p className="text-xs text-gray-500 italic">No work link provided yet.</p>
+                                                    </div>
+                                                )
+                                            )}
+                                        </div>
+
+                                        {/* Uploaded Files */}
+                                        <div>
+                                            <p className="text-sm font-bold text-gray-700 mb-3 flex items-center gap-2">
+                                                <PhotoIcon className="w-4 h-4 text-gray-500" />
+                                                Uploaded Files
+                                            </p>
+                                            {currentTask.files && currentTask.files.length > 0 ? (
+                                                <div className="space-y-3">
+                                                    {currentTask.files.map((file) => (
+                                                        <div key={file.id} className="flex items-center justify-between p-3 bg-white border border-gray-100 rounded-xl hover:border-blue-200 transition-colors shadow-sm">
+                                                            <div className="flex items-center gap-3 min-w-0">
+                                                                <div className="w-8 h-8 bg-gray-100 rounded-lg flex items-center justify-center text-gray-500">
+                                                                    <DocumentTextIcon className="w-4 h-4" />
+                                                                </div>
+                                                                <div className="min-w-0">
+                                                                    <p className="text-sm font-bold text-gray-900 truncate" title={file.originalName}>{file.originalName}</p>
+                                                                    <p className="text-[10px] text-gray-500">{(file.fileSize / 1024).toFixed(2)} KB • {isValid(new Date(file.createdAt)) ? format(new Date(file.createdAt), 'MMM dd, HH:mm') : 'N/A'}</p>
+                                                                </div>
+                                                            </div>
+                                                            <button
+                                                                onClick={() => handleFileDownload(file.id, file.originalName)}
+                                                                className="p-2 text-gray-400 hover:text-blue-600 hover:bg-blue-50 rounded-lg transition-all"
+                                                                title="Download"
+                                                            >
+                                                                <ArrowDownTrayIcon className="w-4 h-4" />
+                                                            </button>
+                                                        </div>
+                                                    ))}
+                                                </div>
+                                            ) : (
+                                                <div className="text-center p-4 border border-dashed border-gray-200 rounded-xl bg-gray-50/50">
+                                                    <p className="text-xs text-gray-500 italic">No files uploaded yet.</p>
+                                                </div>
+                                            )}
+                                        </div>
+                                    </div>
                                 </div>
 
                                 {currentTask.specifications && (

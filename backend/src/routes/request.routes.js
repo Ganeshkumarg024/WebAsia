@@ -9,7 +9,8 @@ import {
     submitFeedback,
     approveRequest,
     getRequestActivity,
-    changePriority
+    changePriority,
+    updateWorkLink
 } from '../controllers/request.controller.js';
 import { authenticate } from '../middleware/auth.middleware.js';
 import { isClient, isClientOrAdmin } from '../middleware/rbac.middleware.js';
@@ -68,5 +69,10 @@ router.get('/:id/activity', getRequestActivity);
 router.patch('/:id/priority', isClient, [
     body('priority').isIn(['normal', 'urgent']).withMessage('Invalid priority')
 ], changePriority);
+
+// Update work link
+router.patch('/:id/work-link', [
+    body('workLink').trim().notEmpty().withMessage('Work link is required').isURL().withMessage('Invalid URL format')
+], updateWorkLink);
 
 export default router;

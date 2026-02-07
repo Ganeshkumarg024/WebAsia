@@ -9,13 +9,16 @@ import {
     XCircleIcon,
     ExclamationTriangleIcon,
     PaperClipIcon,
-    ChatBubbleLeftRightIcon
+    ChatBubbleLeftRightIcon,
+    LinkIcon,
+    PencilSquareIcon
 } from '@heroicons/react/24/outline';
 import DashboardLayout from '../../components/layout/DashboardLayout';
 import FileList from '../../components/shared/FileList';
 import FileUploadZone from '../../components/shared/FileUploadZone';
 import adminAPI from '../../api/admin';
 import requestFilesAPI from '../../api/requestFiles';
+import requestsAPI from '../../api/requests';
 import showToast from '../../components/shared/Toast';
 import { format } from 'date-fns';
 
@@ -46,6 +49,8 @@ const AdminRequestDetails = () => {
     const [selectedManager, setSelectedManager] = useState('');
     const [note, setNote] = useState('');
     const [isInternalNote, setIsInternalNote] = useState(true);
+    const [isEditingLink, setIsEditingLink] = useState(false);
+    const [workLink, setWorkLink] = useState('');
 
     const [updating, setUpdating] = useState(false);
 
@@ -67,6 +72,7 @@ const AdminRequestDetails = () => {
                 setSelectedStatus(result.data.request.status);
                 setSelectedDesigner(result.data.request.assignedDesignerId || '');
                 setSelectedManager(result.data.request.assignedManagerId || '');
+                setWorkLink(result.data.request.workLink || '');
             }
         } catch (error) {
             console.error('Failed to fetch request details:', error);
@@ -171,6 +177,21 @@ const AdminRequestDetails = () => {
         } catch (error) {
             console.error('Failed to add note:', error);
             showToast.error('Failed to add note');
+        } finally {
+            setUpdating(false);
+        }
+    };
+
+    const handleUpdateWorkLink = async () => {
+        try {
+            setUpdating(true);
+            await requestsAPI.updateWorkLink(id, workLink);
+            showToast.success('Work link updated');
+            setIsEditingLink(false);
+            fetchRequestDetails();
+        } catch (error) {
+            console.error('Failed to update work link:', error);
+            showToast.error('Failed to update work link');
         } finally {
             setUpdating(false);
         }
@@ -349,6 +370,53 @@ const AdminRequestDetails = () => {
                                     <p className="mt-1 text-gray-700">{request.description}</p>
                                 </div>
 
+                                <div>
+                                    <div className="flex items-center justify-between mb-2">
+                                        <label className="text-sm font-bold text-gray-500 uppercase tracking-wider flex items-center gap-2">
+                                            <LinkIcon className="w-4 h-4" />
+                                            Work Link
+                                        </label>
+                                        <button
+                                            onClick={() => setIsEditingLink(!isEditingLink)}
+                                            className="text-blue-600 hover:text-blue-700 text-xs font-bold uppercase"
+                                        >
+                                            {isEditingLink ? 'Cancel' : 'Edit'}
+                                        </button>
+                                    </div>
+                                    {isEditingLink ? (
+                                        <div className="flex items-center gap-2">
+                                            <input
+                                                type="url"
+                                                value={workLink}
+                                                onChange={(e) => setWorkLink(e.target.value)}
+                                                placeholder="https://..."
+                                                className="flex-1 px-3 py-2 border border-gray-200 rounded-lg text-sm"
+                                            />
+                                            <button
+                                                onClick={handleUpdateWorkLink}
+                                                className="px-3 py-2 bg-blue-600 text-white rounded-lg text-xs font-bold"
+                                                disabled={updating}
+                                            >
+                                                Save
+                                            </button>
+                                        </div>
+                                    ) : (
+                                        request.workLink ? (
+                                            <a href={request.workLink} target="_blank" rel="noopener noreferrer" className="flex items-center gap-3 p-3 bg-blue-50/50 border border-blue-100 rounded-xl group hover:bg-blue-50 transition-colors mt-2">
+                                                <div className="w-8 h-8 bg-blue-600/10 rounded-lg flex items-center justify-center text-blue-600 group-hover:scale-110 transition-transform flex-shrink-0">
+                                                    <LinkIcon className="w-4 h-4" />
+                                                </div>
+                                                <div className="overflow-hidden min-w-0 flex-1">
+                                                    <p className="text-xs font-bold text-gray-900 truncate">Open Link</p>
+                                                    <p className="text-[10px] text-blue-600 truncate">{request.workLink}</p>
+                                                </div>
+                                            </a>
+                                        ) : (
+                                            <p className="text-gray-400 italic text-sm mt-1">No link provided</p>
+                                        )
+                                    )}
+                                </div>
+
                                 {request.specifications && (
                                     <div>
                                         <label className="text-sm font-bold text-gray-500 uppercase tracking-wider">Specifications</label>
@@ -410,6 +478,45 @@ const AdminRequestDetails = () => {
                                 <PaperClipIcon className="w-6 h-6 text-blue-600" />
                                 Files & Attachments
                             </h2>
+
+                            {/* Work Link Display */}
+                            {request.workLink && (
+                                <div className="mb-6 p-4 bg-blue-50 rounded-2xl border border-blue-100 flex items-center justify-between">
+                                    <div className="flex items-center gap-4">
+                                        <div className="w-10 h-10 bg-blue-100 rounded-xl flex items-center justify-center text-blue-600">
+                                            <LinkIcon className="w-6 h-6" />
+                                        </div>
+                                        <div>
+                                            <p className="font-bold text-gray-900">Work Link / Deliverable</p>
+                                            <a href={request.workLink} target="_blank" rel="noopener noreferrer" className="text-sm text-blue-600 hover:underline truncate block max-w-md">
+                                                {request.workLink}
+                                            </a>
+                                        </div>
+                                    </div>
+                                    <div className="flex gap-2">
+                                        <button
+                                            onClick={() => {
+                                                setIsEditingLink(true);
+                                                // Scroll to top or handle UI focus if needed, though for now just setting edit mode is enough
+                                                // Ideally point user to the edit section above, or allow inline edit here. 
+                                                // For simplicity, we just link to the main existing Work Link section by reusing existing state.
+                                                document.querySelector('h2')?.scrollIntoView({ behavior: 'smooth' });
+                                            }}
+                                            className="px-3 py-2 bg-white text-gray-700 text-xs font-bold rounded-xl border border-gray-200 hover:bg-gray-50"
+                                        >
+                                            Edit
+                                        </button>
+                                        <a
+                                            href={request.workLink}
+                                            target="_blank"
+                                            rel="noopener noreferrer"
+                                            className="px-3 py-2 bg-blue-600 text-white text-xs font-bold rounded-xl hover:bg-blue-700 flex items-center gap-1"
+                                        >
+                                            Open
+                                        </a>
+                                    </div>
+                                </div>
+                            )}
 
                             {files.length > 0 ? (
                                 <FileList

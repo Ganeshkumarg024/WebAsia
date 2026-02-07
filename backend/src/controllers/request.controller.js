@@ -24,7 +24,9 @@ export const createRequest = async (req, res) => {
             title,
             description,
             specifications,
-            priority = 'normal'
+            workLink,
+            priority = 'normal',
+            deadline // Add deadline
         } = req.body;
 
         // Run expiry check
@@ -107,8 +109,10 @@ export const createRequest = async (req, res) => {
                 specifications,
                 status: 'queued',
                 priority,
+                workLink,
                 queuePosition,
-                slaHours: subscription.plan.turnaroundHours
+                slaHours: subscription.plan.turnaroundHours,
+                deadline: deadline || null // Save deadline
             });
 
             // Create activity
@@ -137,7 +141,9 @@ export const createRequest = async (req, res) => {
             specifications,
             status: 'active',
             priority,
-            slaHours: subscription.plan.turnaroundHours
+            workLink,
+            slaHours: subscription.plan.turnaroundHours,
+            deadline: deadline || null // Save deadline
         });
 
         // Create activity
@@ -680,6 +686,85 @@ export const changePriority = async (req, res) => {
             error: {
                 code: 'SERVER_ERROR',
                 message: 'Failed to change priority'
+            }
+        });
+    }
+};
+
+/**
+ * Update work link for a request
+ * PATCH /api/requests/:id/work-link
+ */
+export const updateWorkLink = async (req, res) => {
+    try {
+        const { id } = req.params;
+        const { workLink } = req.body;
+
+        const errors = validationResult(req);
+        if (!errors.isEmpty()) {
+            return res.status(400).json({
+                success: false,
+                error: {
+                    code: 'VALIDATION_ERROR',
+                    message: 'Invalid input data',
+                    details: errors.array()
+                }
+            });
+        }
+
+        const request = await Request.findByPk(id);
+
+        if (!request) {
+            return res.status(404).json({
+                success: false,
+                error: {
+                    code: 'NOT_FOUND',
+                    message: 'Request not found'
+                }
+            });
+        }
+
+        // Check authorization (Client, Designer assigned, Admin)
+        const isAuthorized =
+            request.clientId === req.user.id ||
+            request.assignedDesignerId === req.user.id ||
+            req.user.role === 'admin';
+
+        if (!isAuthorized) {
+            return res.status(403).json({
+                success: false,
+                error: {
+                    code: 'FORBIDDEN',
+                    message: 'Access denied'
+                }
+            });
+        }
+
+        const oldLink = request.workLink;
+        await request.update({ workLink });
+
+        // Create activity
+        await RequestActivity.create({
+            requestId: request.id,
+            userId: req.user.id,
+            activityType: 'work_link_updated',
+            description: `Work link ${oldLink ? 'updated' : 'added'}`,
+            metadata: { oldLink, newLink: workLink },
+            isSystemGenerated: false
+        });
+
+        res.json({
+            success: true,
+            message: 'Work link updated successfully',
+            data: request
+        });
+    } catch (error) {
+        console.error('Update work link error:', error);
+        res.status(500).json({
+            success: false,
+            error: {
+                code: 'SERVER_ERROR',
+                message: 'Failed to update work link'
             }
         });
     }

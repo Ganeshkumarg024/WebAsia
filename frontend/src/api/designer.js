@@ -26,8 +26,8 @@ export const designerAPI = {
     },
 
     // Submit for review
-    submitForReview: async (id, notes) => {
-        const response = await apiClient.post(`/designer/tasks/${id}/submit`, { notes });
+    submitForReview: async (id, notes, workLink) => {
+        const response = await apiClient.post(`/designer/tasks/${id}/submit`, { notes, workLink });
         return response.data;
     },
 
