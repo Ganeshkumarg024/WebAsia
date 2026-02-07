@@ -13,8 +13,20 @@ export const createRazorpayOrder = async (req, res) => {
     try {
         const { planId, amount, currency = 'INR' } = req.body;
 
+        // Check if Razorpay keys are placeholders
+        if (config.razorpay.keyId.startsWith('your-') || config.razorpay.keySecret.startsWith('your-')) {
+            console.error('Razorpay Error: API keys are placeholders. Please set real keys in .env');
+            return res.status(400).json({
+                success: false,
+                error: {
+                    code: 'INVALID_CREDENTIALS',
+                    message: 'Razorpay API keys are not configured. Please contact the administrator.'
+                }
+            });
+        }
+
         const options = {
-            amount: amount * 100, // Convert to paise
+            amount: Math.round(amount * 100), // Convert to paise and ensure integer
             currency,
             receipt: `receipt_${Date.now()}`,
             notes: {
@@ -36,12 +48,27 @@ export const createRazorpayOrder = async (req, res) => {
             }
         });
     } catch (error) {
-        console.error('Razorpay order creation error:', error);
-        res.status(500).json({
+        console.error('Razorpay order creation error details:', {
+            message: error.message,
+            statusCode: error.statusCode,
+            description: error.description,
+            metadata: error.metadata
+        });
+
+        let errorMessage = 'Failed to create payment order';
+        let errorCode = 'PAYMENT_ERROR';
+
+        if (error.statusCode === 401) {
+            errorMessage = 'Invalid Razorpay API keys. Please verify your configuration.';
+            errorCode = 'AUTH_ERROR';
+        }
+
+        res.status(error.statusCode || 500).json({
             success: false,
             error: {
-                code: 'PAYMENT_ERROR',
-                message: 'Failed to create payment order'
+                code: errorCode,
+                message: errorMessage,
+                details: error.description || error.message
             }
         });
     }

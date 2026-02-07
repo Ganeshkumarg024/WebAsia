@@ -7,6 +7,7 @@ const useSubscriptionStore = create((set, get) => ({
     currentSubscription: null,
     paymentHistory: [],
     isLoading: false,
+    isInitialized: false,
     error: null,
 
     // Fetch all plans
@@ -34,14 +35,16 @@ const useSubscriptionStore = create((set, get) => ({
             set({
                 currentSubscription: data.data,
                 isLoading: false,
+                isInitialized: true,
             });
         } catch (error) {
             if (error.status === 404) {
-                set({ currentSubscription: null, isLoading: false });
+                set({ currentSubscription: null, isLoading: false, isInitialized: true });
             } else {
                 set({
                     error: error.message || 'Failed to fetch subscription',
                     isLoading: false,
+                    isInitialized: true,
                 });
             }
         }

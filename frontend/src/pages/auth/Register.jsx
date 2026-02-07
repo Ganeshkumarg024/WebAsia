@@ -56,7 +56,8 @@ const Register = () => {
             if (referralCode) {
                 localStorage.removeItem('wa_referral');
             }
-            navigate('/dashboard');
+            // New clients need to purchase a plan
+            navigate('/client/billing');
         } else {
             toast.error(result.error || 'Registration failed');
         }

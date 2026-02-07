@@ -4,6 +4,8 @@ import DashboardLayout from '../../components/layout/DashboardLayout';
 import useSubscriptionStore from '../../store/subscriptionStore';
 import useAuthStore from '../../store/authStore';
 import { motion, AnimatePresence } from 'framer-motion';
+import useRazorpay from '../../hooks/useRazorpay';
+import toast from 'react-hot-toast';
 
 const Billing = () => {
     const { user } = useAuthStore();
@@ -20,6 +22,7 @@ const Billing = () => {
         cancelSubscription
     } = useSubscriptionStore();
 
+    const { processPayment, isProcessing } = useRazorpay();
     const [isModifyModalOpen, setIsModifyModalOpen] = useState(false);
 
     useEffect(() => {
@@ -28,11 +31,39 @@ const Billing = () => {
         fetchPlans();
     }, [fetchCurrentSubscription, fetchPaymentHistory, fetchPlans]);
 
-    const handlePlanChange = async (planId) => {
-        const result = await changePlan(planId);
-        if (result.success) {
-            setIsModifyModalOpen(false);
-            // Optionally show success notification
+    const handlePlanChange = async (plan) => {
+        // If it's a paid plan, initiate Razorpay
+        if (plan.price > 0) {
+            await processPayment({
+                plan,
+                user,
+                onSuccess: async (paymentData) => {
+                    const result = await useSubscriptionStore.getState().subscribe(plan.id, {
+                        paymentId: paymentData.paymentId,
+                        paymentMethod: 'razorpay',
+                        amount: paymentData.amount,
+                        currency: paymentData.currency,
+                        gateway: 'razorpay'
+                    });
+
+                    if (result.success) {
+                        toast.success(`Successfully subscribed to ${plan.name}`);
+                        setIsModifyModalOpen(false);
+                        fetchCurrentSubscription();
+                        fetchPaymentHistory();
+                    }
+                },
+                onError: (err) => {
+                    toast.error(err.message || 'Payment failed');
+                }
+            });
+        } else {
+            // Handle free/trial plans if any
+            const result = await changePlan(plan.id);
+            if (result.success) {
+                toast.success(`Plan updated to ${plan.name}`);
+                setIsModifyModalOpen(false);
+            }
         }
     };
 
@@ -364,14 +395,14 @@ const Billing = () => {
                                             </li>
                                         </ul>
                                         <button
-                                            disabled={currentSubscription?.planId === plan.id || isLoading}
-                                            onClick={() => handlePlanChange(plan.id)}
+                                            disabled={currentSubscription?.planId === plan.id || isLoading || isProcessing}
+                                            onClick={() => handlePlanChange(plan)}
                                             className={`w-full py-4 text-[10px] font-black uppercase tracking-widest rounded-2xl transition-all ${currentSubscription?.planId === plan.id
-                                                    ? 'bg-gray-100 text-gray-400 cursor-not-allowed'
-                                                    : 'bg-blue-600 text-white hover:bg-blue-700 shadow-xl shadow-blue-600/10'
+                                                ? 'bg-gray-100 text-gray-400 cursor-not-allowed'
+                                                : 'bg-blue-600 text-white hover:bg-blue-700 shadow-xl shadow-blue-600/10'
                                                 }`}
                                         >
-                                            {currentSubscription?.planId === plan.id ? 'Current Plan' : 'Select Plan'}
+                                            {currentSubscription?.planId === plan.id ? 'Current Plan' : isProcessing ? 'Processing...' : 'Select Plan'}
                                         </button>
                                     </div>
                                 ))}

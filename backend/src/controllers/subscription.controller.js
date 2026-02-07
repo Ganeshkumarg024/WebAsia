@@ -84,17 +84,25 @@ export const getUserSubscription = async (req, res) => {
 
 export const createSubscription = async (req, res) => {
     try {
-        const { planId, paymentId, paymentMethod, amount, currency } = req.body;
+        const { planId, paymentId, paymentMethod, amount, currency, gateway = 'razorpay' } = req.body;
+
+        // Basic validation
+        if (req.user.role !== 'client') {
+            return res.status(403).json({
+                success: false,
+                error: { code: 'FORBIDDEN', message: 'Only clients can create subscriptions' }
+            });
+        }
 
         const result = await paymentService.handleSuccessfulPayment({
             userId: req.user.id,
             planId,
             amount: amount || 0,
             currency: currency || 'INR',
-            gateway: 'manual', // or appropriate gateway
+            gateway,
             gatewayPaymentId: paymentId,
-            paymentMethod: paymentMethod || 'offline',
-            metadata: { source: 'manual_creation' }
+            paymentMethod: paymentMethod || 'online',
+            metadata: { source: 'checkout_flow' }
         });
 
         res.status(201).json({
