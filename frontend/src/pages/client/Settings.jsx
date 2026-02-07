@@ -3,6 +3,7 @@ import { UserIcon, ShieldCheckIcon, BellIcon, CameraIcon, LockClosedIcon } from 
 import DashboardLayout from '../../components/layout/DashboardLayout';
 import useAuthStore from '../../store/authStore';
 import toast from 'react-hot-toast';
+import { getAvatarUrl } from '../../utils/image';
 
 const Settings = () => {
     const { user, updateProfile, uploadAvatar, changePassword, isLoading } = useAuthStore();
@@ -142,8 +143,8 @@ const Settings = () => {
                                     <div className="flex items-center gap-8">
                                         <div className="relative group">
                                             <div className="w-28 h-28 rounded-[36px] bg-gray-50 border-4 border-white shadow-xl flex items-center justify-center overflow-hidden transition-transform group-hover:scale-[1.02] duration-500">
-                                                {user?.photoUrl || user?.avatar ? (
-                                                    <img src={user.photoUrl || user.avatar} alt="Profile" className="w-full h-full object-cover" />
+                                                {getAvatarUrl(user) ? (
+                                                    <img src={getAvatarUrl(user)} alt="Profile" className="w-full h-full object-cover" />
                                                 ) : (
                                                     <span className="text-3xl font-black text-blue-600">{(user?.firstName || user?.name || 'U').charAt(0)}</span>
                                                 )}

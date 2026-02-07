@@ -3,7 +3,7 @@ import { User } from '../models/index.js';
 export const getProfile = async (req, res) => {
     try {
         const user = await User.findByPk(req.user.id, {
-            attributes: { exclude: ['passwordHash'] }
+            attributes: { exclude: ['password', 'refreshToken'] }
         });
 
         res.json({
@@ -37,10 +37,14 @@ export const updateProfile = async (req, res) => {
             language: language || user.language
         });
 
+        const userResponse = user.toJSON();
+        delete userResponse.password;
+        delete userResponse.refreshToken;
+
         res.json({
             success: true,
             message: 'Profile updated successfully',
-            data: user
+            data: userResponse
         });
     } catch (error) {
         console.error('Update profile error:', error);
@@ -74,10 +78,14 @@ export const uploadAvatar = async (req, res) => {
             photoUrl: result.url
         });
 
+        const userResponse = user.toJSON();
+        delete userResponse.password;
+        delete userResponse.refreshToken;
+
         res.json({
             success: true,
             message: 'Avatar updated successfully',
-            data: user
+            data: userResponse
         });
     } catch (error) {
         console.error('Upload avatar error:', error);
@@ -110,7 +118,7 @@ export const changePassword = async (req, res) => {
         }
 
         // Update password
-        await user.update({ passwordHash: newPassword });
+        await user.update({ password: newPassword });
 
         res.json({
             success: true,

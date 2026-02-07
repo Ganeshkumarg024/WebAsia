@@ -61,9 +61,17 @@ export const register = async (req, res) => {
             success: true,
             message: 'Registration successful. Please verify your email.',
             data: {
-                userId: user.id,
-                email: user.email,
-                ...tokens
+                ...tokens,
+                user: {
+                    id: user.id,
+                    email: user.email,
+                    firstName: user.firstName,
+                    lastName: user.lastName,
+                    photoUrl: user.photoUrl,
+                    role: user.role,
+                    status: user.status,
+                    emailVerified: user.emailVerified
+                }
             }
         });
 
@@ -155,6 +163,7 @@ export const login = async (req, res) => {
                     email: user.email,
                     firstName: user.firstName,
                     lastName: user.lastName,
+                    photoUrl: user.photoUrl,
                     role: user.role,
                     status: user.status,
                     emailVerified: user.emailVerified
@@ -250,7 +259,7 @@ export const refreshToken = async (req, res) => {
 export const getCurrentUser = async (req, res) => {
     try {
         const user = await User.findByPk(req.user.id, {
-            attributes: { exclude: ['passwordHash'] }
+            attributes: { exclude: ['password', 'refreshToken'] }
         });
 
         res.json({

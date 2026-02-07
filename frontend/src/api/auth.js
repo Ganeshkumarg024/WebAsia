@@ -73,13 +73,8 @@ export const authAPI = {
         return response.data;
     },
 
-    // Upload avatar
     uploadAvatar: async (formData) => {
-        const response = await apiClient.post('/users/me/avatar', formData, {
-            headers: {
-                'Content-Type': 'multipart/form-data'
-            }
-        });
+        const response = await apiClient.post('/users/me/avatar', formData);
         return response.data;
     },
 

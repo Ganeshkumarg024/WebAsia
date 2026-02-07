@@ -1,12 +1,14 @@
-import { useState } from 'react';
+import { useState, useRef } from 'react';
 import { UserIcon, ShieldCheckIcon, BellIcon, CameraIcon } from '@heroicons/react/24/outline';
 import DashboardLayout from '../../components/layout/DashboardLayout';
 import FileUpload from '../../components/shared/FileUpload';
 import useAuthStore from '../../store/authStore';
 import showToast from '../../components/shared/Toast';
+import { getAvatarUrl } from '../../utils/image';
 
 const Settings = () => {
     const { user, updateProfile, changePassword, uploadAvatar, isLoading } = useAuthStore();
+    const fileInputRef = useRef(null);
     const [activeSection, setActiveSection] = useState('Profile');
     const [formData, setFormData] = useState({
         firstName: user?.firstName || '',
@@ -35,15 +37,29 @@ const Settings = () => {
         }));
     };
 
-    const handleAvatarUpload = async (file) => {
+    const handleAvatarUpload = async (e) => {
+        const file = e.target.files[0];
         if (!file) return;
 
-        const result = await uploadAvatar(file);
+        // Validation
+        if (file.size > 2 * 1024 * 1024) {
+            showToast.error('File size must be less than 2MB');
+            return;
+        }
+
+        const formData = new FormData();
+        formData.append('avatar', file);
+
+        const result = await uploadAvatar(formData);
         if (result.success) {
             showToast.success('Avatar updated successfully');
         } else {
             showToast.error(result.error || 'Failed to upload avatar');
         }
+    };
+
+    const triggerFileInput = () => {
+        fileInputRef.current?.click();
     };
 
     const handleSaveProfile = async () => {
@@ -133,23 +149,35 @@ const Settings = () => {
                                     <div>
                                         <label className="block text-xs font-bold text-gray-500 uppercase tracking-wide mb-4">Profile Picture</label>
                                         <div className="flex items-center gap-6">
-                                            <div className="w-24 h-24 rounded-2xl bg-gray-100 border-2 border-white shadow-lg flex items-center justify-center text-gray-500 font-black text-3xl overflow-hidden shrink-0">
-                                                {user?.photoUrl ? (
-                                                    <img src={user.photoUrl} alt="" className="w-full h-full object-cover" />
-                                                ) : (
-                                                    user?.firstName?.charAt(0) || 'A'
-                                                )}
+                                            <div className="relative group">
+                                                <div className="w-24 h-24 rounded-2xl bg-gray-100 border-2 border-white shadow-xl flex items-center justify-center text-gray-500 font-black text-3xl overflow-hidden shrink-0 transition-transform group-hover:scale-[1.02]">
+                                                    {getAvatarUrl(user) ? (
+                                                        <img src={getAvatarUrl(user)} alt="" className="w-full h-full object-cover" />
+                                                    ) : (
+                                                        user?.firstName?.charAt(0) || user?.name?.charAt(0) || 'A'
+                                                    )}
+                                                </div>
+                                                <button
+                                                    onClick={triggerFileInput}
+                                                    className="absolute -bottom-2 -right-2 p-2 bg-blue-600 text-white rounded-xl shadow-lg hover:bg-blue-700 transition-all hover:rotate-12"
+                                                >
+                                                    <CameraIcon className="w-4 h-4" />
+                                                </button>
+                                                <input
+                                                    type="file"
+                                                    ref={fileInputRef}
+                                                    className="hidden"
+                                                    accept="image/*"
+                                                    onChange={handleAvatarUpload}
+                                                />
                                             </div>
                                             <div className="flex-1">
-                                                <FileUpload
-                                                    onFileSelect={handleAvatarUpload}
-                                                    accept="image/*"
-                                                    maxSize={2 * 1024 * 1024}
-                                                    preview={false}
-                                                    label="Upload New Avatar"
-                                                    className="w-full"
-                                                />
-                                                <p className="text-xs text-gray-400 mt-2">JPG, PNG or GIF. Max size 2MB.</p>
+                                                <h3 className="text-sm font-black text-gray-900 mb-1">Upload New Avatar</h3>
+                                                <p className="text-xs text-gray-400">JPG, PNG or GIF. Max size 2MB.</p>
+                                                <div className="flex gap-3 mt-3">
+                                                    <button onClick={triggerFileInput} className="px-4 py-2 bg-blue-50 text-blue-600 text-[10px] font-black uppercase tracking-widest rounded-xl hover:bg-blue-100 transition-colors">Replace</button>
+                                                    <button className="px-4 py-2 text-red-500 text-[10px] font-black uppercase tracking-widest hover:underline transition-colors">Wipe Data</button>
+                                                </div>
                                             </div>
                                         </div>
                                     </div>

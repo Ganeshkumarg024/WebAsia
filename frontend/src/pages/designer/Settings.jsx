@@ -3,6 +3,7 @@ import { CameraIcon, UserCircleIcon } from '@heroicons/react/24/outline';
 import DashboardLayout from '../../components/layout/DashboardLayout';
 import useAuthStore from '../../store/authStore';
 import toast from 'react-hot-toast';
+import { getAvatarUrl } from '../../utils/image';
 
 const Settings = () => {
     const { user, uploadAvatar, isLoading } = useAuthStore();
@@ -51,8 +52,8 @@ const Settings = () => {
                         {/* Avatar Circle */}
                         <div className="relative group cursor-pointer" onClick={triggerFileInput}>
                             <div className="w-48 h-48 rounded-full bg-gray-50 border-4 border-white shadow-2xl flex items-center justify-center overflow-hidden transition-transform group-hover:scale-[1.02] duration-500">
-                                {user?.photoUrl || user?.avatar ? (
-                                    <img src={user.photoUrl || user.avatar} alt="Profile" className="w-full h-full object-cover" />
+                                {getAvatarUrl(user) ? (
+                                    <img src={getAvatarUrl(user)} alt="Profile" className="w-full h-full object-cover" />
                                 ) : (
                                     <UserCircleIcon className="w-32 h-32 text-gray-300" />
                                 )}

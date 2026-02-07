@@ -14,6 +14,7 @@ import {
     CheckCircleIcon,
     TrashIcon
 } from '@heroicons/react/24/outline';
+import { getAvatarUrl } from '../../utils/image';
 
 const Users = () => {
     const { users, loading, fetchUsers, createUser, updateUser, deleteUser } = useAdminStore();
@@ -246,8 +247,8 @@ const Users = () => {
                                         <td className="px-8 py-5">
                                             <div className="flex items-center gap-4">
                                                 <div className="w-12 h-12 rounded-2xl bg-gray-100 border-2 border-white shadow-sm flex items-center justify-center text-gray-500 font-black text-lg overflow-hidden shrink-0">
-                                                    {user.photoUrl ? (
-                                                        <img src={user.photoUrl} alt="" className="w-full h-full object-cover" />
+                                                    {getAvatarUrl(user) ? (
+                                                        <img src={getAvatarUrl(user)} alt="" className="w-full h-full object-cover" />
                                                     ) : (
                                                         user.firstName?.charAt(0)
                                                     )}

@@ -26,6 +26,7 @@ import useAuthStore from '../../store/authStore';
 import useNotificationStore from '../../store/notificationStore';
 import SupportChatPopup from '../chat/SupportChatPopup';
 import AdminSupportChatPopup from '../chat/AdminSupportChatPopup';
+import { getAvatarUrl } from '../../utils/image';
 
 const Sidebar = ({ isOpen, onClose }) => {
     const navigate = useNavigate();
@@ -111,7 +112,7 @@ const Sidebar = ({ isOpen, onClose }) => {
                 />
             )}
 
-            <div className={`fixed left-0 top-0 h-screen w-64 bg-white border-r border-gray-100 shadow-[4px_0_24px_rgba(0,0,0,0.02)] flex flex-col z-50 transition-all duration-300 transform ${isOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0'}`}>
+            <div className={`fixed left-4 top-4 h-[calc(100vh-2rem)] w-64 bg-white border border-gray-100 rounded-[2.5rem] shadow-[0_8px_30px_rgb(0,0,0,0.04)] flex flex-col z-50 transition-all duration-300 transform ${isOpen ? 'translate-x-0' : '-translate-x-[calc(100%+1rem)] lg:translate-x-0'}`}>
                 {/* Logo */}
                 <div className="p-2 border-b border-gray-100 flex flex-col items-center">
                     <img
@@ -206,9 +207,9 @@ const Sidebar = ({ isOpen, onClose }) => {
                 <div className="p-6 border-t border-gray-50">
                     <div className="flex items-center gap-4 mb-6">
                         <div className="w-12 h-12 bg-gray-50 border border-gray-100 rounded-2xl flex items-center justify-center text-blue-600 font-black text-lg shadow-sm overflow-hidden">
-                            {user?.photoUrl || user?.avatar ? (
+                            {getAvatarUrl(user) ? (
                                 <img
-                                    src={user.photoUrl || user.avatar}
+                                    src={getAvatarUrl(user)}
                                     alt={user?.name || 'User'}
                                     className="w-full h-full object-cover"
                                     onError={(e) => {
@@ -217,7 +218,7 @@ const Sidebar = ({ isOpen, onClose }) => {
                                     }}
                                 />
                             ) : null}
-                            <div className={`w-full h-full flex items-center justify-center ${user?.photoUrl || user?.avatar ? 'hidden' : ''}`}>
+                            <div className={`w-full h-full flex items-center justify-center ${getAvatarUrl(user) ? 'hidden' : ''}`}>
                                 {user?.name?.charAt(0) || 'U'}
                             </div>
                         </div>

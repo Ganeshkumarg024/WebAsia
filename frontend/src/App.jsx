@@ -79,11 +79,12 @@ const DashboardRedirect = () => {
     if (!user) return <Navigate to="/login" />;
 
     switch (user.role) {
-        case 'admin': return <Navigate to="/admin/dashboard" />;
-        case 'manager': return <Navigate to="/manager/dashboard" />;
-        case 'designer': return <Navigate to="/designer/dashboard" />;
-        case 'affiliate': return <Navigate to="/affiliate/dashboard" />;
-        default: return <Navigate to="/client/dashboard" />;
+        case 'admin': return <Navigate to="/admin/dashboard" replace />;
+        case 'manager': return <Navigate to="/manager/dashboard" replace />;
+        case 'designer': return <Navigate to="/designer/dashboard" replace />;
+        case 'affiliate': return <Navigate to="/affiliate/dashboard" replace />;
+        case 'client': return <Navigate to="/client/dashboard" replace />;
+        default: return <Navigate to="/client/dashboard" replace />;
     }
 };
 

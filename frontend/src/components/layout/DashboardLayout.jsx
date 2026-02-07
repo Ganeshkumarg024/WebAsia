@@ -5,6 +5,7 @@ import Sidebar from './Sidebar';
 import useAuthStore from '../../store/authStore';
 import useNotificationStore from '../../store/notificationStore';
 import { format, isValid } from 'date-fns';
+import { getAvatarUrl } from '../../utils/image';
 
 const DashboardLayout = ({ children, title, breadcrumbs }) => {
     const { user } = useAuthStore();
@@ -41,9 +42,9 @@ const DashboardLayout = ({ children, title, breadcrumbs }) => {
             <Sidebar isOpen={isMobileMenuOpen} onClose={() => setIsMobileMenuOpen(false)} />
 
             {/* Main Content Area */}
-            <div className="lg:ml-64 transition-all duration-300">
+            <div className="lg:ml-72 transition-all duration-300">
                 {/* Top Header */}
-                <header className="sticky top-0 z-40 bg-white border-b border-gray-100 shadow-sm">
+                <header className="sticky top-4 z-40 bg-white/80 backdrop-blur-md border border-gray-100 shadow-[0_8px_30px_rgb(0,0,0,0.04)] mx-4 lg:mx-8 mb-4 rounded-2xl">
                     <div className="flex items-center justify-between px-4 lg:px-8 py-4 gap-4">
                         {/* Mobile Menu Button */}
                         <button
@@ -146,9 +147,9 @@ const DashboardLayout = ({ children, title, breadcrumbs }) => {
                                 className="w-10 h-10 bg-blue-500 rounded-full flex items-center justify-center text-white font-medium cursor-pointer group relative overflow-hidden"
                                 title={user?.name || user?.email || 'User'}
                             >
-                                {user?.photoUrl || user?.avatar ? (
+                                {getAvatarUrl(user) ? (
                                     <img
-                                        src={user.photoUrl || user.avatar}
+                                        src={getAvatarUrl(user)}
                                         alt={user?.name || 'User'}
                                         className="w-full h-full object-cover"
                                         onError={(e) => {
@@ -157,7 +158,7 @@ const DashboardLayout = ({ children, title, breadcrumbs }) => {
                                         }}
                                     />
                                 ) : null}
-                                <div className={`w-full h-full flex items-center justify-center ${user?.photoUrl || user?.avatar ? 'hidden' : ''}`}>
+                                <div className={`w-full h-full flex items-center justify-center ${getAvatarUrl(user) ? 'hidden' : ''}`}>
                                     {user?.firstName?.charAt(0) || user?.name?.charAt(0) || 'U'}
                                 </div>
                                 {/* Tooltip */}

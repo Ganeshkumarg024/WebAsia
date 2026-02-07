@@ -3,10 +3,7 @@ import axios from 'axios';
 // Create axios instance with base configuration
 const apiClient = axios.create({
     baseURL: import.meta.env.VITE_API_URL || 'http://localhost:8080/api',
-    timeout: 30000,
-    headers: {
-        'Content-Type': 'application/json'
-    }
+    timeout: 30000
 });
 
 // Request interceptor to add auth token
