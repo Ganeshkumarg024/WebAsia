@@ -1,5 +1,6 @@
 import { Message, Request, User, File } from '../models/index.js';
 import { Op } from 'sequelize';
+import { notifyUser } from './notification.controller.js';
 
 export const sendMessage = async (req, res) => {
     try {
@@ -54,6 +55,26 @@ export const sendMessage = async (req, res) => {
         // Emit socket event
         const io = req.app.get('io');
         io.to(`request_${requestId}`).emit('message:new', newMessage);
+
+        // Notify other participants
+        const participants = [
+            request.clientId,
+            request.assignedDesignerId,
+            request.assignedManagerId
+        ].filter(id => id && id !== req.user.id);
+
+        for (const participantId of participants) {
+            await notifyUser(
+                participantId,
+                'message_received',
+                `New message from ${req.user.firstName}`,
+                message.length > 50 ? message.substring(0, 47) + '...' : message,
+                requestId,
+                'request',
+                `/requests/${requestId}`,
+                io
+            );
+        }
 
         res.status(201).json({
             success: true,

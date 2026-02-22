@@ -1,5 +1,6 @@
 import { Notification, User } from '../models/index.js';
 import { Op } from 'sequelize';
+import { sendPushNotification } from '../utils/push.js';
 
 export const createNotification = async (userId, type, title, message, relatedId = null, relatedType = null, actionUrl = null) => {
     try {
@@ -218,6 +219,14 @@ export const notifyUser = async (userId, type, title, message, relatedId, relate
         if (io) {
             io.to(`user_${userId}`).emit('notification:new', notification);
         }
+
+        // Send Push Notification (Web Push API)
+        await sendPushNotification(userId, {
+            title,
+            body: message,
+            actionUrl,
+            metadata: { type, relatedId, relatedType }
+        });
 
         return notification;
     } catch (error) {

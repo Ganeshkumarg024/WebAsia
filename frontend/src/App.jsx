@@ -78,10 +78,12 @@ import AffiliateResourcesAdmin from './pages/admin/AffiliateResourcesAdmin';
 
 // Components
 import ProtectedRoute from './components/auth/ProtectedRoute';
+import PushNotificationPrompt from './components/common/PushNotificationPrompt';
 
 import { useEffect } from 'react';
 import { initializeSocket } from './socket';
 import useNotificationStore from './store/notificationStore';
+import { pushManager } from './utils/PushManager';
 
 const DashboardRedirect = () => {
     const { user } = useAuthStore();
@@ -106,463 +108,469 @@ function App() {
             initializeSocket(accessToken);
             fetchUnreadCount();
             fetchNotifications();
+
+            // Register service worker and init push management
+            pushManager.init();
         }
     }, [isAuthenticated, accessToken]);
 
     return (
-        <Routes>
-            {/* Public Routes */}
-            <Route
-                path="/login"
-                element={isAuthenticated ? <Navigate to="/dashboard" /> : <Login />}
-            />
-            <Route
-                path="/register"
-                element={isAuthenticated ? <Navigate to="/dashboard" /> : <Register />}
-            />
-            <Route path="/forgot-password" element={<ForgotPassword />} />
-            <Route path="/reset-password" element={<ResetPassword />} />
+        <>
+            <Routes>
+                {/* Public Routes */}
+                <Route
+                    path="/login"
+                    element={isAuthenticated ? <Navigate to="/dashboard" /> : <Login />}
+                />
+                <Route
+                    path="/register"
+                    element={isAuthenticated ? <Navigate to="/dashboard" /> : <Register />}
+                />
+                <Route path="/forgot-password" element={<ForgotPassword />} />
+                <Route path="/reset-password" element={<ResetPassword />} />
 
-            {/* Protected Routes - All Users */}
-            <Route
-                path="/dashboard"
-                element={
-                    <ProtectedRoute>
-                        <DashboardRedirect />
-                    </ProtectedRoute>
-                }
-            />
+                {/* Protected Routes - All Users */}
+                <Route
+                    path="/dashboard"
+                    element={
+                        <ProtectedRoute>
+                            <DashboardRedirect />
+                        </ProtectedRoute>
+                    }
+                />
 
-            {/* Protected Routes - Client */}
-            <Route
-                path="/client/dashboard"
-                element={
-                    <ProtectedRoute roles={['client']}>
-                        <ClientDashboard />
-                    </ProtectedRoute>
-                }
-            />
-            <Route
-                path="/client/requests"
-                element={
-                    <ProtectedRoute roles={['client']}>
-                        <MyRequests />
-                    </ProtectedRoute>
-                }
-            />
-            <Route
-                path="/client/requests/history"
-                element={
-                    <ProtectedRoute roles={['client']}>
-                        <RequestHistory />
-                    </ProtectedRoute>
-                }
-            />
-            <Route
-                path="/client/requests/new"
-                element={
-                    <ProtectedRoute roles={['client']}>
-                        <CreateRequest />
-                    </ProtectedRoute>
-                }
-            />
-            <Route
-                path="/client/requests/:id"
-                element={
-                    <ProtectedRoute roles={['client']}>
-                        <RequestDetail />
-                    </ProtectedRoute>
-                }
-            />
-            <Route
-                path="/client/deliveries"
-                element={
-                    <ProtectedRoute roles={['client']}>
-                        <ClientDeliveries />
-                    </ProtectedRoute>
-                }
-            />
-            <Route
-                path="/client/billing"
-                element={
-                    <ProtectedRoute roles={['client']}>
-                        <ClientBilling />
-                    </ProtectedRoute>
-                }
-            />
-            <Route
-                path="/client/affiliate"
-                element={
-                    <ProtectedRoute roles={['client']}>
-                        <ClientAffiliateDashboard />
-                    </ProtectedRoute>
-                }
-            />
-            <Route
-                path="/client/affiliate/join"
-                element={
-                    <ProtectedRoute roles={['client']}>
-                        <AffiliateRegistration />
-                    </ProtectedRoute>
-                }
-            />
-            <Route
-                path="/client/settings"
-                element={
-                    <ProtectedRoute roles={['client']}>
-                        <ClientSettings />
-                    </ProtectedRoute>
-                }
-            />
-            <Route
-                path="/client/support-chat"
-                element={
-                    <ProtectedRoute roles={['client']}>
-                        <SupportChat />
-                    </ProtectedRoute>
-                }
-            />
+                {/* Protected Routes - Client */}
+                <Route
+                    path="/client/dashboard"
+                    element={
+                        <ProtectedRoute roles={['client']}>
+                            <ClientDashboard />
+                        </ProtectedRoute>
+                    }
+                />
+                <Route
+                    path="/client/requests"
+                    element={
+                        <ProtectedRoute roles={['client']}>
+                            <MyRequests />
+                        </ProtectedRoute>
+                    }
+                />
+                <Route
+                    path="/client/requests/history"
+                    element={
+                        <ProtectedRoute roles={['client']}>
+                            <RequestHistory />
+                        </ProtectedRoute>
+                    }
+                />
+                <Route
+                    path="/client/requests/new"
+                    element={
+                        <ProtectedRoute roles={['client']}>
+                            <CreateRequest />
+                        </ProtectedRoute>
+                    }
+                />
+                <Route
+                    path="/client/requests/:id"
+                    element={
+                        <ProtectedRoute roles={['client']}>
+                            <RequestDetail />
+                        </ProtectedRoute>
+                    }
+                />
+                <Route
+                    path="/client/deliveries"
+                    element={
+                        <ProtectedRoute roles={['client']}>
+                            <ClientDeliveries />
+                        </ProtectedRoute>
+                    }
+                />
+                <Route
+                    path="/client/billing"
+                    element={
+                        <ProtectedRoute roles={['client']}>
+                            <ClientBilling />
+                        </ProtectedRoute>
+                    }
+                />
+                <Route
+                    path="/client/affiliate"
+                    element={
+                        <ProtectedRoute roles={['client']}>
+                            <ClientAffiliateDashboard />
+                        </ProtectedRoute>
+                    }
+                />
+                <Route
+                    path="/client/affiliate/join"
+                    element={
+                        <ProtectedRoute roles={['client']}>
+                            <AffiliateRegistration />
+                        </ProtectedRoute>
+                    }
+                />
+                <Route
+                    path="/client/settings"
+                    element={
+                        <ProtectedRoute roles={['client']}>
+                            <ClientSettings />
+                        </ProtectedRoute>
+                    }
+                />
+                <Route
+                    path="/client/support-chat"
+                    element={
+                        <ProtectedRoute roles={['client']}>
+                            <SupportChat />
+                        </ProtectedRoute>
+                    }
+                />
 
-            {/* Protected Routes - Designer */}
-            <Route
-                path="/designer/workspace"
-                element={
-                    <ProtectedRoute roles={['designer']}>
-                        <DesignerWorkspace />
-                    </ProtectedRoute>
-                }
-            />
-            <Route
-                path="/designer/dashboard"
-                element={
-                    <ProtectedRoute roles={['designer']}>
-                        <DesignerDashboard />
-                    </ProtectedRoute>
-                }
-            />
-            <Route
-                path="/designer/tasks"
-                element={
-                    <ProtectedRoute roles={['designer']}>
-                        <MyTasks />
-                    </ProtectedRoute>
-                }
-            />
-            <Route
-                path="/designer/priority-queue"
-                element={
-                    <ProtectedRoute roles={['designer']}>
-                        <PriorityQueue />
-                    </ProtectedRoute>
-                }
-            />
-            <Route
-                path="/designer/submissions"
-                element={
-                    <ProtectedRoute roles={['designer']}>
-                        <DesignerSubmissions />
-                    </ProtectedRoute>
-                }
-            />
-            <Route
-                path="/designer/archives"
-                element={
-                    <ProtectedRoute roles={['designer']}>
-                        <DesignerArchives />
-                    </ProtectedRoute>
-                }
-            />
-            <Route
-                path="/designer/settings"
-                element={
-                    <ProtectedRoute roles={['designer']}>
-                        <DesignerSettings />
-                    </ProtectedRoute>
-                }
-            />
-            <Route
-                path="/designer/tasks/:id/upload"
-                element={
-                    <ProtectedRoute roles={['designer']}>
-                        <UploadDesign />
-                    </ProtectedRoute>
-                }
-            />
-            <Route
-                path="/designer/analytics"
-                element={
-                    <ProtectedRoute roles={['designer']}>
-                        <DesignerAnalytics />
-                    </ProtectedRoute>
-                }
-            />
-            <Route
-                path="/designer/tasks/:id"
-                element={
-                    <ProtectedRoute roles={['designer']}>
-                        <TaskDetails />
-                    </ProtectedRoute>
-                }
-            />
+                {/* Protected Routes - Designer */}
+                <Route
+                    path="/designer/workspace"
+                    element={
+                        <ProtectedRoute roles={['designer']}>
+                            <DesignerWorkspace />
+                        </ProtectedRoute>
+                    }
+                />
+                <Route
+                    path="/designer/dashboard"
+                    element={
+                        <ProtectedRoute roles={['designer']}>
+                            <DesignerDashboard />
+                        </ProtectedRoute>
+                    }
+                />
+                <Route
+                    path="/designer/tasks"
+                    element={
+                        <ProtectedRoute roles={['designer']}>
+                            <MyTasks />
+                        </ProtectedRoute>
+                    }
+                />
+                <Route
+                    path="/designer/priority-queue"
+                    element={
+                        <ProtectedRoute roles={['designer']}>
+                            <PriorityQueue />
+                        </ProtectedRoute>
+                    }
+                />
+                <Route
+                    path="/designer/submissions"
+                    element={
+                        <ProtectedRoute roles={['designer']}>
+                            <DesignerSubmissions />
+                        </ProtectedRoute>
+                    }
+                />
+                <Route
+                    path="/designer/archives"
+                    element={
+                        <ProtectedRoute roles={['designer']}>
+                            <DesignerArchives />
+                        </ProtectedRoute>
+                    }
+                />
+                <Route
+                    path="/designer/settings"
+                    element={
+                        <ProtectedRoute roles={['designer']}>
+                            <DesignerSettings />
+                        </ProtectedRoute>
+                    }
+                />
+                <Route
+                    path="/designer/tasks/:id/upload"
+                    element={
+                        <ProtectedRoute roles={['designer']}>
+                            <UploadDesign />
+                        </ProtectedRoute>
+                    }
+                />
+                <Route
+                    path="/designer/analytics"
+                    element={
+                        <ProtectedRoute roles={['designer']}>
+                            <DesignerAnalytics />
+                        </ProtectedRoute>
+                    }
+                />
+                <Route
+                    path="/designer/tasks/:id"
+                    element={
+                        <ProtectedRoute roles={['designer']}>
+                            <TaskDetails />
+                        </ProtectedRoute>
+                    }
+                />
 
-            {/* Protected Routes - Manager */}
-            <Route
-                path="/manager/queue"
-                element={
-                    <ProtectedRoute roles={['manager']}>
-                        <ManagerQueue />
-                    </ProtectedRoute>
-                }
-            />
-            <Route
-                path="/manager/dashboard"
-                element={
-                    <ProtectedRoute roles={['manager']}>
-                        <ManagerDashboard />
-                    </ProtectedRoute>
-                }
-            />
-            <Route
-                path="/manager/review/:id"
-                element={
-                    <ProtectedRoute roles={['manager']}>
-                        <ReviewDetail />
-                    </ProtectedRoute>
-                }
-            />
-            <Route
-                path="/manager/designers/:id/analytics"
-                element={
-                    <ProtectedRoute roles={['manager']}>
-                        <DesignerAnalyticsDetail />
-                    </ProtectedRoute>
-                }
-            />
-            <Route
-                path="/manager/assign"
-                element={
-                    <ProtectedRoute roles={['manager']}>
-                        <AssignRequests />
-                    </ProtectedRoute>
-                }
-            />
-            <Route
-                path="/manager/workload"
-                element={
-                    <ProtectedRoute roles={['manager']}>
-                        <TeamWorkload />
-                    </ProtectedRoute>
-                }
-            />
+                {/* Protected Routes - Manager */}
+                <Route
+                    path="/manager/queue"
+                    element={
+                        <ProtectedRoute roles={['manager']}>
+                            <ManagerQueue />
+                        </ProtectedRoute>
+                    }
+                />
+                <Route
+                    path="/manager/dashboard"
+                    element={
+                        <ProtectedRoute roles={['manager']}>
+                            <ManagerDashboard />
+                        </ProtectedRoute>
+                    }
+                />
+                <Route
+                    path="/manager/review/:id"
+                    element={
+                        <ProtectedRoute roles={['manager']}>
+                            <ReviewDetail />
+                        </ProtectedRoute>
+                    }
+                />
+                <Route
+                    path="/manager/designers/:id/analytics"
+                    element={
+                        <ProtectedRoute roles={['manager']}>
+                            <DesignerAnalyticsDetail />
+                        </ProtectedRoute>
+                    }
+                />
+                <Route
+                    path="/manager/assign"
+                    element={
+                        <ProtectedRoute roles={['manager']}>
+                            <AssignRequests />
+                        </ProtectedRoute>
+                    }
+                />
+                <Route
+                    path="/manager/workload"
+                    element={
+                        <ProtectedRoute roles={['manager']}>
+                            <TeamWorkload />
+                        </ProtectedRoute>
+                    }
+                />
 
-            {/* Protected Routes - Admin */}
-            <Route
-                path="/admin/dashboard"
-                element={
-                    <ProtectedRoute roles={['admin']}>
-                        <AdminDashboard />
-                    </ProtectedRoute>
-                }
-            />
-            <Route
-                path="/admin/team-mapping"
-                element={
-                    <ProtectedRoute roles={['admin']}>
-                        <TeamMapping />
-                    </ProtectedRoute>
-                }
-            />
-            <Route
-                path="/admin/financials"
-                element={
-                    <ProtectedRoute roles={['admin']}>
-                        <Financials />
-                    </ProtectedRoute>
-                }
-            />
-            <Route
-                path="/admin/communication"
-                element={
-                    <ProtectedRoute roles={['admin']}>
-                        <CommHub />
-                    </ProtectedRoute>
-                }
-            />
-            <Route
-                path="/admin/testimonials"
-                element={
-                    <ProtectedRoute roles={['admin']}>
-                        <Testimonials />
-                    </ProtectedRoute>
-                }
-            />
-            <Route
-                path="/admin/plans"
-                element={
-                    <ProtectedRoute roles={['admin']}>
-                        <SubscriptionPlans />
-                    </ProtectedRoute>
-                }
-            />
-            <Route
-                path="/admin/plans/new"
-                element={
-                    <ProtectedRoute roles={['admin']}>
-                        <EditPlan />
-                    </ProtectedRoute>
-                }
-            />
-            <Route
-                path="/admin/plans/:id/edit"
-                element={
-                    <ProtectedRoute roles={['admin']}>
-                        <EditPlan />
-                    </ProtectedRoute>
-                }
-            />
-            <Route
-                path="/admin/users"
-                element={
-                    <ProtectedRoute roles={['admin']}>
-                        <Users />
-                    </ProtectedRoute>
-                }
-            />
-            <Route
-                path="/admin/requests"
-                element={
-                    <ProtectedRoute roles={['admin']}>
-                        <GlobalRequests />
-                    </ProtectedRoute>
-                }
-            />
-            <Route
-                path="/admin/requests/:id"
-                element={
-                    <ProtectedRoute roles={['admin']}>
-                        <AdminRequestDetails />
-                    </ProtectedRoute>
-                }
-            />
-            <Route
-                path="/admin/analytics"
-                element={
-                    <ProtectedRoute roles={['admin']}>
-                        <Analytics />
-                    </ProtectedRoute>
-                }
-            />
-            <Route
-                path="/admin/leads"
-                element={
-                    <ProtectedRoute roles={['admin']}>
-                        <LeadManager />
-                    </ProtectedRoute>
-                }
-            />
-            <Route
-                path="/admin/payouts"
-                element={
-                    <ProtectedRoute roles={['admin']}>
-                        <AffiliatePayouts />
-                    </ProtectedRoute>
-                }
-            />
-            <Route
-                path="/admin/affiliates"
-                element={
-                    <ProtectedRoute roles={['admin']}>
-                        <AffiliateManagement />
-                    </ProtectedRoute>
-                }
-            />
-            <Route
-                path="/admin/fraud-detection"
-                element={
-                    <ProtectedRoute roles={['admin']}>
-                        <FraudDetection />
-                    </ProtectedRoute>
-                }
-            />
-            <Route
-                path="/admin/affiliate-resources"
-                element={
-                    <ProtectedRoute roles={['admin']}>
-                        <AffiliateResourcesAdmin />
-                    </ProtectedRoute>
-                }
-            />
-            <Route
-                path="/admin/settings"
-                element={
-                    <ProtectedRoute roles={['admin']}>
-                        <AdminSettings />
-                    </ProtectedRoute>
-                }
-            />
-            <Route
-                path="/admin/support-chat"
-                element={
-                    <ProtectedRoute roles={['admin']}>
-                        <AdminSupportChat />
-                    </ProtectedRoute>
-                }
-            />
+                {/* Protected Routes - Admin */}
+                <Route
+                    path="/admin/dashboard"
+                    element={
+                        <ProtectedRoute roles={['admin']}>
+                            <AdminDashboard />
+                        </ProtectedRoute>
+                    }
+                />
+                <Route
+                    path="/admin/team-mapping"
+                    element={
+                        <ProtectedRoute roles={['admin']}>
+                            <TeamMapping />
+                        </ProtectedRoute>
+                    }
+                />
+                <Route
+                    path="/admin/financials"
+                    element={
+                        <ProtectedRoute roles={['admin']}>
+                            <Financials />
+                        </ProtectedRoute>
+                    }
+                />
+                <Route
+                    path="/admin/communication"
+                    element={
+                        <ProtectedRoute roles={['admin']}>
+                            <CommHub />
+                        </ProtectedRoute>
+                    }
+                />
+                <Route
+                    path="/admin/testimonials"
+                    element={
+                        <ProtectedRoute roles={['admin']}>
+                            <Testimonials />
+                        </ProtectedRoute>
+                    }
+                />
+                <Route
+                    path="/admin/plans"
+                    element={
+                        <ProtectedRoute roles={['admin']}>
+                            <SubscriptionPlans />
+                        </ProtectedRoute>
+                    }
+                />
+                <Route
+                    path="/admin/plans/new"
+                    element={
+                        <ProtectedRoute roles={['admin']}>
+                            <EditPlan />
+                        </ProtectedRoute>
+                    }
+                />
+                <Route
+                    path="/admin/plans/:id/edit"
+                    element={
+                        <ProtectedRoute roles={['admin']}>
+                            <EditPlan />
+                        </ProtectedRoute>
+                    }
+                />
+                <Route
+                    path="/admin/users"
+                    element={
+                        <ProtectedRoute roles={['admin']}>
+                            <Users />
+                        </ProtectedRoute>
+                    }
+                />
+                <Route
+                    path="/admin/requests"
+                    element={
+                        <ProtectedRoute roles={['admin']}>
+                            <GlobalRequests />
+                        </ProtectedRoute>
+                    }
+                />
+                <Route
+                    path="/admin/requests/:id"
+                    element={
+                        <ProtectedRoute roles={['admin']}>
+                            <AdminRequestDetails />
+                        </ProtectedRoute>
+                    }
+                />
+                <Route
+                    path="/admin/analytics"
+                    element={
+                        <ProtectedRoute roles={['admin']}>
+                            <Analytics />
+                        </ProtectedRoute>
+                    }
+                />
+                <Route
+                    path="/admin/leads"
+                    element={
+                        <ProtectedRoute roles={['admin']}>
+                            <LeadManager />
+                        </ProtectedRoute>
+                    }
+                />
+                <Route
+                    path="/admin/payouts"
+                    element={
+                        <ProtectedRoute roles={['admin']}>
+                            <AffiliatePayouts />
+                        </ProtectedRoute>
+                    }
+                />
+                <Route
+                    path="/admin/affiliates"
+                    element={
+                        <ProtectedRoute roles={['admin']}>
+                            <AffiliateManagement />
+                        </ProtectedRoute>
+                    }
+                />
+                <Route
+                    path="/admin/fraud-detection"
+                    element={
+                        <ProtectedRoute roles={['admin']}>
+                            <FraudDetection />
+                        </ProtectedRoute>
+                    }
+                />
+                <Route
+                    path="/admin/affiliate-resources"
+                    element={
+                        <ProtectedRoute roles={['admin']}>
+                            <AffiliateResourcesAdmin />
+                        </ProtectedRoute>
+                    }
+                />
+                <Route
+                    path="/admin/settings"
+                    element={
+                        <ProtectedRoute roles={['admin']}>
+                            <AdminSettings />
+                        </ProtectedRoute>
+                    }
+                />
+                <Route
+                    path="/admin/support-chat"
+                    element={
+                        <ProtectedRoute roles={['admin']}>
+                            <AdminSupportChat />
+                        </ProtectedRoute>
+                    }
+                />
 
-            <Route path="/" element={<LandingPage />} />
+                <Route path="/" element={<LandingPage />} />
 
-            {/* Protected Routes - Affiliate */}
-            <Route
-                path="/affiliate/dashboard"
-                element={
-                    <ProtectedRoute roles={['affiliate']}>
-                        <PartnerAffiliateDashboard />
-                    </ProtectedRoute>
-                }
-            />
-            <Route
-                path="/affiliate/referrals"
-                element={
-                    <ProtectedRoute roles={['affiliate']}>
-                        <AffiliateReferrals />
-                    </ProtectedRoute>
-                }
-            />
-            <Route
-                path="/affiliate/earnings"
-                element={
-                    <ProtectedRoute roles={['affiliate']}>
-                        <AffiliateEarnings />
-                    </ProtectedRoute>
-                }
-            />
-            <Route
-                path="/affiliate/payouts"
-                element={
-                    <ProtectedRoute roles={['affiliate']}>
-                        <AffiliatePayoutsPage />
-                    </ProtectedRoute>
-                }
-            />
-            <Route
-                path="/affiliate/resources"
-                element={
-                    <ProtectedRoute roles={['affiliate']}>
-                        <AffiliateResources />
-                    </ProtectedRoute>
-                }
-            />
-            <Route
-                path="/affiliate/settings"
-                element={
-                    <ProtectedRoute roles={['affiliate']}>
-                        <AffiliateSettings />
-                    </ProtectedRoute>
-                }
-            />
+                {/* Protected Routes - Affiliate */}
+                <Route
+                    path="/affiliate/dashboard"
+                    element={
+                        <ProtectedRoute roles={['affiliate']}>
+                            <PartnerAffiliateDashboard />
+                        </ProtectedRoute>
+                    }
+                />
+                <Route
+                    path="/affiliate/referrals"
+                    element={
+                        <ProtectedRoute roles={['affiliate']}>
+                            <AffiliateReferrals />
+                        </ProtectedRoute>
+                    }
+                />
+                <Route
+                    path="/affiliate/earnings"
+                    element={
+                        <ProtectedRoute roles={['affiliate']}>
+                            <AffiliateEarnings />
+                        </ProtectedRoute>
+                    }
+                />
+                <Route
+                    path="/affiliate/payouts"
+                    element={
+                        <ProtectedRoute roles={['affiliate']}>
+                            <AffiliatePayoutsPage />
+                        </ProtectedRoute>
+                    }
+                />
+                <Route
+                    path="/affiliate/resources"
+                    element={
+                        <ProtectedRoute roles={['affiliate']}>
+                            <AffiliateResources />
+                        </ProtectedRoute>
+                    }
+                />
+                <Route
+                    path="/affiliate/settings"
+                    element={
+                        <ProtectedRoute roles={['affiliate']}>
+                            <AffiliateSettings />
+                        </ProtectedRoute>
+                    }
+                />
 
-            <Route path="*" element={<Navigate to="/" />} />
-        </Routes>
+                <Route path="*" element={<Navigate to="/" />} />
+            </Routes>
+            <PushNotificationPrompt />
+        </>
     );
 }
 

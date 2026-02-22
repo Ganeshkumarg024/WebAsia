@@ -33,6 +33,7 @@ import brandAssetRoutes from './routes/brandAsset.routes.js';
 import brandKitRoutes from './routes/brandKit.routes.js';
 import requestFileRoutes from './routes/requestFile.routes.js';
 import supportChatRoutes from './routes/supportChat.routes.js';
+import pushRoutes from './routes/push.routes.js';
 import { streamFile } from './controllers/file.controller.js'; // For public thumbnails if needed
 
 // Import socket handlers
@@ -110,6 +111,7 @@ app.use('/api/brand-assets', brandAssetRoutes);
 app.use('/api/brand-kit', brandKitRoutes);
 app.use('/api/request-files', requestFileRoutes);
 app.use('/api/support', supportChatRoutes);
+app.use('/api/push', pushRoutes);
 
 // 404 handler
 app.use((req, res) => {
@@ -137,13 +139,7 @@ app.use((err, req, res, next) => {
 });
 
 // Socket.io connection handler
-io.on('connection', (socket) => {
-    console.log('Client connected:', socket.id);
-
-    socket.on('disconnect', () => {
-        console.log('Client disconnected:', socket.id);
-    });
-});
+setupSocketHandlers(io);
 
 // Make io accessible to routes
 app.set('io', io);

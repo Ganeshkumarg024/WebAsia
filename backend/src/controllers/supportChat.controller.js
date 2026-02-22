@@ -1,6 +1,7 @@
 import { SupportMessage, User } from '../models/index.js';
 import { Op } from 'sequelize';
 import sequelize from '../config/database.js';
+import { notifyUser } from './notification.controller.js';
 
 // Send a support message
 export const sendSupportMessage = async (req, res) => {
@@ -72,6 +73,36 @@ export const sendSupportMessage = async (req, res) => {
         if (io) {
             io.to(`support_${clientId}`).emit('support:message', supportMessage);
             io.to('admin_support').emit('support:message', supportMessage);
+        }
+
+        // Send instant notifications
+        if (senderType === 'client') {
+            // Notify admins about new support message
+            const admins = await User.findAll({ where: { role: 'admin' } });
+            for (const admin of admins) {
+                await notifyUser(
+                    admin.id,
+                    'message_received',
+                    'New Support Message',
+                    `${req.user.firstName}: ${message.substring(0, 100)}`,
+                    supportMessage.id,
+                    'message',
+                    `/admin/support?clientId=${clientId}`,
+                    io
+                );
+            }
+        } else {
+            // Notify the specific client about admin reply
+            await notifyUser(
+                clientId,
+                'message_received',
+                'Support Team Reply',
+                message.substring(0, 100),
+                supportMessage.id,
+                'message',
+                '/support',
+                io
+            );
         }
 
         res.status(201).json({

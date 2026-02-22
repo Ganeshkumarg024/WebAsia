@@ -4,6 +4,7 @@ import bcrypt from 'bcryptjs';
 import { User, Subscription, Request, SubscriptionPlan, Message, Payment, Testimonial, Affiliate, FinancialLog, Referral, Commission, Payout, AffiliateResource, SystemLog } from '../models/index.js';
 import { affiliateService } from '../services/affiliate.service.js';
 import { sendAdminPasswordResetEmail } from '../utils/email.js';
+import { notifyUser } from './notification.controller.js';
 
 // ... (existing code)
 
@@ -902,6 +903,31 @@ export const bulkUpdateRequests = async (req, res) => {
             where: { id: { [Op.in]: requestIds } }
         });
 
+        // Notify assigned members
+        const io = req.app.get('io');
+        const updatedRequests = await Request.findAll({
+            where: { id: { [Op.in]: requestIds } }
+        });
+
+        for (const request of updatedRequests) {
+            const recipients = [];
+            if (designerId) recipients.push(designerId);
+            if (managerId) recipients.push(managerId);
+
+            for (const recipientId of recipients) {
+                await notifyUser(
+                    recipientId,
+                    'request_status_changed',
+                    'New Assignment',
+                    `You have been assigned to: ${request.title}`,
+                    request.id,
+                    'request',
+                    `/requests/${request.id}`,
+                    io
+                );
+            }
+        }
+
         res.json({
             success: true,
             message: `Successfully updated ${requestIds.length} requests`
@@ -1134,6 +1160,19 @@ export const approveAffiliate = async (req, res) => {
         // Update user role to affiliate
         await User.update({ role: 'affiliate' }, { where: { id: affiliate.userId } });
 
+        // Notify user
+        const io = req.app.get('io');
+        await notifyUser(
+            affiliate.userId,
+            'subscription', // Best fit from existing ENUM or we could use 'system' if added
+            'Affiliate Approved!',
+            'Welcome to the WebAsia Affiliate Program! Your application is approved.',
+            affiliate.id,
+            'subscription',
+            '/affiliate/dashboard',
+            io
+        );
+
         res.json({ success: true, message: 'Affiliate approved successfully', data: affiliate });
     } catch (error) {
         console.error('Approve affiliate error:', error);
@@ -1287,6 +1326,22 @@ export const approvePayoutNew = async (req, res) => {
             }, { transaction: t });
 
             await t.commit();
+
+            // Notify affiliate
+            const io = req.app.get('io');
+            if (payout.affiliate) {
+                await notifyUser(
+                    payout.affiliate.userId,
+                    'payment',
+                    'Payout Approved',
+                    `Your payout request for ₹${payout.amount} has been approved.`,
+                    payout.id,
+                    'payment',
+                    '/affiliate/payouts',
+                    io
+                );
+            }
+
             res.json({ success: true, message: 'Payout approved successfully' });
         } catch (err) {
             await t.rollback();
@@ -1655,6 +1710,19 @@ export const assignSubscription = async (req, res) => {
         const message = commissionInfo
             ? `${plan.name} plan assigned. Commission of ₹${commissionInfo.commissionAmount} awarded to ${commissionInfo.affiliateName}.`
             : `${plan.name} plan assigned successfully.`;
+
+        // Notify client
+        const io = req.app.get('io');
+        await notifyUser(
+            userId,
+            'subscription',
+            'Subscription Active',
+            `Your ${plan.name} plan is now active!`,
+            subscription.id,
+            'subscription',
+            '/settings',
+            io
+        );
 
         res.json({
             success: true,

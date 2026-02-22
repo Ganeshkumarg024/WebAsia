@@ -4,6 +4,7 @@ import { subscriptionService } from '../services/subscription.service.js';
 import { Op } from 'sequelize';
 import sequelize from '../config/database.js';
 import { validationResult } from 'express-validator';
+import { notifyUser } from './notification.controller.js';
 
 export const createRequest = async (req, res) => {
     try {
@@ -325,6 +326,27 @@ export const updateRequestStatus = async (req, res) => {
             isSystemGenerated: false
         });
 
+        // Notify client or participants
+        const io = req.app.get('io');
+        const recipients = [
+            request.clientId,
+            request.assignedDesignerId,
+            request.assignedManagerId
+        ].filter(id => id && id !== req.user.id);
+
+        for (const recipientId of recipients) {
+            await notifyUser(
+                recipientId,
+                'request_status_changed',
+                `Request Update: ${request.title}`,
+                `Status changed to ${status.replace('_', ' ')}`,
+                request.id,
+                'request',
+                `/requests/${request.id}`,
+                io
+            );
+        }
+
         res.json({
             success: true,
             message: 'Request status updated',
@@ -484,6 +506,22 @@ export const submitFeedback = async (req, res) => {
             isSystemGenerated: false
         });
 
+        // Notify designer and manager
+        const io = req.app.get('io');
+        const team = [request.assignedDesignerId, request.assignedManagerId].filter(id => id);
+        for (const memberId of team) {
+            await notifyUser(
+                memberId,
+                'request_status_changed',
+                `Feedback: ${request.title}`,
+                requestRevision ? 'Revision requested by client' : 'New feedback received',
+                request.id,
+                'request',
+                `/requests/${request.id}`,
+                io
+            );
+        }
+
         res.json({
             success: true,
             message: 'Feedback submitted successfully',
@@ -539,6 +577,22 @@ export const approveRequest = async (req, res) => {
             description: 'Client approved the final delivery',
             isSystemGenerated: false
         });
+
+        // Notify designer and manager
+        const io = req.app.get('io');
+        const team = [request.assignedDesignerId, request.assignedManagerId].filter(id => id);
+        for (const memberId of team) {
+            await notifyUser(
+                memberId,
+                'request_status_changed',
+                `Approved: ${request.title}`,
+                'Client approved the final design!',
+                request.id,
+                'request',
+                `/requests/${request.id}`,
+                io
+            );
+        }
 
         // Deduct credits logic moved to creation time
 
@@ -752,6 +806,21 @@ export const updateWorkLink = async (req, res) => {
             metadata: { oldLink, newLink: workLink },
             isSystemGenerated: false
         });
+
+        // Notify client
+        if (req.user.id !== request.clientId) {
+            const io = req.app.get('io');
+            await notifyUser(
+                request.clientId,
+                'file_uploaded',
+                `Work Ready: ${request.title}`,
+                'A new work link has been shared with you.',
+                request.id,
+                'request',
+                `/requests/${request.id}`,
+                io
+            );
+        }
 
         res.json({
             success: true,

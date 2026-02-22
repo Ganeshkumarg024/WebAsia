@@ -74,6 +74,13 @@ export default {
     apiKey: process.env.SENDGRID_API_KEY || ''
   },
 
+  // VAPID Configuration
+  vapid: {
+    publicKey: process.env.VAPID_PUBLIC_KEY,
+    privateKey: process.env.VAPID_PRIVATE_KEY,
+    email: process.env.VAPID_EMAIL || 'mailto:noreply@webasia.in'
+  },
+
   // Twilio Configuration
   twilio: {
     accountSid: process.env.TWILIO_ACCOUNT_SID || '',

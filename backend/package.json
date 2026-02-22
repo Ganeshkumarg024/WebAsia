@@ -60,6 +60,7 @@
     "stripe": "^14.10.0",
     "twilio": "^4.20.0",
     "uuid": "^9.0.1",
+    "web-push": "^3.6.7",
     "winston": "^3.11.0"
   },
   "devDependencies": {

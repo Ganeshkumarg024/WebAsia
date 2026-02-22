@@ -20,6 +20,7 @@ import Lead from './Lead.js';
 import BrandKit from './BrandKit.js';
 import SupportMessage from './SupportMessage.js';
 import SystemLog from './SystemLog.js';
+import PushSubscription from './PushSubscription.js';
 
 // User associations
 User.hasMany(Subscription, { foreignKey: 'userId', as: 'subscriptions' });
@@ -41,6 +42,7 @@ User.hasOne(BrandKit, { foreignKey: 'userId', as: 'brandKit' });
 User.hasMany(SupportMessage, { foreignKey: 'clientId', as: 'supportMessagesAsClient' });
 User.hasMany(SupportMessage, { foreignKey: 'adminId', as: 'supportMessagesAsAdmin' });
 User.hasMany(SystemLog, { foreignKey: 'adminId', as: 'auditLogs' });
+User.hasMany(PushSubscription, { foreignKey: 'userId', as: 'pushSubscriptions' });
 User.hasMany(AffiliateResource, { foreignKey: 'uploadedBy', as: 'uploadedResources' });
 
 // SubscriptionPlan associations
@@ -76,6 +78,9 @@ Message.belongsTo(File, { foreignKey: 'fileId', as: 'file' });
 
 // Notification associations
 Notification.belongsTo(User, { foreignKey: 'userId', as: 'user' });
+
+// PushSubscription associations
+PushSubscription.belongsTo(User, { foreignKey: 'userId', as: 'user' });
 
 // Affiliate associations
 Affiliate.belongsTo(User, { foreignKey: 'userId', as: 'user' });
@@ -167,5 +172,6 @@ export {
     Lead,
     BrandKit,
     SupportMessage,
-    SystemLog
+    SystemLog,
+    PushSubscription
 };
