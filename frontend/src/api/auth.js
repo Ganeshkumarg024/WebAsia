@@ -50,7 +50,7 @@ export const authAPI = {
     },
 
     // Request password reset
-    requestPasswordReset: async (email) => {
+    forgotPassword: async (email) => {
         const response = await apiClient.post('/auth/forgot-password', { email });
         return response.data;
     },

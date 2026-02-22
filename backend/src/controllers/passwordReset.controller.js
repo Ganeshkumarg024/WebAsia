@@ -30,15 +30,20 @@ export const requestPasswordReset = async (req, res) => {
         // Send email
         try {
             await sendPasswordResetEmail(user, resetToken);
+            res.json({
+                success: true,
+                message: 'If an account exists with this email, a password reset link has been sent'
+            });
         } catch (emailError) {
             console.error('Email send error:', emailError);
-            // Continue even if email fails
+            res.status(500).json({
+                success: false,
+                error: {
+                    code: 'EMAIL_ERROR',
+                    message: 'Failed to send reset email. Please try again later.'
+                }
+            });
         }
-
-        res.json({
-            success: true,
-            message: 'If an account exists with this email, a password reset link has been sent'
-        });
     } catch (error) {
         console.error('Request password reset error:', error);
         res.status(500).json({
