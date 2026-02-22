@@ -364,6 +364,43 @@ const useAdminStore = create((set, get) => ({
         } catch (error) {
             set({ error: error.message, loading: false });
         }
+    },
+
+    // Subscription Management
+    subscriptionPlans: [],
+
+    fetchSubscriptionPlans: async () => {
+        try {
+            const response = await adminAPI.getSubscriptionPlans();
+            set({ subscriptionPlans: response.data || [] });
+        } catch (error) {
+            console.error('Failed to fetch subscription plans:', error);
+            // Fallback to existing getPlans
+            try {
+                const response = await adminAPI.getPlans();
+                set({ subscriptionPlans: response.data || [] });
+            } catch (e) {
+                set({ subscriptionPlans: [] });
+            }
+        }
+    },
+
+    assignSubscription: async (userId, planId, duration) => {
+        try {
+            const response = await adminAPI.assignSubscription(userId, planId, duration);
+            return { success: true, data: response.data, message: response.message };
+        } catch (error) {
+            return { success: false, error: error.response?.data?.error?.message || error.message };
+        }
+    },
+
+    removeSubscription: async (userId) => {
+        try {
+            const response = await adminAPI.removeSubscription(userId);
+            return { success: true, message: response.message };
+        } catch (error) {
+            return { success: false, error: error.response?.data?.error?.message || error.message };
+        }
     }
 }));
 

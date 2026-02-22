@@ -41,7 +41,10 @@ import {
     getAffiliateResources,
     createAffiliateResource,
     deleteAffiliateResource,
-    toggleAffiliateResource
+    toggleAffiliateResource,
+    getSubscriptionPlans,
+    assignSubscription,
+    removeSubscription
 } from '../controllers/admin.controller.js';
 import {
     getAllRequests,
@@ -84,6 +87,13 @@ router.post('/users', [
 router.put('/users/:id', updateUser);
 
 router.delete('/users/:id', deleteUser);
+
+// Subscription Management
+router.get('/plans', getSubscriptionPlans);
+router.post('/users/:userId/subscription', [
+    body('planId').isUUID().withMessage('Valid plan ID required')
+], assignSubscription);
+router.delete('/users/:userId/subscription', removeSubscription);
 
 // Dashboard & Analytics
 router.get('/dashboard/stats', getDashboardStats);

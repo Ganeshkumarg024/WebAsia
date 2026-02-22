@@ -264,6 +264,22 @@ export const adminAPI = {
     resetUserPassword: async (userId, newPassword, sendEmail = false) => {
         const response = await apiClient.post('/admin/users/reset-password', { userId, newPassword, sendEmail });
         return response.data;
+    },
+
+    // Subscription Assignment
+    getSubscriptionPlans: async () => {
+        const response = await apiClient.get('/admin/plans');
+        return response.data;
+    },
+
+    assignSubscription: async (userId, planId, duration) => {
+        const response = await apiClient.post(`/admin/users/${userId}/subscription`, { planId, duration });
+        return response.data;
+    },
+
+    removeSubscription: async (userId) => {
+        const response = await apiClient.delete(`/admin/users/${userId}/subscription`);
+        return response.data;
     }
 };
 

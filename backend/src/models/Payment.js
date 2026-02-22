@@ -44,7 +44,7 @@ const Payment = sequelize.define('Payment', {
         comment: 'card, upi, netbanking, wallet'
     },
     paymentGateway: {
-        type: DataTypes.ENUM('razorpay', 'stripe'),
+        type: DataTypes.ENUM('razorpay', 'stripe', 'manual', 'admin'),
         allowNull: false,
         field: 'payment_gateway'
     },

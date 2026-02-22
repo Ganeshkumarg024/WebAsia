@@ -39,15 +39,15 @@ const useAffiliateStore = create(
             },
 
             // Register as an affiliate
-            registerAsAffiliate: async () => {
+            registerAsAffiliate: async (applicationNote = null) => {
                 set({ isLoading: true });
                 try {
-                    const response = await apiClient.post('/affiliate/register');
+                    const response = await apiClient.post('/affiliate/register', { applicationNote });
                     set({ affiliate: response.data.data, isLoading: false, error: null });
                     return response.data.data;
                 } catch (error) {
                     set({
-                        error: error.response?.data?.message || 'Failed to register as affiliate',
+                        error: error.response?.data?.error?.message || error.response?.data?.message || 'Failed to register as affiliate',
                         isLoading: false
                     });
                     throw error;

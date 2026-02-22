@@ -12,12 +12,14 @@ import {
     ClockIcon,
     NoSymbolIcon,
     CheckCircleIcon,
-    TrashIcon
+    TrashIcon,
+    CreditCardIcon,
+    XMarkIcon
 } from '@heroicons/react/24/outline';
 import { getAvatarUrl } from '../../utils/image';
 
 const Users = () => {
-    const { users, loading, fetchUsers, createUser, updateUser, deleteUser } = useAdminStore();
+    const { users, loading, fetchUsers, createUser, updateUser, deleteUser, subscriptionPlans, fetchSubscriptionPlans, assignSubscription, removeSubscription } = useAdminStore();
     const [activeTab, setActiveTab] = useState('client');
     const [searchQuery, setSearchQuery] = useState('');
     const [statusFilter, setStatusFilter] = useState('all');
@@ -33,6 +35,12 @@ const Users = () => {
     const [confirmPassword, setConfirmPassword] = useState('');
     const [sendEmail, setSendEmail] = useState(true);
     const [resettingPassword, setResettingPassword] = useState(false);
+
+    // Subscription assignment states
+    const [showPlanModal, setShowPlanModal] = useState(false);
+    const [selectedPlanId, setSelectedPlanId] = useState('');
+    const [selectedDuration, setSelectedDuration] = useState('monthly');
+    const [assigningPlan, setAssigningPlan] = useState(false);
 
     // Form state
     const [formData, setFormData] = useState({
@@ -91,6 +99,50 @@ const Users = () => {
             fetchUsers({ role: activeTab });
         } else {
             showToast.error(result.error || 'Failed to create user');
+        }
+    };
+
+    const openPlanModal = (user) => {
+        setSelectedUser(user);
+        const currentPlan = user.subscriptions?.find(s => s.status === 'active');
+        setSelectedPlanId(currentPlan?.planId || '');
+        setSelectedDuration(currentPlan?.plan?.duration || 'monthly');
+        setShowPlanModal(true);
+        fetchSubscriptionPlans();
+    };
+
+    const handleAssignPlan = async () => {
+        if (!selectedPlanId) {
+            showToast.error('Please select a plan');
+            return;
+        }
+        setAssigningPlan(true);
+        const result = await assignSubscription(selectedUser.id, selectedPlanId, selectedDuration);
+        setAssigningPlan(false);
+
+        if (result.success) {
+            showToast.success(result.message || 'Plan assigned successfully');
+            setShowPlanModal(false);
+            setSelectedUser(null);
+            fetchUsers({ role: activeTab });
+        } else {
+            showToast.error(result.error || 'Failed to assign plan');
+        }
+    };
+
+    const handleRemovePlan = async () => {
+        if (!selectedUser) return;
+        setAssigningPlan(true);
+        const result = await removeSubscription(selectedUser.id);
+        setAssigningPlan(false);
+
+        if (result.success) {
+            showToast.success(result.message || 'Plan removed successfully');
+            setShowPlanModal(false);
+            setSelectedUser(null);
+            fetchUsers({ role: activeTab });
+        } else {
+            showToast.error(result.error || 'Failed to remove plan');
         }
     };
 
@@ -364,6 +416,15 @@ const Users = () => {
                                             </td>
                                             <td className="px-8 py-5 text-right">
                                                 <div className="flex justify-end gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
+                                                    {user.role === 'client' && (
+                                                        <button
+                                                            onClick={() => openPlanModal(user)}
+                                                            className="p-2 rounded-xl text-orange-400 hover:bg-white hover:text-orange-600 hover:shadow-md transition-all"
+                                                            title="Assign Plan"
+                                                        >
+                                                            <CreditCardIcon className="w-4 h-4" />
+                                                        </button>
+                                                    )}
                                                     <button
                                                         onClick={() => openEditModal(user)}
                                                         className="p-2 rounded-xl text-gray-400 hover:bg-white hover:text-blue-600 hover:shadow-md transition-all"
@@ -732,6 +793,131 @@ const Users = () => {
                 variant="danger"
                 loading={submitting}
             />
+
+            {/* Assign Plan Modal */}
+            <Modal
+                isOpen={showPlanModal}
+                onClose={() => {
+                    setShowPlanModal(false);
+                    setSelectedUser(null);
+                }}
+                title="Assign Subscription Plan"
+                size="lg"
+            >
+                <div className="space-y-6">
+                    {/* User Info */}
+                    <div className="flex items-center gap-4 p-4 bg-gray-50 rounded-2xl">
+                        <div className="w-12 h-12 rounded-2xl bg-blue-100 flex items-center justify-center text-blue-600 font-black text-lg">
+                            {selectedUser?.firstName?.charAt(0)}
+                        </div>
+                        <div>
+                            <p className="text-sm font-bold text-gray-900">{selectedUser?.firstName} {selectedUser?.lastName}</p>
+                            <p className="text-xs text-gray-500">{selectedUser?.email}</p>
+                        </div>
+                        {selectedUser?.subscriptions?.find(s => s.status === 'active') && (
+                            <span className="ml-auto inline-flex items-center gap-1.5 px-3 py-1 text-[10px] font-black bg-green-50 text-green-600 rounded-lg uppercase border border-green-100">
+                                <span className="w-1.5 h-1.5 rounded-full bg-green-500"></span>
+                                Current: {selectedUser?.subscriptions?.find(s => s.status === 'active')?.plan?.name || 'Active'}
+                            </span>
+                        )}
+                    </div>
+
+                    {/* Plan Selection */}
+                    <div>
+                        <label className="block text-xs font-bold text-gray-500 uppercase tracking-wide mb-2">Select Plan *</label>
+                        <select
+                            value={selectedPlanId}
+                            onChange={(e) => setSelectedPlanId(e.target.value)}
+                            className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl text-gray-900 font-medium focus:bg-white focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 outline-none transition-all cursor-pointer"
+                        >
+                            <option value="">-- Choose a plan --</option>
+                            {(subscriptionPlans || []).map((plan) => (
+                                <option key={plan.id} value={plan.id}>
+                                    {plan.name} — ₹{Number(plan.price).toLocaleString('en-IN')}/{plan.duration}
+                                </option>
+                            ))}
+                        </select>
+                    </div>
+
+                    {/* Duration */}
+                    <div>
+                        <label className="block text-xs font-bold text-gray-500 uppercase tracking-wide mb-2">Duration</label>
+                        <div className="grid grid-cols-4 gap-2">
+                            {['weekly', 'monthly', 'quarterly', 'yearly'].map(dur => (
+                                <button
+                                    key={dur}
+                                    onClick={() => setSelectedDuration(dur)}
+                                    className={`px-4 py-2.5 rounded-xl text-xs font-black uppercase tracking-wider transition-all ${selectedDuration === dur
+                                            ? 'bg-blue-600 text-white shadow-lg shadow-blue-600/20'
+                                            : 'bg-gray-50 text-gray-500 border border-gray-200 hover:bg-gray-100'
+                                        }`}
+                                >
+                                    {dur}
+                                </button>
+                            ))}
+                        </div>
+                    </div>
+
+                    {/* Plan Details Preview */}
+                    {selectedPlanId && (() => {
+                        const plan = (subscriptionPlans || []).find(p => p.id === selectedPlanId);
+                        if (!plan) return null;
+                        return (
+                            <div className="p-5 bg-gradient-to-br from-blue-50 to-indigo-50 rounded-2xl border border-blue-100 space-y-3">
+                                <div className="flex items-center justify-between">
+                                    <h4 className="text-sm font-black text-gray-900">{plan.name}</h4>
+                                    <span className="text-lg font-black text-blue-600">₹{Number(plan.price).toLocaleString('en-IN')}</span>
+                                </div>
+                                {plan.description && <p className="text-xs text-gray-500">{plan.description}</p>}
+                                <div className="grid grid-cols-3 gap-3">
+                                    <div className="bg-white/70 rounded-xl p-3 text-center">
+                                        <p className="text-lg font-black text-gray-900">{plan.monthlyGraphicsCredits || 0}</p>
+                                        <p className="text-[9px] font-bold text-gray-400 uppercase">Graphics</p>
+                                    </div>
+                                    <div className="bg-white/70 rounded-xl p-3 text-center">
+                                        <p className="text-lg font-black text-gray-900">{plan.monthlyVideoCredits || 0}</p>
+                                        <p className="text-[9px] font-bold text-gray-400 uppercase">Videos</p>
+                                    </div>
+                                    <div className="bg-white/70 rounded-xl p-3 text-center">
+                                        <p className="text-lg font-black text-gray-900">{plan.monthlyWebCredits || 0}</p>
+                                        <p className="text-[9px] font-bold text-gray-400 uppercase">Web</p>
+                                    </div>
+                                </div>
+                            </div>
+                        );
+                    })()}
+
+                    {/* Actions */}
+                    <div className="flex items-center gap-3 pt-2">
+                        {selectedUser?.subscriptions?.find(s => s.status === 'active') && (
+                            <button
+                                onClick={handleRemovePlan}
+                                disabled={assigningPlan}
+                                className="px-4 py-3 bg-red-50 hover:bg-red-100 text-red-600 rounded-xl text-xs font-black uppercase tracking-widest transition-all border border-red-100 disabled:opacity-50"
+                            >
+                                Remove Plan
+                            </button>
+                        )}
+                        <button
+                            onClick={() => {
+                                setShowPlanModal(false);
+                                setSelectedUser(null);
+                            }}
+                            disabled={assigningPlan}
+                            className="flex-1 px-4 py-3 bg-gray-100 hover:bg-gray-200 text-gray-700 rounded-xl text-sm font-black uppercase tracking-widest transition-all disabled:opacity-50"
+                        >
+                            Cancel
+                        </button>
+                        <button
+                            onClick={handleAssignPlan}
+                            disabled={assigningPlan || !selectedPlanId}
+                            className="flex-1 px-4 py-3 bg-blue-600 hover:bg-blue-700 text-white rounded-xl text-sm font-black uppercase tracking-widest shadow-lg shadow-blue-600/20 transition-all disabled:opacity-50"
+                        >
+                            {assigningPlan ? 'Assigning...' : 'Assign Plan'}
+                        </button>
+                    </div>
+                </div>
+            </Modal>
         </DashboardLayout>
     );
 };

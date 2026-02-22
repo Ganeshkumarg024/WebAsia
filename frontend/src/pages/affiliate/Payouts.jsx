@@ -83,21 +83,79 @@ const AffiliatePayouts = () => {
                 </button>
             </div>
 
-            {/* Balance Card */}
-            <div className="bg-gradient-to-r from-blue-600 to-blue-700 rounded-2xl p-8 mb-8 relative overflow-hidden">
-                <div className="absolute top-0 right-0 w-40 h-40 bg-white/10 rounded-full -mr-20 -mt-20"></div>
-                <div className="relative z-10">
-                    <p className="text-blue-100 text-sm font-bold uppercase tracking-wider mb-2">Available Balance</p>
-                    <p className="text-4xl font-black text-white mb-4">₹{parseFloat(stats.pendingEarnings || 0).toLocaleString()}</p>
-                    <div className="flex gap-6 text-sm">
-                        <div>
-                            <p className="text-blue-200 text-xs font-bold">Total Earned</p>
-                            <p className="text-white font-black">₹{parseFloat(stats.totalEarnings || 0).toLocaleString()}</p>
+            {/* Balance and Payout Info */}
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+                {/* Balance Card */}
+                <div className="bg-gradient-to-r from-blue-600 to-blue-700 rounded-2xl p-8 relative overflow-hidden h-full">
+                    <div className="absolute top-0 right-0 w-40 h-40 bg-white/10 rounded-full -mr-20 -mt-20"></div>
+                    <div className="relative z-10">
+                        <p className="text-blue-100 text-sm font-bold uppercase tracking-wider mb-2">Available Balance</p>
+                        <p className="text-4xl font-black text-white mb-4">₹{parseFloat(stats.pendingEarnings || 0).toLocaleString()}</p>
+                        <div className="flex gap-6 text-sm">
+                            <div>
+                                <p className="text-blue-200 text-xs font-bold">Total Earned</p>
+                                <p className="text-white font-black">₹{parseFloat(stats.totalEarnings || 0).toLocaleString()}</p>
+                            </div>
+                            <div>
+                                <p className="text-blue-200 text-xs font-bold">Already Paid</p>
+                                <p className="text-white font-black">₹{parseFloat(stats.paidEarnings || 0).toLocaleString()}</p>
+                            </div>
                         </div>
-                        <div>
-                            <p className="text-blue-200 text-xs font-bold">Already Paid</p>
-                            <p className="text-white font-black">₹{parseFloat(stats.paidEarnings || 0).toLocaleString()}</p>
+                    </div>
+                </div>
+
+                {/* Active Payout Method Card */}
+                <div className="bg-white rounded-2xl border border-gray-100 p-8 shadow-sm flex flex-col justify-between">
+                    <div>
+                        <div className="flex justify-between items-start mb-4">
+                            <p className="text-gray-400 text-sm font-bold uppercase tracking-wider">Withdrawal Method</p>
+                            <a href="/affiliate/settings" className="text-blue-600 font-bold text-xs hover:underline">Edit Settings</a>
                         </div>
+
+                        {!stats.payoutMethod ? (
+                            <div className="text-gray-500 italic text-sm py-4">
+                                No payout method set. Please configure in settings.
+                            </div>
+                        ) : (
+                            <div className="space-y-3">
+                                <div className="flex items-center gap-3">
+                                    <span className="text-2xl">
+                                        {stats.payoutMethod === 'upi' ? '📱' : stats.payoutMethod === 'bank_transfer' ? '🏦' : '💳'}
+                                    </span>
+                                    <div>
+                                        <p className="text-gray-900 font-black capitalize">{stats.payoutMethod?.replace('_', ' ')}</p>
+                                        <p className="text-xs text-gray-400">Default destination for your payouts</p>
+                                    </div>
+                                </div>
+
+                                <div className="bg-gray-50 rounded-xl p-4 mt-2">
+                                    {stats.payoutMethod === 'upi' && (
+                                        <div>
+                                            <p className="text-[10px] font-black text-gray-400 uppercase mb-1">UPI ID</p>
+                                            <p className="text-gray-900 font-bold font-mono">{stats.payoutDetails?.upiId}</p>
+                                        </div>
+                                    )}
+                                    {stats.payoutMethod === 'bank_transfer' && (
+                                        <div className="grid grid-cols-2 gap-4">
+                                            <div>
+                                                <p className="text-[10px] font-black text-gray-400 uppercase mb-1">Account Number</p>
+                                                <p className="text-gray-900 font-bold font-mono text-xs">{stats.payoutDetails?.accountNumber}</p>
+                                            </div>
+                                            <div>
+                                                <p className="text-[10px] font-black text-gray-400 uppercase mb-1">IFSC Code</p>
+                                                <p className="text-gray-900 font-bold uppercase text-xs">{stats.payoutDetails?.ifscCode}</p>
+                                            </div>
+                                        </div>
+                                    )}
+                                    {stats.payoutMethod === 'paypal' && (
+                                        <div>
+                                            <p className="text-[10px] font-black text-gray-400 uppercase mb-1">PayPal Email</p>
+                                            <p className="text-gray-900 font-bold font-mono">{stats.payoutDetails?.paypalEmail}</p>
+                                        </div>
+                                    )}
+                                </div>
+                            </div>
+                        )}
                     </div>
                 </div>
             </div>

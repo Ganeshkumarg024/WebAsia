@@ -98,10 +98,17 @@ export const affiliateService = {
     /**
      * Process referral commission on successful payment
      */
-    processReferralConversion: async (userId, subscriptionId, amount, currency, paymentId) => {
+    processReferralConversion: async (userId, subscriptionId, amount, currency, paymentId, externalTransaction = null) => {
         const referral = await Referral.findOne({
-            where: { referredUserId: userId, status: { [Op.in]: ['registered', 'subscribed'] } },
-            include: [{ model: Affiliate, as: 'affiliate' }]
+            where: {
+                referredUserId: userId,
+                [Op.or]: [
+                    { status: { [Op.in]: ['registered', 'subscribed'] } },
+                    { status: 'converted', commissionAmount: null }
+                ]
+            },
+            include: [{ model: Affiliate, as: 'affiliate' }],
+            transaction: externalTransaction
         });
 
         if (!referral || !referral.affiliate) return null;
@@ -116,7 +123,7 @@ export const affiliateService = {
             commissionAmount = (amount * commissionRate) / 100;
         }
 
-        const t = await Referral.sequelize.transaction();
+        const t = externalTransaction || await Referral.sequelize.transaction();
 
         try {
             // 1. Update Referral
@@ -160,10 +167,10 @@ export const affiliateService = {
                 description: `Affiliate commission for referral conversion (User ID: ${userId})`
             }, { transaction: t });
 
-            await t.commit();
+            if (!externalTransaction) await t.commit();
             return referral;
         } catch (error) {
-            await t.rollback();
+            if (!externalTransaction) await t.rollback();
             throw error;
         }
     },
@@ -247,7 +254,7 @@ export const affiliateService = {
         const commissions = await Commission.findAll({
             where: {
                 affiliateId,
-                createdAt: { [Op.gte]: startDate }
+                created_at: { [Op.gte]: startDate }
             },
             include: [
                 {
@@ -260,7 +267,7 @@ export const affiliateService = {
                     }]
                 }
             ],
-            order: [['createdAt', 'DESC']]
+            order: [['created_at', 'DESC']]
         });
 
         const totalAmount = commissions.reduce((sum, c) => sum + parseFloat(c.amount), 0);
@@ -337,7 +344,7 @@ export const affiliateService = {
 
         return await AffiliateResource.findAll({
             where,
-            order: [['createdAt', 'DESC']]
+            order: [['created_at', 'DESC']]
         });
     },
 
@@ -350,7 +357,7 @@ export const affiliateService = {
         // 1. Multiple signups from the same IP
         const referrals = await Referral.findAll({
             where: {
-                createdAt: { [Op.gte]: new Date(Date.now() - 30 * 24 * 60 * 60 * 1000) }
+                created_at: { [Op.gte]: new Date(Date.now() - 30 * 24 * 60 * 60 * 1000) }
             },
             attributes: ['affiliateId', 'metadata'],
             include: [{

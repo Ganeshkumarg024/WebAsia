@@ -78,7 +78,7 @@ export const getAffiliateStats = async (req, res) => {
                     attributes: ['firstName', 'lastName', 'email'],
                     required: false
                 }],
-                order: [['createdAt', 'DESC']],
+                order: [['created_at', 'DESC']],
                 limit: 10
             });
         } catch (refErr) {
@@ -112,6 +112,7 @@ export const getAffiliateStats = async (req, res) => {
         });
     } catch (error) {
         console.error('Get affiliate stats error:', error);
+        console.error('Error detail:', JSON.stringify(error, Object.getOwnPropertyNames(error)));
         res.status(500).json({
             success: false,
             error: { message: error.message || 'Failed to get affiliate stats' }
@@ -141,10 +142,10 @@ export const getReferrals = async (req, res) => {
             include: [{
                 model: User,
                 as: 'referredUser',
-                attributes: ['firstName', 'lastName', 'email', 'createdAt'],
+                attributes: ['firstName', 'lastName', 'email', 'created_at'],
                 required: false
             }],
-            order: [['createdAt', 'DESC']],
+            order: [['created_at', 'DESC']],
             limit: parseInt(limit),
             offset
         });
@@ -161,6 +162,7 @@ export const getReferrals = async (req, res) => {
         });
     } catch (error) {
         console.error('Get referrals error:', error);
+        console.error('Error detail:', JSON.stringify(error, Object.getOwnPropertyNames(error)));
         res.status(500).json({
             success: false,
             error: { message: error.message || 'Failed to get referrals' }
@@ -188,6 +190,7 @@ export const getEarnings = async (req, res) => {
         });
     } catch (error) {
         console.error('Get earnings error:', error);
+        console.error('Error detail:', JSON.stringify(error, Object.getOwnPropertyNames(error)));
         res.status(500).json({
             success: false,
             error: { message: error.message || 'Failed to get earnings' }
@@ -260,20 +263,28 @@ export const getPayoutSettings = async (req, res) => {
 // Update payout settings
 export const updatePayoutSettings = async (req, res) => {
     try {
-        const { paymentMethod, bankDetails, upiId, paypalEmail } = req.body;
+        // Support both old flat format and new nested format
+        const {
+            paymentMethod: flatMethod,
+            bankDetails: flatBank,
+            upiId: flatUpi,
+            paypalEmail: flatPaypal,
+            payoutMethod: nestedMethod,
+            payoutDetails: nestedDetails
+        } = req.body;
 
-        let payoutMethod = 'bank_transfer';
-        let payoutDetails = {};
+        let payoutMethod = nestedMethod || flatMethod || 'bank_transfer';
+        let payoutDetails = nestedDetails || {};
 
-        if (paymentMethod === 'upi') {
-            payoutMethod = 'upi';
-            payoutDetails = { upiId };
-        } else if (paymentMethod === 'paypal') {
-            payoutMethod = 'paypal';
-            payoutDetails = { paypalEmail };
-        } else {
-            payoutMethod = 'bank_transfer';
-            payoutDetails = bankDetails || {};
+        // If using old format, rebuild the details object
+        if (!nestedDetails) {
+            if (payoutMethod === 'upi') {
+                payoutDetails = { upiId: flatUpi };
+            } else if (payoutMethod === 'paypal') {
+                payoutDetails = { paypalEmail: flatPaypal };
+            } else if (payoutMethod === 'bank_transfer') {
+                payoutDetails = flatBank || {};
+            }
         }
 
         const affiliate = await affiliateService.updatePayoutSettings(req.user.id, payoutMethod, payoutDetails);

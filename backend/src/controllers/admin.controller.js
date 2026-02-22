@@ -1,4 +1,5 @@
 import { Op, DataTypes } from 'sequelize';
+import sequelize from '../config/database.js';
 import bcrypt from 'bcryptjs';
 import { User, Subscription, Request, SubscriptionPlan, Message, Payment, Testimonial, Affiliate, FinancialLog, Referral, Commission, Payout, AffiliateResource, SystemLog } from '../models/index.js';
 import { affiliateService } from '../services/affiliate.service.js';
@@ -1192,17 +1193,17 @@ export const getAffiliateDetail = async (req, res) => {
 
         const affiliate = await Affiliate.findByPk(id, {
             include: [
-                { model: User, as: 'user', attributes: ['firstName', 'lastName', 'email', 'phone', 'createdAt'] },
+                { model: User, as: 'user', attributes: ['firstName', 'lastName', 'email', 'phone', 'created_at'] },
                 {
                     model: Referral,
                     as: 'referrals',
                     include: [{ model: User, as: 'referredUser', attributes: ['firstName', 'lastName', 'email'] }],
-                    order: [['createdAt', 'DESC']]
+                    order: [['created_at', 'DESC']]
                 },
                 {
                     model: Commission,
                     as: 'commissions',
-                    order: [['createdAt', 'DESC']],
+                    order: [['created_at', 'DESC']],
                     limit: 50
                 },
                 {
@@ -1238,7 +1239,7 @@ export const getPendingPayouts = async (req, res) => {
                 as: 'affiliate',
                 include: [{ model: User, as: 'user', attributes: ['firstName', 'lastName', 'email'] }]
             }],
-            order: [['requestedAt', 'DESC']]
+            order: [['requested_at', 'DESC']]
         });
 
         // Map to a format the frontend expects
@@ -1250,6 +1251,7 @@ export const getPendingPayouts = async (req, res) => {
             status: p.status,
             requestDate: p.requestedAt,
             payoutMethod: p.payoutMethod,
+            payoutDetails: p.payoutDetails,
             transactionRef: p.transactionRef,
             adminNotes: p.adminNotes
         }));
@@ -1419,7 +1421,7 @@ export const getAffiliateResources = async (req, res) => {
     try {
         const resources = await AffiliateResource.findAll({
             include: [{ model: User, as: 'uploader', attributes: ['firstName', 'lastName'] }],
-            order: [['createdAt', 'DESC']]
+            order: [['created_at', 'DESC']]
         });
         res.json({ success: true, data: resources });
     } catch (error) {
@@ -1481,5 +1483,213 @@ export const toggleAffiliateResource = async (req, res) => {
     } catch (error) {
         console.error('Toggle affiliate resource error:', error);
         res.status(500).json({ success: false, error: { message: 'Failed to toggle resource' } });
+    }
+};
+
+// ========================================
+// SUBSCRIPTION MANAGEMENT
+// ========================================
+
+export const getSubscriptionPlans = async (req, res) => {
+    try {
+        const plans = await SubscriptionPlan.findAll({
+            where: { status: 'active' },
+            order: [['price', 'ASC']]
+        });
+        res.json({ success: true, data: plans });
+    } catch (error) {
+        console.error('Get subscription plans error:', error);
+        res.status(500).json({ success: false, error: { message: 'Failed to get plans' } });
+    }
+};
+
+export const assignSubscription = async (req, res) => {
+    const t = await sequelize.transaction();
+    try {
+        const { userId } = req.params;
+        const { planId, duration, startDate: customStartDate } = req.body;
+
+        const user = await User.findByPk(userId, { transaction: t });
+        if (!user) {
+            await t.rollback();
+            return res.status(404).json({ success: false, error: { message: 'User not found' } });
+        }
+
+        const plan = await SubscriptionPlan.findByPk(planId, { transaction: t });
+        if (!plan) {
+            await t.rollback();
+            return res.status(404).json({ success: false, error: { message: 'Subscription plan not found' } });
+        }
+
+        // Calculate dates
+        const startDate = customStartDate ? new Date(customStartDate) : new Date();
+        const endDate = new Date(startDate);
+        const planDuration = duration || plan.duration;
+
+        if (planDuration === 'weekly') endDate.setDate(endDate.getDate() + 7);
+        else if (planDuration === 'monthly') endDate.setMonth(endDate.getMonth() + 1);
+        else if (planDuration === 'quarterly') endDate.setMonth(endDate.getMonth() + 3);
+        else if (planDuration === 'yearly') endDate.setFullYear(endDate.getFullYear() + 1);
+        else endDate.setMonth(endDate.getMonth() + 1);
+
+        // 1. Deactivate existing subscriptions
+        await Subscription.update(
+            { status: 'cancelled', cancelledAt: new Date(), cancellationReason: 'Reassigned by Admin' },
+            { where: { userId, status: 'active' }, transaction: t }
+        );
+
+        // 2. Create new subscription
+        const subscription = await Subscription.create({
+            userId,
+            planId: plan.id,
+            status: 'active',
+            startDate,
+            endDate,
+            nextBillingDate: endDate,
+            autoRenew: false, // Admin-assigned = manual
+            graphicsCreditsRemaining: plan.monthlyGraphicsCredits || 0,
+            videoCreditsRemaining: plan.monthlyVideoCredits || 0,
+            webCreditsRemaining: plan.monthlyWebCredits || 0,
+            creditsResetDate: endDate,
+            paymentMethod: 'Admin Assigned',
+            paymentId: `ADMIN-MANUAL-${Date.now()}`
+        }, { transaction: t });
+
+        // 3. Create Payment Record (for tracking)
+        const payment = await Payment.create({
+            userId,
+            subscriptionId: subscription.id,
+            amount: parseFloat(plan.price) || 0,
+            currency: plan.currency || 'INR',
+            status: 'completed',
+            paymentMethod: 'manual',
+            paymentGateway: 'manual',
+            gatewayPaymentId: subscription.paymentId,
+            paidAt: new Date(),
+            metadata: { assignedBy: req.user.id, reason: 'Manual admin assignment' }
+        }, { transaction: t });
+
+        // 4. Create Financial Log
+        await FinancialLog.create({
+            type: 'revenue',
+            category: 'subscription',
+            amount: payment.amount,
+            currency: payment.currency,
+            status: 'completed',
+            paymentId: payment.id,
+            userId,
+            relatedId: subscription.id,
+            description: `Manual subscription assignment for ${plan.name} by Admin`,
+            metadata: { adminId: req.user.id }
+        }, { transaction: t });
+
+        // ========================================
+        // AFFILIATE COMMISSION PROCESSING
+        // ========================================
+        let commissionInfo = null;
+
+        try {
+            // Check if this user was referred by an affiliate
+            const referral = await Referral.findOne({
+                where: {
+                    referredUserId: userId,
+                    [Op.or]: [
+                        { status: { [Op.in]: ['registered', 'subscribed'] } },
+                        { status: 'converted', commissionAmount: null }
+                    ]
+                },
+                include: [{ model: Affiliate, as: 'affiliate' }],
+                transaction: t
+            });
+
+            if (referral && referral.affiliate && referral.affiliate.status === 'active') {
+                const planPrice = parseFloat(plan.price) || 0;
+
+                if (planPrice > 0) {
+                    // Award the commission linking it to the manual payment record
+                    const result = await affiliateService.processReferralConversion(
+                        userId,
+                        subscription.id,
+                        planPrice,
+                        plan.currency || 'INR',
+                        payment.id,
+                        t // Pass the transaction
+                    );
+
+                    if (result) {
+                        const affiliate = referral.affiliate;
+                        const commRate = affiliate.commissionRate;
+                        let commAmount;
+                        if (affiliate.commissionType === 'fixed') {
+                            commAmount = parseFloat(commRate);
+                        } else {
+                            commAmount = (planPrice * commRate) / 100;
+                        }
+
+                        const affiliateUser = await User.findByPk(affiliate.userId, {
+                            attributes: ['firstName', 'lastName', 'email'],
+                            transaction: t
+                        });
+
+                        commissionInfo = {
+                            affiliateName: affiliateUser ? `${affiliateUser.firstName} ${affiliateUser.lastName}` : 'Unknown',
+                            affiliateEmail: affiliateUser?.email,
+                            commissionAmount: commAmount,
+                            currency: plan.currency || 'INR'
+                        };
+                    }
+                }
+            }
+        } catch (commissionError) {
+            console.error('Commission processing error (non-blocking):', commissionError);
+            // We don't fail the whole transaction for commission errors
+        }
+
+        await t.commit();
+
+        // Re-fetch with plan included for response
+        const fullSubscription = await Subscription.findByPk(subscription.id, {
+            include: [{ model: SubscriptionPlan, as: 'plan' }]
+        });
+
+        const message = commissionInfo
+            ? `${plan.name} plan assigned. Commission of ₹${commissionInfo.commissionAmount} awarded to ${commissionInfo.affiliateName}.`
+            : `${plan.name} plan assigned successfully.`;
+
+        res.json({
+            success: true,
+            message,
+            data: fullSubscription,
+            commission: commissionInfo
+        });
+    } catch (error) {
+        if (t) await t.rollback();
+        console.error('Assign subscription error:', error);
+        res.status(500).json({ success: false, error: { message: error.message || 'Failed to assign subscription' } });
+    }
+};
+
+export const removeSubscription = async (req, res) => {
+    try {
+        const { userId } = req.params;
+
+        const user = await User.findByPk(userId);
+        if (!user) {
+            return res.status(404).json({ success: false, error: { message: 'User not found' } });
+        }
+
+        const updated = await Subscription.update(
+            { status: 'cancelled', cancelledAt: new Date(), cancellationReason: 'Admin removed plan' },
+            { where: { userId, status: 'active' } }
+        );
+
+        res.json({
+            success: true,
+            message: `Subscription removed for ${user.firstName} ${user.lastName}`,
+            data: { deactivated: updated[0] }
+        });
+    } catch (error) {
+        console.error('Remove subscription error:', error);
+        res.status(500).json({ success: false, error: { message: 'Failed to remove subscription' } });
     }
 };

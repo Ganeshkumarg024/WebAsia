@@ -174,6 +174,17 @@ export const affiliateAPI = {
     getPayoutsPending: async () => {
         const response = await apiClient.get('/admin/affiliate/payouts', { params: { status: 'requested' } });
         return response.data;
+    },
+
+    // User Profile management
+    getUserProfile: async () => {
+        const response = await apiClient.get('/users/me');
+        return response.data;
+    },
+
+    updateUserProfile: async (profileData) => {
+        const response = await apiClient.put('/users/me', profileData);
+        return response.data;
     }
 };
 
