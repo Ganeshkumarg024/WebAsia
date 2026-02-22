@@ -1,6 +1,7 @@
 import { Op, DataTypes } from 'sequelize';
 import bcrypt from 'bcryptjs';
-import { User, Subscription, Request, SubscriptionPlan, Message, Payment, Testimonial, Affiliate, FinancialLog, Referral, SystemLog } from '../models/index.js';
+import { User, Subscription, Request, SubscriptionPlan, Message, Payment, Testimonial, Affiliate, FinancialLog, Referral, Commission, Payout, AffiliateResource, SystemLog } from '../models/index.js';
+import { affiliateService } from '../services/affiliate.service.js';
 import { sendAdminPasswordResetEmail } from '../utils/email.js';
 
 // ... (existing code)
@@ -170,7 +171,7 @@ export const createUser = async (req, res) => {
             });
         }
 
-        // Create user
+        // Create user (admin-created users skip email verification)
         const user = await User.create({
             email,
             password, // Will be hashed by model hook
@@ -178,12 +179,31 @@ export const createUser = async (req, res) => {
             lastName,
             role,
             phone,
-            status: 'active'
+            status: 'active',
+            emailVerified: true
         });
 
         const userResponse = user.toJSON();
         delete userResponse.password;
         delete userResponse.refreshToken;
+
+        // If role is affiliate, auto-create Affiliate record
+        if (role === 'affiliate') {
+            try {
+                await affiliateService.registerAffiliate(user.id);
+                // Auto-approve since admin created the user
+                const affiliate = await Affiliate.findOne({ where: { userId: user.id } });
+                if (affiliate) {
+                    await affiliate.update({
+                        status: 'active',
+                        approvedAt: new Date(),
+                        approvedBy: req.user.id
+                    });
+                }
+            } catch (affErr) {
+                console.error('Auto-create affiliate record error:', affErr);
+            }
+        }
 
         res.status(201).json({
             success: true,
@@ -1085,5 +1105,381 @@ export const rejectTestimonial = async (req, res) => {
                 message: 'Failed to reject testimonial'
             }
         });
+    }
+};
+
+// ========================
+// AFFILIATE MANAGEMENT (Admin)
+// ========================
+
+// Approve affiliate application
+export const approveAffiliate = async (req, res) => {
+    try {
+        const { id } = req.params;
+        const affiliate = await Affiliate.findByPk(id);
+        if (!affiliate) {
+            return res.status(404).json({ success: false, error: { message: 'Affiliate not found' } });
+        }
+        if (affiliate.status !== 'pending') {
+            return res.status(400).json({ success: false, error: { message: `Affiliate is already ${affiliate.status}` } });
+        }
+
+        await affiliate.update({
+            status: 'active',
+            approvedAt: new Date(),
+            approvedBy: req.user.id
+        });
+
+        // Update user role to affiliate
+        await User.update({ role: 'affiliate' }, { where: { id: affiliate.userId } });
+
+        res.json({ success: true, message: 'Affiliate approved successfully', data: affiliate });
+    } catch (error) {
+        console.error('Approve affiliate error:', error);
+        res.status(500).json({ success: false, error: { message: 'Failed to approve affiliate' } });
+    }
+};
+
+// Reject affiliate application
+export const rejectAffiliate = async (req, res) => {
+    try {
+        const { id } = req.params;
+        const { reason } = req.body;
+        const affiliate = await Affiliate.findByPk(id);
+        if (!affiliate) {
+            return res.status(404).json({ success: false, error: { message: 'Affiliate not found' } });
+        }
+
+        await affiliate.update({
+            status: 'rejected',
+            rejectionReason: reason || 'Application rejected by admin'
+        });
+
+        res.json({ success: true, message: 'Affiliate rejected', data: affiliate });
+    } catch (error) {
+        console.error('Reject affiliate error:', error);
+        res.status(500).json({ success: false, error: { message: 'Failed to reject affiliate' } });
+    }
+};
+
+// Update affiliate status (suspend/reactivate)
+export const updateAffiliateStatus = async (req, res) => {
+    try {
+        const { id } = req.params;
+        const { status } = req.body;
+
+        if (!['active', 'suspended', 'inactive'].includes(status)) {
+            return res.status(400).json({ success: false, error: { message: 'Invalid status' } });
+        }
+
+        const affiliate = await Affiliate.findByPk(id);
+        if (!affiliate) {
+            return res.status(404).json({ success: false, error: { message: 'Affiliate not found' } });
+        }
+
+        await affiliate.update({ status });
+        res.json({ success: true, message: `Affiliate status updated to ${status}`, data: affiliate });
+    } catch (error) {
+        console.error('Update affiliate status error:', error);
+        res.status(500).json({ success: false, error: { message: 'Failed to update affiliate status' } });
+    }
+};
+
+// Get single affiliate detail
+export const getAffiliateDetail = async (req, res) => {
+    try {
+        const { id } = req.params;
+
+        const affiliate = await Affiliate.findByPk(id, {
+            include: [
+                { model: User, as: 'user', attributes: ['firstName', 'lastName', 'email', 'phone', 'createdAt'] },
+                {
+                    model: Referral,
+                    as: 'referrals',
+                    include: [{ model: User, as: 'referredUser', attributes: ['firstName', 'lastName', 'email'] }],
+                    order: [['createdAt', 'DESC']]
+                },
+                {
+                    model: Commission,
+                    as: 'commissions',
+                    order: [['createdAt', 'DESC']],
+                    limit: 50
+                },
+                {
+                    model: Payout,
+                    as: 'payouts',
+                    order: [['requestedAt', 'DESC']]
+                }
+            ]
+        });
+
+        if (!affiliate) {
+            return res.status(404).json({ success: false, error: { message: 'Affiliate not found' } });
+        }
+
+        res.json({ success: true, data: affiliate });
+    } catch (error) {
+        console.error('Get affiliate detail error:', error);
+        res.status(500).json({ success: false, error: { message: 'Failed to fetch affiliate details' } });
+    }
+};
+
+// Get pending payouts (from Payout model)
+export const getPendingPayouts = async (req, res) => {
+    try {
+        const { status } = req.query;
+        const where = {};
+        if (status) where.status = status;
+
+        const payouts = await Payout.findAll({
+            where,
+            include: [{
+                model: Affiliate,
+                as: 'affiliate',
+                include: [{ model: User, as: 'user', attributes: ['firstName', 'lastName', 'email'] }]
+            }],
+            order: [['requestedAt', 'DESC']]
+        });
+
+        // Map to a format the frontend expects
+        const data = payouts.map(p => ({
+            id: p.id,
+            affiliateName: p.affiliate?.user ? `${p.affiliate.user.firstName} ${p.affiliate.user.lastName}` : 'Unknown',
+            affiliateEmail: p.affiliate?.user?.email || 'Unknown',
+            amount: parseFloat(p.amount),
+            status: p.status,
+            requestDate: p.requestedAt,
+            payoutMethod: p.payoutMethod,
+            transactionRef: p.transactionRef,
+            adminNotes: p.adminNotes
+        }));
+
+        res.json({ success: true, data });
+    } catch (error) {
+        console.error('Get pending payouts error:', error);
+        res.status(500).json({ success: false, error: { message: 'Failed to fetch payouts' } });
+    }
+};
+
+// Approve a payout (new Payout model)
+export const approvePayoutNew = async (req, res) => {
+    try {
+        const { id } = req.params;
+        const { transactionRef, adminNotes } = req.body;
+
+        const payout = await Payout.findByPk(id, {
+            include: [{ model: Affiliate, as: 'affiliate' }]
+        });
+        if (!payout || payout.status !== 'requested') {
+            return res.status(404).json({ success: false, error: { message: 'Payout request not found or already processed' } });
+        }
+
+        const t = await Payout.sequelize.transaction();
+        try {
+            await payout.update({
+                status: 'approved',
+                approvedAt: new Date(),
+                approvedBy: req.user.id,
+                transactionRef,
+                adminNotes
+            }, { transaction: t });
+
+            await t.commit();
+            res.json({ success: true, message: 'Payout approved successfully' });
+        } catch (err) {
+            await t.rollback();
+            throw err;
+        }
+    } catch (error) {
+        console.error('Approve payout error:', error);
+        res.status(500).json({ success: false, error: { message: 'Failed to approve payout' } });
+    }
+};
+
+// Mark payout as paid
+export const markPayoutPaid = async (req, res) => {
+    try {
+        const { id } = req.params;
+        const { transactionRef } = req.body;
+
+        const payout = await Payout.findByPk(id, {
+            include: [{ model: Affiliate, as: 'affiliate' }]
+        });
+        if (!payout || !['approved', 'requested'].includes(payout.status)) {
+            return res.status(404).json({ success: false, error: { message: 'Payout not found or invalid state' } });
+        }
+
+        const t = await Payout.sequelize.transaction();
+        try {
+            await payout.update({
+                status: 'paid',
+                processedAt: new Date(),
+                transactionRef: transactionRef || payout.transactionRef
+            }, { transaction: t });
+
+            // Update affiliate earnings
+            if (payout.affiliate) {
+                await payout.affiliate.decrement('pendingEarnings', { by: payout.amount, transaction: t });
+                await payout.affiliate.increment('paidEarnings', { by: payout.amount, transaction: t });
+            }
+
+            await t.commit();
+            res.json({ success: true, message: 'Payout marked as paid' });
+        } catch (err) {
+            await t.rollback();
+            throw err;
+        }
+    } catch (error) {
+        console.error('Mark payout paid error:', error);
+        res.status(500).json({ success: false, error: { message: 'Failed to mark payout as paid' } });
+    }
+};
+
+// Reject a payout
+export const rejectPayout = async (req, res) => {
+    try {
+        const { id } = req.params;
+        const { reason } = req.body;
+
+        const payout = await Payout.findByPk(id);
+        if (!payout || payout.status !== 'requested') {
+            return res.status(404).json({ success: false, error: { message: 'Payout not found or already processed' } });
+        }
+
+        await payout.update({
+            status: 'rejected',
+            rejectionReason: reason || 'Rejected by admin'
+        });
+
+        res.json({ success: true, message: 'Payout rejected' });
+    } catch (error) {
+        console.error('Reject payout error:', error);
+        res.status(500).json({ success: false, error: { message: 'Failed to reject payout' } });
+    }
+};
+
+// Bulk payout action
+export const bulkPayoutAction = async (req, res) => {
+    try {
+        const { payoutIds, action } = req.body; // action: 'approve' | 'reject' | 'paid'
+
+        if (!payoutIds || !Array.isArray(payoutIds) || payoutIds.length === 0) {
+            return res.status(400).json({ success: false, error: { message: 'No payout IDs provided' } });
+        }
+
+        let updateData = {};
+        if (action === 'approve') {
+            updateData = { status: 'approved', approvedAt: new Date(), approvedBy: req.user.id };
+        } else if (action === 'reject') {
+            updateData = { status: 'rejected' };
+        } else if (action === 'paid') {
+            updateData = { status: 'paid', processedAt: new Date() };
+        } else {
+            return res.status(400).json({ success: false, error: { message: 'Invalid action' } });
+        }
+
+        await Payout.update(updateData, {
+            where: { id: { [Op.in]: payoutIds } }
+        });
+
+        // If marking as paid, update affiliate earnings
+        if (action === 'paid') {
+            const payouts = await Payout.findAll({
+                where: { id: { [Op.in]: payoutIds } },
+                include: [{ model: Affiliate, as: 'affiliate' }]
+            });
+            for (const payout of payouts) {
+                if (payout.affiliate) {
+                    await payout.affiliate.decrement('pendingEarnings', { by: payout.amount });
+                    await payout.affiliate.increment('paidEarnings', { by: payout.amount });
+                }
+            }
+        }
+
+        res.json({ success: true, message: `${payoutIds.length} payouts ${action}d successfully` });
+    } catch (error) {
+        console.error('Bulk payout action error:', error);
+        res.status(500).json({ success: false, error: { message: 'Failed to process bulk payout action' } });
+    }
+};
+
+// Fraud detection
+export const getFraudFlags = async (req, res) => {
+    try {
+        const flags = await affiliateService.detectFraud();
+        res.json({ success: true, data: flags });
+    } catch (error) {
+        console.error('Get fraud flags error:', error);
+        res.status(500).json({ success: false, error: { message: 'Failed to detect fraud' } });
+    }
+};
+
+// Affiliate Resource Management
+export const getAffiliateResources = async (req, res) => {
+    try {
+        const resources = await AffiliateResource.findAll({
+            include: [{ model: User, as: 'uploader', attributes: ['firstName', 'lastName'] }],
+            order: [['createdAt', 'DESC']]
+        });
+        res.json({ success: true, data: resources });
+    } catch (error) {
+        console.error('Get affiliate resources error:', error);
+        res.status(500).json({ success: false, error: { message: 'Failed to fetch resources' } });
+    }
+};
+
+export const createAffiliateResource = async (req, res) => {
+    try {
+        const { title, description, category, fileUrl, thumbnailUrl, fileName, fileSize, fileType, dimensions } = req.body;
+
+        const resource = await AffiliateResource.create({
+            title,
+            description,
+            category: category || 'banner',
+            fileUrl,
+            thumbnailUrl,
+            fileName,
+            fileSize,
+            fileType,
+            dimensions,
+            uploadedBy: req.user.id
+        });
+
+        res.status(201).json({ success: true, message: 'Resource created', data: resource });
+    } catch (error) {
+        console.error('Create affiliate resource error:', error);
+        res.status(500).json({ success: false, error: { message: 'Failed to create resource' } });
+    }
+};
+
+export const deleteAffiliateResource = async (req, res) => {
+    try {
+        const { id } = req.params;
+        const resource = await AffiliateResource.findByPk(id);
+        if (!resource) {
+            return res.status(404).json({ success: false, error: { message: 'Resource not found' } });
+        }
+
+        await resource.destroy();
+        res.json({ success: true, message: 'Resource deleted' });
+    } catch (error) {
+        console.error('Delete affiliate resource error:', error);
+        res.status(500).json({ success: false, error: { message: 'Failed to delete resource' } });
+    }
+};
+
+export const toggleAffiliateResource = async (req, res) => {
+    try {
+        const { id } = req.params;
+        const resource = await AffiliateResource.findByPk(id);
+        if (!resource) {
+            return res.status(404).json({ success: false, error: { message: 'Resource not found' } });
+        }
+
+        await resource.update({ isActive: !resource.isActive });
+        res.json({ success: true, message: `Resource ${resource.isActive ? 'activated' : 'deactivated'}`, data: resource });
+    } catch (error) {
+        console.error('Toggle affiliate resource error:', error);
+        res.status(500).json({ success: false, error: { message: 'Failed to toggle resource' } });
     }
 };

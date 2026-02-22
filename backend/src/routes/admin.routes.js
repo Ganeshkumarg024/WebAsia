@@ -26,7 +26,22 @@ import {
     getAllAffiliates,
     updateAffiliateCommission,
     approvePayout,
-    adminResetUserPassword
+    adminResetUserPassword,
+    // New affiliate management functions
+    approveAffiliate,
+    rejectAffiliate,
+    updateAffiliateStatus,
+    getAffiliateDetail,
+    getPendingPayouts,
+    approvePayoutNew,
+    markPayoutPaid,
+    rejectPayout,
+    bulkPayoutAction,
+    getFraudFlags,
+    getAffiliateResources,
+    createAffiliateResource,
+    deleteAffiliateResource,
+    toggleAffiliateResource
 } from '../controllers/admin.controller.js';
 import {
     getAllRequests,
@@ -168,4 +183,48 @@ router.post('/leads/:id/quote', [
     body('notes').notEmpty().withMessage('Notes required')
 ], createQuote);
 
+// ========================
+// AFFILIATE MANAGEMENT
+// ========================
+router.get('/affiliates', getAllAffiliates);
+router.get('/affiliates/:id', getAffiliateDetail);
+router.post('/affiliates/:id/approve', approveAffiliate);
+router.post('/affiliates/:id/reject', [
+    body('reason').optional().isString()
+], rejectAffiliate);
+router.put('/affiliates/:id/status', [
+    body('status').isIn(['active', 'suspended', 'inactive']).withMessage('Invalid status')
+], updateAffiliateStatus);
+router.put('/affiliates/:id/commission', [
+    body('commissionRate').isNumeric().withMessage('Valid commission rate required')
+], updateAffiliateCommission);
+
+// Affiliate Payouts
+router.get('/affiliate/payouts', getPendingPayouts);
+router.post('/affiliate/payouts/:id/approve', approvePayoutNew);
+router.post('/affiliate/payouts/:id/reject', [
+    body('reason').optional().isString()
+], rejectPayout);
+router.post('/affiliate/payouts/:id/paid', markPayoutPaid);
+router.post('/affiliate/payouts/bulk', [
+    body('payoutIds').isArray().withMessage('Payout IDs required'),
+    body('action').isIn(['approve', 'reject', 'paid']).withMessage('Invalid action')
+], bulkPayoutAction);
+
+// Legacy payout approval (FinancialLog based)
+router.post('/payouts/:id/approve', approvePayout);
+
+// Fraud Detection
+router.get('/affiliate/fraud', getFraudFlags);
+
+// Affiliate Resources
+router.get('/affiliate/resources', getAffiliateResources);
+router.post('/affiliate/resources', [
+    body('title').notEmpty().withMessage('Title required'),
+    body('fileUrl').notEmpty().withMessage('File URL required')
+], createAffiliateResource);
+router.delete('/affiliate/resources/:id', deleteAffiliateResource);
+router.patch('/affiliate/resources/:id/toggle', toggleAffiliateResource);
+
 export default router;
+

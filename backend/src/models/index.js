@@ -8,6 +8,9 @@ import Message from './Message.js';
 import Notification from './Notification.js';
 import Affiliate from './Affiliate.js';
 import Referral from './Referral.js';
+import Commission from './Commission.js';
+import Payout from './Payout.js';
+import AffiliateResource from './AffiliateResource.js';
 import Testimonial from './Testimonial.js';
 import Payment from './Payment.js';
 import RequestActivity from './RequestActivity.js';
@@ -38,6 +41,7 @@ User.hasOne(BrandKit, { foreignKey: 'userId', as: 'brandKit' });
 User.hasMany(SupportMessage, { foreignKey: 'clientId', as: 'supportMessagesAsClient' });
 User.hasMany(SupportMessage, { foreignKey: 'adminId', as: 'supportMessagesAsAdmin' });
 User.hasMany(SystemLog, { foreignKey: 'adminId', as: 'auditLogs' });
+User.hasMany(AffiliateResource, { foreignKey: 'uploadedBy', as: 'uploadedResources' });
 
 // SubscriptionPlan associations
 SubscriptionPlan.hasMany(Subscription, { foreignKey: 'planId', as: 'subscriptions' });
@@ -77,11 +81,27 @@ Notification.belongsTo(User, { foreignKey: 'userId', as: 'user' });
 Affiliate.belongsTo(User, { foreignKey: 'userId', as: 'user' });
 Affiliate.belongsTo(User, { foreignKey: 'approvedBy', as: 'approver' });
 Affiliate.hasMany(Referral, { foreignKey: 'affiliateId', as: 'referrals' });
+Affiliate.hasMany(Commission, { foreignKey: 'affiliateId', as: 'commissions' });
+Affiliate.hasMany(Payout, { foreignKey: 'affiliateId', as: 'payouts' });
 
 // Referral associations
 Referral.belongsTo(Affiliate, { foreignKey: 'affiliateId', as: 'affiliate' });
 Referral.belongsTo(User, { foreignKey: 'referredUserId', as: 'referredUser' });
 Referral.belongsTo(Subscription, { foreignKey: 'subscriptionId', as: 'subscription' });
+Referral.hasMany(Commission, { foreignKey: 'referralId', as: 'commissions' });
+
+// Commission associations
+Commission.belongsTo(Affiliate, { foreignKey: 'affiliateId', as: 'affiliate' });
+Commission.belongsTo(Referral, { foreignKey: 'referralId', as: 'referral' });
+Commission.belongsTo(Payment, { foreignKey: 'paymentId', as: 'payment' });
+Commission.belongsTo(User, { foreignKey: 'approvedBy', as: 'approver' });
+
+// Payout associations
+Payout.belongsTo(Affiliate, { foreignKey: 'affiliateId', as: 'affiliate' });
+Payout.belongsTo(User, { foreignKey: 'approvedBy', as: 'approver' });
+
+// AffiliateResource associations
+AffiliateResource.belongsTo(User, { foreignKey: 'uploadedBy', as: 'uploader' });
 
 // Testimonial associations
 Testimonial.belongsTo(User, { foreignKey: 'userId', as: 'user' });
@@ -92,6 +112,7 @@ Testimonial.belongsTo(User, { foreignKey: 'approvedBy', as: 'approver' });
 Payment.belongsTo(User, { foreignKey: 'userId', as: 'user' });
 Payment.belongsTo(Subscription, { foreignKey: 'subscriptionId', as: 'subscription' });
 Payment.hasOne(FinancialLog, { foreignKey: 'paymentId', as: 'financialLog' });
+Payment.hasMany(Commission, { foreignKey: 'paymentId', as: 'commissions' });
 
 // RequestActivity associations
 RequestActivity.belongsTo(Request, { foreignKey: 'requestId', as: 'request' });
@@ -135,6 +156,9 @@ export {
     Notification,
     Affiliate,
     Referral,
+    Commission,
+    Payout,
+    AffiliateResource,
     Testimonial,
     Payment,
     RequestActivity,

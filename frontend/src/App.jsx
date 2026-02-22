@@ -65,7 +65,16 @@ import AdminSupportChat from './pages/admin/SupportChat';
 
 // Affiliate Pages
 import PartnerAffiliateDashboard from './pages/affiliate/Dashboard';
+import AffiliateReferrals from './pages/affiliate/Referrals';
+import AffiliateEarnings from './pages/affiliate/Earnings';
+import AffiliatePayoutsPage from './pages/affiliate/Payouts';
+import AffiliateResources from './pages/affiliate/Resources';
 import AffiliateSettings from './pages/affiliate/Settings';
+
+// Admin Affiliate Management
+import AffiliateManagement from './pages/admin/AffiliateManagement';
+import FraudDetection from './pages/admin/FraudDetection';
+import AffiliateResourcesAdmin from './pages/admin/AffiliateResourcesAdmin';
 
 // Components
 import ProtectedRoute from './components/auth/ProtectedRoute';
@@ -460,6 +469,30 @@ function App() {
                 }
             />
             <Route
+                path="/admin/affiliates"
+                element={
+                    <ProtectedRoute roles={['admin']}>
+                        <AffiliateManagement />
+                    </ProtectedRoute>
+                }
+            />
+            <Route
+                path="/admin/fraud-detection"
+                element={
+                    <ProtectedRoute roles={['admin']}>
+                        <FraudDetection />
+                    </ProtectedRoute>
+                }
+            />
+            <Route
+                path="/admin/affiliate-resources"
+                element={
+                    <ProtectedRoute roles={['admin']}>
+                        <AffiliateResourcesAdmin />
+                    </ProtectedRoute>
+                }
+            />
+            <Route
                 path="/admin/settings"
                 element={
                     <ProtectedRoute roles={['admin']}>
@@ -484,6 +517,38 @@ function App() {
                 element={
                     <ProtectedRoute roles={['affiliate']}>
                         <PartnerAffiliateDashboard />
+                    </ProtectedRoute>
+                }
+            />
+            <Route
+                path="/affiliate/referrals"
+                element={
+                    <ProtectedRoute roles={['affiliate']}>
+                        <AffiliateReferrals />
+                    </ProtectedRoute>
+                }
+            />
+            <Route
+                path="/affiliate/earnings"
+                element={
+                    <ProtectedRoute roles={['affiliate']}>
+                        <AffiliateEarnings />
+                    </ProtectedRoute>
+                }
+            />
+            <Route
+                path="/affiliate/payouts"
+                element={
+                    <ProtectedRoute roles={['affiliate']}>
+                        <AffiliatePayoutsPage />
+                    </ProtectedRoute>
+                }
+            />
+            <Route
+                path="/affiliate/resources"
+                element={
+                    <ProtectedRoute roles={['affiliate']}>
+                        <AffiliateResources />
                     </ProtectedRoute>
                 }
             />

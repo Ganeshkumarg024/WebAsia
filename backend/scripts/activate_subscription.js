@@ -6,7 +6,7 @@ const activateSubscription = async () => {
         await sequelize.authenticate();
         console.log('Database connected.');
 
-        const email = 'client@webasia.in';
+        const email = 'Testaf@gmail.com';
         const user = await User.findOne({ where: { email } });
 
         if (!user) {

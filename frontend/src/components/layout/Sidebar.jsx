@@ -20,7 +20,9 @@ import {
     CurrencyDollarIcon,
     ArrowRightOnRectangleIcon,
     ChatBubbleLeftRightIcon,
-    XMarkIcon
+    XMarkIcon,
+    ShieldExclamationIcon,
+    PhotoIcon
 } from '@heroicons/react/24/outline';
 import useAuthStore from '../../store/authStore';
 import useNotificationStore from '../../store/notificationStore';
@@ -84,6 +86,9 @@ const Sidebar = ({ isOpen, onClose }) => {
                     { name: 'Testimonials', path: '/admin/testimonials', icon: StarIcon },
                     { name: 'Leads', path: '/admin/leads', icon: BriefcaseIcon },
                     { name: 'Payouts', path: '/admin/payouts', icon: CurrencyDollarIcon },
+                    { name: 'Affiliates', path: '/admin/affiliates', icon: UsersIcon },
+                    { name: 'Fraud Detection', path: '/admin/fraud-detection', icon: ShieldExclamationIcon },
+                    { name: 'Affiliate Resources', path: '/admin/affiliate-resources', icon: PhotoIcon },
                     { name: 'Settings', path: '/admin/settings', icon: Cog6ToothIcon },
                 ];
 
@@ -92,6 +97,8 @@ const Sidebar = ({ isOpen, onClose }) => {
                     { name: 'Dashboard', path: '/affiliate/dashboard', icon: HomeIcon },
                     { name: 'Referrals', path: '/affiliate/referrals', icon: UsersIcon },
                     { name: 'Earnings', path: '/affiliate/earnings', icon: CurrencyDollarIcon },
+                    { name: 'Payouts', path: '/affiliate/payouts', icon: CreditCardIcon },
+                    { name: 'Resources', path: '/affiliate/resources', icon: PhotoIcon },
                     { name: 'Settings', path: '/affiliate/settings', icon: Cog6ToothIcon },
                 ];
 

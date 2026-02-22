@@ -30,6 +30,15 @@ const Affiliate = sequelize.define('Affiliate', {
         field: 'commission_rate',
         comment: 'Commission percentage (e.g., 15.00 for 15%)'
     },
+    commissionType: {
+        type: DataTypes.ENUM('percentage', 'fixed'),
+        defaultValue: 'percentage',
+        field: 'commission_type'
+    },
+    tier: {
+        type: DataTypes.ENUM('standard', 'premium', 'vip'),
+        defaultValue: 'standard'
+    },
     totalReferrals: {
         type: DataTypes.INTEGER,
         defaultValue: 0,
@@ -55,15 +64,31 @@ const Affiliate = sequelize.define('Affiliate', {
         defaultValue: 0.00,
         field: 'paid_earnings'
     },
+    payoutMethod: {
+        type: DataTypes.ENUM('bank_transfer', 'upi', 'paypal'),
+        allowNull: true,
+        field: 'payout_method'
+    },
     payoutDetails: {
         type: DataTypes.JSONB,
         allowNull: true,
         field: 'payout_details',
         comment: 'Bank account, UPI, PayPal details'
     },
+    applicationNote: {
+        type: DataTypes.TEXT,
+        allowNull: true,
+        field: 'application_note',
+        comment: 'Why the user wants to join the affiliate program'
+    },
     status: {
-        type: DataTypes.ENUM('active', 'suspended', 'inactive'),
-        defaultValue: 'active'
+        type: DataTypes.ENUM('pending', 'active', 'suspended', 'rejected', 'inactive'),
+        defaultValue: 'pending'
+    },
+    rejectionReason: {
+        type: DataTypes.TEXT,
+        allowNull: true,
+        field: 'rejection_reason'
     },
     approvedAt: {
         type: DataTypes.DATE,
@@ -86,7 +111,8 @@ const Affiliate = sequelize.define('Affiliate', {
     indexes: [
         { fields: ['user_id'], unique: true },
         { fields: ['referral_code'], unique: true },
-        { fields: ['status'] }
+        { fields: ['status'] },
+        { fields: ['tier'] }
     ]
 });
 
