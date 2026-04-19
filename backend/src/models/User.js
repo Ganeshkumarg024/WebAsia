@@ -40,7 +40,7 @@ const User = sequelize.define('User', {
         defaultValue: 'client'
     },
     status: {
-        type: DataTypes.ENUM('active', 'inactive', 'suspended'),
+        type: DataTypes.ENUM('active', 'inactive', 'suspended', 'deleted'),
         defaultValue: 'active',
         allowNull: false
     },

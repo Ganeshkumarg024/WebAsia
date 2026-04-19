@@ -205,6 +205,7 @@ const Users = () => {
             showToast.success('User deleted successfully');
             setShowDeleteDialog(false);
             setSelectedUser(null);
+            fetchUsers({ role: activeTab, search: searchQuery, status: statusFilter === 'all' || statusFilter === 'needs_attention' ? undefined : statusFilter });
         } else {
             showToast.error(result.error || 'Failed to delete user');
         }
@@ -848,8 +849,8 @@ const Users = () => {
                                     key={dur}
                                     onClick={() => setSelectedDuration(dur)}
                                     className={`px-4 py-2.5 rounded-xl text-xs font-black uppercase tracking-wider transition-all ${selectedDuration === dur
-                                            ? 'bg-blue-600 text-white shadow-lg shadow-blue-600/20'
-                                            : 'bg-gray-50 text-gray-500 border border-gray-200 hover:bg-gray-100'
+                                        ? 'bg-blue-600 text-white shadow-lg shadow-blue-600/20'
+                                        : 'bg-gray-50 text-gray-500 border border-gray-200 hover:bg-gray-100'
                                         }`}
                                 >
                                     {dur}

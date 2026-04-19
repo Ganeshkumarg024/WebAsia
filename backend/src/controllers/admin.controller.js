@@ -96,8 +96,15 @@ export const getAllUsers = async (req, res) => {
             where.role = role;
         }
 
-        if (status && status !== 'needs_attention') {
-            where.status = status;
+        if (status && status !== 'needs_attention' && status !== 'all') {
+            if (status === 'pending') {
+                where.status = 'inactive'; // 'inactive' means pending verification in registration
+            } else {
+                where.status = status;
+            }
+        } else {
+            // Default or 'all': exclude 'deleted' users
+            where.status = { [Op.ne]: 'deleted' };
         }
 
         if (search) {
@@ -283,11 +290,11 @@ export const deleteUser = async (req, res) => {
         }
 
         // Soft delete
-        await user.update({ status: 'inactive' });
+        await user.update({ status: 'deleted' });
 
         res.json({
             success: true,
-            message: 'User deactivated successfully'
+            message: 'User deleted successfully'
         });
     } catch (error) {
         console.error('Delete user error:', error);
